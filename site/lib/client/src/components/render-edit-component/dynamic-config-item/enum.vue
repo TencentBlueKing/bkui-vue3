@@ -5,6 +5,7 @@
     behavior="simplicity"
     theme="primary"
     :clearable="clearable"
+    :disabled="disabled"
   >
     <BkSelect.Option
       v-for="option in options"
@@ -24,7 +25,8 @@ import type { IComponentWiki } from '@/types/component';
 interface IProps {
   modelValue: string;
   clearable?: boolean;
-  options: IComponentWiki['props'][number]['options']
+  options: IComponentWiki['props'][number]['options'];
+  disabled?: boolean;
 }
 interface IEmits {
   (e: 'update:modelValue', value: string): void;

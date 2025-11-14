@@ -4,6 +4,7 @@
       :height="200"
       v-model="arrVal"
       placeholder="请输入有效的JSON数组格式"
+      :disabled="disabled"
       :class="{
         'is-error': hasError,
       }"
@@ -22,6 +23,10 @@ const props = defineProps({
   modelValue: {
     type: Array as PropType<Array<Record<string, ValueType> | string | number | boolean>>,
     default: () => [],
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
   },
 });
 

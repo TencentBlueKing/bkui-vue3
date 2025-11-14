@@ -52,6 +52,10 @@ export default defineComponent({
       type: String as PropType<CodeLanguages>,
       required: true,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: {
     'update:modelValue': (__: ComponentPropValue) => true,
@@ -130,6 +134,7 @@ export default defineComponent({
             <RenderString
               modelValue={this.newModelValue as string}
               onUpdate:modelValue={this.handleUpdate}
+              disabled={this.disabled}
             />
           );
         case 'number':
@@ -137,6 +142,7 @@ export default defineComponent({
             <RenderNumber
               modelValue={this.newModelValue as number}
               onUpdate:modelValue={this.handleUpdate}
+              disabled={this.disabled}
             />
           );
         case 'boolean':
@@ -144,6 +150,7 @@ export default defineComponent({
             <RenderBoolean
               modelValue={this.newModelValue as boolean}
               onUpdate:modelValue={this.handleUpdate}
+              disabled={this.disabled}
             />
           );
         case 'enum':
@@ -152,6 +159,7 @@ export default defineComponent({
               modelValue={this.newModelValue as string}
               onUpdate:modelValue={this.handleUpdate}
               options={this.options}
+              disabled={this.disabled}
             />
           );
         case 'array':
@@ -159,6 +167,7 @@ export default defineComponent({
             <RenderArray
               modelValue={this.newModelValue as Array<Record<string, ComponentPropValue> | string | number | boolean>}
               onUpdate:modelValue={this.handleUpdate}
+              disabled={this.disabled}
             />
           );
         case 'object':
@@ -168,6 +177,7 @@ export default defineComponent({
               onUpdate:modelValue={this.handleUpdate}
               type={this.singleType}
               complexTypes={this.complexTypes}
+              disabled={this.disabled}
             />
           );
         case 'function':

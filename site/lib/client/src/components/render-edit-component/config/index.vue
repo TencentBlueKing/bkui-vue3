@@ -34,6 +34,7 @@
             :options="prop.options"
             :complex-types="types"
             :active-language="activeLanguage"
+            :disabled="isDisableProp(prop.name)"
             :class="{ 'selected-prop': selectedProp === prop.name }"
             @update:model-value="(value) => handleUpdateProps(prop.name, value)"
           >
@@ -69,6 +70,7 @@
 
 <script lang="ts" setup>
 import { computed, onBeforeUnmount, ref, watch, nextTick } from 'vue';
+import { useRoute } from 'vue-router';
 
 import type {
   CodeLanguages,
@@ -79,7 +81,7 @@ import type {
 
 import DynamicConfigItem from '../dynamic-config-item';
 import { filterXss } from '@blueking/xss-filter';
-import { camelKey, camelToSnakeCase } from '@/utils'
+import { camelKey } from '@/utils'
 import { debounce } from '../dynamic-config-item/utils';
 
 import Collapse from './collapse';
@@ -205,15 +207,8 @@ const comSlots = computed(() => {
 });
 
 const renderCamelKeyProps = (key: string) => {
-  const renderVal = props.renderProps[key]
-  if(typeof renderVal === 'undefined') {
-    if(key.includes('-')) {
-      return props.renderProps[camelKey(key)]
-    } else {
-      return props.renderProps[camelToSnakeCase(key)]
-    }
-  }
-  return renderVal
+  const newKey = Object.keys(props.renderProps || {}).find((propKey) => camelKey(propKey) === camelKey(key));
+  return props.renderProps[newKey ?? key]
 }
 
 const resetProp = () => {
@@ -262,6 +257,14 @@ const scrollToSlot = () => {
     })
   })
 }
+
+const route = useRoute()
+const isDisableProp = computed(() => {
+  return (propName: string) => {
+    const componentName = route.params.name as string || ''
+    return componentName === 'timeline' && propName === 'list'
+  }
+})
 
 // 组件卸载时清理定时器
 onBeforeUnmount(() => {
