@@ -4,6 +4,7 @@
       :height="200"
       v-model="objectVal"
       placeholder="请输入有效的JSON对象格式"
+      :disabled="disabled"
       :class="{
         'is-error': hasError,
       }"
@@ -33,6 +34,10 @@ const props = defineProps({
   complexTypes: {
     type: Array as PropType<IComponentWiki['types']>,
     default: () => [],
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
   },
 });
 

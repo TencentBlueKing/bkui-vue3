@@ -6,6 +6,7 @@
     :false-value="false"
     theme="primary"
     ext-cls="config-item-boolean"
+    :disabled="disabled"
   />
 </template>
 <script lang="ts" setup>
@@ -13,6 +14,7 @@ import { Switcher as BkSwitcher } from 'bkui-vue';
 
 interface IProps {
   modelValue: boolean;
+  disabled?: boolean;
 }
 interface IEmits {
   (e: 'update:modelValue', value: boolean): void;

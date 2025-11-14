@@ -1,8 +1,9 @@
 <template>
   <bk-input
     class="config-item-string"
-    :model-value="props.modelValue"
+    :model-value="modelValue"
     behavior="simplicity"
+    :disabled="disabled"
     @update:model-value="handleUpdateModelValue"
   />
 </template>
@@ -14,12 +15,13 @@ import {
 
 interface IProps {
   modelValue: string;
+  disabled?: boolean;
 }
 interface IEmits {
   (e: 'update:modelValue', value: string): void;
 }
 
-const props = defineProps<IProps>();
+defineProps<IProps>();
 const emits = defineEmits<IEmits>();
 
 const handleUpdateModelValue = (value: string) => {
