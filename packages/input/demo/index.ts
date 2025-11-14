@@ -34,10 +34,6 @@ const presets = [
       modelValue: '',
       type: 'text',
       behavior: 'normal',
-      placeholder: '请输入',
-      maxlength: 10,
-      minlength: 1,
-      overMaxLengthLimit: true,
       prefix: 'https://',
       suffix: '.com',
       clearable: true,
@@ -49,12 +45,11 @@ const presets = [
     props: {
       modelValue: '',
       type: 'textarea',
-      placeholder: '请输入',
+      resize: false,
       maxlength: 100,
-      minlength: 10,
+      minlength: 0,
+      showWordLimit: true,
       overMaxLengthLimit: true,
-      resize: true,
-      clearable: true,
     },
   },
   {
@@ -82,16 +77,75 @@ const presets = [
     description: '支持前后缀图标的输入框',
     props: {
       modelValue: '',
-      type: 'text',
     },
     slots: {
-      prefix:
-        '<span class="input-icon" style="display: flex; align-items: center; justify-content: center; padding-left: 8px; font-size: 16px; color: #c4c6cc;"><search /></span>',
-      suffix:
-        '<span class="input-icon" style="display: flex; align-items: center; justify-content: center; padding-right: 8px; font-size: 16px; color: #c4c6cc;"><info-line /></span>',
+      prefix: '<span class="input-icon"><search /></span>',
+      suffix: '<span class="input-icon"><info-line /></span>',
     },
+    style: `
+    .input-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 8px;
+      font-size: 16px;
+      background-color: #fff;
+      color: #c4c6cc;
+    }`,
     dependent: {
       components: ['icon'],
+    },
+  },
+  {
+    title: 'hover 时才显示 clear 按钮',
+    description: '配置show-clear-only-hover为true时，清除按钮在hover时才会显示',
+    props: {
+      modelValue: '',
+      clearable: true,
+      showClearOnlyHover: true,
+    },
+  },
+  {
+    title: '尺寸',
+    description: '可以使用 size 属性来定义按钮的尺寸，可接受 small large',
+    props: {
+      modelValue: '',
+      size: 'small',
+    },
+  },
+  {
+    title: '带状态输入框',
+    description: '通过配置 disabled, readonly，来让输入框禁用、只读',
+    props: {
+      modelValue: '',
+      disabled: true,
+      readonly: false,
+    },
+  },
+  {
+    title: '事件回调',
+    description: '支持 keyup enter keypress keydown change focus blur 回调事件',
+    props: {
+      modelValue: '',
+    },
+    events: {
+      change: '(newVal, event) => {console.log(newVal, event);}',
+    },
+  },
+  {
+    title: 'HTML 原生属性透传',
+    description: '支持 HTML input 标签所有原生属性，设置 password 禁用自动填充功能',
+    props: {
+      modelValue: '',
+      type: 'password',
+    },
+  },
+  {
+    title: '简约风格输入框',
+    description: '通过属性behavior配置简约风格',
+    props: {
+      modelValue: '',
+      behavior: 'simplicity',
     },
   },
 ];
@@ -143,6 +197,16 @@ const props = [
     type: 'boolean',
   },
   {
+    name: 'max',
+    description: '最大值',
+    type: 'number',
+  },
+  {
+    name: 'min',
+    description: '最小值',
+    type: 'number',
+  },
+  {
     name: 'maxlength',
     description: '最大输入长度',
     type: 'number',
@@ -181,6 +245,11 @@ const props = [
   {
     name: 'show-overflow-tooltips',
     description: '文本超出长度是否显示tooltips',
+    type: 'boolean',
+  },
+  {
+    name: 'show-clear-only-hover',
+    description: '清除按钮是否仅在 hover 时显示',
     type: 'boolean',
   },
   {

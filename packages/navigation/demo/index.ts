@@ -98,9 +98,13 @@ const presets = [
         </bk-menu>
       `,
       header: '<div class="header-demo">这里是头部导航</div>',
-      'side-icon':
-        '<span class="input-icon" style="display: inline-flex; align-items: center;"><tree-application-shape /></span>',
+      'side-icon': '<span class="input-icon"><tree-application-shape /></span>',
     },
+    style: `
+    .input-icon {
+      display: inline-flex;
+      align-items: center;
+    }`,
     dependent: {
       components: ['icon'],
     },

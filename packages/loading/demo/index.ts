@@ -32,7 +32,6 @@ const presets = [
     description: '通过点状图标样式显示加载，点类型：通常用于整个页面、组件内容的加载状态；',
     props: {
       size: 'normal',
-      title: '数据加载中',
     },
   },
   {
@@ -41,7 +40,6 @@ const presets = [
     props: {
       size: 'normal',
       mode: 'spin',
-      title: '数据加载中',
       theme: 'primary',
     },
   },
@@ -53,6 +51,52 @@ const presets = [
       mode: 'spin',
       title: '自定义加载',
       theme: 'primary',
+    },
+  },
+  {
+    title: '配置大小',
+    description: '传入 size，可以配置 loading 效果大小',
+    props: {
+      size: 'large',
+      title: '配置大小',
+    },
+  },
+  {
+    title: '配置主题',
+    description: '传入 theme，可以配置 loading 效果颜色',
+    props: {
+      theme: 'danger',
+      title: '配置主题',
+    },
+  },
+  {
+    title: '配置 loading 遮罩的背景透明度与背景色',
+    description:
+      'loading 遮罩的背景透明度会由传入的 opacity 参数决定，此参数为 0 至 1 之间的数字，默认为 0.9 背景色则由color属性决定。',
+    props: {
+      opacity: 0.6,
+      color: '#62ba62',
+      loading: true,
+    },
+    slots: {
+      default: '<div class="loading-container">Content</div>',
+    },
+    style: `
+    .loading-container {
+      position: relative;
+      z-index: 99;
+      display: flex;
+      width: 100%;
+      height: 360px;
+      align-items: center;
+      justify-content: center;
+    }`,
+  },
+  {
+    title: '配置文案',
+    description: '传入 title，值会被渲染到 loading 图标的下方',
+    props: {
+      title: '数据加载中',
     },
   },
 ];

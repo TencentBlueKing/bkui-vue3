@@ -55,11 +55,27 @@ const presets = [
       theme: 'primary',
     },
     slots: {
-      default:
-        '<div style="display: flex;align-items: center;gap: 4px; justify-content: center;"><help />文本链接</div>',
+      default: '<div class="link-icon"><help />文本链接</div>',
     },
+    style: `
+    .link-icon {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      justify-content: center;
+    }`,
     dependent: {
       components: ['icon'],
+    },
+  },
+  {
+    title: '禁用状态',
+    description: '文字链接不可用状态',
+    props: {
+      disabled: true,
+    },
+    slots: {
+      default: '文本链接',
     },
   },
 ];
