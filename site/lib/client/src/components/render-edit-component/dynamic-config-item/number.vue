@@ -25,8 +25,9 @@ interface IEmits {
 defineProps<IProps>();
 const emits = defineEmits<IEmits>();
 
-const handleUpdateModelValue = (value: number) => {
-  emits('update:modelValue', +value);
+const handleUpdateModelValue = (_value: number, e: Event) => {
+  // 默认会四舍五入，改为原始输入值
+  emits('update:modelValue', e.target.value);
 };
 </script>
 <style lang="postcss">
