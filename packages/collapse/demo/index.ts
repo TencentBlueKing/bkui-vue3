@@ -26,24 +26,26 @@
 
 import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
+const list = [
+  { name: '方案成熟', content: '拥有支撑数百款腾讯业务的经验沉淀，兼容各种复杂的系统架构，生于运维 · 精于运维' },
+  {
+    name: '覆盖全面',
+    content:
+      '从配置管理，到作业执行、任务调度和监控自愈，再通过运维大数据分析辅助运营决策，全方位覆盖业务运营的全周期保障管理。',
+  },
+  {
+    name: '开放平台',
+    content: '开放的PaaS，具备强大的开发框架和调度引擎，以及完整的运维开发培训体系，助力运维快速转型升级。',
+  },
+];
+
 // 组件示例
 const presets = [
   {
     title: '基础型',
     description: '基础的折叠面板',
     props: {
-      list: [
-        { name: '方案成熟', content: '拥有支撑数百款腾讯业务的经验沉淀，兼容各种复杂的系统架构，生于运维 · 精于运维' },
-        {
-          name: '覆盖全面',
-          content:
-            '从配置管理，到作业执行、任务调度和监控自愈，再通过运维大数据分析辅助运营决策，全方位覆盖业务运营的全周期保障管理。',
-        },
-        {
-          name: '开放平台',
-          content: '开放的PaaS，具备强大的开发框架和调度引擎，以及完整的运维开发培训体系，助力运维快速转型升级。',
-        },
-      ],
+      list,
       modelValue: [],
       accordion: false,
     },
@@ -53,18 +55,7 @@ const presets = [
     description: '通过线条分隔面板',
     props: {
       hasHeaderBorder: true,
-      list: [
-        { name: '方案成熟', content: '拥有支撑数百款腾讯业务的经验沉淀，兼容各种复杂的系统架构，生于运维 · 精于运维' },
-        {
-          name: '覆盖全面',
-          content:
-            '从配置管理，到作业执行、任务调度和监控自愈，再通过运维大数据分析辅助运营决策，全方位覆盖业务运营的全周期保障管理。',
-        },
-        {
-          name: '开放平台',
-          content: '开放的PaaS，具备强大的开发框架和调度引擎，以及完整的运维开发培训体系，助力运维快速转型升级。',
-        },
-      ],
+      list,
       modelValue: [],
       accordion: false,
     },
@@ -74,18 +65,7 @@ const presets = [
     description: '通过标题栏色块分隔面板',
     props: {
       useBlockTheme: true,
-      list: [
-        { name: '方案成熟', content: '拥有支撑数百款腾讯业务的经验沉淀，兼容各种复杂的系统架构，生于运维 · 精于运维' },
-        {
-          name: '覆盖全面',
-          content:
-            '从配置管理，到作业执行、任务调度和监控自愈，再通过运维大数据分析辅助运营决策，全方位覆盖业务运营的全周期保障管理。',
-        },
-        {
-          name: '开放平台',
-          content: '开放的PaaS，具备强大的开发框架和调度引擎，以及完整的运维开发培训体系，助力运维快速转型升级。',
-        },
-      ],
+      list,
       accordion: false,
     },
   },
@@ -94,8 +74,83 @@ const presets = [
     description: '通过卡片样式分隔面板',
     props: {
       useCardTheme: true,
+      list,
+      modelValue: [],
+      accordion: false,
+    },
+  },
+  {
+    title: '自定义图标',
+    description: '通过 headerIcon 配置自定义图标',
+    props: {
+      headerIcon: 'angle-double-right',
+      list,
+      modelValue: [],
+      accordion: false,
+    },
+  },
+  {
+    title: '图标位置',
+    description: '通过 headerIconAlign 配置图标位置',
+    props: {
+      headerIconAlign: 'right',
+      list,
+      modelValue: [],
+    },
+  },
+  {
+    title: '是否使用手风琴模式',
+    description: '通过 accordion 配置是否使用手风琴模式',
+    props: {
+      accordion: true,
+      list,
+      modelValue: [0],
+    },
+  },
+  {
+    title: '自定义面板标题',
+    description: '通过 title 插槽配置面板标题',
+    props: {
+      list,
+      modelValue: [],
+    },
+    slots: {
+      title: `
+        <span> {{ data.name }} 自定义title</span>
+      `,
+    },
+  },
+  {
+    title: '点击事件',
+    description: '通过点击事件获取当前点击项',
+    props: {
+      list,
+      modelValue: [],
+    },
+    events: {
+      itemClick: `
+        (item) => {
+          BkMessage({
+            message: \`当前点击\${item.name}\`,
+            offsetY: 80,
+          });
+        }
+      `,
+    },
+    dependent: {
+      components: ['message'],
+    },
+  },
+  {
+    title: '列表不可点击',
+    description: '通过 disabled 配置列表不可点击',
+    props: {
       list: [
-        { name: '方案成熟', content: '拥有支撑数百款腾讯业务的经验沉淀，兼容各种复杂的系统架构，生于运维 · 精于运维' },
+        {
+          name: '方案成熟',
+          content: '拥有支撑数百款腾讯业务的经验沉淀，兼容各种复杂的系统架构，生于运维 · 精于运维',
+          disabled: true,
+        },
         {
           name: '覆盖全面',
           content:
@@ -107,7 +162,72 @@ const presets = [
         },
       ],
       modelValue: [],
-      accordion: false,
+    },
+  },
+  {
+    title: 'collapse-panel 组件',
+    description: '通过 collapse-panel 组件配置面板',
+    props: {
+      modelValue: [],
+    },
+    slots: {
+      default: `
+        <bk-collapse-panel name="0">
+          <span>0-方案成熟</span>
+          <template #content>
+            <div>
+              拥有支撑数百款腾讯业务的经验沉淀，兼容各种复杂的系统架构，生于运维 · 精于运维
+            </div>
+          </template>
+        </bk-collapse-panel>
+        <bk-collapse-panel name="1">
+          <span>1-覆盖全面</span>
+          <template #content>
+            <div>
+              从配置管理，到作业执行、任务调度和监控自愈，再通过运维大数据分析辅助运营决策，全方位覆盖业务运营的全周期保障管理。
+            </div>
+          </template>
+        </bk-collapse-panel>
+        <bk-collapse-panel name="2">
+          <span>2-开放平台</span>
+          <template #content>
+            <div>
+              开放的PaaS，具备强大的开发框架和调度引擎，以及完整的运维开发培训体系，助力运维快速转型升级。
+            </div>
+          </template>
+        </bk-collapse-panel>
+      `,
+    },
+  },
+  {
+    title: '面板插槽',
+    description: '通过插槽配置面板',
+    props: {
+      modelValue: [],
+    },
+    slots: {
+      default: `
+          <bk-collapse-panel name="0">
+            <span>0-方案成熟</span>
+            <template #content>
+              <div>
+                拥有支撑数百款腾讯业务的经验沉淀，兼容各种复杂的系统架构，生于运维 · 精于运维
+              </div>
+            </template>
+          </bk-collapse-panel>
+          <bk-collapse-panel name="1">
+            <template #header>
+              <div style="display: flex; justify-content: space-between; align-items: center">
+                <div>1-自定义header</div>
+              </div>
+            </template>
+            <template #content>
+              <div>
+                从配置管理，到作业执行、任务调度和监控自愈，再通过运维大数据分析辅助运营决策，全方位覆盖业务运营的全周期保障管理。
+              </div>
+            </template>
+          </bk-collapse-panel>
+        `,
     },
   },
 ];
@@ -143,6 +263,7 @@ const props = [
     description: '当当前激活Index',
     type: 'number | Array<number | string>',
     default: '[]',
+    isSupportVModel: true,
   },
   {
     name: 'accordion',

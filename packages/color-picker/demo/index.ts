@@ -42,7 +42,30 @@ const presets = [
       modelValue: '',
       size: 'large',
     },
-  }
+  },
+  {
+    title: 'trigger slot',
+    description: '通过 trigger slot 配置触发对象',
+    props: {
+      modelValue: '',
+    },
+    slots: {
+      trigger: `
+        <div>
+          {{ data.value }}
+          <span>{{ data.isShowDropdown ? '收起' : '展开' }}</span>
+        </div>
+      `,
+    },
+  },
+  {
+    title: '预设颜色值',
+    description: '通过 recommend 配置预设颜色值',
+    props: {
+      modelValue: '',
+      recommend: ['#000', '#333', '#666', '#999', 'FFF'],
+    },
+  },
 ];
 
 // 组件属性，用来自动生成属性文档
@@ -52,6 +75,7 @@ const props = [
     description: '绑定值，颜色值',
     type: 'string',
     default: '',
+    isSupportVModel: true,
   },
   {
     name: 'disabled',

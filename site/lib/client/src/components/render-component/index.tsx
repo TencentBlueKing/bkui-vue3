@@ -1,14 +1,14 @@
+import type { PropType } from 'vue';
 import * as vue from 'vue';
+
+import type { IProp } from '@/types/component';
 
 import RenderComponent from './render-component';
 import RenderDirective from './render-directive';
+import RenderError from './render-error';
 import RenderFunction from './render-function';
 import RenderIcon from './render-icon';
-import RenderError from './render-error';
 import RenderLoading from './render-loading';
-
-import type { PropType } from 'vue';
-import type { IProp } from '@/types/component';
 
 export default vue.defineComponent({
   name: 'RenderComponentWrapper',
@@ -24,7 +24,7 @@ export default vue.defineComponent({
       default: '',
     },
     style: {
-      type: String
+      type: String,
     },
     component: {
       type: Object,
@@ -71,6 +71,7 @@ export default vue.defineComponent({
     },
   },
   errorCaptured(err) {
+    console.error('errorCaptured', err);
     this.errorMessage = (err as Error).message;
     return false;
   },
@@ -88,17 +89,17 @@ export default vue.defineComponent({
   render() {
     if (this.loading) {
       return <RenderLoading />;
-    } else if (this.errorMessage) {
+    } if (this.errorMessage) {
       return <RenderError
         key={this.errorMessage}
         errorMessage={this.errorMessage}
       />;
-    } else if (this.name === 'icon') {
+    } if (this.name === 'icon') {
       return <RenderIcon
         component={this.component}
         renderProps={this.renderProps}
       />;
-    } else if (this.group === '指令') {
+    } if (this.group === '指令') {
       return <RenderDirective
         key={this.name}
         name={this.name}
@@ -106,7 +107,7 @@ export default vue.defineComponent({
         component={this.component}
         renderProps={this.renderProps}
       />;
-    } else if (typeof this.component.default === 'function') {
+    } if (typeof this.component.default === 'function') {
       return <RenderFunction
         key={this.component.default}
         component={this.component}

@@ -92,6 +92,124 @@ const presets = [
       type: 'yearrange',
     },
   },
+  {
+    title: 'trigger slot',
+    description: '通过 trigger slot 配置触发对象',
+    props: {
+      'model-value': new Date(),
+      type: 'date',
+    },
+    slots: {
+      trigger: `
+        <div>
+          {{ data }}
+        </div>
+      `,
+    },
+  },
+  {
+    title: 'header slot',
+    description: '通过 header slot 配置头部',
+    props: {
+      'model-value': new Date(),
+      type: 'date',
+    },
+    slots: {
+      header: `
+        <div class="custom-header">我是自定义 header</div>
+      `,
+    },
+  },
+  {
+    title: 'footer slot',
+    description: '通过 footer slot 配置底部',
+    props: {
+      'model-value': new Date(),
+      type: 'date',
+    },
+    slots: {
+      footer: `
+        <div class="custom-footer">我是自定义 footer</div>
+      `,
+    },
+  },
+  {
+    title: 'shortcuts 配置',
+    description: '通过 shortcuts配置快捷选项',
+    props: {
+      'model-value': new Date(),
+      type: 'datetime',
+      shortcuts: [
+        {
+          text: '今天',
+          value: () => {
+            const date = new Date(new Date().getTime());
+            date.setHours(0, 0, 0, 0);
+            return date;
+          },
+          short: 'now/d',
+        },
+        {
+          text: '昨天',
+          value: () => {
+            const date = new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000);
+            date.setHours(0, 0, 0, 0);
+            return date;
+          },
+          short: 'now-1d/d',
+        },
+        {
+          text: '前天',
+          value: () => {
+            const date = new Date(new Date().getTime() - 2 * 24 * 60 * 60 * 1000);
+            date.setHours(0, 0, 0, 0);
+            return date;
+          },
+          short: 'now-2d/d',
+        },
+        {
+          text: '一星期前',
+          value: () => {
+            const date = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000);
+            date.setHours(0, 0, 0, 0);
+            return date;
+          },
+          short: 'now-7d/d',
+        },
+        {
+          text: '一个月前',
+          value: () => {
+            const date = new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000);
+            date.setHours(0, 0, 0, 0);
+            return date;
+          },
+          short: 'now-1M/d',
+        },
+        {
+          text: '一年前',
+          value: () => {
+            const date = new Date(new Date().getTime() - 365 * 24 * 60 * 60 * 1000);
+            date.setHours(0, 0, 0, 0);
+            return date;
+          },
+          short: 'now-1y/d',
+        },
+      ],
+    },
+  },
+  {
+    title: 'shortcuts slot',
+    description: '通过 shortcuts slot 配置快捷选项',
+    props: {
+      'model-value': new Date(),
+      type: 'datetime',
+    },
+    slots: {
+      shortcuts: `
+        <div class="custom-shortcuts">自定义插槽</div>
+      `,
+    },
+  },
 ];
 
 // 组件属性，用来自动生成属性文档
@@ -230,6 +348,7 @@ const props = [
     description: '绑定值',
     type: 'Date | String | Number | [Date | String | Number, Date | String | Number] | null',
     default: '',
+    isSupportVModel: true,
   },
   {
     name: 'value',

@@ -91,7 +91,7 @@ const presets = [
       `,
     },
     events: {
-      change: `(status: boolean) => {
+      change: `(status) => {
         // alert(\`当前状态\${status}\`);
         // console.log('change', aa); 这里 aa 是 undefined，因为不会动态创建变量，遇到再说
         BkMessage({

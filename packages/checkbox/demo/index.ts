@@ -33,12 +33,12 @@ const presets = [
     description: '单独使用：选中时值为true',
     props: {
       modelValue: false,
-      label: '选项',
+      label: '微信',
     },
   },
   {
     title: '多选框组',
-    description: '通过 checkbox-group 组件包裹，可以实现多选框组',
+    description: '配合 bk-checkbox-grop 使用，label 配置选中时的值',
     props: {
       modelValue: [],
     },
@@ -50,6 +50,63 @@ const presets = [
       </bk-checkbox-group>
     `,
   },
+  {
+    title: '默认选中',
+    description: '配置 checked',
+    props: {
+      modelValue: [],
+    },
+    template: `
+      <bk-checkbox-group>
+        <bk-checkbox checked label="微信" />
+        <bk-checkbox label="QQ" />
+        <bk-checkbox label="Email" />
+      </bk-checkbox-group>
+    `,
+  },
+  {
+    title: '禁用',
+    description: '配置 disabled',
+    props: {
+      modelValue: [],
+    },
+    template: `
+      <bk-checkbox-group>
+        <bk-checkbox disabled label="微信" />
+        <bk-checkbox label="QQ" />
+        <bk-checkbox label="Email" />
+      </bk-checkbox-group>
+    `,
+  },
+  {
+    title: '前置校验',
+    description: '配置beforeChange',
+    props: {
+      modelValue: false,
+      label: '微信',
+      beforeChange: `() => {
+        return new Promise((resolve, reject) => {
+          BkInfoBox({
+            title: '确认是否选中',
+            onConfirm: () => resolve(true),
+            onCancel: () => reject(),
+          });
+        });
+      }`,
+    },
+    dependent: {
+      components: ['info-box'],
+    },
+  },
+  {
+    title: '半选',
+    description: '配置indeterminate',
+    props: {
+      label: '微信',
+      checked: true,
+      indeterminate: true,
+    },
+  },
 ];
 
 // 组件属性，用来自动生成属性文档
@@ -59,6 +116,7 @@ const props = [
     description: '绑定值',
     type: 'boolean | string | number',
     default: '',
+    isSupportVModel: true,
   },
   {
     name: 'label',
