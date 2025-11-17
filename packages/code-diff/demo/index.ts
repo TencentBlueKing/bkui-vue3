@@ -126,6 +126,26 @@ const presets = [
       diffFormat: 'line-by-line',
     },
   },
+  {
+    title: '黑暗主题',
+    description: '配置 theme 为 dark',
+    props: {
+      oldContent: OLD_STR,
+      newContent: NEW_STR,
+      language: 'javascript',
+      theme: 'dark',
+    },
+  },
+  {
+    title: '不隐藏行数配置',
+    description: '配置 diffContext 为 10，表示不隐藏行数',
+    props: {
+      oldContent: OLD_STR,
+      newContent: NEW_STR,
+      language: 'javascript',
+      diffContext: 10,
+    },
+  },
 ];
 
 // 组件属性，用来自动生成属性文档

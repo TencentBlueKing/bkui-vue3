@@ -4,17 +4,15 @@ import {
 import type {
   Component,
   ComponentInstance,
-} from 'vue';
+  PropType } from 'vue';
 import * as vue from 'vue';
+
+import { kebabToCamel } from '@/common/util';
+import type { IProp } from '@/types/component';
 
 import {
   compile,
 } from '@vue/compiler-dom';
-
-import type { PropType } from 'vue';
-import type { IProp } from '@/types/component';
-
-import { kebabToCamel } from '@/common/util';
 
 export default vue.defineComponent({
   name: 'RenderComponent',
@@ -33,7 +31,7 @@ export default vue.defineComponent({
       default: '',
     },
     componentStyle: {
-      type: String
+      type: String,
     },
     component: {
       type: Object,
@@ -166,7 +164,7 @@ export default vue.defineComponent({
           (window as unknown as Record<string, unknown>)[name] = comp;
         } else {
           (this as ComponentInstance<Component>)._.components[name] = comp;
-        } 
+        }
       });
 
       // 处理 events
@@ -175,15 +173,15 @@ export default vue.defineComponent({
           const Fn = Function;
           // 处理箭头函数: (param: Type, param2: Type2) => 或 async (param: Type) =>
           const eventCode = this.events[key].replace(/(async\s+)?\(([^)]*)\)\s*=>/g, (_match: string, asyncKeyword: string, params: string) => {
-            const cleanParams = params.replace(/(\w+)\s*:\s*[^,)]+/g, '$1');
+            const cleanParams = params.replace(/(\w+)\s*:\s*[A-Z][^,)]*/g, '$1');
             return `${asyncKeyword || ''}(${cleanParams}) =>`;
           });
 
           // 例如：'click' -> 'onClick', 'custom-event' -> 'onCustomEvent'
-          const eventName = 'on' + key
+          const eventName = `on${key
             .split('-')
-            .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-            .join('');
+            .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+            .join('')}`;
           // 创建一个返回该箭头函数的函数，然后立即执行得到箭头函数本身
           acc[eventName] = Fn(`return (${eventCode})`)();
           return acc;
@@ -195,17 +193,17 @@ export default vue.defineComponent({
       const renderProps = Object.keys(this.renderProps).reduce((acc, key) => {
         const propValue = this.renderProps[key];
         const prop = this.props.find(item => kebabToCamel(item.name) === kebabToCamel(key));
-  
+
         // 判断 prop 是否为函数类型（包含 => 或以 function 开头）
         const isFunctionType = prop.type && (prop.type.includes('=>') || prop.type.startsWith('function'));
-        
+
         if (isFunctionType) {
           // 如果是函数类型且值是字符串，需要转换为可执行函数
           const Fn = Function;
           // 去除 TypeScript 类型标注（只处理参数列表中的类型标注）
           // 匹配箭头函数或普通函数的参数列表，避免影响函数体
           let functionCode = propValue;
-          
+
           // 处理箭头函数: (param: Type, param2: Type2) => 或 async (param: Type) =>
           if (typeof functionCode === 'string') {
             functionCode = functionCode.replace(/(async\s+)?\(([^)]*)\)\s*=>/g, (_match: string, asyncKeyword: string, params: string) => {
@@ -213,11 +211,11 @@ export default vue.defineComponent({
               const cleanParams = params.replace(/(\w+)\s*:\s*[A-Z][^,)]*/g, '$1');
               return `${asyncKeyword || ''}(${cleanParams}) =>`;
             });
-            
             // 转换为实际函数
             acc[prop.name] = Fn(`return (${functionCode})`)();
+          } else {
+            acc[prop.name] = propValue;
           }
-
         } else {
           // 其他类型直接赋值
           acc[prop.name] = propValue;
@@ -225,7 +223,8 @@ export default vue.defineComponent({
 
         if (prop.isSupportVModel) {
           renderEvents[`onUpdate:${key}`] = (value: unknown) => {
-            const newKey = Object.keys(renderProps).find((propKey) => kebabToCamel(propKey) === kebabToCamel(key) && propKey !== key);
+            const newKey = Object.keys(renderProps).
+              find(propKey => kebabToCamel(propKey) === kebabToCamel(key) && propKey !== key);
             const newRenderProps = { ...renderProps };
             newRenderProps[newKey ?? key] = value;
             this.$emit('update:renderProps', newRenderProps);
@@ -272,7 +271,7 @@ export default vue.defineComponent({
           [
             vue.h('div', ['继续滚动查看出现 Backtop 效果']),
             component,
-          ]
+          ],
         );
       }
 
@@ -289,7 +288,7 @@ export default vue.defineComponent({
               flexDirection: 'column',
               gap: '10px',
               textAlign: 'left',
-            }
+            },
           },
           [
             vue.h('div', {
@@ -315,10 +314,10 @@ export default vue.defineComponent({
                   justifyContent: 'center',
                   border: '1px solid #63656e',
                 },
-              }, 
-              ['继续滚动查看固定效果']
+              },
+              ['继续滚动查看固定效果'],
             ),
-          ]
+          ],
         );
       }
 
@@ -327,7 +326,7 @@ export default vue.defineComponent({
         {},
         [
           component,
-        ]
+        ],
       );
     };
 

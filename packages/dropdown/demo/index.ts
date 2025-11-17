@@ -109,12 +109,125 @@ const presets = [
     },
   },
   {
+    title: '自定义显示与隐藏',
+    description: '通过 isShow 下来菜单的显示与隐藏，trigger=manual下生效',
+    props: {
+      isShow: true,
+      trigger: 'manual',
+    },
+    slots: {
+      default: `
+        <bk-button theme="primary">更多操作</bk-button>
+      `,
+      content: `
+        <bk-dropdown-menu>
+          <bk-dropdown-item>生产环境</bk-dropdown-item>
+          <bk-dropdown-item>测试环境</bk-dropdown-item>
+          <bk-dropdown-item>预发布环境</bk-dropdown-item>
+          <bk-dropdown-item>正式环境</bk-dropdown-item>
+          <bk-dropdown-item>灰度环境</bk-dropdown-item>
+          <bk-dropdown-item>开发环境</bk-dropdown-item>
+          <bk-dropdown-item>调试环境</bk-dropdown-item>
+        </bk-dropdown-menu>
+      `,
+    },
+    events: {
+      showChange: `(val) => {
+        BkMessage(\`is-show: \${val}\`);
+      }`,
+    },
+  },
+  {
+    title: '禁用状态',
+    description: '通过 disabled 设置禁用状态',
+    props: {
+      disabled: true,
+    },
+    slots: {
+      default: `
+        <bk-button theme="primary">更多操作</bk-button>
+      `,
+      content: `
+        <bk-dropdown-menu>
+          <bk-dropdown-item>生产环境</bk-dropdown-item>
+          <bk-dropdown-item>测试环境</bk-dropdown-item>
+          <bk-dropdown-item>预发布环境</bk-dropdown-item>
+          <bk-dropdown-item>正式环境</bk-dropdown-item>
+          <bk-dropdown-item>灰度环境</bk-dropdown-item>
+          <bk-dropdown-item>开发环境</bk-dropdown-item>
+          <bk-dropdown-item>调试环境</bk-dropdown-item>
+        </bk-dropdown-menu>
+      `,
+    },
+  },
+  {
+    title: '回调函数',
+    description: '通过 show hide 设置显示与隐藏的回调',
+    // props: {
+    //   trigger: 'manual',
+    // },
+    slots: {
+      default: `
+        <bk-button theme="primary">更多操作</bk-button>
+      `,
+      content: `
+        <bk-dropdown-menu>
+          <bk-dropdown-item>生产环境</bk-dropdown-item>
+          <bk-dropdown-item>测试环境</bk-dropdown-item>
+          <bk-dropdown-item>预发布环境</bk-dropdown-item>
+          <bk-dropdown-item>正式环境</bk-dropdown-item>
+          <bk-dropdown-item>灰度环境</bk-dropdown-item>
+          <bk-dropdown-item>开发环境</bk-dropdown-item>
+          <bk-dropdown-item>调试环境</bk-dropdown-item>
+        </bk-dropdown-menu>
+      `,
+    },
+    events: {
+      show: `
+        () => {
+          BkMessage('show');
+        }
+      `,
+      hide: `
+        () => {
+          BkMessage('hide');
+        }
+      `,
+    },
+  },
+  {
     title: '元素绑定在body下',
     description: '通过 popoverOptions 设置 boundary: "body"',
     props: {
       popoverOptions: {
         clickContentAutoHide: true,
         boundary: 'body',
+      },
+    },
+    slots: {
+      default: `
+        <bk-button theme="primary">更多操作</bk-button>
+      `,
+      content: `
+        <bk-dropdown-menu>
+          <bk-dropdown-item>生产环境</bk-dropdown-item>
+          <bk-dropdown-item>测试环境</bk-dropdown-item>
+          <bk-dropdown-item>预发布环境</bk-dropdown-item>
+          <bk-dropdown-item>正式环境</bk-dropdown-item>
+          <bk-dropdown-item>灰度环境</bk-dropdown-item>
+          <bk-dropdown-item>开发环境</bk-dropdown-item>
+          <bk-dropdown-item>调试环境</bk-dropdown-item>
+        </bk-dropdown-menu>
+      `,
+    },
+  },
+  {
+    title: '点击占位区弹窗不收起',
+    description: '通过 popoverOptions 设置 hideIgnoreReference: true，若占位区为非行内元素，请配置 referenceCls: 类名',
+    props: {
+      popoverOptions: {
+        clickContentAutoHide: true,
+        hideIgnoreReference: true,
       },
     },
     slots: {

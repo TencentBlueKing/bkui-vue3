@@ -29,116 +29,94 @@ import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 // 组件示例
 const presets = [
   {
-    title: '基础分割线',
-    description: '没有文字的独立分割线条',
-    props: {
-      direction: 'horizontal',
-    },
-    style: `
-      .edit-component-component {
-        height: 250px;
-      }
-    `,
-  },
-  {
-    title: '文字分割线',
-    description: '垂直分割线条',
-    props: {
-      direction: 'horizontal',
-    },
-    slots: {
-      default: '<div>文字分割线</div>',
-    },
-    style: `
-      .edit-component-component {
-        height: 250px;
-      }
-    `,
+    title: '基础用法',
+    description: '加载中',
+    template: `
+      <section
+        v-loading="loadingConf"
+        style="width: 400px; height: 400px; background-color: #f0f0f0; line-height: 400px; text-align: center;"
+      >
+        <div>
+          <p>加载中</p>
+        </div>
+      </section>`,
+    // props: {
+    //   loading: true,
+    //   title: 'loading...',
+    // },
   },
 ];
 
-// 组件属性，用来自动生成属性文档
+// 组件属性
 const props = [
   {
-    name: 'direction',
-    description: '分割线方向',
+    name: 'size',
+    description: 'loading 大小',
     type: 'string',
-    options: ['horizontal', 'vertical'],
-    default: 'horizontal',
+    options: ['mini', 'small', 'normal', 'large'],
+    default: 'normal',
   },
   {
-    name: 'align',
-    description: '分割线对齐方式',
+    name: 'loading',
+    description: '是否显示 loading',
+    type: 'boolean',
+    options: [true, false],
+    default: true,
+    isSupportVModel: true,
+  },
+  {
+    name: 'mode',
+    description: '空白提示',
     type: 'string',
-    options: ['left', 'center', 'right'],
-    default: 'center',
+    options: ['spin', 'normal'],
+    default: 'normal',
+  },
+  {
+    name: 'title',
+    description: '加载提示文字',
+    type: 'string',
+  },
+  {
+    name: 'theme',
+    description: 'primary danger warning(spin模式下支持: primary danger warning success, white)',
+    type: 'string',
+    options: ['default', 'primary', 'danger', 'warning', 'white'],
+  },
+  {
+    name: 'opacity',
+    description: 'loading 遮罩的背景透明度 （注：如设置了 color 属性为 rgba 类型颜色则此属性将被覆盖）',
+    type: 'number',
+    default: 0.9,
   },
   {
     name: 'color',
-    description: '分割线颜色',
+    description: 'loading 遮罩的背景色 支持 rgb/hex/rgba',
     type: 'string',
-    default: '#dde4eb',
-  },
-  {
-    name: 'width',
-    description: '分割线宽度',
-    type: 'number',
-    default: 1,
-  },
-  {
-    name: 'type',
-    description: '分割线类型',
-    type: 'string',
-    options: ['solid', 'dashed'],
-    default: 'solid',
-  },
-];
-
-// 组件事件，用来自动生成事件文档
-const emits = [
-  {
-    name: 'click',
-    description: '点击分割线时触发',
-    params: [
-      {
-        name: 'event',
-        type: 'MouseEvent',
-      },
-    ],
-  },
-];
-
-const slots = [
-  {
-    name: 'default',
-    description: '默认插槽',
   },
 ];
 
 // 组件分组
-const group = NavGroupMeta.Nav;
+const group = NavGroupMeta.Directive;
 
 // 组件名称
-const name = 'divider';
+const name = 'loading';
 
 // 组件标签
-const title = 'Divider';
+const title = 'Loading';
 
 // 组件中文标签
-const titleCN = '分割线';
+const titleCN = '加载中';
 
 // 组件描述
-const description = '分割线';
+const description = '加载中';
 
 const wiki: IComponentWiki = {
   group,
   name,
   title,
   titleCN,
-  props,
-  emits,
-  slots,
   presets,
+  props,
   description,
 };
 

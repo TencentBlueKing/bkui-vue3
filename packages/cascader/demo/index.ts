@@ -26,6 +26,61 @@
 
 import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
+const list = [
+  {
+    id: 'hunan',
+    name: '湖南',
+    disabled: true,
+    children: [
+      {
+        id: 'changsha',
+        name: '长沙',
+      },
+      {
+        id: 'yueyang',
+        name: '岳阳',
+        disabled: true,
+      },
+    ],
+  },
+  {
+    id: 'guangxi',
+    name: '广西',
+  },
+  {
+    id: 'yunnan',
+    name: '云南',
+    children: [
+      {
+        id: 'kunming',
+        name: '昆明',
+        children: [
+          {
+            id: 'wuhuaqu',
+            name: '长文字测试五华山五华山五华山',
+          },
+          {
+            id: 'guanduqu',
+            name: '官渡区',
+          },
+          {
+            id: 'xishanqu',
+            name: '西山区',
+          },
+        ],
+      },
+      {
+        id: 0,
+        name: '大理',
+      },
+      {
+        id: 'yuxi',
+        name: '玉溪',
+      },
+    ],
+  },
+];
+
 // 组件示例
 const presets = [
   {
@@ -33,65 +88,12 @@ const presets = [
     description: '单选的级联选择器，选取后展示每一层级所选的内容。',
     props: {
       modelValue: [],
-      clearable: true,
-      filterable: true,
-      trigger: 'click',
-      checkAnyLevel: true,
-      showCompleteName: true,
-      list: [
-        {
-          id: 'hunan',
-          name: '湖南',
-          disabled: true,
-          children: [
-            {
-              id: 'changsha',
-              name: '长沙',
-            },
-            {
-              id: 'yueyang',
-              name: '岳阳',
-              disabled: true,
-            },
-          ],
-        },
-        {
-          id: 'guangxi',
-          name: '广西',
-        },
-        {
-          id: 'yunnan',
-          name: '云南',
-          children: [
-            {
-              id: 'kunming',
-              name: '昆明',
-              children: [
-                {
-                  id: 'wuhuaqu',
-                  name: '长文字测试五华山五华山五华山',
-                },
-                {
-                  id: 'guanduqu',
-                  name: '官渡区',
-                },
-                {
-                  id: 'xishanqu',
-                  name: '西山区',
-                },
-              ],
-            },
-            {
-              id: 0,
-              name: '大理',
-            },
-            {
-              id: 'yuxi',
-              name: '玉溪',
-            },
-          ],
-        },
-      ],
+      // clearable: true,
+      // filterable: true,
+      // trigger: 'click',
+      // checkAnyLevel: true,
+      // showCompleteName: true,
+      list,
     },
   },
   {
@@ -99,29 +101,113 @@ const presets = [
     description: '支持选择多个对象',
     props: {
       modelValue: [],
-      clearable: true,
-      filterable: true,
+      // clearable: true,
+      // filterable: true,
+      // trigger: 'click',
+      // checkAnyLevel: true,
+      // showCompleteName: true,
+      multiple: true,
+      floatMode: true,
+      // separator: '/',
+      list,
+    },
+  },
+  {
+    title: '任意级可选',
+    description: '通过配置实现任意级可选',
+    props: {
+      modelValue: [],
       trigger: 'click',
       checkAnyLevel: true,
-      showCompleteName: true,
-      multiple: true,
-      separator: '/',
+      list,
+    },
+  },
+  {
+    title: '列表别名设置',
+    description: 'id-key，name-key，children-key适配',
+    props: {
+      modelValue: [],
+      idKey: 'uid',
+      nameKey: 'title',
+      childrenKey: 'subList',
+      list: [
+        {
+          uid: 'hunan',
+          title: '湖南',
+          subList: [
+            { uid: 'changsha', title: '长沙' },
+            { uid: 'yueyang', title: '岳阳' },
+          ],
+        },
+        {
+          uid: 'guangdong',
+          title: '广东',
+          subList: [
+            { uid: 'guangzhou', title: '广州' },
+            { uid: 'shenzhen', title: '深圳' },
+          ],
+        },
+        {
+          uid: 'shanghai',
+          title: '上海',
+        },
+      ],
+    },
+  },
+  {
+    title: '分隔符设置',
+    description: '自定义分隔符',
+    props: {
+      modelValue: [],
+      separator: '-',
+      list,
+    },
+  },
+  {
+    title: '仅显示最后一级',
+    description: '可在输入框仅显示最后一级的标签，而非完整路径',
+    props: {
+      modelValue: [],
+      showCompleteName: false,
+      list,
+    },
+  },
+  {
+    title: '自定义节点',
+    description:
+      '可以通过`scoped slot`对级联选择器的备选项的节点内容进行自定义，scoped slot传入node表示当前节点的 Node 的数据,data代表原数据',
+    props: {
+      modelValue: [],
+      list,
+    },
+    slots: {
+      default: `
+        <div class="cascader-slots-demo-node">
+          <i
+            v-if="data.node.children.length"
+            class="cascader-slots-demo-round"
+          />
+          <span>{{ data.node.name }} / {{ data.data.id }}</span>
+          <span
+            v-if="data.node.children.length"
+            class="cascader-slots-demo-prepend"
+            >{{ data.node.children.length }}</span
+          >
+        </div>
+      `,
+    },
+  },
+  {
+    title: '远程加载',
+    description:
+      '可以通过`is-remote`开启动态加载，并通过`remote-method`来设置加载数据源的方法。注意远程拉取数据格式需要遵循list的要求',
+    props: {
+      modelValue: [],
+      isRemote: true,
       list: [
         {
           id: 'hunan',
           name: '湖南',
-          disabled: true,
-          children: [
-            {
-              id: 'changsha',
-              name: '长沙',
-            },
-            {
-              id: 'yueyang',
-              name: '岳阳',
-              disabled: true,
-            },
-          ],
         },
         {
           id: 'guangxi',
@@ -130,36 +216,68 @@ const presets = [
         {
           id: 'yunnan',
           name: '云南',
-          children: [
-            {
-              id: 'kunming',
-              name: '昆明',
-              children: [
-                {
-                  id: 'wuhuaqu',
-                  name: '长文字测试五华山五华山五华山',
-                },
-                {
-                  id: 'guanduqu',
-                  name: '官渡区',
-                },
-                {
-                  id: 'xishanqu',
-                  name: '西山区',
-                },
-              ],
-            },
-            {
-              id: 0,
-              name: '大理',
-            },
-            {
-              id: 'yuxi',
-              name: '玉溪',
-            },
-          ],
         },
       ],
+      remoteMethod: `(node, resolve) => {
+        const { level } = node;
+        let id = 0;
+        setTimeout(() => {
+          const nodes = Array.from({ length: level + 1 }).map(() => {
+            id = id + 1;
+            return {
+              id,
+              name: \`Option\${id}\`,
+              leaf: level >= 2, // 为了更准确渲染，尽量通过\`leaf\`字段，告知是否是叶子节点；
+            };
+          });
+          resolve(nodes);
+        }, 1000);
+      }`,
+    },
+  },
+  {
+    title: '自定义Trigger',
+    description: '通过插槽自定义trigger',
+    props: {
+      modelValue: [],
+      list,
+    },
+    slots: {
+      trigger: `
+        <div class="cascader-slots-demo-trigger">
+          <span>selected: {{ data.selected }} {{ data.isShow }}</span>
+        </div>
+      `,
+    },
+  },
+  {
+    title: '自定义填充回调',
+    description: '默认填充时，如果绑定数据不在列表中，会造成无法填充，此时可以通过自定义填充回调实现自定义填充',
+    props: {
+      modelValue: ['guangxi', 2, 3],
+      list: [
+        {
+          id: 'hunan',
+          name: '湖南',
+        },
+        {
+          id: 'guangxi',
+          name: '广西',
+        },
+        {
+          id: 'yunnan',
+          name: '云南',
+        },
+      ],
+      customTextFillback: `
+        (data, nodes) =>
+          data
+            .map(item => {
+              const target = nodes.find(node => node.id === item);
+              return target ? target.name : item;
+            })
+            .join('/')
+      `,
     },
   },
 ];
@@ -171,6 +289,7 @@ const props = [
     description: '选中值',
     type: 'Array<number | string | string[]>',
     default: [],
+    isSupportVModel: true,
   },
   {
     name: 'list',
