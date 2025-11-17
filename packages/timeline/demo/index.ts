@@ -57,7 +57,9 @@ const presets = [
       ],
     },
     events: {
-      select: '(data) => { alert(`选择了：${data.tag}`); }',
+      select: `(data) => {
+        alert(\`选择了：\${data.tag}\`);
+      }`,
     },
     style: `
       .edit-component-component {

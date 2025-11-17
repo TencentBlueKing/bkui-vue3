@@ -100,7 +100,10 @@ const presets = [
         { username: 'Arman', nickname: '阿尔曼' },
       ],
       'search-key': ['username', 'nickname'],
-      tpl: "(node, highlightKeyword, h) => {const innerHTML = `${highlightKeyword(node.username)} (${node.nickname})`;return h('div', { class: 'bk-selector-node' }, [h('span', {class: 'text',innerHTML})])}",
+      tpl: `(node, highlightKeyword, h) => {
+        const innerHTML = \`\${highlightKeyword(node.username)} (\${node.nickname})\`;
+        return h('div', { class: 'bk-selector-node' }, [h('span', {class: 'text',innerHTML})])
+      }`,
       'display-key': 'username',
       placeholder: '请输入 username 或 nickname',
       'save-key': 'username',
@@ -208,9 +211,12 @@ const presets = [
     title: '支持批量录入',
     description: '粘贴内容默认按“;”来分割内容，设置 paste-fn 方法可以自定义粘贴输出内容',
     props: {
+      modelValue: ['shenzhen'],
       list,
       placeholder: '请选择城市',
-      'paste-fn': `value => value.split(';').map(tag => ({ id: tag, name: tag }))`,
+      'paste-fn': `value => {
+        return value.split(';').map(tag => ({ id: tag, name: tag }))
+      }`,
       trigger: 'focus',
     },
   },

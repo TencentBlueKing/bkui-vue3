@@ -28,14 +28,86 @@ import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 // 组件示例
 const presets = [
   {
-    title: '基础用法',
-    description: '用默认配置初始化组件',
+    title: '基础按钮',
+    description:
+      '基础按钮提供 5 种主题，由 theme 属性来定义，可选的主题有 default, primary, warning, success, danger，默认为 default。',
     props: {
-      theme: 'default',
-      size: 'small',
+      theme: 'primary',
     },
     slots: {
       default: `基础按钮`,
+    },
+  },
+  {
+    title: '禁用按钮',
+    description: '配置 disabled 属性来使按钮禁用',
+    props: {
+      theme: 'primary',
+      disabled: true,
+    },
+    slots: {
+      default: `禁用按钮`,
+    },
+  },
+  {
+    title: '加载状态',
+    description: '可以使用 loading 属性来定义按钮是否显示加载中状态，它接受一个 Boolean 值',
+    props: {
+      theme: 'primary',
+      loading: true,
+    },
+    slots: {
+      default: `加载中`,
+    },
+  },
+  {
+    title: '图标按钮',
+    description: '可以在slot自定义icon',
+    props: {
+      theme: 'primary',
+    },
+    slots: {
+      default: `<plus class='f22' />图标按钮`,
+    },
+    dependent: {
+      components: ['icon'],
+    },
+    style: `.f22 {
+      font-size: 22px;
+      margin-right: 5px;
+      }`,
+  },
+  {
+    title: '文字按钮',
+    description: '通过设置 text 属性来配置文字按钮',
+    props: {
+      theme: 'primary',
+      text: true,
+    },
+    slots: {
+      default: `文字按钮`,
+    },
+  },
+  {
+    title: '反色按钮',
+    description: '用默认配置初始化组件',
+    props: {
+      theme: 'primary',
+      outline: true,
+    },
+    slots: {
+      default: `反色按钮`,
+    },
+  },
+  {
+    title: '鼠标移入颜色自定义',
+    description:
+      '提供 4 种 mousehover 颜色主题，由 hover-theme 属性来定义，可选的主题有 primary, warning, success, danger。当设置了 hover-theme 属性时，theme 和 text 失效。',
+    props: {
+      hoverTheme: 'primary',
+    },
+    slots: {
+      default: `鼠标移入看效果`,
     },
   },
 ];
@@ -47,7 +119,7 @@ const props = [
     description: '按钮主题',
     options: ['primary', 'success', 'danger', 'warning', 'default'],
     type: 'string',
-    default: 'default',
+    default: 'primary',
   },
   {
     name: 'size',
@@ -70,6 +142,16 @@ const props = [
   {
     name: 'outline',
     description: '是否为反色按钮',
+    type: 'boolean',
+  },
+  {
+    name: 'disabled',
+    description: '是否为禁用按钮',
+    type: 'boolean',
+  },
+  {
+    name: 'loading',
+    description: '是否为加载中按钮',
     type: 'boolean',
   },
 ];
