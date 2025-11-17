@@ -136,6 +136,9 @@ const presets = [
         BkMessage(\`is-show: \${val}\`);
       }`,
     },
+    dependent: {
+      components: ['message'],
+    },
   },
   {
     title: '禁用状态',
@@ -193,6 +196,9 @@ const presets = [
           BkMessage('hide');
         }
       `,
+    },
+    dependent: {
+      components: ['message'],
     },
   },
   {

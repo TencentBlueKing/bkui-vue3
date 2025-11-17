@@ -203,7 +203,6 @@ const presets = [
     title: '面板插槽',
     description: '通过插槽配置面板',
     props: {
-      list,
       modelValue: [],
     },
     slots: {
