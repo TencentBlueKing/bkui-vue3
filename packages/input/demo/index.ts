@@ -450,21 +450,21 @@ const emits = [
   },
 ];
 
-const methods = [
+const exposes = [
   {
     name: 'focus',
+    type: '() => void',
     description: '组件聚集',
-    params: [],
   },
   {
     name: 'blur',
+    type: '() => void',
     description: '失去焦点',
-    params: [],
   },
   {
     name: 'clear',
-    description: '清空内容	',
-    params: [],
+    type: '() => void',
+    description: '清空内容',
   },
 ];
 
@@ -520,7 +520,7 @@ const wiki: IComponentWiki = {
   props,
   emits,
   presets,
-  methods,
+  exposes,
   slots,
   description,
   types,
