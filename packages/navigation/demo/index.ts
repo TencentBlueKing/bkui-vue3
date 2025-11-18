@@ -254,6 +254,37 @@ const children = [
   },
 ];
 
+const slots = [
+  {
+    name: 'default',
+    description: 'default 内容插槽',
+  },
+  {
+    name: 'header',
+    description: 'header 插槽',
+  },
+  {
+    name: 'menu',
+    description: 'menu 插槽',
+  },
+  {
+    name: 'footer',
+    description: 'footer 插槽',
+  },
+  {
+    name: 'side-icon',
+    description: '左侧icon 插槽',
+  },
+  {
+    name: 'side-header',
+    description: '左侧header 插槽',
+  },
+  {
+    name: 'side-footer',
+    description: '左侧footer 插槽',
+  },
+];
+
 // 组件分组
 const group = NavGroupMeta.Nav;
 
@@ -279,5 +310,6 @@ const wiki: IComponentWiki = {
   presets,
   description,
   children,
+  slots,
 };
 export default wiki;

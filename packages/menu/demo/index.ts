@@ -278,6 +278,13 @@ const children = [
   },
 ];
 
+const slots = [
+  {
+    name: 'default',
+    description: 'default 内容插槽',
+  },
+];
+
 // 组件分组
 const group = NavGroupMeta.Nav;
 
@@ -303,6 +310,7 @@ const wiki: IComponentWiki = {
   children,
   presets,
   description,
+  slots,
 };
 
 export default wiki;
