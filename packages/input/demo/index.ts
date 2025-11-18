@@ -453,17 +453,17 @@ const emits = [
 const exposes = [
   {
     name: 'focus',
-    type: 'Function',
+    type: '() => void',
     description: '组件聚集',
   },
   {
     name: 'blur',
-    type: 'Function',
+    type: '() => void',
     description: '失去焦点',
   },
   {
     name: 'clear',
-    type: 'Function',
+    type: '() => void',
     description: '清空内容',
   },
 ];
