@@ -74,6 +74,11 @@ const presets = [
         </bk-submenu>
       `,
     },
+    style: `
+      .bk-resize-layout-main .edit-component-view .edit-component-component {
+        align-self: start;
+      }
+    `,
   },
 ];
 

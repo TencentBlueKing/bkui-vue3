@@ -59,6 +59,11 @@ const presets = [
     dependent: {
       components: ['menu'],
     },
+    style: `
+      .bk-resize-layout-main .edit-component-view .edit-component-component {
+        algin-self: start;
+      }
+    `,
   },
   {
     title: '组合导航',
@@ -101,10 +106,15 @@ const presets = [
       'side-icon': '<span class="input-icon"><tree-application-shape /></span>',
     },
     style: `
-    .input-icon {
-      display: inline-flex;
-      align-items: center;
-    }`,
+      .bk-resize-layout-main .edit-component-view .edit-component-component {
+        align-self: start;
+      }
+
+      .input-icon {
+        display: inline-flex;
+        align-items: center;
+      }
+    `,
     dependent: {
       components: ['icon'],
     },

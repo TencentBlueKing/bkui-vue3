@@ -159,12 +159,11 @@ export default vue.defineComponent({
       // 注册依赖组件
       const dependentComponentsMap = buildDependentComponentsMap();
       Object.entries(dependentComponentsMap).forEach(([name, comp]) => {
-        // 如果组件是函数，则直接注册到 window 上（带Bk前缀应该不会覆盖，遇到再说）
+        // 如果组件是函数，则直接注册到 window 上一份，主要在事件中使用调用（带Bk前缀应该不会覆盖，遇到再说）
         if (typeof comp === 'function') {
           (window as unknown as Record<string, unknown>)[name] = comp;
-        } else {
-          (this as ComponentInstance<Component>)._.components[name] = comp;
-        }
+        } 
+        (this as ComponentInstance<Component>)._.components[name] = comp;
       });
 
       // 处理 events
