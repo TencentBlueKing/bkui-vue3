@@ -90,6 +90,127 @@ const presets = [
     },
   },
   {
+    title: 'label 描述',
+    description: '一行可配置显示多个表单',
+    props: {
+      model: {},
+    },
+    slots: {
+      default: `
+        <bk-form-item
+          description="中文名称"
+          label="姓名"
+          property="name"
+        >
+          <bk-input
+            placeholder="请输入"
+            clearable
+          />
+        </bk-form-item>
+        <bk-form-item label="性别">
+          <bk-radio-group>
+            <bk-radio label="男" />
+            <bk-radio label="女" />
+          </bk-radio-group>
+        </bk-form-item>
+        <bk-form-item 
+          description="常用联系方式"
+          label="联系方式"
+        >
+          <bk-checkbox-group>
+            <bk-checkbox label="QQ" />
+            <bk-checkbox label="微信" />
+            <bk-checkbox label="Email" />
+          </bk-checkbox-group>
+        </bk-form-item>
+        <bk-form-item label="学历">
+          <bk-select>
+            <bk-option
+              label="本科以下"
+              value="1"
+            />
+            <bk-option
+              label="本科以上"
+              value="2"
+            />
+          </bk-select>
+        </bk-form-item>
+        <bk-form-item label="介绍">
+          <bk-input
+            placeholder="请输入"
+            type="textarea"
+          />
+        </bk-form-item>
+        <bk-form-item style="margin-top: 32px">
+          <bk-button
+            theme="primary"
+          >
+            提交
+          </bk-button>
+        </bk-form-item>
+      `,
+    },
+  },
+  {
+    title: '顶部对齐',
+    description: '表单项标签位置为顶部',
+    props: {
+      model: {},
+      formType: 'vertical',
+    },
+    slots: {
+      default: `
+        <bk-form-item
+          label="姓名"
+          property="name"
+        >
+          <bk-input
+            placeholder="请输入"
+            clearable
+          />
+        </bk-form-item>
+        <bk-form-item label="性别">
+          <bk-radio-group>
+            <bk-radio label="男" />
+            <bk-radio label="女" />
+          </bk-radio-group>
+        </bk-form-item>
+        <bk-form-item label="联系方式">
+          <bk-checkbox-group>
+            <bk-checkbox label="QQ" />
+            <bk-checkbox label="微信" />
+            <bk-checkbox label="Email" />
+          </bk-checkbox-group>
+        </bk-form-item>
+        <bk-form-item label="学历">
+          <bk-select>
+            <bk-option
+              label="本科以下"
+              value="1"
+            />
+            <bk-option
+              label="本科以上"
+              value="2"
+            />
+          </bk-select>
+        </bk-form-item>
+        <bk-form-item label="介绍">
+          <bk-input
+            placeholder="请输入"
+            type="textarea"
+          />
+        </bk-form-item>
+        <bk-form-item style="margin-top: 32px">
+          <bk-button
+            theme="primary"
+          >
+            提交
+          </bk-button>
+        </bk-form-item>
+      `,
+    },
+  },
+  {
     title: '行内布局表单',
     description: '一行可配置显示多个表单',
     props: {

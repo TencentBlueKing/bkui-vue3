@@ -44,6 +44,43 @@ const presets = [
       title: '页面不存在',
     },
   },
+  {
+    title: '自定义内容',
+    description: '通过插槽配置操作',
+    props: {
+      type: '404',
+      title: '页面不存在',
+    },
+    slots: {
+      default: `
+        <div class="exception-footer">
+          <bk-button theme="primary"> 刷新页面 </bk-button>
+          <bk-button theme="primary"> 返回首页 </bk-button>
+        </div>
+      `,
+    },
+    dependent: {
+      components: ['button'],
+    },
+    style: `
+      .exception-footer {
+        display: flex;
+        gap: 10px;
+      }
+    `,
+  },
+  {
+    title: '自定义icon',
+    description: '通过插槽配置图片',
+    props: {
+      title: '自定义icon',
+    },
+    slots: {
+      type: `
+        <img src="https://bk.tencent.com/static/images/index/index/%E9%AB%98%E6%95%88%E8%BF%90%E8%90%A5@2x.png" />
+      `,
+    },
+  },
 ];
 
 const props = [

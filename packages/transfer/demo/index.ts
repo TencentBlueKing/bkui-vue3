@@ -68,6 +68,76 @@ const presets = [
       multiple: true,
     },
   },
+  {
+    title: '配置 target-list 以及设置排序',
+    description:
+      '配置 sortable 以及 sort-key 使得操作数据时数据的排序不变，配置 target-list 设置默认选择的数据。sortable 为 true 时开启排序功能，为 false 时则关闭，sort-key 为排序所依据的 key 值。注意：当 source-list 为普通数组时，开启排序时默认按照值排序，此时不需要传 sort-key。',
+    props: {
+      displayKey: 'service_name',
+      settingKey: 'service_code',
+      sourceList: sourceList,
+      targetList: ['pipeline', 'codecc'],
+      searchable: true,
+      sortable: true,
+    },
+  },
+  {
+    title: '普通数组配置',
+    description: '此时根据值排序；display-key、sort-key、setting-key 不需要传。',
+    props: {
+      sourceList: [1, 4, 9, 'ab', 8, 5, 'bc', 3],
+      targetList: [1, 4, 9, 'bc'],
+      searchable: true,
+      sortable: true,
+    },
+  },
+  {
+    title: '自定义 header 和无数据时显示内容',
+    description:
+      '配置 slot 为 left-header 或 right-header 可自定义 header 内容，配置 slot 为 left-empty-content 和 right-empty-content 可自定义数据为空时所显示的内容(注意：当配置了 slot 时，其 title 和 empty-content 配置不会生效)',
+    props: {
+      displayKey: 'service_name',
+      settingKey: 'service_code',
+      sourceList: sourceList,
+      targetList: ['pipeline', 'codecc'],
+      searchable: true,
+      sortable: true,
+    },
+    slots: {
+      'left-header': `
+        <div>自定义左侧头部</div>
+      `,
+      'right-header': `
+        <div>自定义右侧头部</div>
+      `,
+      'left-empty-content': `
+        <div>自定义左侧无数据时显示内容</div>
+      `,
+      'right-empty-content': `
+        <div>自定义右侧无数据时显示内容</div>
+      `,
+    },
+  },
+  {
+    title: '自定义 选项 模板',
+    description: '配置 slot 为 source-option 或 target-option 可自定义选项模板',
+    props: {
+      displayKey: 'service_name',
+      settingKey: 'service_code',
+      sourceList: sourceList,
+      targetList: ['pipeline', 'codecc'],
+      searchable: true,
+      sortable: true,
+    },
+    slots: {
+      'source-option': `
+        <div>code: {{ data.code }}, name: {{ data.name }}</div>
+      `,
+      'target-option': `
+        <div>code: {{ data.code }}, name: {{ data.name }}</div>
+      `,
+    },
+  },
 ];
 
 // 组件属性，用来自动生成属性文档
@@ -137,6 +207,7 @@ const props = [
     description: '默认已选择的数据源',
     type: 'Array<any>',
     default: [],
+    isSupportVModel: true,
   },
   {
     name: 'emptyContent',

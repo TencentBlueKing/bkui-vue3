@@ -37,6 +37,22 @@ const presets = [
     },
   },
   {
+    title: '默认选中',
+    description: '配置 checked',
+    props: {
+      label: '默认选中',
+      checked: true,
+    },
+  },
+  {
+    title: '禁用',
+    description: '配置 disabled',
+    props: {
+      label: '禁用',
+      disabled: true,
+    },
+  },
+  {
     title: '胶囊样式',
     description: '用于单选选项胶囊组展示场景',
     props: {
@@ -65,6 +81,21 @@ const presets = [
     },
     template: `
       <bk-radio-group style="width: revert;">
+        <bk-radio-button label="QQ" />
+        <bk-radio-button label="微信" />
+        <bk-radio-button label="Email" />
+      </bk-radio-group>
+    `,
+  },
+  {
+    title: '卡片样式',
+    description: '用于单选选项卡片组展示场景',
+    props: {
+      size: 'small',
+      modelValue: [],
+    },
+    template: `
+      <bk-radio-group type="card">
         <bk-radio-button label="QQ" />
         <bk-radio-button label="微信" />
         <bk-radio-button label="Email" />

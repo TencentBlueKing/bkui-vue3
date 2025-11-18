@@ -143,18 +143,6 @@ const presets = [
       levelLine: true,
     },
   },
-  {
-    title: '支持搜索',
-    description: '支持搜索节点',
-    props: {
-      data: data,
-      children: 'children',
-      label: 'name',
-      draggable: true,
-      levelLine: true,
-      search: '',
-    },
-  },
 ];
 
 // 组件属性，用来自动生成属性文档

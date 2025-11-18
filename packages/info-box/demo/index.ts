@@ -30,24 +30,62 @@ import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 const presets = [
   {
     title: '基础用法',
-    description: '用于反馈各种状态',
+    description: '配置 title, content 等参数',
     props: {
-      type: 'success',
-      title: '标题文案',
       content: '说明文案',
-      confirmText: '主按钮文案',
-      confirmButtonTheme: 'primary',
-      cancelText: '次按钮文案',
     },
   },
   {
-    title: '二次确认类型',
-    description: '用于破坏性操作的二次确认',
+    title: '各种状态',
+    description: '配置 type 的值，实现成功，错误，警告，加载中的不同类型',
     props: {
-      title: '请确认是否删除？',
-      content: '删除后不可恢复',
+      title: '各种 title',
+      content: '各种 content',
+      theme: 'success',
+    },
+  },
+  {
+    title: '自定义按钮文字',
+    description: '配置 confirmText，cancelText',
+    props: {
+      theme: 'danger',
+      title: '确认要删除1？',
+      content: '确认要删除？',
       confirmText: '删除',
       cancelText: '取消',
+    },
+  },
+  {
+    title: '事件回调',
+    description: '确认，取消回调',
+    props: {
+      theme: 'danger',
+      title: '确认要删除1？',
+      content: '确认要删除？',
+      onConfirm: `() => {
+        BkMessage({
+          message: '确认',
+        });
+      }`,
+      onCancel: `() => {
+        BkMessage({
+          message: '取消',
+        });
+      }`,
+    },
+    dependent: {
+      components: ['message'],
+    },
+  },
+  {
+    title: '文本对齐方式',
+    description: '配置 headerAlign，contentAlign，footerAlign',
+    props: {
+      title: '左对齐 title',
+      content: '集中 center',
+      headerAlign: 'left',
+      contentAlign: 'center',
+      footerAlign: 'right',
     },
   },
 ];

@@ -153,6 +153,326 @@ const presets = [
       ],
     },
   },
+  {
+    title: '远程加载子列表',
+    description:
+      '通过配置属性 geMenuList 方法 来做到异步获取menu列表 同时配合 data 内子项 async 属性来配置针对不同的选择项是否需要远程获取子列表',
+    props: {
+      data: [
+        {
+          name: '实例状态',
+          id: '1',
+          multiple: true,
+          placeholder: '请选择/请输入',
+          async: true,
+          validate: true,
+          showLogicalPanel: true,
+          children: [
+            {
+              name: '创建中',
+              id: '1-2',
+            },
+            {
+              name: '运行中',
+              id: '1-3',
+              disabled: false,
+            },
+            {
+              name: '已关机',
+              id: '1-4',
+            },
+          ],
+        },
+        {
+          name: '实例业务',
+          id: '2',
+          children: [
+            {
+              name: '王者荣耀',
+              id: '2-1',
+              disabled: false,
+            },
+            {
+              name: '刺激战场',
+              id: '2-2',
+            },
+            {
+              name: '绝地求生',
+              id: '2-3',
+            },
+          ],
+        },
+        {
+          name: 'IP地址',
+          id: '3',
+          disabled: true,
+        },
+      ],
+      modelValue: [],
+      uniqueSelect: true,
+      getMenuList: `async (item, keyword) => {
+        await new Promise(resolve => setTimeout(resolve, 300));
+        if (!item && keyword) {
+          return [
+            {
+              id: 'sdfds',
+              name: 'sdfsdfds',
+              value: {
+                id: 'sdfsdfsdfsdf',
+                name: \`测试\${keyword}\`,
+              },
+            },
+          ];
+        }
+        if (!item) return data;
+        return data.find(set => set.id === item.id)?.children;
+      }`,
+    },
+  },
+  {
+    title: '校验输入的选择项',
+    description:
+      '通过配置属性 validateValues 方法 来做到对选择的子项进行校验 validateValues 返回校验失败文案 返回true则代表校验成功',
+    props: {
+      data: dataSource,
+      modelValue: [],
+      uniqueSelect: true,
+      validateValues: `async (item, values) => {
+          console.info(item, values);
+          return !item ? '格式错误' : true;
+        }`,
+    },
+  },
+  {
+    title: '配置每个选项独立的placeholder',
+    description: '通过配置 data 内子项 placeholder 属性来配置每个选项独立的placeholder',
+    props: {
+      data: [
+        {
+          name: '访问入口',
+          id: 'domain',
+          multiple: true,
+          placeholder: '请选择/请输入1',
+          async: false,
+        },
+        {
+          name: 'ID',
+          id: 'id',
+          placeholder: '请选择/请输入2',
+        },
+        {
+          name: '集群名称',
+          id: 'name',
+          placeholder: '请选择/请输入3',
+        },
+        {
+          name: '管控区域',
+          id: 'bk_cloud_id',
+          multiple: true,
+          placeholder: '请选择/请输入4',
+          children: [
+            {
+              id: 0,
+              name: '直连区域',
+            },
+          ],
+        },
+        {
+          name: '状态',
+          id: 'status',
+          multiple: true,
+          placeholder: '请选择/请输入5',
+          children: [
+            {
+              id: 'normal',
+              name: '正常',
+            },
+            {
+              id: 'abnormal',
+              name: '异常',
+            },
+          ],
+        },
+        {
+          name: '所属 DB 模块',
+          id: 'db_module_id',
+          multiple: true,
+          placeholder: '请选择/请输入6',
+          children: [
+            {
+              id: 2,
+              name: 'tendbha57',
+            },
+            {
+              id: 19,
+              name: 'xiaog56',
+            },
+          ],
+        },
+        {
+          name: '版本',
+          id: 'major_version',
+          multiple: true,
+          placeholder: '请选择/请输入7',
+          children: [
+            {
+              id: 'MySQL-5.7',
+              name: 'MySQL-5.7',
+            },
+            {
+              id: 'MySQL-5.6',
+              name: 'MySQL-5.6',
+            },
+          ],
+        },
+        {
+          name: '地域',
+          id: 'region',
+          multiple: true,
+          placeholder: '请选择/请输入8',
+          children: [
+            {
+              id: 'default',
+              name: 'default',
+            },
+            {
+              id: 'default2',
+              name: 'default2',
+            },
+          ],
+        },
+        {
+          name: '创建人',
+          id: 'creator',
+          placeholder: '请选择/请输入9',
+        },
+        {
+          name: '时区',
+          id: 'time_zone',
+          multiple: true,
+          placeholder: '请选择/请输入10',
+          children: [
+            {
+              id: '+08:00',
+              name: '+08:00',
+            },
+          ],
+        },
+      ],
+      modelValue: [],
+      uniqueSelect: true,
+      placeholder: '请选择',
+    },
+  },
+  {
+    title: '自定义 menu 面板',
+    description: '配置 menu 插槽来自定义 menu 面板',
+    props: {
+      data: [
+        {
+          name: '自定义面板',
+          id: '1',
+          placeholder: '自定义面板',
+          isCustomMenu: true,
+        },
+        {
+          name: '实例业务',
+          id: '2',
+          placeholder: '输入格式为XXX',
+          children: [
+            {
+              name: '王者荣耀',
+              id: '2-1',
+              disabled: false,
+            },
+            {
+              name: '刺激战场',
+              id: '2-2',
+            },
+            {
+              name: '绝地求生',
+              id: '2-3',
+            },
+          ],
+        },
+        {
+          name: 'IP地址',
+          id: '3',
+          placeholder: '输入格式为XXX.XXX.XXX',
+        },
+        {
+          name: '实例名',
+          id: '4',
+        },
+        {
+          name: '实例地址',
+          id: '5',
+        },
+        {
+          name: '测试六',
+          id: '6',
+        },
+      ],
+      modelValue: [],
+      uniqueSelect: true,
+    },
+    slots: {
+      menu: `
+        <div class="custom-panel">
+          <h3>自定义面板</h3>
+          <bk-form class="example">
+            <bk-form-item
+              description="中文名"
+              label="姓名"
+            >
+              <bk-input
+                id="search-select-custom-input"
+                placeholder="请输入"
+                clearable
+              />
+            </bk-form-item>
+            <bk-form-item style="margin-top: 32px">
+              <bk-button
+                theme="primary"
+                @click="() => {
+                  // 暂时没有实现动态创建变量，所以需要手动获取input的value
+                  const input = document.getElementById('search-select-custom-input');
+                  if (input) {
+                    data.onSubmit(input.value);
+                  }
+                }"
+              >
+                提交
+              </bk-button>
+            </bk-form-item>
+          </bk-form>
+        </div>
+      `,
+    },
+    style: `
+      .custom-panel {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 360px;
+        padding: 16px 24px 0 0;
+      }
+      `,
+    dependent: {
+      components: ['form', 'input', 'button'],
+    },
+  },
+  {
+    title: '配置 valueBehevior 属性定义生成 value 交互行为',
+    description: '改变配置 valueBehevior 值为 need-key 来做到存文本不可生成 value tag',
+    props: {
+      data: dataSource,
+      modelValue: [],
+      uniqueSelect: true,
+      valueBehavior: 'need-key',
+    },
+  },
 ];
 
 // 组件属性
@@ -170,6 +490,7 @@ const props = [
     default: '[]',
     description: '绑定值，支持 v-model',
     link: '/component/search-select/api#ISearchValue',
+    isSupportVModel: true,
   },
   {
     name: 'maxHeight',

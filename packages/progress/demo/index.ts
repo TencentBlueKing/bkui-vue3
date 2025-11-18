@@ -41,6 +41,15 @@ const presets = [
     },
   },
   {
+    title: '大小设置',
+    description: '可以使用 size 属性来配置进度条的尺寸，可接受 small large huge，也可配置strokeWidth线宽',
+    props: {
+      percent: 20,
+      size: 'small',
+      strokeWidth: 10,
+    },
+  },
+  {
     title: '环形进度条/仪表盘',
     description: '空间位置占据较大，视觉效果较强的环形',
     props: {
@@ -49,6 +58,23 @@ const presets = [
       width: 126,
       bgColor: '#f5f5f5',
       color: '#13ce66',
+    },
+  },
+  {
+    title: '文案内显',
+    description:
+      'Progress 组件可通过 show-text 来控制文案是否显示， 通过 text-inside 属性来将进度条描述置于进度条内部, titleStyle 属性来调整百分数显示的样式 format 过滤文案展示',
+    props: {
+      percent: 60,
+      strokeWidth: 20,
+      showText: true,
+      textInside: true,
+      titleStyle: {
+        fontSize: '16px',
+        verticalAlign: 'middle',
+        color: '#d094dc',
+      },
+      format: `(value) => \`自定义过滤文案：\${value}\``,
     },
   },
 ];
