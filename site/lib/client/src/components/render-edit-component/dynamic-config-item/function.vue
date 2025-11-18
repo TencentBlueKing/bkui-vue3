@@ -24,7 +24,7 @@ const { highlightFactory } = useHighLightJs();
 const RenderFunc = computed(() => {
     const isTypeScript = props.activeLanguage === 'typescript';
     return highlightFactory(
-        formatCodeIndent(props.modelValue?.trim?.() ?? '', 2, isTypeScript) || '--' , 'typescript'
+        formatCodeIndent(props.modelValue, 2, isTypeScript) || '--' , 'typescript'
     );
 })
 </script>

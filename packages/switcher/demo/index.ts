@@ -58,14 +58,6 @@ const presets = [
     description: '通过 before-change 接收一个函数来做前置状态检测，返回 false状态切换失败，否则成功',
     props: {
       modelValue: true,
-      beforeChange: '(value: boolean) => { return false; }',
-    },
-  },
-  {
-    title: '前置状态检测',
-    description: '通过 before-change 接收一个函数来做前置状态检测，返回 false状态切换失败，否则成功',
-    props: {
-      modelValue: true,
       beforeChange: '(value: string | boolean | number) => { return false; }',
     },
   },
