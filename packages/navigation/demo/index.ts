@@ -61,7 +61,7 @@ const presets = [
     },
     style: `
       .bk-resize-layout-main .edit-component-view .edit-component-component {
-        algin-self: start;
+        align-self: start;
       }
     `,
   },

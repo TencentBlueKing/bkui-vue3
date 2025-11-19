@@ -7,12 +7,15 @@ import type {
   PropType } from 'vue';
 import * as vue from 'vue';
 
-import { kebabToCamel } from '@/common/util';
 import type { IProp } from '@/types/component';
 
 import {
-  compile,
-} from '@vue/compiler-dom';
+  buildDependentComponentsMap,
+  processRenderEvents,
+  processRenderProps,
+  processRenderSlots,
+  registerComponents,
+} from './utils';
 
 export default vue.defineComponent({
   name: 'RenderComponent',
@@ -97,200 +100,82 @@ export default vue.defineComponent({
     },
   },
   render() {
-    // 构建依赖组件映射的公共方法
-    const buildDependentComponentsMap = () => {
-      const map: Record<string, Component> = {};
-      Object.keys(this.dependentComponents).forEach((componentName) => {
-        const depComp = this.dependentComponents[componentName];
-        if (!Object.keys(depComp).length) return;
-
-        Object.keys(depComp).forEach((subKey) => {
-          if (subKey === 'default') {
-            // 转换为 PascalCase: 'bk-menu' -> 'BkMenu'
-            const nameWithoutBk = componentName.startsWith('bk-')
-              ? componentName.slice(3)
-              : componentName;
-            const pascalCaseName = `Bk${nameWithoutBk
-              .split('-')
-              .map((part: string) => part.charAt(0).toUpperCase() + part.slice(1))
-              .join('')}`;
-            map[pascalCaseName] = depComp.default;
-          } else {
-            map[subKey] = depComp[subKey];
-          }
-        });
+    // template渲染模式, 子组件套主组件的渲染模式
+    const templateRender = () => {
+      // 构建当前组件的所有子组件映射
+      const componentsMap: Record<string, Component> = {};
+      Object.keys(this.component).forEach((key) => {
+        componentsMap[key] = this.component[key];
       });
-      return map;
+
+      // 创建运行时组件
+      const renderPropsData = this.renderProps;
+      const RuntimeComponent = vue.defineComponent({
+        name: `Render${this.name?.charAt(0).toUpperCase() + this.name?.slice(1)}`,
+        components: {
+          ...componentsMap,
+          ...buildDependentComponentsMap(this.dependentComponents),
+        },
+        template: this.template,
+        setup() {
+          return { ...renderPropsData };
+        },
+      });
+
+      return vue.h(RuntimeComponent, this.renderProps);
     };
 
-    const renderComponent = () => {
-      // 使用 template 渲染（支持子组件嵌套，如 CheckboxGroup）
-      if (this.template) {
-        // 构建当前组件的所有子组件映射
-        const componentsMap: Record<string, Component> = {};
-        Object.keys(this.component).forEach((key) => {
-          componentsMap[key] = this.component[key];
-        });
-
-        // 创建运行时组件
-        const renderPropsData = this.renderProps;
-        const RuntimeComponent = vue.defineComponent({
-          name: `Render${this.name?.charAt(0).toUpperCase() + this.name?.slice(1)}`,
-          components: {
-            ...componentsMap,
-            ...buildDependentComponentsMap(),
-          },
-          template: this.template,
-          setup() {
-            return { ...renderPropsData };
-          },
-        });
-
-        return vue.h(RuntimeComponent, this.renderProps);
-      }
-
-      // 注册当前组件的所有子组件
-      if (Object.keys(this.component).length > 1) {
-        Object.keys(this.component).forEach((key) => {
-          (this as ComponentInstance<Component>)._.components[key] = this.component[key];
-        });
-      }
-
-      // 注册依赖组件
-      const dependentComponentsMap = buildDependentComponentsMap();
-      Object.entries(dependentComponentsMap).forEach(([name, comp]) => {
-        // 如果组件是函数，则直接注册到 window 上一份，主要在事件中使用调用（带Bk前缀应该不会覆盖，遇到再说）
-        if (typeof comp === 'function') {
-          (window as unknown as Record<string, unknown>)[name] = comp;
-        } 
-        (this as ComponentInstance<Component>)._.components[name] = comp;
-      });
-
-      // 处理 events
-      const renderEvents = Object.keys(this.events).reduce(
-        (acc, key) => {
-          const Fn = Function;
-          // 处理箭头函数: (param: Type, param2: Type2) => 或 async (param: Type) =>
-          const eventCode = this.events[key].replace(/(async\s+)?\(([^)]*)\)\s*=>/g, (_match: string, asyncKeyword: string, params: string) => {
-            const cleanParams = params.replace(/(\w+)\s*:\s*[A-Z][^,)]*/g, '$1');
-            return `${asyncKeyword || ''}(${cleanParams}) =>`;
-          });
-
-          // 例如：'click' -> 'onClick', 'custom-event' -> 'onCustomEvent'
-          const eventName = `on${key
-            .split('-')
-            .map(part => part.charAt(0).toUpperCase() + part.slice(1))
-            .join('')}`;
-          // 创建一个返回该箭头函数的函数，然后立即执行得到箭头函数本身
-          acc[eventName] = Fn(`return (${eventCode})`)();
-          return acc;
-        },
-        {} as Record<string, (data?: unknown) => void>,
-      );
-
-      // 处理 props
-      const renderProps = Object.keys(this.renderProps).reduce((acc, key) => {
-        const propValue = this.renderProps[key];
-        const prop = this.props.find(item => kebabToCamel(item.name) === kebabToCamel(key));
-
-        // 判断 prop 是否为函数类型（包含 => 或以 function 开头）
-        const isFunctionType = prop.type && (prop.type.includes('=>') || prop.type.startsWith('function'));
-
-        if (isFunctionType) {
-          // 如果是函数类型且值是字符串，需要转换为可执行函数
-          const Fn = Function;
-          // 去除 TypeScript 类型标注（只处理参数列表中的类型标注）
-          // 匹配箭头函数或普通函数的参数列表，避免影响函数体
-          let functionCode = propValue;
-
-          // 处理箭头函数: (param: Type, param2: Type2) => 或 async (param: Type) =>
-          if (typeof functionCode === 'string') {
-            functionCode = functionCode.replace(/(async\s+)?\(([^)]*)\)\s*=>/g, (_match: string, asyncKeyword: string, params: string) => {
-              // 去除参数中的类型标注: param: Type -> param
-              const cleanParams = params.replace(/(\w+)\s*:\s*[A-Z][^,)]*/g, '$1');
-              return `${asyncKeyword || ''}(${cleanParams}) =>`;
-            });
-            // 转换为实际函数
-            acc[prop.name] = Fn(`return (${functionCode})`)();
-          } else {
-            acc[prop.name] = propValue;
-          }
-        } else {
-          // 其他类型直接赋值
-          acc[prop.name] = propValue;
-        }
-
-        if (prop.isSupportVModel) {
-          renderEvents[`onUpdate:${key}`] = (value: unknown) => {
-            const newKey = Object.keys(renderProps).
-              find(propKey => kebabToCamel(propKey) === kebabToCamel(key) && propKey !== key);
-            const newRenderProps = { ...renderProps };
-            newRenderProps[newKey ?? key] = value;
-            this.$emit('update:renderProps', newRenderProps);
-          };
-        }
-
-        return acc;
-      }, {} as Record<string, unknown>);
-
-      // 处理 slots
-      const renderSlots = Object.keys(this.renderSlots).reduce(
-        (acc, slotName) => {
-          const Fn = Function;
-          acc[slotName] = (data?: unknown) => Fn('Vue', 'data', compile(this.renderSlots[slotName]).code)(vue, data)(vue);
-          return acc;
-        },
-        {} as Record<string, (data?: unknown) => object>,
-      );
-
-      // 渲染组件
-      const component = vue.h(
-        this.component.default,
+    // 处理 Backtop 组件
+    const processBackTopRender = (component: vue.VNode) => {
+      return vue.h(
+        'section',
         {
-          ...renderEvents,
-          ...renderProps,
+          style: {
+            width: '100%',
+            height: '1000px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            transform: 'translate(0,0)',
+          },
         },
-        renderSlots,
+        [
+          vue.h('div', ['继续滚动查看出现 Backtop 效果']),
+          component,
+        ],
       );
+    };
 
-      // 如果是 Backtop 组件
-      if (this.component.default.name === 'Backtop') {
-        return vue.h(
-          'section',
-          {
+    // 处理 Affix 组件
+    const processAffixRender = (component: vue.VNode) => {
+      return vue.h(
+        'section',
+        {
+          style: {
+            width: '100%',
+            height: '2000px',
+            alignSelf: 'initial',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '10px',
+            textAlign: 'left',
+          },
+        },
+        [
+          vue.h('div', {
             style: {
               width: '100%',
               height: '1000px',
+              color: '#63656e',
               display: 'flex',
-              justifyContent: 'center',
               alignItems: 'center',
-              transform: 'translate(0,0)',
+              justifyContent: 'center',
+              border: '1px solid #63656e',
             },
-          },
-          [
-            vue.h('div', ['继续滚动查看出现 Backtop 效果']),
-            component,
-          ],
-        );
-      }
-
-      // 如果是 Affix 组件
-      if (this.component.default.name === 'Affix') {
-        return vue.h(
-          'section',
-          {
-            style: {
-              width: '100%',
-              height: '2000px',
-              alignSelf: 'initial',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '10px',
-              textAlign: 'left',
-            },
-          },
-          [
-            vue.h('div', {
+          }, ['继续滚动查看固定效果']),
+          component,
+          vue.h(
+            'div', {
               style: {
                 width: '100%',
                 height: '1000px',
@@ -300,24 +185,59 @@ export default vue.defineComponent({
                 justifyContent: 'center',
                 border: '1px solid #63656e',
               },
-            }, ['继续滚动查看固定效果']),
-            component,
-            vue.h(
-              'div', {
-                style: {
-                  width: '100%',
-                  height: '1000px',
-                  color: '#63656e',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  border: '1px solid #63656e',
-                },
-              },
-              ['继续滚动查看固定效果'],
-            ),
-          ],
-        );
+            },
+            ['继续滚动查看固定效果'],
+          ),
+        ],
+      );
+    };
+
+    // 普通渲染模式
+    const NormalComponentRender = () => {
+      // 注册组件和依赖组件
+      registerComponents(
+        this.component,
+        this.dependentComponents,
+        this as ComponentInstance<Component>,
+      );
+
+      // 处理 events
+      const renderEvents = processRenderEvents(this.events);
+
+      // 处理 props
+      const renderProps = processRenderProps(
+        this.renderProps,
+        this.props,
+        renderEvents,
+        (event: 'update:renderProps', value: Record<string, unknown>) => {
+          this.$emit(event, value);
+        },
+      );
+
+      // 处理 slots
+      const renderSlots = processRenderSlots(this.renderSlots);
+
+      // 每次props更新时，组件重新渲染，避免有些props更改不生效，比如code-diff的format更改不生效
+      const renderKey = `${this.name}-${JSON.stringify(this.renderProps)}`;
+      // 渲染组件
+      const component = vue.h(
+        this.component.default,
+        {
+          key: renderKey,
+          ...renderEvents,
+          ...renderProps,
+        },
+        renderSlots,
+      );
+
+      // 如果是 Backtop 组件
+      if (this.component.default.name === 'Backtop') {
+        return processBackTopRender(component);
+      }
+
+      // 如果是 Affix 组件
+      if (this.component.default.name === 'Affix') {
+        return processAffixRender(component);
       }
 
       return vue.h(
@@ -329,6 +249,6 @@ export default vue.defineComponent({
       );
     };
 
-    return renderComponent();
+    return this.template ? templateRender() : NormalComponentRender();
   },
 });

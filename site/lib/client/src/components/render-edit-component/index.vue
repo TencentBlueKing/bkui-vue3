@@ -191,6 +191,7 @@ const handleChoosePreset = async (preset: IComponentWiki['presets'][number]) => 
               components[componentName] = comp;
             }
           } catch (error) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const err = error as any;
             if (err?.name === 'AbortError') {
               return;
@@ -287,7 +288,7 @@ onUnmounted(() => {
   .bk-steps-vertical {
     min-height: 500px;
   }
-  /* 
+  /*
     为了面包屑、单选框组等组件需要居中显示额外添加的样式
   */
   .search-container {
@@ -312,7 +313,7 @@ onUnmounted(() => {
   .bk-breadcrumb, .bk-checkbox-group {
     justify-content: center;
   }
-  
+
 
   .edit-component-code {
     width: 100%;
