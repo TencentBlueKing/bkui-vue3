@@ -52,6 +52,7 @@ const props = [
     description: '时间选择器组件的值，可以是 Date 或字符串或数组，只有在 timerange 类型时才支持数组',
     type: 'string | Array | Date | number',
     default: '00:00:00',
+    isSupportVModel: true,
   },
   {
     name: 'type',

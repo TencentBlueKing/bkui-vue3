@@ -47,34 +47,41 @@
               />
             </template>
             <template #main>
-              <section
-                class="edit-component-view"
-                :key="renderPresetIndex + componentWiki.name"
+              <bk-loading
+                :loading="loadingDependentComponents"
+                :z-index="10"
+                class="edit-component-view-wrapper"
               >
-                <render-component
-                  v-if="mainPanel === MainPanel.Component"
-                  v-model:render-props="renderProps"
-                  :render-slots="renderSlots"
-                  :name="componentWiki.name"
-                  :group="componentWiki.group"
-                  :template="componentWiki.presets[renderPresetIndex].template"
-                  :style="componentWiki.presets[renderPresetIndex].style"
-                  :events="componentWiki.presets[renderPresetIndex].events"
-                  :props="componentWiki.props"
-                  :component="component"
-                  :dependent-components="dependentComponents"
-                  class="edit-component-component"
-                />
-                <render-code
-                  v-if="mainPanel === MainPanel.Code"
-                  v-model:active-language="activeLanguage"
-                  :index="renderPresetIndex"
-                  :component-wiki="componentWiki"
-                  :render-props="renderProps"
-                  :render-slots="renderSlots"
-                  class="edit-component-code"
-                />
-              </section>
+                <section
+                  v-if="!loadingDependentComponents"
+                  class="edit-component-view"
+                  :key="renderPresetIndex + componentWiki.name"
+                >
+                  <render-component
+                    v-if="mainPanel === MainPanel.Component"
+                    v-model:render-props="renderProps"
+                    :render-slots="renderSlots"
+                    :name="componentWiki.name"
+                    :group="componentWiki.group"
+                    :template="componentWiki.presets[renderPresetIndex].template"
+                    :style="componentWiki.presets[renderPresetIndex].style"
+                    :events="componentWiki.presets[renderPresetIndex].events"
+                    :props="componentWiki.props"
+                    :component="component"
+                    :dependent-components="dependentComponents"
+                    class="edit-component-component"
+                  />
+                  <render-code
+                    v-if="mainPanel === MainPanel.Code"
+                    v-model:active-language="activeLanguage"
+                    :index="renderPresetIndex"
+                    :component-wiki="componentWiki"
+                    :render-props="renderProps"
+                    :render-slots="renderSlots"
+                    class="edit-component-code"
+                  />
+                </section>
+              </bk-loading>
             </template>
           </bk-resize-layout>
         </template>
@@ -138,6 +145,8 @@ const renderPresetIndex = ref(0);
 const mainPanel = ref<MainPanel>(MainPanel.Component);
 const isFullScreen = ref(false);
 const activeLanguage = ref<CodeLanguages>('typescript');
+// 依赖组件加载状态
+const loadingDependentComponents = ref(false);
 
 // 选择预设
 const handleChoosePreset = async (preset: IComponentWiki['presets'][number]) => {
@@ -163,29 +172,37 @@ const handleChoosePreset = async (preset: IComponentWiki['presets'][number]) => 
 
     // 只加载未缓存的组件
     if (componentsToLoad.length > 0) {
-      await Promise.all(componentsToLoad.map(async (componentName: string) => {
-        try {
-          await getComponent(
-            componentName,
-            componentStore.version,
-            'component',
-            { requestKey: `component:dependency:${componentName}` },
-          );
-          const comp = window.getComponent();
-          if (comp) {
-            // 存入缓存（保存整个组件对象，包括子组件）
-            dependentComponentsCache.value[componentName] = comp;
-            // 添加到当前组件列表
-            components[componentName] = comp;
+      // 开始加载，显示 loading
+      loadingDependentComponents.value = true;
+      try {
+        await Promise.all(componentsToLoad.map(async (componentName: string) => {
+          try {
+            await getComponent(
+              componentName,
+              componentStore.version,
+              'component',
+              { requestKey: `component:dependency:${componentName}` },
+            );
+            const comp = window.getComponent();
+            if (comp) {
+              // 存入缓存（保存整个组件对象，包括子组件）
+              dependentComponentsCache.value[componentName] = comp;
+              // 添加到当前组件列表
+              components[componentName] = comp;
+            }
+          } catch (error) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const err = error as any;
+            if (err?.name === 'AbortError') {
+              return;
+            }
+            console.error(`Failed to load dependent component: ${componentName}`, err);
           }
-        } catch (error) {
-          const err = error as any;
-          if (err?.name === 'AbortError') {
-            return;
-          }
-          console.error(`Failed to load dependent component: ${componentName}`, err);
-        }
-      }));
+        }));
+      } finally {
+        // 加载完成，隐藏 loading
+        loadingDependentComponents.value = false;
+      }
     }
 
     dependentComponents.value = components;
@@ -249,6 +266,11 @@ onUnmounted(() => {
   height: 100%;
 }
 
+.edit-component-view-wrapper {
+  height: 100%;
+  background: #f3f3fa;
+}
+
 :deep(.edit-component-view) {
   display: flex;
   justify-content: center;
@@ -266,7 +288,7 @@ onUnmounted(() => {
   .bk-steps-vertical {
     min-height: 500px;
   }
-  /* 
+  /*
     为了面包屑、单选框组等组件需要居中显示额外添加的样式
   */
   .search-container {
@@ -291,7 +313,7 @@ onUnmounted(() => {
   .bk-breadcrumb, .bk-checkbox-group {
     justify-content: center;
   }
-  
+
 
   .edit-component-code {
     width: 100%;

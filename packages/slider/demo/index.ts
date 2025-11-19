@@ -38,6 +38,24 @@ const presets = [
       }
     `,
   },
+  {
+    title: '刻度',
+    description: '通过配置 showInterval 和 showIntervalLabel 属性来配置刻度和标签',
+    props: {
+      showInterval: true,
+      showIntervalLabel: true,
+      modelValue: [0, 100],
+      step: 5,
+    },
+  },
+  {
+    title: '带输入',
+    description: '通过配置 showInput 属性来配置是否显示输入框',
+    props: {
+      showInput: true,
+      modelValue: 20,
+    },
+  },
 ];
 
 // 组件属性，用来自动生成属性文档

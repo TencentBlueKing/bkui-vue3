@@ -37,6 +37,33 @@ const presets = [
       withValidate: true,
     },
   },
+  {
+    title: '大小设置',
+    description: '配置 size',
+    props: {
+      modelValue: 3.5,
+      size: 'large',
+      editable: true,
+      withValidate: true,
+    },
+  },
+  {
+    title: '监听 change 事件',
+    description: '配置 editable',
+    props: {
+      modelValue: 3.5,
+      editable: true,
+      withValidate: true,
+      onChange: `(val) => {
+        BkMessage({
+          message: \`评分：\${val}\`,
+        });
+      }`,
+    },
+    dependent: {
+      components: ['message'],
+    },
+  },
 ];
 
 // 组件属性，用来自动生成属性文档

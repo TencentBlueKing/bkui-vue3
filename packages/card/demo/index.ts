@@ -86,9 +86,9 @@ const presets = [
       `,
       footer: `
         <div class="card-demo-foot">
-          <span class="card-demo-foot-item"> <i class="bkui-vue-wiki-icon icon-help" /></span>
-          <span class="card-demo-foot-item"> <i class="bkui-vue-wiki-icon icon-code" /></span>
-          <span class="card-demo-foot-item"> <i class="bkui-vue-wiki-icon icon-copy" /></span>
+          <span class="card-demo-foot-item"> <help /></span>
+          <span class="card-demo-foot-item"> <CollapseLeft /></span>
+          <span class="card-demo-foot-item"> <copy /></span>
         </div>
       `,
     },
@@ -110,6 +110,9 @@ const presets = [
         border: none;
       }
     `,
+    dependent: {
+      components: ['icon'],
+    }
   },
 ];
 

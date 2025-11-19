@@ -143,6 +143,29 @@ const presets = [
       modelValue: [],
     },
   },
+  {
+    title: '尺寸 & 风格',
+    description: 'large、default、 small 三种尺寸，normal、simplicity两种风格',
+    props: {
+      size: 'small',
+      behavior: 'simplicity',
+      list: dataSource,
+      modelValue: [],
+    },
+  },
+  {
+    title: 'trigger插槽',
+    description: '通过配置 trigger 插槽来自定义触发器',
+    props: {
+      list: dataSource,
+      modelValue: [],
+    },
+    slots: {
+      trigger: `
+        <div>{{ data.selected }}</div>
+      `,
+    },
+  },
 ];
 
 // 组件属性
@@ -152,6 +175,7 @@ const props = [
     type: 'any',
     default: '',
     description: '绑定值，支持 v-model',
+    isSupportVModel: true,
   },
   {
     name: 'multiple',
@@ -419,7 +443,7 @@ const props = [
   },
   {
     name: 'filterOption',
-    type: '{ type: Function }',
+    type: 'boolean | Function',
     default: '',
     description: '配置当前options的过滤规则',
   },

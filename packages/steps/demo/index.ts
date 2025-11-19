@@ -110,6 +110,7 @@ const props = [
     description: '当前步骤的索引值，从 1 开始',
     type: 'number',
     default: 1,
+    isSupportVModel: true,
   },
   {
     name: 'direction',
