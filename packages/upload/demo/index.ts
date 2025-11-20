@@ -50,17 +50,125 @@ const presets = [
       isShowPreview: true,
       url: 'https://jsonplaceholder.typicode.com/posts/',
     },
+    style: `
+      .edit-component-component {
+        display: flex;
+        justify-content: center;
+      }
+    `,
   },
   {
     title: '拖拽上传',
     description: '把文件拖拽到指定区域进行上传',
     props: {
       size: 5,
-      accept: '',
       withCredentials: true,
       isShowPreview: true,
       url: 'https://jsonplaceholder.typicode.com/posts/',
     },
+  },
+  {
+    title: '点击按钮上传',
+    description: '设置 theme 属性为 button',
+    props: {
+      files: [
+        {
+          name: 'test.ppt',
+        },
+      ],
+      theme: 'button',
+      size: 5,
+      tip: '最大上传5(Mb)的文件',
+      handleResCode: `
+        (response) => {
+          if (response.id) {
+            return true;
+          }
+          return false;
+        }
+      `,
+      withCredentials: true,
+      isShowPreview: true,
+      url: 'https://jsonplaceholder.typicode.com/posts/',
+    },
+    style: `
+      .edit-component-view-wrapper .edit-component-view .edit-component-component {
+        text-align: left;
+      }
+    `,
+  },
+  {
+    title: '设置文件大小和个数',
+    description: '设置文件大小和个数',
+    props: {
+      size: 5,
+      limit: 2,
+      tip: `最多上传2个文件，单个文件大小不超过5MB`,
+      withCredentials: true,
+      isShowPreview: true,
+      url: 'https://jsonplaceholder.typicode.com/posts/',
+    },
+    style: `
+      .edit-component-view-wrapper .edit-component-view .edit-component-component {
+        text-align: left;
+      }
+    `,
+  },
+  {
+    title: '自定义文件列表项',
+    description: '使用 slot 自定义文件列表项',
+    props: {
+      files: [
+        {
+          name: 'test.ppt',
+        },
+      ],
+      theme: 'button',
+      size: 5,
+      tip: '最大上传5(Mb)的文件',
+      handleResCode: `
+        (response) => {
+          if (response.id) {
+            return true;
+          }
+          return false;
+        }
+      `,
+      withCredentials: true,
+      isShowPreview: true,
+      url: 'https://jsonplaceholder.typicode.com/posts/',
+    },
+    slots: {
+      file: `
+        <div>
+          {{data.file.name}}
+          <a
+            class="action-link"
+            href="javascrip:;"
+            @click.stop.prevent="() => {
+              console.log('删除');
+              // 这里可以调用删除方法
+              // uploader.value?.handleRemove(file);
+            }"
+            >删除</a>
+          <a
+            v-if="data.file.status === 'fail'"
+            class="action-link"
+            href="javascrip:;"
+            @click.stop.prevent="() => {
+              console.log('重试');
+              // 这里可以调用重试方法
+              // uploader.value?.handleRetry(file);
+            }"
+            >重试</a>
+        </div>
+      `,
+    },
+    style: `
+      .edit-component-view-wrapper .edit-component-view .edit-component-component {
+        text-align: left;
+      }
+    `,
   },
 ];
 

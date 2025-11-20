@@ -142,56 +142,56 @@ const presets = [
       shortcuts: [
         {
           text: '今天',
-          value: () => {
+          value: `() => {
             const date = new Date(new Date().getTime());
             date.setHours(0, 0, 0, 0);
             return date;
-          },
+          }`,
           short: 'now/d',
         },
         {
           text: '昨天',
-          value: () => {
+          value: `() => {
             const date = new Date(new Date().getTime() - 1 * 24 * 60 * 60 * 1000);
             date.setHours(0, 0, 0, 0);
             return date;
-          },
+          }`,
           short: 'now-1d/d',
         },
         {
           text: '前天',
-          value: () => {
+          value: `() => {
             const date = new Date(new Date().getTime() - 2 * 24 * 60 * 60 * 1000);
             date.setHours(0, 0, 0, 0);
             return date;
-          },
+          }`,
           short: 'now-2d/d',
         },
         {
           text: '一星期前',
-          value: () => {
+          value: `() => {
             const date = new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000);
             date.setHours(0, 0, 0, 0);
             return date;
-          },
+          }`,
           short: 'now-7d/d',
         },
         {
           text: '一个月前',
-          value: () => {
+          value: `() => {
             const date = new Date(new Date().getTime() - 30 * 24 * 60 * 60 * 1000);
             date.setHours(0, 0, 0, 0);
             return date;
-          },
+          }`,
           short: 'now-1M/d',
         },
         {
           text: '一年前',
-          value: () => {
+          value: `() => {
             const date = new Date(new Date().getTime() - 365 * 24 * 60 * 60 * 1000);
             date.setHours(0, 0, 0, 0);
             return date;
-          },
+          }`,
           short: 'now-1y/d',
         },
       ],
