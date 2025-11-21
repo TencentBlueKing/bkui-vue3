@@ -112,6 +112,9 @@ export default vue.defineComponent({
         key={this.component.default}
         component={this.component}
         renderProps={this.renderProps}
+        events={this.events}
+        props={this.props}
+        dependentComponents={this.dependentComponents}
       />;
     }
 

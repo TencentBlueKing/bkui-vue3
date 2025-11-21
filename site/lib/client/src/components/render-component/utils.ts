@@ -31,14 +31,14 @@ function isFunctionString(value: unknown): value is string {
   // - async () => { ... }
   // - function() { ... }
   // - async function() { ... }
-  return /^\s*(async\s+)?(\([^)]*\)|[a-zA-Z_$][a-zA-Z0-9_$]*)\s*=>/.test(trimmed) ||
-         /^\s*(async\s+)?function\s*\(/.test(trimmed);
+  return /^\s*(async\s+)?(\([^)]*\)|[a-zA-Z_$][a-zA-Z0-9_$]*)\s*=>/.test(trimmed)
+         || /^\s*(async\s+)?function\s*\(/.test(trimmed);
 }
 
 /**
  * 将函数字符串转换为可执行函数
  */
-function parseFunctionString(functionCode: string): Function {
+function parseFunctionString(functionCode: string): (...args: unknown[]) => unknown {
   const Fn = Function;
   // 处理箭头函数: (param: Type, param2: Type2) => 或 async (param: Type) =>
   const cleanedCode = functionCode.replace(/(async\s+)?\(([^)]*)\)\s*=>/g, (_match: string, asyncKeyword: string, params: string) => {
@@ -118,12 +118,13 @@ export function processRenderProps(
 
     // 判断 prop 是否为函数类型（包含 => 或以 function 开头）
     const isFunctionType = prop.type && (prop.type.includes('=>') || prop.type.startsWith('function'));
-
     if (isFunctionType) {
       // 如果是函数类型且值是字符串，需要转换为可执行函数
-      if (typeof propValue === 'string') {
+      // 先检查是否是有效的函数字符串，避免将普通字符串误解析为函数 (联合类型：string | Function)
+      if (typeof propValue === 'string' && isFunctionString(propValue)) {
         acc[prop.name] = parseFunctionString(propValue);
       } else {
+        // 如果不是函数字符串，直接使用原值（可能是普通字符串、VNode、已经是函数等）
         acc[prop.name] = propValue;
       }
     } else {
@@ -132,6 +133,7 @@ export function processRenderProps(
       acc[prop.name] = deepParseFunctions(propValue);
     }
 
+    // 处理 v-model 支持
     if (prop.isSupportVModel) {
       // eslint-disable-next-line no-param-reassign
       renderEvents[`onUpdate:${key}`] = (value: unknown) => {
