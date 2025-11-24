@@ -19,6 +19,65 @@ function cleanFunctionParams(params: string): string {
 }
 
 /**
+ * 判断字符串是否是函数字符串
+ */
+function isFunctionString(value: unknown): value is string {
+  if (typeof value !== 'string') return false;
+  const trimmed = value.trim();
+  // 检查是否包含箭头函数或 function 关键字
+  // 支持格式：
+  // - () => { ... }
+  // - (param) => { ... }
+  // - async () => { ... }
+  // - function() { ... }
+  // - async function() { ... }
+  return /^\s*(async\s+)?(\([^)]*\)|[a-zA-Z_$][a-zA-Z0-9_$]*)\s*=>/.test(trimmed)
+         || /^\s*(async\s+)?function\s*\(/.test(trimmed);
+}
+
+/**
+ * 将函数字符串转换为可执行函数
+ */
+function parseFunctionString(functionCode: string): (...args: unknown[]) => unknown {
+  const Fn = Function;
+  // 处理箭头函数: (param: Type, param2: Type2) => 或 async (param: Type) =>
+  const cleanedCode = functionCode.replace(/(async\s+)?\(([^)]*)\)\s*=>/g, (_match: string, asyncKeyword: string, params: string) => {
+    // 去除参数中的类型标注: param: Type -> param
+    const cleanParams = cleanFunctionParams(params);
+    return `${asyncKeyword || ''}(${cleanParams}) =>`;
+  });
+  // 转换为实际函数
+  return Fn(`return (${cleanedCode})`)();
+}
+
+/**
+ * 递归处理对象和数组中的函数字符串
+ */
+function deepParseFunctions(value: unknown): unknown {
+  // 如果是函数字符串，转换为函数
+  if (isFunctionString(value)) {
+    return parseFunctionString(value);
+  }
+
+  // 如果是数组，递归处理每个元素
+  if (Array.isArray(value)) {
+    return value.map(item => deepParseFunctions(item));
+  }
+
+  // 如果是对象，递归处理每个属性
+  if (value !== null && typeof value === 'object') {
+    const result: Record<string, unknown> = {};
+    for (const [key, val] of Object.entries(value)) {
+      result[key] = deepParseFunctions(val);
+    }
+    return result;
+  }
+
+  // 其他类型直接返回
+  return value;
+}
+
+/**
  * 处理 events，将事件字符串转换为可执行函数
  */
 export function processRenderEvents(events: Record<string, string>): Record<string, (data?: unknown) => void> {
@@ -59,31 +118,22 @@ export function processRenderProps(
 
     // 判断 prop 是否为函数类型（包含 => 或以 function 开头）
     const isFunctionType = prop.type && (prop.type.includes('=>') || prop.type.startsWith('function'));
-
     if (isFunctionType) {
       // 如果是函数类型且值是字符串，需要转换为可执行函数
-      const Fn = Function;
-      // 去除 TypeScript 类型标注（只处理参数列表中的类型标注）
-      // 匹配箭头函数或普通函数的参数列表，避免影响函数体
-      let functionCode = propValue;
-
-      // 处理箭头函数: (param: Type, param2: Type2) => 或 async (param: Type) =>
-      if (typeof functionCode === 'string') {
-        functionCode = functionCode.replace(/(async\s+)?\(([^)]*)\)\s*=>/g, (_match: string, asyncKeyword: string, params: string) => {
-          // 去除参数中的类型标注: param: Type -> param
-          const cleanParams = cleanFunctionParams(params);
-          return `${asyncKeyword || ''}(${cleanParams}) =>`;
-        });
-        // 转换为实际函数
-        acc[prop.name] = Fn(`return (${functionCode})`)();
+      // 先检查是否是有效的函数字符串，避免将普通字符串误解析为函数 (联合类型：string | Function)
+      if (typeof propValue === 'string' && isFunctionString(propValue)) {
+        acc[prop.name] = parseFunctionString(propValue);
       } else {
+        // 如果不是函数字符串，直接使用原值（可能是普通字符串、VNode、已经是函数等）
         acc[prop.name] = propValue;
       }
     } else {
-      // 其他类型直接赋值
-      acc[prop.name] = propValue;
+      // 对于非函数类型，也要递归处理对象和数组中的函数字符串
+      // 例如：nav-items 数组中的 action 函数，async 对象中的 callback 函数
+      acc[prop.name] = deepParseFunctions(propValue);
     }
 
+    // 处理 v-model 支持
     if (prop.isSupportVModel) {
       // eslint-disable-next-line no-param-reassign
       renderEvents[`onUpdate:${key}`] = (value: unknown) => {

@@ -213,6 +213,7 @@ export default vue.defineComponent({
           this.$emit(event, value);
         },
       );
+      console.log(renderProps);
 
       // 处理 slots
       const renderSlots = processRenderSlots(this.renderSlots);
