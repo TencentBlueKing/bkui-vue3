@@ -22,15 +22,19 @@ export default class McpController {
   @All('/mcp', { userControl: true })
   async mcp(ctx) {
     try {
+      console.log(`${ctx.method} request start`);
       // 告诉 Koa 不要自动处理响应
       ctx.respond = false;
 
       // 根据 sessionId 获取或创建 transport
       const sessionId = ctx.query.sessionId || ctx.headers['mcp-session-id'];
       let transport = sessionId ? transports.get(sessionId) : null;
+      console.log(`[${sessionId}] transport found: ${!!transport}, active transports: ${transports.size}`);
 
       // 如果是新连接或没有找到 transport，创建新的
       if (!transport) {
+        console.log(`[${requestId}] Creating new transport...`);
+
         transport = new StreamableHTTPServerTransport({
           sessionIdGenerator: () => randomUUID(),
           onsessioninitialized: (sessionId) => {
@@ -52,10 +56,16 @@ export default class McpController {
         };
 
         // 连接 MCP server
+        console.log(`[${sessionId}] Connecting to MCP server...`);
+        const connectStartTime = Date.now();
         await mcpServer.connect(transport);
+        console.log(`[${sessionId}] Connected in ${Date.now() - connectStartTime}ms`);
       }
 
+      const handleStartTime = Date.now();
+      console.log(`[${sessionId}] Handling request...`);
       await transport.handleRequest(ctx.req, ctx.res, ctx.request.body);
+      console.log(`[${sessionId}] Request handled in ${Date.now() - handleStartTime}ms`);
     } catch (error) {
       throwError(ctx, error);
     }
