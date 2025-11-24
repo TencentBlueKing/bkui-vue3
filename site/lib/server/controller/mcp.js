@@ -28,12 +28,13 @@ export default class McpController {
 
       // 根据 sessionId 获取或创建 transport
       const sessionId = ctx.query.sessionId || ctx.headers['mcp-session-id'];
+      const requestKey = `[${sessionId}] - ${ctx.method} - ${new Date().toISOString()}`;
       let transport = sessionId ? transports.get(sessionId) : null;
-      console.log(`[${sessionId}] transport found: ${!!transport}, active transports: ${transports.size}`);
+      console.log(`[${requestKey}] transport found: ${!!transport}, active transports: ${transports.size}`);
 
       // 如果是新连接或没有找到 transport，创建新的
       if (!transport) {
-        console.log(`[${sessionId}] Creating new transport...`);
+        console.log(`[${requestKey}] Creating new transport...`);
 
         transport = new StreamableHTTPServerTransport({
           sessionIdGenerator: () => randomUUID(),
@@ -56,16 +57,16 @@ export default class McpController {
         };
 
         // 连接 MCP server
-        console.log(`[${sessionId}] Connecting to MCP server...`);
+        console.log(`[${requestKey}] Connecting to MCP server...`);
         const connectStartTime = Date.now();
         await mcpServer.connect(transport);
-        console.log(`[${sessionId}] Connected in ${Date.now() - connectStartTime}ms`);
+        console.log(`[${requestKey}] Connected in ${Date.now() - connectStartTime}ms`);
       }
 
       const handleStartTime = Date.now();
-      console.log(`[${sessionId}] Handling request...`);
+      console.log(`[${requestKey}] Handling request...`);
       await transport.handleRequest(ctx.req, ctx.res, ctx.request.body);
-      console.log(`[${sessionId}] Request handled in ${Date.now() - handleStartTime}ms`);
+      console.log(`[${requestKey}] Request handled in ${Date.now() - handleStartTime}ms`);
     } catch (error) {
       throwError(ctx, error);
     }
