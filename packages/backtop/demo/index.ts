@@ -35,6 +35,69 @@ const presets = [
       'visibility-height': 40,
     },
   },
+  {
+    title: '文字类型',
+    description: '向下滚动以显示按钮',
+    props: {
+      target: '.edit-component-view',
+      'visibility-height': 40,
+    },
+    slots: {
+      default: `返回顶部`,
+    },
+  },
+  {
+    title: '图标文字组合',
+    description: '向下滚动以显示按钮',
+    props: {
+      target: '.edit-component-view',
+      'visibility-height': 40,
+      extCls: 'border-radius-0',
+    },
+    slots: {
+      default: `
+      <div>
+        <AngleUp class="f16" />
+        <div class="text">
+          返回顶部
+        </div>
+      </div>
+      `,
+    },
+    dependent: {
+      components: ['icon'],
+    },
+    style: `
+      .f16 {
+      font-size: 16px;
+      }
+      .text {
+      font-size: 12px;
+      }
+      .border-radius-0 {
+      border-radius: 0;
+      }`,
+  },
+  {
+    title: '自定义样式',
+    description: '向下滚动以显示按钮',
+    props: {
+      target: '.edit-component-view',
+      'visibility-height': 40,
+    },
+    slots: {
+      default: `
+          <angleDoubleUpLine class="f22" />
+      `,
+    },
+    dependent: {
+      components: ['icon'],
+    },
+    style: `
+      .f22 {
+      font-size: 22px;
+      }`,
+  },
 ];
 
 // 组件属性，用来自动生成属性文档
