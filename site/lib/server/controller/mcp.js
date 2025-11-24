@@ -33,7 +33,7 @@ export default class McpController {
 
       // 如果是新连接或没有找到 transport，创建新的
       if (!transport) {
-        console.log(`[${requestId}] Creating new transport...`);
+        console.log(`[${sessionId}] Creating new transport...`);
 
         transport = new StreamableHTTPServerTransport({
           sessionIdGenerator: () => randomUUID(),
