@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { ref } from 'vue';
+import { nextTick, ref } from 'vue';
 
 import { EMIT_EVENTS } from './const';
 import useFloating from './use-floating';
@@ -73,8 +73,24 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
     }
   };
 
-  const addEventToPopTargetEl = () => {
+  const addEventToPopTargetEl = (retryCount = 0) => {
     const { elReference, elContent } = resolvePopElements();
+
+    // 检查元素是否存在，如果不存在则延迟执行
+    // 这通常发生在 renderDirective = 'show' 时，Content 通过 Teleport 渲染，可能还未完全挂载
+    if (!elReference) {
+      if (retryCount >= 10) {
+        console.warn('[Popover] Failed to add events: reference element not found after retries');
+        return;
+      }
+
+      // 使用 nextTick 等待 DOM 更新完成
+      nextTick(() => {
+        addEventToPopTargetEl(retryCount + 1);
+      });
+      return;
+    }
+
     storeEvents = resolveTriggerEvents();
     storeEvents.forEach(storeEvent => {
       if (Array.isArray(storeEvent)) {
@@ -82,12 +98,20 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
       } else {
         const { content, reference } = storeEvent;
         addEventToTargetEl(elReference, reference);
-        addEventToTargetEl(elContent, content);
+        // elContent 可能为 null（当 renderDirective = 'show' 且 Content 还未挂载时）
+        if (elContent) {
+          addEventToTargetEl(elContent, content);
+        }
       }
     });
   };
 
-  const addEventToTargetEl = (target: HTMLElement, evets: any[]) => {
+  const addEventToTargetEl = (target: HTMLElement | null, evets: any[]) => {
+    // 检查 target 是否存在，避免在 null 上调用 addEventListener
+    if (!target) {
+      return;
+    }
+
     evets.forEach(([event, listener]) => {
       if (event && typeof listener === 'function') {
         target.addEventListener(event, listener);
@@ -136,12 +160,15 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
     const { elReference, root } = resolvePopElements();
     if (isFullscreen.value) {
       const { parentNode } = elReference || root || {};
-      boundary.value = fullScreenTarget?.value ?? getClosestFullscreenElement(parentNode);
-
+      const fullscreenBoundary = fullScreenTarget?.value ?? getClosestFullscreenElement(parentNode);
+      // 确保 boundary 始终有一个有效值，避免 Teleport 的 to 属性为 undefined
+      boundary.value = fullscreenBoundary || 'body';
       return;
     }
 
-    boundary.value = getPrefixId(root || elReference);
+    const resolvedBoundary = getPrefixId(root || elReference);
+    // 确保 boundary 始终有一个有效值，避免 Teleport 的 to 属性为 undefined
+    boundary.value = resolvedBoundary || 'body';
   };
 
   const { getPrefixId, clearParentNodeId } = usePopperId(props, '#');
@@ -159,7 +186,8 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
     );
   };
 
-  const boundary = ref();
+  // 初始化 boundary 为 'body'，避免 Teleport 的 to 属性为 undefined
+  const boundary = ref('body');
 
   const beforeInstanceUnmount = () => {
     removeEventListener();
