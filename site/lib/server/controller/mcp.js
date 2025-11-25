@@ -1,6 +1,6 @@
 import {
   Controller,
-  All,
+  Post,
   Ctx,
   OutputMcp,
   OutputJson,
@@ -19,7 +19,7 @@ const transports = new Map();
 
 @Controller('/api')
 export default class McpController {
-  @All('/mcp', { userControl: true })
+  @Post('/mcp', { userControl: true })
   async mcp(ctx) {
     try {
       console.log(`${ctx.method} request start`);
