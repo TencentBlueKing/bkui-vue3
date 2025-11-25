@@ -1,6 +1,13 @@
 ## 更新日志
 
 
+### 2.0.2-beta.79
+
+* **[feat]**:
+    - bugfix(tree): 刷新tree列表后搜索异常
+    - fix(popover): 修复renderDirective=show渲染问题
+
+
 ### 2.0.2-beta.77
 
 * **[feat]**:
