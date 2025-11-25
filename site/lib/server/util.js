@@ -27,6 +27,22 @@ export const throwError = (ctx, error) => {
   ctx.app.emit('error', error, ctx);
 };
 
+// 发送 MCP 错误
+export const throwMcpError = (ctx, error) => {
+  ctx.status = error.status;
+  ctx.body = {
+    jsonrpc: '2.0',
+    error: {
+      code: error.code,
+      message: error.message,
+    },
+  };
+
+  console.error(error);
+  // 调用日志记录下来
+  ctx.app.emit('error', error, ctx);
+};
+
 /**
  * 移除字符串两端空格
  *
