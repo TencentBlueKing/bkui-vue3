@@ -132,8 +132,9 @@ export const serializeElementTree = (elements: IElement[], indentLevel: number =
     
     if (isSlot) {
       if (hasSlotAttr) {
-        const attributesStr = element.props.map(prop => formatAttribute(prop)).join(' ');
+        const attributesStr = element.props.map(prop => formatAttribute(prop, indentLevel)).join(' ');
         result += `${indent}<template ${attributesStr}>${BREAK_LINE}`;
+
       } else {
         result += `${indent}<template>${BREAK_LINE}`;
       }
@@ -168,7 +169,8 @@ export const serializeElementTree = (elements: IElement[], indentLevel: number =
       // 输出props
       for (const prop of element.props) {
         const propIndent = ' '.repeat(indentLevel + 2);
-        result += `${propIndent}${formatAttribute(prop)}${BREAK_LINE}`;
+        result += `${propIndent}${formatAttribute(prop, indentLevel)}${BREAK_LINE}`;
+
       }
       
       // 输出emits - 修改为新的数据结构
@@ -281,10 +283,51 @@ const hasChildTags = (str: string): boolean => {
 };
 
 // 格式化属性输出
-const formatAttribute = (prop: { key: string; value: any }): string => {
+const formatAttribute = (prop: { key: string; value: any }, indentLevel: number = 0): string => {
   let kebabKey = camelToKebab(prop.key);
   if (typeof prop.value === 'boolean') {
     return kebabKey;
+  } else if (typeof prop.value === 'string') {
+    // 检查字符串是否是已格式化的对象格式（如 "{ content, boundary }" 或 "{\n  content,\n  boundary,\n}"）
+    // 这种格式通常来自 directive.ts 的预处理
+    const isFormattedObject = /^\s*\{[\s\S]*\}\s*$/.test(prop.value);
+    if (isFormattedObject) {
+      // 检查是否是多行格式
+      if (prop.value.includes('\n')) {
+        // 多行格式，需要调整缩进
+        // 外层serializeElementTree会添加propIndent（indentLevel + 2 = 4个空格）
+        // 对象内部需要额外2个空格，总共6个空格
+        const propIndent = ' '.repeat(indentLevel + 2); // 4个空格（属性行的缩进）
+        const extraIndent = '  '; // 额外2个空格
+        const contentIndent = propIndent + extraIndent; // 总共6个空格（对象内部属性的缩进）
+        
+        const lines = prop.value.split('\n');
+        const adjustedLines = lines.map((line, index) => {
+          const trimmedLine = line.trim();
+          if (index === 0) {
+            // 第一行（{）不需要额外缩进，会被外层的propIndent处理
+            return trimmedLine;
+          } else if (index === lines.length - 1) {
+            // 最后一行（}）和属性行对齐，使用propIndent（4个空格）
+            return propIndent + trimmedLine;
+          } else {
+            // 中间的属性行使用contentIndent（6个空格）
+            return contentIndent + trimmedLine;
+          }
+        });
+        return `${kebabKey}="${adjustedLines.join('\n')}"`;
+
+      }
+
+
+
+
+
+      // 单行格式，直接输出
+      return `${kebabKey}="${prop.value}"`;
+    }
+    // 普通字符串
+    return `${kebabKey}="${prop.value}"`;
   } else if (typeof prop.value === 'object' && prop.value !== null) {
     // 对象值
     const entries = Object.entries(prop.value);
@@ -297,10 +340,12 @@ const formatAttribute = (prop: { key: string; value: any }): string => {
       return `${kebabKey}={${BREAK_LINE}${innerProps}${BREAK_LINE}}`;
     }
   } else {
-    // 字符串或其他值
+    // 其他值
     return `${kebabKey}="${prop.value}"`;
   }
 };
+
+
 
 // 解析属性 - 最简版本
 const parseAttributes = (attrString: string) => {
