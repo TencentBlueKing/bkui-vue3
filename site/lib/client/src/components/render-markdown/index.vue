@@ -54,21 +54,19 @@ const titleToId = (title: string): string => {
     .replace(/[^\w\u4e00-\u9fa5-]/g, ''); // 保留中文字符
 };
 
-const headingConfigs = computed(() =>
-  (props.parseTagList ?? [])
-    .map(tag => {
-      const match = tag.match(/^h([1-6])$/i);
-      if (!match) {
-        return null;
-      }
-      const level = Number(match[1]);
-      return {
-        tag: `h${level}`.toLowerCase(),
-        regex: new RegExp(`^${'#'.repeat(level)}\\s+(.+)$`),
-      };
-    })
-    .filter((item): item is { tag: string; regex: RegExp } => Boolean(item)),
-);
+const headingConfigs = computed(() => (props.parseTagList ?? [])
+  .map((tag) => {
+    const match = tag.match(/^h([1-6])$/i);
+    if (!match) {
+      return null;
+    }
+    const level = Number(match[1]);
+    return {
+      tag: `h${level}`.toLowerCase(),
+      regex: new RegExp(`^${'#'.repeat(level)}\\s+(.+)$`),
+    };
+  })
+  .filter((item): item is { tag: string; regex: RegExp } => Boolean(item)));
 
 // 解析 markdown 内容，提取所有标题
 const navItems = computed<NavItem[]>(() => {
@@ -153,7 +151,7 @@ const getMarkdownHtml = () => {
 };
 </script>
 
-<style lang="postcss">
+<style scoped lang="postcss">
 .markdown-container {
   display: flex;
   width: 100%;
@@ -162,12 +160,12 @@ const getMarkdownHtml = () => {
 }
 
 .markdown-body-content {
-  flex: 1;
+  width: calc(100% - 146px);
   background-color: #fff;
   padding: 24px;
 }
 
-.markdown-body {
+:deep(.markdown-body) {
   font-family: PingFangSC, PingFangSC-Regular;
   font-size: 16px;
   line-height: 1.6;
@@ -256,6 +254,7 @@ const getMarkdownHtml = () => {
   a {
     color: #3a84ff;
   }
+
   .custom-container {
     margin: 16px 0;
     padding: 0;
@@ -331,19 +330,6 @@ const getMarkdownHtml = () => {
         color: #63656e;
       }
     }
-  }
-}
-
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .markdown-container {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    width: 100%;
-    position: relative;
-    max-height: none;
   }
 }
 </style>
