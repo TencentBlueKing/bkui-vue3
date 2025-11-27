@@ -175,7 +175,11 @@ const filterHighlightXssFactory = (
 // template生成
 const templateContent = () => {
   if (isDirectiveComponent.value) {
-    return createDirectiveTemplate(curPreset.value);
+    return createDirectiveTemplate(
+      curPreset.value,
+      renderProps.value,
+      componentName.value,
+    );
   } else if (isFunctionComponent.value) {
     return createFunctionTemplate();
   }
