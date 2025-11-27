@@ -197,7 +197,17 @@ export default defineComponent({
       if (isDone(index)) {
         return <Done class={`${this.resolveClassName('steps-icon')}`} />;
       }
-      return <span>{isNumberIcon(index, step) ? index + 1 : <step.icon />}</span>;
+      return (
+        <span>
+          {isNumberIcon(index, step) ? (
+            index + 1
+          ) : typeof step.icon === 'string' ? (
+            <i class={`${step.icon} icon`}></i>
+          ) : (
+            <step.icon />
+          )}
+        </span>
+      );
     };
 
     return (

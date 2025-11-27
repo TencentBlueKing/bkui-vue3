@@ -60,7 +60,7 @@ const presets = [
     props: {
       'cur-step': 1,
       steps: [
-        { title: '步骤一', icon: 'icon1' },
+        { title: '步骤一', icon: 'bkui-vue-wiki-icon icon-help' },
         { title: '步骤二', icon: 'icon2' },
         { title: '步骤三', icon: 'icon3' },
       ],
