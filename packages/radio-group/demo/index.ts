@@ -41,6 +41,9 @@ const presets = [
         <bk-radio label="Email" />
       `,
     },
+    dependent: {
+      components: ['radio'],
+    },
   },
   {
     title: '胶囊样式',
@@ -59,6 +62,9 @@ const presets = [
         <bk-radio-button label="Email" />
       `,
     },
+    dependent: {
+      components: ['radio-button'],
+    },
   },
   {
     title: '按钮组样式',
@@ -73,6 +79,9 @@ const presets = [
         <bk-radio-button label="微信" />
         <bk-radio-button label="Email" />
       `,
+    },
+    dependent: {
+      components: ['radio-button'],
     },
   },
   {
@@ -89,6 +98,9 @@ const presets = [
         <bk-radio-button label="微信" />
         <bk-radio-button label="Email" />
       `,
+    },
+    dependent: {
+      components: ['radio-button'],
     },
   },
 ];

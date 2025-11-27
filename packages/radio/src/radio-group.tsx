@@ -29,7 +29,7 @@ import { defineComponent, onMounted, provide, watch } from 'vue';
 import { usePrefix } from '@bkui-vue/config-provider';
 import { useFormItem } from '@bkui-vue/shared';
 
-import { radioGroupKey } from './common';
+import { RADIO_GROUP_KEY } from './common';
 import { radioGroupEmits } from './emits';
 import { radioGroupProps } from './props';
 
@@ -64,7 +64,7 @@ export default defineComponent({
       context.emit('change', nextValue);
     };
 
-    provide(radioGroupKey, {
+    provide(RADIO_GROUP_KEY, {
       props,
       register,
       unregister,

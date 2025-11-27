@@ -29,7 +29,6 @@ import {
   computed,
   getCurrentInstance,
   inject,
-  type InjectionKey,
   nextTick,
   onBeforeUnmount,
   onMounted,
@@ -40,10 +39,11 @@ import {
 
 import { EMPTY_OBJ, isEmptyObj } from '@bkui-vue/shared';
 
-import type { RadioProps } from './radio';
+import type { RadioProps } from './props';
 import type { IRadioGroupContext, IRadioInstance } from './type';
 
-export const radioGroupKey: InjectionKey<IRadioGroupContext> = Symbol('RadioGroup');
+// 不使用 symbol, 因为group和radio可能会分别构建在不同的地方
+export const RADIO_GROUP_KEY = 'radioGroupKey';
 
 export function useFocus(): [Ref<boolean>, { blur: () => void; focus: () => void }];
 export function useFocus() {
@@ -68,7 +68,7 @@ export const useRadio = () => {
 
   const { props, emit } = currentInstance;
 
-  const radioGroup = inject<IRadioGroupContext>(radioGroupKey, EMPTY_OBJ);
+  const radioGroup = inject<IRadioGroupContext>(RADIO_GROUP_KEY, EMPTY_OBJ);
   const isGroup = !isEmptyObj(radioGroup);
 
   const isChecked = ref<boolean>(false);
