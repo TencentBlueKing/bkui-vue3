@@ -37,46 +37,21 @@ const presets = [
     },
   },
   {
-    title: '多选框组',
-    description: '配合 bk-checkbox-grop 使用，label 配置选中时的值',
-    props: {
-      modelValue: [],
-    },
-    template: `
-      <bk-checkbox-group>
-        <bk-checkbox label="微信" />
-        <bk-checkbox label="QQ" />
-        <bk-checkbox label="Email" />
-      </bk-checkbox-group>
-    `,
-  },
-  {
     title: '默认选中',
     description: '配置 checked',
     props: {
-      modelValue: [],
+      checked: true,
+      label: '微信',
+      modelValue: '',
     },
-    template: `
-      <bk-checkbox-group>
-        <bk-checkbox checked label="微信" />
-        <bk-checkbox label="QQ" />
-        <bk-checkbox label="Email" />
-      </bk-checkbox-group>
-    `,
   },
   {
     title: '禁用',
     description: '配置 disabled',
     props: {
-      modelValue: [],
+      disabled: true,
+      label: '微信',
     },
-    template: `
-      <bk-checkbox-group>
-        <bk-checkbox disabled label="微信" />
-        <bk-checkbox label="QQ" />
-        <bk-checkbox label="Email" />
-      </bk-checkbox-group>
-    `,
   },
   {
     title: '前置校验',

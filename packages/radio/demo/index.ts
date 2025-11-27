@@ -34,6 +34,7 @@ const presets = [
     props: {
       label: '基础样式',
       checked: false,
+      modelValue: '',
     },
   },
   {
@@ -42,6 +43,7 @@ const presets = [
     props: {
       label: '默认选中',
       checked: true,
+      modelValue: '',
     },
   },
   {
@@ -51,56 +53,6 @@ const presets = [
       label: '禁用',
       disabled: true,
     },
-  },
-  {
-    title: '胶囊样式',
-    description: '用于单选选项胶囊组展示场景',
-    props: {
-      size: 'small',
-      modelValue: [],
-    },
-    template: `
-     <bk-radio-group
-        type="capsule"
-        style="width: revert;"
-      >
-        <bk-radio-button label="QQ" />
-        <bk-radio-button label="原始数据" />
-        <bk-radio-button label="字典翻译" />
-        <bk-radio-button label="微信" />
-        <bk-radio-button label="Email" />
-      </bk-radio-group>
-    `,
-  },
-  {
-    title: '按钮组样式',
-    description: '用于单选选项按钮组展示场景',
-    props: {
-      size: 'small',
-      modelValue: [],
-    },
-    template: `
-      <bk-radio-group style="width: revert;">
-        <bk-radio-button label="QQ" />
-        <bk-radio-button label="微信" />
-        <bk-radio-button label="Email" />
-      </bk-radio-group>
-    `,
-  },
-  {
-    title: '卡片样式',
-    description: '用于单选选项卡片组展示场景',
-    props: {
-      size: 'small',
-      modelValue: [],
-    },
-    template: `
-      <bk-radio-group type="card">
-        <bk-radio-button label="QQ" />
-        <bk-radio-button label="微信" />
-        <bk-radio-button label="Email" />
-      </bk-radio-group>
-    `,
   },
 ];
 
@@ -123,6 +75,7 @@ const props = [
     description: '绑定值',
     type: 'string | number | boolean',
     default: '',
+    isSupportVModel: true,
   },
   {
     name: 'checked',
@@ -205,6 +158,7 @@ const children = [
         description: '绑定值',
         type: 'string | number | boolean',
         default: '',
+        isSupportVModel: true,
       },
       {
         name: 'disabled',
@@ -277,6 +231,7 @@ const children = [
         description: '绑定值',
         type: 'string | number | boolean',
         default: '',
+        isSupportVModel: true,
       },
       {
         name: 'checked',

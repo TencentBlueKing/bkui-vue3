@@ -1,15 +1,18 @@
 <template>
-  <bk-loading
-    :loading="loading"
-    :z-index="10"
-    class="markdown-home g-scrollbar"
-  >
-    <render-markdown
-      :parse-tag-list="['h1', 'h2', 'h3', 'h4']"
-      :content="content"
-      container-class-name=".markdown-home"
-    />
-  </bk-loading>
+  <div class="markdown-home g-scrollbar">
+    <bk-loading
+      :loading="loading"
+      :z-index="10"
+      style="height: 100%;"
+    >
+      <render-markdown
+        v-if="content"
+        :parse-tag-list="['h1', 'h2', 'h3', 'h4']"
+        :content="content"
+        container-class-name=".markdown-home"
+      />
+    </bk-loading>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -39,6 +42,7 @@ const handleGetMarkdownContent = () => {
   if (route.params.name === 'start') {
     content.value = StartMarkdown;
   } else {
+    content.value = '';
     loading.value = true;
     getNpmMarkdown(route.params.name as string)
       .then((res) => {

@@ -28,11 +28,11 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onMounted, onUnmounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
 import {
   OverflowTitle as BkOverflowTitle,
 } from 'bkui-vue';
+import { nextTick, onMounted, onUnmounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
 
 interface IProps {
   navItems: {

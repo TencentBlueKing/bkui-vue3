@@ -21,8 +21,8 @@ import {
   useRouter,
 } from 'vue-router';
 
-import RenderNav from '@/components/render-nav/index.vue';
 import RenderAi from '@/components/render-ai/index.vue';
+import RenderNav from '@/components/render-nav/index.vue';
 import {
   useComponent,
 } from '@/store/component';

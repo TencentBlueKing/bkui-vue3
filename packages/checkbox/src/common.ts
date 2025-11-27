@@ -40,7 +40,7 @@ import {
 
 import { EMPTY_OBJ, isEmptyObj } from '@bkui-vue/shared';
 
-import type { CheckboxProps } from './checkbox';
+import type { CheckboxProps } from './props';
 import type { ICheckboxGroupContext, ICheckboxInstance } from './type';
 
 export const checkboxGroupKey: InjectionKey<ICheckboxGroupContext> = Symbol('CheckboxGroup');
