@@ -69,6 +69,7 @@
                     :props="componentWiki.props"
                     :component="component"
                     :dependent-components="dependentComponents"
+                    :dependent-props="componentWiki.presets[renderPresetIndex]?.dependent?.props"
                     class="edit-component-component"
                   />
                   <render-code

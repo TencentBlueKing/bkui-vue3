@@ -92,6 +92,14 @@ const presets = [
     slots: {
       default: '标签',
     },
+    events: {
+      click: `() => {
+        checked.value = !checked.value;
+      }`,
+    },
+    dependent: {
+      props: ['checked'],
+    },
   },
   {
     title: '带图标 Icon 标签',

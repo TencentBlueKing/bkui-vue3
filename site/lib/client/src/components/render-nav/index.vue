@@ -43,7 +43,7 @@
           type="search"
           clearable
           @input="handleSearch"
-          @enter="handleChooseCom"
+          @enter="handleChooseCom()"
           @clear="hidePopover"
           @keydown="handleKeydown"
         />

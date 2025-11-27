@@ -352,7 +352,8 @@ export interface IPreset {
   slots?: Record<string, string>;
   events?: Record<string, string>;
   dependent?: {
-    components: Array<string>;
+    components?: Array<string>;
+    props?: Array<string>;
   };
   style?: string;
 }

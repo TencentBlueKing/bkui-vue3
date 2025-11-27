@@ -30,6 +30,10 @@ export default vue.defineComponent({
       type: Object,
       default: (_data?: unknown) => ({}),
     },
+    dependentProps: {
+      type: Array as vue.PropType<string[]>,
+      default: () => ([] as string[]),
+    },
   },
   components: {},
   render() {
@@ -41,7 +45,14 @@ export default vue.defineComponent({
     );
 
     // 处理 events
-    const renderEvents = processRenderEvents(this.events);
+    const renderEvents = processRenderEvents(
+      this.events,
+      this.renderProps,
+      this.dependentProps,
+      (event: 'update:renderProps', value: Record<string, unknown>) => {
+        this.$emit(event, value);
+      },
+    );
 
     // 处理 props
     const renderProps = processRenderProps(

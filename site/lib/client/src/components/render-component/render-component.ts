@@ -60,6 +60,10 @@ export default vue.defineComponent({
       type: Object,
       default: (_data?: unknown) => ({}),
     },
+    dependentProps: {
+      type: Array as vue.PropType<string[]>,
+      default: () => ([] as string[]),
+    },
   },
   emits: {
     'update:renderProps': (value: Record<string, unknown>) => value !== undefined,
@@ -193,7 +197,7 @@ export default vue.defineComponent({
     };
 
     // 普通渲染模式
-    const NormalComponentRender = () => {
+    const normalComponentRender = () => {
       // 注册组件和依赖组件
       registerComponents(
         this.component,
@@ -202,7 +206,14 @@ export default vue.defineComponent({
       );
 
       // 处理 events
-      const renderEvents = processRenderEvents(this.events);
+      const renderEvents = processRenderEvents(
+        this.events,
+        this.renderProps,
+        this.dependentProps,
+        (event: 'update:renderProps', value: Record<string, unknown>) => {
+          this.$emit(event, value);
+        },
+      );
 
       // 处理 props
       const renderProps = processRenderProps(
@@ -213,18 +224,14 @@ export default vue.defineComponent({
           this.$emit(event, value);
         },
       );
-      console.log(renderProps);
 
       // 处理 slots
       const renderSlots = processRenderSlots(this.renderSlots);
 
-      // 每次props更新时，组件重新渲染，避免有些props更改不生效，比如code-diff的format更改不生效
-      const renderKey = `${this.name}-${JSON.stringify(this.renderProps)}`;
       // 渲染组件
       const component = vue.h(
         this.component.default,
         {
-          key: renderKey,
           ...renderEvents,
           ...renderProps,
         },
@@ -250,6 +257,6 @@ export default vue.defineComponent({
       );
     };
 
-    return this.template ? templateRender() : NormalComponentRender();
+    return this.template ? templateRender() : normalComponentRender();
   },
 });

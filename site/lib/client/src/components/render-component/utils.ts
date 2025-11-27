@@ -78,9 +78,58 @@ function deepParseFunctions(value: unknown): unknown {
 }
 
 /**
+ * 创建依赖属性代理
+ */
+function createProxy<T>(
+  initialValue: T,
+  onUpdate: (newValue: T) => void,
+): { value: T } {
+  let currentValue = initialValue;
+  
+  return new Proxy(
+    {},
+    {
+      get(_target, prop) {
+        if (prop === 'value') {
+          return currentValue;
+        }
+        return undefined;
+      },
+      set(_target, prop, newValue) {
+        if (prop === 'value') {
+          currentValue = newValue;
+          onUpdate(newValue);
+          return true;
+        }
+        return false;
+      },
+    },
+  ) as { value: T };
+}
+
+/**
  * 处理 events，将事件字符串转换为可执行函数
  */
-export function processRenderEvents(events: Record<string, string>): Record<string, (data?: unknown) => void> {
+export function processRenderEvents(
+  events: Record<string, string>,
+  renderProps: Record<string, unknown>,
+  dependentProps: string[],
+  emit: (event: 'update:renderProps', value: Record<string, unknown>) => void,
+): Record<string, (data?: unknown) => void> {
+  // 创建依赖属性代理
+  const propsRefs = dependentProps.reduce((acc, prop) => {
+    acc[prop] = createProxy(
+      renderProps[prop],
+      (newValue: unknown) => {
+        emit('update:renderProps', {
+          ...renderProps,
+          [prop]: newValue,
+        });
+      },
+    );
+    return acc;
+  }, {} as Record<string, { value: unknown }>);
+  // 处理 events
   return Object.keys(events).reduce(
     (acc, key) => {
       const Fn = Function;
@@ -96,7 +145,9 @@ export function processRenderEvents(events: Record<string, string>): Record<stri
         .map(part => part.charAt(0).toUpperCase() + part.slice(1))
         .join('')}`;
       // 创建一个返回该箭头函数的函数，然后立即执行得到箭头函数本身
-      acc[eventName] = Fn(`return (${eventCode})`)();
+      const paramNames = Object.keys(propsRefs);
+      const paramValues = Object.values(propsRefs);
+      acc[eventName] = Fn(...paramNames,`return (${eventCode})`)(...paramValues);
       return acc;
     },
     {} as Record<string, (data?: unknown) => void>,

@@ -50,6 +50,10 @@ export default vue.defineComponent({
       type: Object,
       default: (_data?: unknown) => ({}),
     },
+    dependentProps: {
+      type: Array as PropType<string[]>,
+      default: () => ([] as string[]),
+    },
   },
   emits: {
     'update:renderProps': (value: Record<string, unknown>) => value !== undefined,
@@ -115,6 +119,7 @@ export default vue.defineComponent({
         events={this.events}
         props={this.props}
         dependentComponents={this.dependentComponents}
+        dependentProps={this.dependentProps}
       />;
     }
 
@@ -130,6 +135,7 @@ export default vue.defineComponent({
       renderProps={this.renderProps}
       renderSlots={this.renderSlots}
       dependentComponents={this.dependentComponents}
+      dependentProps={this.dependentProps}
       onUpdate:renderProps={this.handleUpdateRenderProps}
     />;
   },
