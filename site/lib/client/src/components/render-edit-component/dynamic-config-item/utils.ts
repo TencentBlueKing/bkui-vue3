@@ -145,3 +145,60 @@ export const valueType = (value: unknown, type: string): string => {
   }
   return 'unknown';
 }
+
+/**
+ * 判断匹配常见的函数格式
+ * @param str 字符串
+ * @returns true | false
+ */
+export const isFunctionFormatString = (str: string) => {
+  const functionStringRegex = /^\s*(function\s+\w*\s*\(|const\s+\w+\s*=\s*\(|let\s+\w+\s*=\s*\(|var\s+\w+\s*=\s*\(|\(\s*\)\s*=>|\w+\s*=\s*\(\s*\)\s*=>)/
+  return functionStringRegex.test(str)
+}
+
+const jsonArrIsHasFunc = (arr: unknown[]) => {
+  for (const item of arr) {
+    if(isArray(item) && jsonArrIsHasFunc(item)) {
+      return true
+    }
+    if(isObject(item) && jsonObjIsHasFunc(item)) {
+      return true
+    }
+    if(isFunctionFormatString(item as string)) {
+      return true
+    }
+  }
+  return false
+}
+const jsonObjIsHasFunc = (obj: Object) => {
+  for (const [_key, value] of Object.entries(obj)) {
+    if(isArray(value) && jsonArrIsHasFunc(value)) {
+      return true
+    }
+    if(isObject(value) && jsonObjIsHasFunc(value)) {
+      return true
+    }
+    if(isFunctionFormatString(value as string)) {
+      return true
+    }
+  }
+  return false
+}
+export const jsonStrIsHasFunc = (jsonStr: string) => {
+  if(jsonStr === 'null') return false
+  try {
+    const parse = JSON.parse(jsonStr)
+    if(isString(parse)) return false
+    if(isNumber(parse)) return false
+    if(isBoolean(parse)) return false
+    if(isArray(parse)) {
+      return jsonArrIsHasFunc(parse)
+    }
+    if(isObject(parse)) {
+      return jsonObjIsHasFunc(parse)
+    }
+    return false
+  } catch {
+    return false
+  }
+}

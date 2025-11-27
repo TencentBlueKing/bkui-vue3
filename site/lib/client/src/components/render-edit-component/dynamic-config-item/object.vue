@@ -4,7 +4,7 @@
       :height="200"
       v-model="objectVal"
       placeholder="请输入有效的JSON对象格式"
-      :disabled="disabled"
+      :disabled="isDisabled"
       :class="{
         'is-error': hasError,
       }"
@@ -16,16 +16,16 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, watch, type PropType } from 'vue';
+import { ref, watch, computed, type PropType } from 'vue';
 import type { IComponentWiki } from '@/types/component';
 import RenderAutoHeightTextarea from '../config/render-auto-height-textarea.vue';
+import { filterXss } from '@blueking/xss-filter';
 
-import { factType, isString, isNumber, isBoolean, isArray, isObject } from './utils';
+import { factType, isString, isNumber, isBoolean, isArray, isObject, jsonStrIsHasFunc } from './utils';
 
 const props = defineProps({
   modelValue: {
     type: Object,
-    default: () => ({}),
   },
   type: {
     type: String,
@@ -43,23 +43,36 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-const objectVal = ref(JSON.stringify(props.modelValue, null, 2) || '');
+const objectVal = ref();
+const disabledInput = ref(false)
 const hasError = ref(false);
 const errorMessage = ref('');
 const isValidObject = ref(false);
 
 watch(
   () => props.modelValue,
-  (newVal) => {
+  (newVal, preVal) => {
     objectVal.value = JSON.stringify(newVal, null, 2) || '';
+    // 初始变化时，有函数代码格式，是否禁止编辑
+    if(preVal === undefined) {
+      disabledInput.value = jsonStrIsHasFunc(objectVal.value)
+    }
   },
-  { deep: true }
+  { immediate:true, deep: true }
 );
 
+const isDisabled = computed(() => {
+  return props.disabled || disabledInput.value
+})
+
+const filterXssObjectVal = computed(() => {
+  return filterXss(objectVal.value);
+})
+
 // 监听输入值变化
-watch(objectVal, (newVal) => {
+watch(objectVal, () => {
  if(isValidObject.value && !hasError.value) {
-   emit('update:modelValue', JSON.parse(newVal));
+   emit('update:modelValue', JSON.parse(filterXssObjectVal.value));
  }
 });
 const keyConfigs = (typeName: string) => {
@@ -134,7 +147,7 @@ const isValidObjectFormat = (parse: object, typeName: string) => {
 // 校验对象格式
 // 必须是json格式对象，函数不允许
 const validateObject = () => {
-  const value = objectVal.value?.trim();
+  const value = filterXssObjectVal.value?.trim();
   
   if (!value) {
     clearError();
@@ -147,14 +160,6 @@ const validateObject = () => {
     if(!isValidObjectFormat(parsed, props.type.trim())) {
       hasError.value = true;
       errorMessage.value = '对象内容格式有误，请检查输入内容';
-      isValidObject.value = false;
-      return;
-    }
-    
-    // 检查是否为对象类型
-    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
-      hasError.value = true;
-      errorMessage.value = '请输入有效的对象格式，不能是数组或其他类型';
       isValidObject.value = false;
       return;
     }

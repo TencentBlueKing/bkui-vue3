@@ -4,7 +4,7 @@
       :height="200"
       v-model="arrVal"
       placeholder="请输入有效的JSON数组格式"
-      :disabled="disabled"
+      :disabled="isDisabled"
       :class="{
         'is-error': hasError,
       }"
@@ -14,10 +14,12 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, watch, type PropType } from 'vue';
+import { ref, watch, computed, type PropType } from 'vue';
 import type { ValueType } from '@/types/component';
 
 import RenderAutoHeightTextarea from '../config/render-auto-height-textarea.vue';
+import { filterXss } from '@blueking/xss-filter';
+import { jsonStrIsHasFunc } from './utils'
 
 const props = defineProps({
   modelValue: {
@@ -32,19 +34,31 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-const arrVal = ref(JSON.stringify(props.modelValue, null, 2) || '')
+const arrVal = ref()
+const disabledInput = ref(false)
 watch(
   () => props.modelValue,
-  (newVal) => {
+  (newVal, preVal) => {
     arrVal.value = JSON.stringify(newVal, null, 2) || '';
+    // 初始变化时，有函数代码格式，是否禁止编辑
+    if(preVal === undefined) {
+      disabledInput.value = jsonStrIsHasFunc(arrVal.value)
+    }
   },
-  { deep: true }
+  { immediate: true, deep: true }
 );
+const isDisabled = computed(() => {
+  return props.disabled || disabledInput.value
+})
+const filterXssArrVal = computed(() => {
+  return filterXss(arrVal.value);
+})
+
 const isValidateArrJSON = ref(false)
 const hasError = ref(false)
 const errMsg = ref('')
 const validateArr = () => {
-  const val = arrVal.value.trim()
+  const val = filterXssArrVal.value.trim()
   try {
     const parseArr = JSON.parse(val)
     if(!Array.isArray(parseArr)) {
@@ -65,7 +79,7 @@ const validateArr = () => {
 }
 watch(arrVal, () => {
   if(!hasError.value && isValidateArrJSON.value) {
-    emit('update:modelValue', JSON.parse(arrVal.value))
+    emit('update:modelValue', JSON.parse(filterXssArrVal.value))
   }
 })
 </script>
