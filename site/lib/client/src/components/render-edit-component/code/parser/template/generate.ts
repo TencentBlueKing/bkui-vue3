@@ -10,13 +10,14 @@ import {
 import {
   toPascalCase,
 } from "./template-parser";
+import { isFunctionString } from "@/common/util";
+import { handleReservedKeyword } from "../../constant";
 
 // 创建插槽
 export const createSlots = (
   slotContent: string,
   slotName: string,
   slotParams: IParam[],
-  componentProps: IComponentWiki['props'] = [],
 ) => {
   if (!slotContent) {
     return '';
@@ -27,7 +28,7 @@ export const createSlots = (
   }
   const curSlotName = (slotName === 'default' && !slotParamsStr) ? '' : ` #${slotName}${slotParamsStr}`;
   const name = `template${curSlotName}`;
-  return createLabel(name, slotContent?.trim() ?? '', '', {}, {}, componentProps, 'template');
+  return createLabel(name, slotContent?.trim() ?? '', '', {}, {}, 'template');
 };
 
 // 创建标签
@@ -37,7 +38,6 @@ export const createLabel = (
   prefix = '',
   props: Record<string, ValueType> = {},
   events: Record<string, string> = {},
-  componentProps: IComponentWiki['props'] = [],
   endLabelName = '',
 ) => {
   // 属性列表处理
@@ -54,11 +54,12 @@ export const createLabel = (
       curKey = `:${curKey}`;
     }
     // 判断是否为函数
-    const curPropType = componentProps.find(item => item.name === curValue)?.type;
-    if (curPropType && curPropType.includes('function') && typeof value === 'string' && value.includes('=>')) {
+    if (isFunctionString(value)) {
       curValue = `handle${toPascalCase(camelToSnakeCase(curValue))}`;
     }
-    return ` ${curKey}="${camelKey(curValue)}"`;
+    // 处理保留关键字
+    const variableName = handleReservedKeyword(camelKey(curValue));
+    return ` ${curKey}="${variableName}"`;
   });
   // 事件列表处理
   const eventsList = Object.keys(events).map((key) => {

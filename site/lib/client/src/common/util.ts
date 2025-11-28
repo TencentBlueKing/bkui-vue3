@@ -102,3 +102,20 @@ export function kebabToCamel(str: string) {
 export function camelToKebab(str: string) {
   return str.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
 };
+
+/**
+ * 判断字符串是否是函数字符串
+ */
+export function isFunctionString(value: unknown): value is string {
+  if (typeof value !== 'string') return false;
+  const trimmed = value.trim();
+  // 检查是否包含箭头函数或 function 关键字
+  // 支持格式：
+  // - () => { ... }
+  // - (param) => { ... }
+  // - async () => { ... }
+  // - function() { ... }
+  // - async function() { ... }
+  return /^\s*(async\s+)?(\([^)]*\)|[a-zA-Z_$][a-zA-Z0-9_$]*)\s*=>/.test(trimmed)
+         || /^\s*(async\s+)?function\s*\(/.test(trimmed);
+}

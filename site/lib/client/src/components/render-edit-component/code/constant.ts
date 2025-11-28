@@ -108,3 +108,90 @@ export const iconsName = [
   'Weixin',
   'WeixinPro'
 ];
+
+// js保留关键字
+export const jsRemainKeyWord = [
+  // ES5 保留关键字
+  'break',
+  'case',
+  'catch',
+  'continue',
+  'debugger',
+  'default',
+  'delete',
+  'do',
+  'else',
+  'finally',
+  'for',
+  'function',
+  'if',
+  'in',
+  'instanceof',
+  'new',
+  'return',
+  'switch',
+  'this',
+  'throw',
+  'try',
+  'typeof',
+  'var',
+  'void',
+  'while',
+  'with',
+  
+  // ES6+ 新增关键字
+  'class',
+  'const',
+  'enum',
+  'export',
+  'extends',
+  'import',
+  'super',
+  'let',
+  'static',
+  'yield',
+  'await',
+  'async',
+  
+  // 严格模式下的保留字
+  'implements',
+  'interface',
+  'package',
+  'private',
+  'protected',
+  'public',
+  
+  // 字面量
+  'null',
+  'true',
+  'false',
+  
+  // 未来保留字
+  'abstract',
+  'boolean',
+  'byte',
+  'char',
+  'double',
+  'final',
+  'float',
+  'goto',
+  'int',
+  'long',
+  'native',
+  'short',
+  'synchronized',
+  'throws',
+  'transient',
+  'volatile'
+];
+
+/** 变量名称在碰到js保留关键字时，需要加上的后缀 */
+const VARIABLE_AT_JS_REMAIN_KEY_WORD_SUFFIX = 'Method';
+
+// 处理保留关键字的辅助函数
+export const handleReservedKeyword = (key: string): string => {
+  if (jsRemainKeyWord.includes(key)) {
+    return `${key}${VARIABLE_AT_JS_REMAIN_KEY_WORD_SUFFIX}`;
+  }
+  return key;
+};
