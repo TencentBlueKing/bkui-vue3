@@ -37,6 +37,7 @@ import {
   computed,
 } from 'vue';
 import {
+  useRoute,
   useRouter,
 } from 'vue-router';
 
@@ -48,13 +49,19 @@ import type {
 } from '@/types/component';
 
 const router = useRouter();
+const route = useRoute();
 const componentStore = useComponent();
 
 const adjacentComponents = computed(() => {
   let prevCom = null;
   let nextCom = null;
-  const index = componentStore.componentMetaList
-    .findIndex(item => item.componentWiki.name === componentStore.activeComponentWiki.name);
+  const routerName = route.path.split('/')[1];
+  // 查找当前组件索引时，需要同时匹配 routerName 和 name（区分同名的 component 和 directive）
+  const index = componentStore.componentMetaList.findIndex((item) => {
+    return item.routerName === routerName && item.componentWiki.name === componentStore.activeComponentWiki.name;
+  });
+
+  // 查找相邻组件时，允许跨分区（在整个列表中查找）
   if (index > 0) {
     prevCom = componentStore.componentMetaList[index - 1];
   }
@@ -69,8 +76,8 @@ const adjacentComponents = computed(() => {
 
 const handleChoose = (item: IComponentMeta) => {
   if (!item?.componentWiki) return;
-  const isComponentName = item.routerName === 'component';
-  if (isComponentName) {
+  // 普通组件和指令组件
+  if (['component', 'directive'].includes(item.routerName)) {
     componentStore.activeComponentWiki = item.componentWiki;
   }
   router.push({
