@@ -13,6 +13,9 @@
 </template>
 
 <script lang="ts" setup>
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+
 import RenderHeader from '@/components/render-header/index.vue';
 import RenderRouterTab from '@/components/render-router-tab/index.vue';
 import {
@@ -20,10 +23,19 @@ import {
 } from '@/store/component';
 
 const componentStore = useComponent();
+const route = useRoute();
 
-const routers = [
-  { to: 'demo', name: '组件示例' },
-  { to: 'api', name: 'API 文档' },
-  { to: 'design', name: '设计规范' },
+const routerTabs = [
+  { routeName: 'demo', name: '组件示例' },
+  { routeName: 'api', name: 'API 文档' },
+  { routeName: 'design', name: '设计规范' },
 ];
+
+const routers = computed(() => {
+  const isDirectiveRoute = typeof route.name === 'string' && (route.name === 'directive' || route.name.startsWith('directive-'));
+  return routerTabs.map(tab => ({
+    to: isDirectiveRoute ? `directive-${tab.routeName}` : tab.routeName,
+    name: tab.name,
+  }));
+});
 </script>

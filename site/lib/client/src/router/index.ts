@@ -44,23 +44,23 @@ const router = createRouter({
           path: 'directive/:name',
           name: 'directive',
           redirect: {
-            name: 'demo',
+            name: 'directive-demo',
           },
           component: Component,
           children: [
             {
               path: 'demo',
-              name: 'demo',
+              name: 'directive-demo',
               component: ComponentDemo,
             },
             {
               path: 'api',
-              name: 'api',
+              name: 'directive-api',
               component: ComponentApi,
             },
             {
               path: 'design',
-              name: 'design',
+              name: 'directive-design',
               component: ComponentDesign,
             },
           ],
