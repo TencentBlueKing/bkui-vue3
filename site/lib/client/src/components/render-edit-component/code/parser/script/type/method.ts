@@ -5,6 +5,7 @@ import {
 import {
   createDependImport,
   createValue,
+  formatCodeIndent,
 } from "../script-parser";
 import {
   BKUI_PATH,
@@ -34,11 +35,17 @@ export const createFunctionScript = (
     source: BKUI_PATH,
   }]);
 
-  return `${importDepend}${BREAK_LINE}
-const handleShow = () => {
-  ${toPascalCase(componentName)}({
-    ${propsContent}
-  });
+  return `${importDepend}${BREAK_LINE}${createMethod(
+    componentName,
+    propsContent,
+  )}`;
 };
-`;
+
+const createMethod = (componentName: string, propsContent: string) => {
+  const method = `const handleShow = () => {
+    ${toPascalCase(componentName)}({
+      ${propsContent}
+    });
+  };`
+  return formatCodeIndent(method);
 };

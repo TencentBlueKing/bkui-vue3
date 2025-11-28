@@ -1,17 +1,18 @@
 import {
   IComponentWiki,
-  IEmit,
   IProp,
 } from "@/types/component";
 import {
   BREAK_LINE,
   INDENT,
-  typeForVue,
 } from "../../constant";
 import {
   toPascalCase,
 } from "../template/template-parser";
 import { camelToSnakeCase } from "@/utils";
+import {
+  isFunctionString,
+} from "@/common/util";
 
 export interface DependentData {
   list: string[];
@@ -27,6 +28,10 @@ export const formatComplexValue = (obj: any, indentLevel = 1): string => {
   if (obj === undefined) {
     return 'undefined';
   }
+  // 特殊处理 Date 对象
+  if (obj instanceof Date) {
+    return `new Date('${obj.toISOString()}')`;
+  }
   if (Array.isArray(obj)) {
     return formatComplexArray(obj, indentLevel);
   }
@@ -41,6 +46,25 @@ export const formatComplexValue = (obj: any, indentLevel = 1): string => {
       valueStr = 'null';
     } else if (val === undefined) {
       valueStr = 'undefined';
+    } else if (val instanceof Date) {
+      // 特殊处理 Date 对象
+      valueStr = `new Date('${val.toISOString()}')`;
+    } else if (typeof val === 'string' && isFunctionString(val)) {
+      // 如果是函数字符串，格式化并添加正确的缩进（不添加分号，因为对象属性值后面是逗号）
+      const formattedFunc = formatCodeIndent(val, 2, true, false);
+      // 将函数的每一行都添加适当的缩进
+      const lines = formattedFunc.split(BREAK_LINE);
+      if (lines.length === 1) {
+        // 单行函数
+        valueStr = formattedFunc;
+      } else {
+        // 多行函数，第一行不缩进，后续行添加缩进
+        const indentedLines = lines.map((line, index) => {
+          if (index === 0) return line;
+          return INDENT.repeat(indentLevel) + line;
+        });
+        valueStr = indentedLines.join(BREAK_LINE);
+      }
     } else if (typeof val === 'object') {
       valueStr = formatComplexValue(val, indentLevel + 1);
     } else {
@@ -54,31 +78,53 @@ export const formatComplexValue = (obj: any, indentLevel = 1): string => {
 };
 
 export const createValue = (curPropInfo: IProp, value: unknown) => {
-  let curValue;
-  if ((curPropInfo.type === 'string' || curPropInfo.type?.includes('string')) && typeof value === 'string') {
-    // 模板字符串处理
-    if ((value as string).includes(BREAK_LINE)) {
-      curValue = `\`${value}\``;
-    } else {
-      curValue = `'${value}'`;
+  const propType = curPropInfo.type?.toLowerCase() || '';
+  
+  // 1. Date 类型优先处理
+  if (propType.includes('date')) {
+    if (value instanceof Date) {
+      return `new Date('${value.toISOString()}')`;
     }
-  } else if (curPropInfo.type === 'object' || typeof value === 'object') {
-    if (Array.isArray(value)) {
-      // 判断是否为简单数组（所有元素都不是对象）
-      const isSimpleArray = value.every(item => typeof item !== 'object');
-      curValue = isSimpleArray
-        ? `[${value.map(v => JSON.stringify(v)).join(', ')}]`  // 简单数组不换行
-        : formatComplexArray(value);  // 复杂数组换行
-    } else {
-      curValue = formatComplexValue(value);
+    if (typeof value === 'string') {
+      return `new Date('${value}')`;
     }
-  } else {
-    curValue = value;
+    return `new Date()`;
   }
-  return curValue;
+  
+  // 2. 字符串类型处理
+  if ((propType === 'string' || propType.includes('string')) && typeof value === 'string') {
+    // 多行字符串使用模板字符串
+    return (value as string).includes(BREAK_LINE) ? `\`${value}\`` : `'${value}'`;
+  }
+  
+  // 3. 对象/数组类型处理
+  if (propType === 'object' || typeof value === 'object') {
+    // 3.1 特殊处理 Date 对象（兜底逻辑）
+    if (value instanceof Date) {
+      return `new Date('${value.toISOString()}')`;
+    }
+    
+    // 3.2 数组处理
+    if (Array.isArray(value)) {
+      const isSimpleArray = value.every(item => typeof item !== 'object');
+      return isSimpleArray
+        ? `[${value.map(v => JSON.stringify(v)).join(', ')}]`
+        : formatComplexArray(value);
+    }
+    
+    // 3.3 普通对象处理
+    return formatComplexValue(value);
+  }
+  
+  // 4. 其他类型处理
+  // 如果值是字符串但 type 不是 string，仍需加引号（如枚举值等）
+  if (typeof value === 'string') {
+    return `'${value}'`;
+  }
+  
+  return value;
 };
 
-// 生成依赖导入
 export const createDependImport = (dependData: DependentData[]) => {
   return dependData.map(({ list, source, isType = false }) => {
     if (list.length === 0) return '';
@@ -166,8 +212,15 @@ const autoBreakLines = (code: string): string => {
     }
     
     // 在分号后添加换行（如果后面不是换行且不是结尾）
+    // 但是要排除 ); 或 }; 或 ]; 这样的组合，因为它们应该保持在同一行
     if (char === ';' && nextChar && nextChar !== '\n' && nextChar !== '\r' && nextChar !== ' ') {
-      result += char + '\n';
+      // 检查前一个字符是否是闭合括号
+      const isAfterClosingBracket = prevChar === ')' || prevChar === '}' || prevChar === ']';
+      if (!isAfterClosingBracket) {
+        result += char + '\n';
+      } else {
+        result += char;
+      }
       i++;
       continue;
     }
@@ -179,8 +232,43 @@ const autoBreakLines = (code: string): string => {
   return result;
 };
 
+// 判断行末是否不应该添加分号
+const shouldNotAddSemicolon = (line: string): boolean => {
+  const trimmedLine = line.trim();
+  if (!trimmedLine) return true;
+  
+  const lastChar = trimmedLine.slice(-1);
+  const lastTwoChars = trimmedLine.slice(-2);
+  
+  // 以下情况不应该添加分号：
+  // 1. 已经有分号
+  // 2. 以逗号结尾（对象/数组元素）
+  // 3. 以开括号结尾（函数调用、对象、数组开始）
+  // 4. 以冒号结尾（对象属性名）
+  // 5. 以箭头函数符号结尾（箭头函数换行）
+  // 6. 只包含单个闭合括号
+  // 7. 包含闭合括号+分号的组合（如 );、};、];）
+  // 8. 包含闭合括号+逗号的组合（如 ),、},、],）
+  const isOnlyClosingBracket = trimmedLine === '}' || trimmedLine === ')' || trimmedLine === ']';
+  const isClosingBracketWithSemicolon = lastTwoChars === ');' || lastTwoChars === '};' || lastTwoChars === '];';
+  const isClosingBracketWithComma = lastTwoChars === '),' || lastTwoChars === '},' || lastTwoChars === '],';
+  
+  return (
+    lastChar === ';' ||
+    lastChar === ',' ||
+    lastChar === '{' ||
+    lastChar === '(' ||
+    lastChar === '[' ||
+    lastChar === ':' ||  // 对象属性名
+    lastTwoChars === '=>' ||  // 箭头函数换行
+    isOnlyClosingBracket ||
+    isClosingBracketWithSemicolon ||
+    isClosingBracketWithComma
+  );
+};
+
 // 代码缩进规范化函数
-export const formatCodeIndent = (code: string, indentSize: number = 2, isTypeScript: boolean = true): string => {
+export const formatCodeIndent = (code: string, indentSize: number = 2, isTypeScript: boolean = true, addSemicolon: boolean = true): string => {
   if (!code) return code;
   
   // 先去除前后的空行
@@ -198,7 +286,6 @@ export const formatCodeIndent = (code: string, indentSize: number = 2, isTypeScr
   if (!trimmedCode.includes('\n') && !trimmedCode.includes('\r')) {
     trimmedCode = autoBreakLines(trimmedCode);
   }
-
   
   const lines = trimmedCode.split(BREAK_LINE);
   const result: string[] = [];
@@ -217,13 +304,12 @@ export const formatCodeIndent = (code: string, indentSize: number = 2, isTypeScr
     // 计算缩进级别
     const indent = ' '.repeat(currentIndent * indentSize);
     
-    // 获取行末字符
-    const lastChar = trimmedLine.slice(-1);
+    // 检查下一行是否以 . 开头（链式调用）
+    const nextLine = i + 1 < lines.length ? lines[i + 1].trimStart() : '';
+    const isChainedCall = nextLine.startsWith('.');
     
-    // 判断是否需要添加分号
-    // 只有当行只包含单个闭合括号时才不加分号，其他情况都要检查
-    const isOnlyClosingBracket = trimmedLine === '}' || trimmedLine === ')' || trimmedLine === ']';
-    const needsSemicolon = !isOnlyClosingBracket && ![';', ',', '{', '(', '['].includes(lastChar);
+    // 判断是否需要添加分号（如果下一行是链式调用，则不添加分号）
+    const needsSemicolon = !isChainedCall && !shouldNotAddSemicolon(trimmedLine);
     
     // 处理缩进变化
     if (trimmedLine.endsWith('{') || trimmedLine.endsWith('(') || trimmedLine.endsWith('[')) {
@@ -251,16 +337,13 @@ export const formatCodeIndent = (code: string, indentSize: number = 2, isTypeScr
   
   let formattedCode = result.join(BREAK_LINE);
   
-  // 确保代码以分号结尾（如果最后一个非空字符不是分号）
-  const lastChar = formattedCode.trim().slice(-1);
-  if (lastChar && lastChar !== ';') {
+  // 根据 addSemicolon 参数决定是否在最后添加分号
+  if (addSemicolon && !shouldNotAddSemicolon(formattedCode)) {
     formattedCode += ';';
   }
   
   return formattedCode;
 };
-
-
 
 export const parseEvents = (events: Record<string, string>, isTypeScript: boolean) => {
   return Object.entries(events).map(([key, value]) => {
@@ -285,7 +368,6 @@ export const extractTypeNamesFromGeneric = (typeStr: string): string[] => {
   }
   return typeNames;
 };
-
 
 // 从事件函数参数中提取所有类型
 // 例如: "(xx: AType, yy: BType, zz: Q<CType>) => {}" => ["AType", "BType", "Q", "CType"]
@@ -395,14 +477,12 @@ export const collectAllITypes = (types: IComponentWiki['types']) => {
   return Array.from(typeSet);
 }
 
-
-
 // 递归格式化复杂数组
 const formatComplexArray = (arr: any[], indentLevel = 1): string => {
-  // 判断是否为简单数组（所有元素都是基本类型或null/undefined）
+  // 判断是否为简单数组（所有元素都是基本类型或null/undefined，且不包含函数字符串）
   const isSimpleArray = arr.every(item => item === null
     || item === undefined
-    || ['string', 'number', 'boolean'].includes(typeof item));
+    || (['string', 'number', 'boolean'].includes(typeof item) && !(typeof item === 'string' && isFunctionString(item))));
 
   if (isSimpleArray) {
     // 简单数组单行输出
@@ -418,6 +498,19 @@ const formatComplexArray = (arr: any[], indentLevel = 1): string => {
   const items = arr.map((item) => {
     if (item === undefined) return `${INDENT.repeat(indentLevel)}undefined,`;
     if (item === null) return `${INDENT.repeat(indentLevel)}null,`;
+    if (typeof item === 'string' && isFunctionString(item)) {
+      // 如果是函数字符串，格式化并添加正确的缩进（不添加分号，因为数组元素后面是逗号）
+      const formattedFunc = formatCodeIndent(item, 2, true, false);
+      const lines = formattedFunc.split(BREAK_LINE);
+      if (lines.length === 1) {
+        // 单行函数
+        return `${INDENT.repeat(indentLevel)}${formattedFunc},`;
+      } else {
+        // 多行函数，第一行添加缩进，后续行也添加相同缩进
+        const indentedLines = lines.map(line => INDENT.repeat(indentLevel) + line);
+        return indentedLines.join(BREAK_LINE) + ',';
+      }
+    }
     if (typeof item === 'object') {
       return `${INDENT.repeat(indentLevel)}${formatComplexValue(item, indentLevel + 1)},`;
     }
@@ -454,6 +547,10 @@ const normalizeCodeFormat = (code: string): string => {
   
   // 3. 规范化箭头函数的空格：确保 => 前后都有空格
   normalized = normalized.replace(/\)\s*=>\s*\{/g, ') => {');
+  
+  // 4. 将箭头函数后的换行合并到同一行（避免缩进问题）
+  // 匹配 => 后跟换行符和可选的空白字符，然后是非空白字符
+  normalized = normalized.replace(/=>\s*[\r\n]+\s*/g, '=> ');
   
   return normalized;
 };

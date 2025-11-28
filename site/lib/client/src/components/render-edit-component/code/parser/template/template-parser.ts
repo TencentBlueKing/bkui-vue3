@@ -118,7 +118,6 @@ export const parseStringTemplate = (str: string): IElement[] => {
 export const serializeElementTree = (elements: IElement[], indentLevel: number = 0, isRoot: boolean = false): string => {
   let result = '';
   const indent = ' '.repeat(indentLevel);
-  
   for (let i = 0; i < elements.length; i++) {
     const element = elements[i];
     const hasPropsOrEmits = element.props.length > 0 || element.emits.length > 0;
@@ -170,7 +169,6 @@ export const serializeElementTree = (elements: IElement[], indentLevel: number =
       for (const prop of element.props) {
         const propIndent = ' '.repeat(indentLevel + 2);
         result += `${propIndent}${formatAttribute(prop, indentLevel)}${BREAK_LINE}`;
-
       }
       
       // 输出emits - 修改为新的数据结构
@@ -282,12 +280,109 @@ const hasChildTags = (str: string): boolean => {
   return /<[^>]+>/.test(str);
 };
 
+// 格式化数组属性值（参考 formatComplexArray 的逻辑）
+const formatArrayAttribute = (arr: any[], indentLevel: number = 0): string => {
+  // 判断是否为简单数组（所有元素都不是对象）
+  const isSimpleArray = arr.every(item => typeof item !== 'object' || item === null);
+  
+  if (isSimpleArray) {
+    // 简单数组单行输出
+    const items = arr.map(item => {
+      if (item === null) return 'null';
+      if (item === undefined) return 'undefined';
+      return typeof item === 'string' ? `'${item}'` : String(item);
+    });
+    return `[${items.join(', ')}]`;
+  }
+  
+  // 复杂数组多行格式化
+  // 数组元素的缩进 = 标签缩进 + 2个空格
+  const itemIndent = ' '.repeat(indentLevel + 2);
+  // 对象属性的缩进 = 数组元素缩进 + 2个空格
+  const propIndent = itemIndent + '  ';
+  // 数组结束符的缩进 = 标签缩进（与开始符[对齐）
+  const closeIndent = ' '.repeat(indentLevel);
+  
+  const items = arr.map(item => {
+    if (item === null) return `${itemIndent}null,`;
+    if (item === undefined) return `${itemIndent}undefined,`;
+    
+    if (typeof item === 'object') {
+      // 对象元素，格式化为多行
+      const entries = Object.entries(item);
+      const props = entries.map(([k, v]) => {
+        const value = typeof v === 'string' ? `'${v}'` : v;
+        return `${propIndent}${k}: ${value},`;
+      });
+      return `${itemIndent}{\n${props.join('\n')}\n${itemIndent}},`;
+    }
+    
+    // 基本类型
+    const value = typeof item === 'string' ? `'${item}'` : item;
+    return `${itemIndent}${value},`;
+  });
+  
+  return `[\n${items.join('\n')}\n${closeIndent}]`;
+};
 // 格式化属性输出
 const formatAttribute = (prop: { key: string; value: any }, indentLevel: number = 0): string => {
   let kebabKey = camelToKebab(prop.key);
+  
+  // 1. 布尔值处理
   if (typeof prop.value === 'boolean') {
     return kebabKey;
-  } else if (typeof prop.value === 'string') {
+  }
+  
+  // 2. 字符串处理
+  if (typeof prop.value === 'string') {
+    // 检查字符串是否是已格式化的数组格式（如 "[...]" 或 "[\n  {...}\n]"）
+    const isFormattedArray = /^\s*\[[\s\S]*\]\s*$/.test(prop.value);
+    if (isFormattedArray) {
+      // 检查kebabKey是否已经包含冒号前缀
+      const finalKey = kebabKey.startsWith(':') ? kebabKey : `:${kebabKey}`;
+      
+      // 检查是否是多行格式
+      if (prop.value.includes('\n')) {
+        // 多行格式，需要重新计算正确的缩进
+        // 解析数组内容，重新格式化
+        try {
+          // 尝试解析字符串为实际的数组对象
+          const arrayValue = eval(`(${prop.value})`);
+          if (Array.isArray(arrayValue)) {
+            // 使用formatArrayAttribute重新格式化，传入0作为基础缩进（相对缩进）
+            const formattedArray = formatArrayAttribute(arrayValue, 0);
+            
+            // 给除第一行外的每一行添加属性行缩进（indentLevel + 2）
+            const baseIndent = ' '.repeat(indentLevel + 2);
+            const lines = formattedArray.split('\n');
+            const adjustedLines = lines.map((line, index) => {
+              if (index === 0) {
+                return line;
+              } else {
+                return baseIndent + line;
+              }
+            });
+            return `${finalKey}="${adjustedLines.join('\n')}"`;
+          }
+        } catch (e) {
+          // 解析失败，保持原样但调整缩进
+          const propIndent = ' '.repeat(indentLevel + 2);
+          const lines = prop.value.split('\n');
+          const adjustedLines = lines.map((line, index) => {
+            if (index === 0) {
+              return line.trim();
+            } else {
+              return propIndent + line.trim();
+            }
+          });
+          return `${finalKey}="${adjustedLines.join('\n')}"`;
+        }
+      }
+      
+      // 单行数组格式
+      return `${finalKey}="${prop.value}"`;
+    }
+    
     // 检查字符串是否是已格式化的对象格式（如 "{ content, boundary }" 或 "{\n  content,\n  boundary,\n}"）
     // 这种格式通常来自 directive.ts 的预处理
     const isFormattedObject = /^\s*\{[\s\S]*\}\s*$/.test(prop.value);
@@ -316,20 +411,41 @@ const formatAttribute = (prop: { key: string; value: any }, indentLevel: number 
           }
         });
         return `${kebabKey}="${adjustedLines.join('\n')}"`;
-
       }
-
-
-
-
 
       // 单行格式，直接输出
       return `${kebabKey}="${prop.value}"`;
     }
+    
     // 普通字符串
     return `${kebabKey}="${prop.value}"`;
-  } else if (typeof prop.value === 'object' && prop.value !== null) {
-    // 对象值
+  }
+  
+  // 3. 对象/数组处理
+  if (typeof prop.value === 'object' && prop.value !== null) {
+    // // 3.1 数组处理
+    if (Array.isArray(prop.value)) {
+      const formattedArray = formatArrayAttribute(prop.value, indentLevel);
+      
+      // 如果是多行格式，需要给除第一行外的每一行添加propIndent
+      if (formattedArray.includes('\n')) {
+        const propIndent = ' '.repeat(indentLevel + 2);
+        const lines = formattedArray.split('\n');
+        const adjustedLines = lines.map((line, index) => {
+          if (index === 0) {
+            // 第一行不需要额外缩进（会被外层的propIndent处理）
+            return line;
+          } else {
+            // 其他行需要添加propIndent
+            return propIndent + line;
+          }
+        });
+        return `:${kebabKey}="${adjustedLines.join('\n')}"`;
+      }
+      
+      return `:${kebabKey}="${formattedArray}"`;
+    }
+    // 3.2 对象处理
     const entries = Object.entries(prop.value);
     if (entries.length === 1) {
       // 单个属性，单行显示
@@ -339,19 +455,18 @@ const formatAttribute = (prop: { key: string; value: any }, indentLevel: number 
       const innerProps = entries.map(([k, v]) => `${INDENT}${k}: '${v}'`).join(`,${BREAK_LINE}`);
       return `${kebabKey}={${BREAK_LINE}${innerProps}${BREAK_LINE}}`;
     }
-  } else {
-    // 其他值
-    return `${kebabKey}="${prop.value}"`;
   }
+  
+  // 4. 其他值
+  return `${kebabKey}="${prop.value}"`;
 };
-
-
 
 // 解析属性 - 最简版本
 const parseAttributes = (attrString: string) => {
   if (!attrString.trim()) return [];
   
   const props = [];
+  const emits = [];
   let currentIndex = 0;
   
   while (currentIndex < attrString.length) {
@@ -361,21 +476,13 @@ const parseAttributes = (attrString: string) => {
     }
     if (currentIndex >= attrString.length) break;
     
-    // 检查是否是事件属性（以@开头），如果是则跳过
-    if (attrString[currentIndex] === '@') {
-      // 跳过整个事件属性
-      while (currentIndex < attrString.length && !/\s/.test(attrString[currentIndex])) {
-        currentIndex++;
-      }
-      continue;
-    }
-    
     // 查找键名
     const keyStart = currentIndex;
     while (currentIndex < attrString.length && /[^\s=]/.test(attrString[currentIndex])) {
       currentIndex++;
     }
     let key = attrString.slice(keyStart, currentIndex);
+    
     // 跳过空格
     while (currentIndex < attrString.length && /\s/.test(attrString[currentIndex])) {
       currentIndex++;
@@ -396,12 +503,18 @@ const parseAttributes = (attrString: string) => {
         const quoteChar = attrString[currentIndex];
         
         if (quoteChar === '"' || quoteChar === "'") {
-          // 引号包裹的值
+          // 引号包裹的值 - 需要正确处理引号内的内容
           const valueStart = currentIndex + 1;
           currentIndex = valueStart;
-          while (currentIndex < attrString.length && attrString[currentIndex] !== quoteChar) {
+          
+          // 逐字符扫描，直到找到匹配的结束引号
+          while (currentIndex < attrString.length) {
+            if (attrString[currentIndex] === quoteChar && attrString[currentIndex - 1] !== '\\') {
+              break;
+            }
             currentIndex++;
           }
+          
           value = attrString.slice(valueStart, currentIndex);
           currentIndex++; // 跳过结束引号
         } else if (attrString[currentIndex] === '{') {
@@ -424,7 +537,16 @@ const parseAttributes = (attrString: string) => {
         }
       }
     }
-    props.push({ key, value });
+    
+    // 检查是否是事件属性（以@开头）
+    if (key.startsWith('@')) {
+      // 事件属性，添加到 emits 数组
+      const eventName = key.slice(1); // 去掉 @
+      emits.push({ event: eventName, value: value });
+    } else {
+      // 普通属性
+      props.push({ key, value });
+    }
   }
   
   return props;
@@ -432,86 +554,138 @@ const parseAttributes = (attrString: string) => {
 
 // 原有的 findOuterTag 函数保持不变
 const findOuterTag = (str: string) => {
-  // 1. 找到第一个开始标签
-  const startMatch = str.match(/<([^>\s]+)([^>]*)>/);
-  if (!startMatch) return null;
+  // 1. 找到第一个 < 符号
+  const tagStartIndex = str.indexOf('<');
+  if (tagStartIndex === -1) return null;
   
-  const startIndex = startMatch.index;
-  const tagName = startMatch[1];
-  const attributes = startMatch[2];
-  const fullStartTag = startMatch[0];
+  // 2. 手动解析开始标签，正确处理引号内的内容
+  let currentPos = tagStartIndex + 1;
+  let inQuote = false;
+  let quoteChar = '';
+  let tagName = '';
+  let attributes = '';
+  let isSelfClosing = false;
   
-  // 2. 判断是自闭合标签 - 修复这里的逻辑
-  const isSelfClosing = fullStartTag.endsWith('/>') || 
-                       (attributes.trim().endsWith('/') && !fullStartTag.endsWith('/>'));
+  // 2.1 提取标签名
+  while (currentPos < str.length) {
+    const char = str[currentPos];
+    if (char === ' ' || char === '\n' || char === '\r' || char === '\t' || char === '>' || char === '/') {
+      break;
+    }
+    tagName += char;
+    currentPos++;
+  }
   
-  if (isSelfClosing) {
-    // 清理属性中的末尾斜杠
-    const cleanAttributes = attributes.replace(/\/\s*$/, '').trim();
+  if (!tagName) return null;
+  
+  // 2.2 提取属性，正确处理引号
+  while (currentPos < str.length) {
+    const char = str[currentPos];
     
+    // 处理引号状态
+    if ((char === '"' || char === "'") && (currentPos === 0 || str[currentPos - 1] !== '\\')) {
+      if (!inQuote) {
+        inQuote = true;
+        quoteChar = char;
+      } else if (char === quoteChar) {
+        inQuote = false;
+        quoteChar = '';
+      }
+    }
+    
+    // 只在引号外检查标签结束符
+    if (!inQuote) {
+      if (char === '/' && str[currentPos + 1] === '>') {
+        isSelfClosing = true;
+        currentPos += 2;
+        break;
+      }
+      if (char === '>') {
+        currentPos++;
+        break;
+      }
+    }
+    
+    attributes += char;
+    currentPos++;
+  }
+  
+  const fullStartTag = str.slice(tagStartIndex, currentPos);
+  
+  // 3. 处理自闭合标签
+  if (isSelfClosing) {
     return {
       type: 'self-closing',
       tagName: tagName,
-      attributes: cleanAttributes,
+      attributes: attributes.trim(),
       fullTag: fullStartTag,
       content: '',
-      startIndex: startIndex,
-      endIndex: startIndex + fullStartTag.length,
-      remaining: str.slice(startIndex + fullStartTag.length)
+      startIndex: tagStartIndex,
+      endIndex: currentPos,
+      remaining: str.slice(currentPos)
     };
   }
   
-  // 3. 对于普通标签，使用栈来匹配对应的结束标签
+  // 4. 对于普通标签，使用栈来匹配对应的结束标签
   const stack = [tagName];
-  let currentIndex = startIndex + fullStartTag.length;
+  let searchIndex = currentPos;
   
-  while (stack.length > 0 && currentIndex < str.length) {
-    // 查找下一个开始标签或结束标签
-    const nextStartMatch = str.slice(currentIndex).match(/<([^>\s]+)([^>]*)>/);
-    const nextEndMatch = str.slice(currentIndex).match(/<\/([^>\s]+)>/);
+  while (stack.length > 0 && searchIndex < str.length) {
+    // 查找下一个标签（开始或结束）
+    const nextTagStart = str.indexOf('<', searchIndex);
+    if (nextTagStart === -1) break;
     
-    if (!nextStartMatch && !nextEndMatch) break;
-    
-    const nextStartIndex = nextStartMatch ? currentIndex + nextStartMatch.index : Infinity;
-    const nextEndIndex = nextEndMatch ? currentIndex + nextEndMatch.index : Infinity;
-    
-    // 先遇到开始标签
-    if (nextStartIndex < nextEndIndex) {
-      const nextTagName = nextStartMatch[1];
-      // 如果是同名的开始标签，入栈
-      if (nextTagName === tagName) {
-        stack.push(nextTagName);
-      }
-      currentIndex = nextStartIndex + nextStartMatch[0].length;
-    } 
-    // 先遇到结束标签
-    else if (nextEndIndex < Infinity) {
-      const endTagName = nextEndMatch[1];
-      // 如果是同名的结束标签，出栈
-      if (endTagName === tagName) {
-        stack.pop();
-        if (stack.length === 0) {
-          // 找到最外层的结束标签
-          const contentEnd = nextEndIndex;
-          const fullEndTag = nextEndMatch[0];
-          const fullMatch = str.slice(startIndex, contentEnd + fullEndTag.length);
-          const content = str.slice(startIndex + fullStartTag.length, contentEnd);
-          
-          return {
-            type: 'normal',
-            tagName: tagName,
-            attributes: attributes.trim(),
-            fullTag: fullMatch,
-            content: content,
-            startIndex: startIndex,
-            endIndex: contentEnd + fullEndTag.length,
-            remaining: str.slice(contentEnd + fullEndTag.length)
-          };
+    // 判断是开始标签还是结束标签
+    if (str[nextTagStart + 1] === '/') {
+      // 结束标签
+      const endTagMatch = str.slice(nextTagStart).match(/^<\/([^\s>]+)>/);
+      if (endTagMatch) {
+        const endTagName = endTagMatch[1];
+        if (endTagName === tagName) {
+          stack.pop();
+          if (stack.length === 0) {
+            // 找到最外层的结束标签
+            const contentEnd = nextTagStart;
+            const fullEndTag = endTagMatch[0];
+            const fullMatch = str.slice(tagStartIndex, contentEnd + fullEndTag.length);
+            const content = str.slice(currentPos, contentEnd);
+            
+            return {
+              type: 'normal',
+              tagName: tagName,
+              attributes: attributes.trim(),
+              fullTag: fullMatch,
+              content: content,
+              startIndex: tagStartIndex,
+              endIndex: contentEnd + fullEndTag.length,
+              remaining: str.slice(contentEnd + fullEndTag.length)
+            };
+          }
         }
+        searchIndex = nextTagStart + endTagMatch[0].length;
+      } else {
+        searchIndex = nextTagStart + 1;
       }
-      currentIndex = nextEndIndex + nextEndMatch[0].length;
     } else {
-      currentIndex++;
+      // 可能是开始标签，需要手动解析
+      let tempPos = nextTagStart + 1;
+      let tempTagName = '';
+      
+      // 提取标签名
+      while (tempPos < str.length) {
+        const char = str[tempPos];
+        if (char === ' ' || char === '\n' || char === '\r' || char === '\t' || char === '>' || char === '/') {
+          break;
+        }
+        tempTagName += char;
+        tempPos++;
+      }
+      
+      if (tempTagName === tagName) {
+        stack.push(tempTagName);
+      }
+      
+      searchIndex = tempPos;
     }
   }
   
