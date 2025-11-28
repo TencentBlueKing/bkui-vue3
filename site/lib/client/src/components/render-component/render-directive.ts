@@ -32,10 +32,6 @@ export default vue.defineComponent({
           [this.name]: this.component.default,
         },
         setup() {
-          const loadingConf = vue.ref({
-            loading: true,
-            title: 'loading...',
-          });
           const handleClickOutside = () => {
             Message({
               message: '点击了外部区域',
@@ -43,7 +39,6 @@ export default vue.defineComponent({
             });
           };
           return {
-            loadingConf,
             handleClickOutside,
           };
         },

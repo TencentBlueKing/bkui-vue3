@@ -28,8 +28,8 @@ export const useComponent = defineStore('component', () => {
     return [
       ...mapToMetaList(startList, 'markdown'),
       ...mapToMetaList(Object.values(componentGroupMap).flat(), 'component'),
-      ...mapToMetaList(directiveList, 'component'),
-      ...mapToMetaList(customComponentList, 'markdown'),
+      ...mapToMetaList(directiveList, 'directive'),
+      ...mapToMetaList(customComponentList, 'business-component'),
     ];
   });
 

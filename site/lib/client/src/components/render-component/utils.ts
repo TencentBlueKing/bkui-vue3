@@ -85,7 +85,7 @@ function createProxy<T>(
   onUpdate: (newValue: T) => void,
 ): { value: T } {
   let currentValue = initialValue;
-  
+
   return new Proxy(
     {},
     {
@@ -147,7 +147,7 @@ export function processRenderEvents(
       // 创建一个返回该箭头函数的函数，然后立即执行得到箭头函数本身
       const paramNames = Object.keys(propsRefs);
       const paramValues = Object.values(propsRefs);
-      acc[eventName] = Fn(...paramNames,`return (${eventCode})`)(...paramValues);
+      acc[eventName] = Fn(...paramNames, `return (${eventCode})`)(...paramValues);
       return acc;
     },
     {} as Record<string, (data?: unknown) => void>,

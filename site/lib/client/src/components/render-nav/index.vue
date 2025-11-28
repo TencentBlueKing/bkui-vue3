@@ -96,7 +96,7 @@
         :key="start.name"
         :class="{
           'aside-nav-group-item': true,
-          active: start.name === activeName,
+          active: `${'markdown'}:${start.name}` === activeName,
         }"
         @click="handleChoose(start, 'markdown')"
       >
@@ -114,7 +114,7 @@
           :key="componentWiki.title"
           :class="{
             'aside-nav-group-item': true,
-            active: componentWiki.name === activeName,
+            active: `${'component'}:${componentWiki.name}` === activeName,
           }"
           @click="handleChoose(componentWiki)"
         >
@@ -131,9 +131,9 @@
           :key="directive.name"
           :class="{
             'aside-nav-group-item': true,
-            active: directive.name === activeName,
+            active: `${'directive'}:${directive.name}` === activeName,
           }"
-          @click="handleChoose(directive)"
+          @click="handleChoose(directive, 'directive')"
         >
           {{ directive.title }}
           {{ directive.titleCN }}
@@ -148,9 +148,9 @@
           :key="customCom.name"
           :class="{
             'aside-nav-group-item': true,
-            active: customCom.name === activeName,
+            active: `${'business-component'}:${customCom.name}` === activeName,
           }"
-          @click="handleChoose(customCom,'markdown')"
+          @click="handleChoose(customCom,'business-component')"
         >
           {{ customCom.title }}
           {{ customCom.titleCN }}
@@ -327,10 +327,9 @@ const handleChooseCom = async (config?: IComponentMeta) => {
 };
 
 const handleChoose = async (value: IComponentWiki, routerName = 'component') => {
-  if (routerName === 'component') {
+  if (routerName === 'component' || routerName === 'directive') {
     componentStore.activeComponentWiki = value;
   }
-  activeName.value = value.name;
   await router.push({
     name: routerName,
     params: {
@@ -343,7 +342,8 @@ const getVersionList = async () => {
   try {
     versionList.value = await getVersions();
     if (versionList.value.length && !versionList.value.includes(componentStore.version)) {
-      componentStore.version = versionList.value[0];
+      const [latestVersion] = versionList.value;
+      componentStore.version = latestVersion;
     }
   } catch (error) {
     console.error(error);
@@ -362,13 +362,15 @@ const handleInit = async () => {
 
     renderList.value = [...componentStore.componentMetaList];
     // 设置 activeComponentWiki
-    const routeName = Array.isArray(route.params.name) ? route.params.name[0] : route.params.name;
-    if (routeName) {
+    const componentName = Array.isArray(route.params.name) ? route.params.name[0] : route.params.name;
+    const routerName = route.path.split('/')[1];
+    if (componentName) {
       const component = componentStore.componentMetaList
-        .find(item => item.componentWiki.name === routeName);
+        .filter(item => item.routerName === routerName)
+        .find(item => item.componentWiki.name === componentName);
       if (component) {
         componentStore.activeComponentWiki = component.componentWiki;
-        activeName.value = component.componentWiki.name;
+        activeName.value = `${routerName}:${componentName}`;
         await nextTick(scrollToCurNavItem);
       }
     }
@@ -404,7 +406,8 @@ watch(
   (name) => {
     const nameValue = Array.isArray(name) ? name[0] : name;
     if (nameValue) {
-      activeName.value = nameValue;
+      const routerName = route.path.split('/')[1] || 'component';
+      activeName.value = `${routerName}:${nameValue}`;
     }
   },
 );

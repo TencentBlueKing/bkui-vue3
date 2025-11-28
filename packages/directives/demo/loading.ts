@@ -33,17 +33,18 @@ const presets = [
     description: '加载中',
     template: `
       <section
-        v-loading="loadingConf"
+        v-loading="$attrs"
         style="width: 400px; height: 400px; background-color: #f0f0f0; line-height: 400px; text-align: center;"
       >
         <div>
           <p>加载中</p>
         </div>
-      </section>`,
-    // props: {
-    //   loading: true,
-    //   title: 'loading...',
-    // },
+      </section>
+    `,
+    props: {
+      loading: true,
+      title: 'loading...',
+    },
   },
 ];
 
