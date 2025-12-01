@@ -27,25 +27,15 @@
 import { computed, defineComponent, inject, provide, type ComputedRef } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { PropTypes } from '@bkui-vue/shared';
 
+import { colEmits } from './emits';
 import { containerKey } from './interface';
-
-const colProps = {
-  // 栅格的占位格数，可选值为 0~24 的整数，为 0 时，则为 col 相当于 width: 100%
-  span: PropTypes.number.def(1),
-  // 栅格的偏移
-  offset: PropTypes.number.def(0),
-  // 栅格向左移动格数
-  pull: PropTypes.number.def(0),
-  // 栅格向右移动格数
-  push: PropTypes.number.def(0),
-};
+import { colProps } from './props';
 
 export default defineComponent({
   name: 'Col',
   props: colProps,
-  emits: [],
+  emits: colEmits,
   setup(props, ctx) {
     const { col, gutter, flex } = inject(containerKey);
     const { span, offset, pull, push } = props;

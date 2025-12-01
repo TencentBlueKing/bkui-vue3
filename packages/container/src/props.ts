@@ -24,39 +24,39 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent, inject, provide } from 'vue';
+import { PropTypes } from '@bkui-vue/shared';
 
-import { usePrefix } from '@bkui-vue/config-provider';
+import type { ExtractPropTypes } from 'vue';
 
-import { rowEmits } from './emits';
-import { containerKey } from './interface';
-import { rowProps } from './props';
+export const props = {
+  // 栅格数，默认 24
+  col: PropTypes.number.def(24),
+  // 栅格间距，单位 px，左右平分
+  gutter: PropTypes.number.def(20),
+  // 栅格容器的左右外边距
+  margin: PropTypes.number.def(20),
+  // 控制 row 是否使用 flex 布局
+  flex: PropTypes.bool.def(false),
+  // 外部设置的 class name
+  extCls: PropTypes.string,
+};
 
-export default defineComponent({
-  name: 'Row',
-  props: rowProps,
-  emits: rowEmits,
-  setup(_props, ctx) {
-    const { col, gutter, flex } = inject(containerKey);
-    provide('containerProps', {
-      col,
-      gutter,
-      flex,
-    });
+export const rowProps = {
+  // Row 组件没有独立的 props，继承 Container 的配置
+  // 如果需要添加 props，可以在这里定义
+};
 
-    const { resolveClassName } = usePrefix();
+export const colProps = {
+  // 栅格的占位格数，可选值为 0~24 的整数，为 0 时，则为 col 相当于 width: 100%
+  span: PropTypes.number.def(1),
+  // 栅格的偏移
+  offset: PropTypes.number.def(0),
+  // 栅格向左移动格数
+  pull: PropTypes.number.def(0),
+  // 栅格向右移动格数
+  push: PropTypes.number.def(0),
+};
 
-    const style: any = computed(() => {
-      const o = flex ? { display: ['-webkit-box', '-ms-flexbox', 'flex'] } : {};
-      return { ...o, 'margin-right': `-${gutter / 2}px`, 'margin-left': `-${gutter / 2}px` };
-    });
-    return () => (
-      <div
-        style={style.value}
-        class={`${resolveClassName('grid-row')}`}
-      >
-        {ctx.slots.default?.()}
-      </div>
-    );
-  },
-});
+export type ContainerProps = ExtractPropTypes<typeof props>;
+export type RowProps = ExtractPropTypes<typeof rowProps>;
+export type ColProps = ExtractPropTypes<typeof colProps>;
