@@ -1,4 +1,10 @@
 import type { IProp } from '@/types/component';
+import {
+  useHighLightJs,
+} from '@/hooks/use-highlighjs';
+import {
+  formatCodeIndent,
+} from '../code/parser/script/script-parser';
 
 export const basicTypeToDefVal = {
   'string': '',
@@ -147,35 +153,21 @@ export const valueType = (value: unknown, type: string): string => {
 }
 
 /**
+ * 注意：纯表示字符串也会识别成是函数
  * 判断匹配常见的函数格式
  * @param str 字符串
  * @returns true | false
  */
 export const isFunctionFormatString = (str: string) => {
-  const functionStringRegex = /^\s*(function\s+\w*\s*\(|const\s+\w+\s*=\s*\(|let\s+\w+\s*=\s*\(|var\s+\w+\s*=\s*\(|\(\s*\)\s*=>|\w+\s*=\s*\(\s*\)\s*=>)/
-  return functionStringRegex.test(str)
+  const arrowFuncRegex = /\(?[^)]*\)?\s*=>\s*(?:\{[^{}]*\}|[^;]+)(?=\s*;|$)/
+  const functionKeyRegex = /function\s+\w*\s*\([^)]*\)\s*\{/
+  return functionKeyRegex.test(str) || arrowFuncRegex.test(str)
 }
 
-const jsonArrIsHasFunc = (arr: unknown[]) => {
-  for (const item of arr) {
-    if(isArray(item) && jsonArrIsHasFunc(item)) {
-      return true
-    }
-    if(isObject(item) && jsonObjIsHasFunc(item)) {
-      return true
-    }
-    if(isFunctionFormatString(item as string)) {
-      return true
-    }
-  }
-  return false
-}
-const jsonObjIsHasFunc = (obj: Object) => {
-  for (const [_key, value] of Object.entries(obj)) {
-    if(isArray(value) && jsonArrIsHasFunc(value)) {
-      return true
-    }
-    if(isObject(value) && jsonObjIsHasFunc(value)) {
+const jsonObjArrIsHasFunc = (obj: Object | unknown[]) => {
+  const iterableObj = isArray(obj) ? obj.entries() : Object.entries(obj)
+  for (const [_key, value] of iterableObj) {
+    if((isObject(value) || isArray(value)) && jsonObjArrIsHasFunc(value)) {
       return true
     }
     if(isFunctionFormatString(value as string)) {
@@ -184,6 +176,11 @@ const jsonObjIsHasFunc = (obj: Object) => {
   }
   return false
 }
+/**
+ * 验证JSON字符串是否有函数字符串
+ * @param jsonStr 字符串
+ * @returns true | false
+ */
 export const jsonStrIsHasFunc = (jsonStr: string) => {
   if(jsonStr === 'null') return false
   try {
@@ -191,14 +188,58 @@ export const jsonStrIsHasFunc = (jsonStr: string) => {
     if(isString(parse)) return false
     if(isNumber(parse)) return false
     if(isBoolean(parse)) return false
-    if(isArray(parse)) {
-      return jsonArrIsHasFunc(parse)
-    }
-    if(isObject(parse)) {
-      return jsonObjIsHasFunc(parse)
+    if(isArray(parse) || isObject(parse)) {
+      return jsonObjArrIsHasFunc(parse)
     }
     return false
   } catch {
     return false
+  }
+}
+
+const { highlightFactory } = useHighLightJs();
+const jsonObjArrToFunc = (obj: Object | unknown[], isTypeScript: boolean, level = 0) => {
+  const iterableObj = isArray(obj) ? obj.entries() : Object.entries(obj)
+  let resultStr =  isArray(obj) ? '[<br>' : '{<br>'
+  const innerIndent = level + 1
+  let valueStr = `<div style="padding-left: ${innerIndent * 6}px">`
+  for (const [key, value] of iterableObj) {
+    if(isObject(obj)) {
+      valueStr += `${key}:`
+    }
+    let newVal = value
+    if((isObject(value) || isArray(value))) {
+      newVal = jsonObjArrToFunc(value, isTypeScript, innerIndent + 1)
+    }
+    const isFunc = isFunctionFormatString(value as string)
+    if(isString(value) && !isFunc) {
+      newVal = `"${newVal}"`
+    }
+    if(isFunc) {
+      newVal = highlightFactory(
+        formatCodeIndent(value, 2, isTypeScript) || '--' , 'typescript'
+      )
+    }
+    valueStr += `${newVal}<br>`
+  }
+  valueStr += '</div>'
+  resultStr += valueStr + (isArray(obj) ? ']' : '}')
+  return resultStr
+}
+/**
+ * 高亮含有函数字符串
+ * @param jsonStr json字符串
+ * @param isTypeScript 语言类型
+ * @returns 字符串
+ */
+export const funcStrToFunc = (jsonStr: string, isTypeScript: boolean) => {
+  try {
+    const parse = JSON.parse(jsonStr)
+    if(isArray(parse) || isObject(parse)){
+      return jsonObjArrToFunc(parse, isTypeScript)
+    }
+    return jsonStr
+  } catch {
+    return jsonStr
   }
 }
