@@ -41,6 +41,9 @@ const presets = [
         <bk-checkbox label="Email" />
       `,
     },
+    dependent: {
+      components: ['checkbox'],
+    },
   },
 ];
 

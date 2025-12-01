@@ -29,7 +29,7 @@ import {
   computed,
   getCurrentInstance,
   inject,
-  type InjectionKey,
+  // type InjectionKey,
   nextTick,
   onBeforeUnmount,
   onMounted,
@@ -43,7 +43,8 @@ import { EMPTY_OBJ, isEmptyObj } from '@bkui-vue/shared';
 import type { CheckboxProps } from './props';
 import type { ICheckboxGroupContext, ICheckboxInstance } from './type';
 
-export const checkboxGroupKey: InjectionKey<ICheckboxGroupContext> = Symbol('CheckboxGroup');
+// 不使用 symbol, 因为group和checkbox可能会分别构建在不同的地方
+export const CHECKBOX_GROUP_KEY = 'checkboxGroupKey';
 
 export function useFocus(): [Ref<boolean>, { blur: () => void; focus: () => void }];
 export function useFocus() {
@@ -68,7 +69,7 @@ export const useCheckbox = () => {
 
   const { props, emit } = currentInstance;
 
-  const checkboxGroup = inject<ICheckboxGroupContext>(checkboxGroupKey, EMPTY_OBJ);
+  const checkboxGroup = inject<ICheckboxGroupContext>(CHECKBOX_GROUP_KEY, EMPTY_OBJ);
   const isGroup = !isEmptyObj(checkboxGroup);
 
   const inputRef = ref();

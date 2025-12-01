@@ -29,7 +29,7 @@ import { defineComponent, onMounted, provide, watch } from 'vue';
 import { usePrefix } from '@bkui-vue/config-provider';
 import { useFormItem } from '@bkui-vue/shared';
 
-import { checkboxGroupKey } from './common';
+import { CHECKBOX_GROUP_KEY } from './common';
 import { checkboxGroupEmits } from './emits';
 import { checkboxGroupProps } from './props';
 
@@ -65,7 +65,7 @@ export default defineComponent({
       context.emit('change', nextValue);
     };
 
-    provide(checkboxGroupKey, {
+    provide(CHECKBOX_GROUP_KEY, {
       name: 'CheckboxGroup',
       props,
       register,

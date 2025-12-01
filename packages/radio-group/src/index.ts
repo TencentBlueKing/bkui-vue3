@@ -23,11 +23,8 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { BkRadioGroup as Component } from '@bkui-vue/radio';
-import { withInstall } from '@bkui-vue/shared';
+import { BkRadioGroup } from '@bkui-vue/radio';
 
-const BkRadioGroup = withInstall(Component);
 export default BkRadioGroup;
-export { BkRadioGroup };
 export type { RadioGroupProps, RadioGroupEmits } from '@bkui-vue/radio';
 export type RadioGroupInstance = InstanceType<typeof BkRadioGroup>;
