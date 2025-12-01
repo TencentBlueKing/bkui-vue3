@@ -35,3 +35,8 @@ const BkContainer = withInstallProps(Container, { Row, Col });
 export default BkContainer;
 
 export { BkContainer, Row as BkRow, Col as BkCol };
+export type { ContainerEmits, RowEmits, ColEmits } from './emits';
+export type { ContainerProps, RowProps, ColProps } from './props';
+export type ContainerInstance = InstanceType<typeof Container>;
+export type RowInstance = InstanceType<typeof Row>;
+export type ColInstance = InstanceType<typeof Col>;

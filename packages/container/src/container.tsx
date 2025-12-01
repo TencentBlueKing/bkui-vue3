@@ -27,26 +27,15 @@
 import { computed, defineComponent, provide, type ComputedRef } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { PropTypes } from '@bkui-vue/shared';
 
+import { emits } from './emits';
 import { containerKey } from './interface';
+import { props } from './props';
 
-export const containerProps = {
-  // 栅格数，默认 24
-  col: PropTypes.number.def(24),
-  // 栅格间距，单位 px，左右平分
-  gutter: PropTypes.number.def(20),
-  // 栅格容器的左右外边距
-  margin: PropTypes.number.def(20),
-  // 控制 row 是否使用 flex 布局
-  flex: PropTypes.bool.def(false),
-  // 外部设置的 class name
-  extCls: PropTypes.string,
-};
 export default defineComponent({
   name: 'Container',
-  props: containerProps,
-  emits: [],
+  props,
+  emits,
   setup(props, ctx) {
     const { col, gutter, flex, extCls } = props;
 

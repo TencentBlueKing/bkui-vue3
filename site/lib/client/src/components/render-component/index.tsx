@@ -1,3 +1,4 @@
+import isEqual from 'lodash/isEqual';
 import type { PropType } from 'vue';
 import * as vue from 'vue';
 
@@ -87,6 +88,11 @@ export default vue.defineComponent({
   },
   methods: {
     handleUpdateRenderProps(value: Record<string, unknown>) {
+      console.log('handleUpdateRenderProps', value, this.renderProps);
+      // 如果新值和当前 renderProps，避免不必要的更新
+      if (isEqual(value, this.renderProps)) {
+        return;
+      }
       this.$emit('update:renderProps', value);
     },
   },

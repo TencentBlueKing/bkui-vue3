@@ -24,39 +24,12 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent, inject, provide } from 'vue';
+export const emits = {};
 
-import { usePrefix } from '@bkui-vue/config-provider';
+export const rowEmits = {};
 
-import { rowEmits } from './emits';
-import { containerKey } from './interface';
-import { rowProps } from './props';
+export const colEmits = {};
 
-export default defineComponent({
-  name: 'Row',
-  props: rowProps,
-  emits: rowEmits,
-  setup(_props, ctx) {
-    const { col, gutter, flex } = inject(containerKey);
-    provide('containerProps', {
-      col,
-      gutter,
-      flex,
-    });
-
-    const { resolveClassName } = usePrefix();
-
-    const style: any = computed(() => {
-      const o = flex ? { display: ['-webkit-box', '-ms-flexbox', 'flex'] } : {};
-      return { ...o, 'margin-right': `-${gutter / 2}px`, 'margin-left': `-${gutter / 2}px` };
-    });
-    return () => (
-      <div
-        style={style.value}
-        class={`${resolveClassName('grid-row')}`}
-      >
-        {ctx.slots.default?.()}
-      </div>
-    );
-  },
-});
+export type Emits = typeof emits;
+export type RowEmits = typeof rowEmits;
+export type ColEmits = typeof colEmits;
