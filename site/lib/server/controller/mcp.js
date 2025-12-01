@@ -31,13 +31,14 @@ export default class McpController {
 
     // 如果 transport 不存在，则返回错误
     if (!transport) {
-      throwError(ctx, new BusinessError('Invalid or missing session ID', 400, 400));
+      throwMcpError(ctx, new BusinessError('Invalid or missing session ID', 400, 400));
+      return;
     }
 
     try {
       await transport.handleRequest(ctx.req, ctx.res, ctx.request.body);
     } catch (error) {
-      throwError(ctx, error);
+      throwMcpError(ctx, error);
     }
   }
 
@@ -67,7 +68,7 @@ export default class McpController {
       // 处理请求
       await transport.handleRequest(ctx.req, ctx.res, ctx.request.body);
     } catch (error) {
-      throwError(ctx, error);
+      throwMcpError(ctx, error);
     }
   }
 
@@ -82,13 +83,14 @@ export default class McpController {
 
     // 如果 transport 不存在，则返回错误
     if (!transport) {
-      throwError(ctx, new BusinessError('Invalid or missing session ID', 400, 400));
+      throwMcpError(ctx, new BusinessError('Invalid or missing session ID', 400, 400));
+      return;
     }
 
     try {
       await transport.handleRequest(ctx.req, ctx.res, ctx.request.body);
     } catch (error) {
-      throwError(ctx, error);
+      throwMcpError(ctx, error);
     }
   }
 }

@@ -29,14 +29,16 @@ export const throwError = (ctx, error) => {
 
 // 发送 MCP 错误
 export const throwMcpError = (ctx, error) => {
-  ctx.status = error.status;
-  ctx.body = {
-    jsonrpc: '2.0',
-    error: {
-      code: error.code,
-      message: error.message,
-    },
-  };
+  ctx.res.writeHead(error.status || 500).end(
+    JSON.stringify({
+      jsonrpc: '2.0',
+      error: {
+          code: error.code,
+          message: error.message,
+      },
+      id: null
+    })
+  );
 
   console.error(error);
   // 调用日志记录下来
