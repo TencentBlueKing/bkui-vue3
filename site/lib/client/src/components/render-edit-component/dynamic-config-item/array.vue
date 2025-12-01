@@ -1,10 +1,16 @@
 <template>
   <div class="config-item-array">
+    <template v-if="codeObjStr.length">
+      <pre class="config-arr-item-func g-scrollbar">
+        <code v-html="codeObjStr"></code>
+      </pre>
+    </template>
     <RenderAutoHeightTextarea
+      v-else
       :height="200"
       v-model="arrVal"
       placeholder="请输入有效的JSON数组格式"
-      :disabled="isDisabled"
+      :disabled="disabled"
       :class="{
         'is-error': hasError,
       }"
@@ -15,11 +21,11 @@
 </template>
 <script lang="ts" setup>
 import { ref, watch, computed, type PropType } from 'vue';
-import type { ValueType } from '@/types/component';
+import type { ValueType, CodeLanguages } from '@/types/component';
 
 import RenderAutoHeightTextarea from '../config/render-auto-height-textarea.vue';
 import { filterXss } from '@blueking/xss-filter';
-import { jsonStrIsHasFunc } from './utils'
+import { jsonStrIsHasFunc, funcStrToFunc } from './utils'
 
 const props = defineProps({
   modelValue: {
@@ -35,21 +41,21 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue']);
 
 const arrVal = ref()
-const disabledInput = ref(false)
+const codeObjStr = ref('');
 watch(
   () => props.modelValue,
   (newVal, preVal) => {
     arrVal.value = JSON.stringify(newVal, null, 2) || '';
     // 初始变化时，有函数代码格式，是否禁止编辑
     if(preVal === undefined) {
-      disabledInput.value = jsonStrIsHasFunc(arrVal.value)
+      if(jsonStrIsHasFunc(arrVal.value)) {
+        codeObjStr.value = funcStrToFunc(arrVal.value, false)
+      }
     }
   },
   { immediate: true, deep: true }
 );
-const isDisabled = computed(() => {
-  return props.disabled || disabledInput.value
-})
+
 const filterXssArrVal = computed(() => {
   return filterXss(arrVal.value);
 })
@@ -86,60 +92,16 @@ watch(arrVal, () => {
 <style lang="postcss" scoped>
 .config-item-array {
   font-size: 12px;
-  .item-first-row {
-    display: flex;
-    align-items: center;
-    .expand {
-      cursor: pointer;
-      & > i {
-        color: #4D4F56;
-      }
-    }
-    .index-remove {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      line-height: 24px;
-      padding-left: 8px;
-      margin-left: 5px;
-      .remove {
-        display: none;
-        margin-right: 5px;
-        cursor: pointer;
-        .icon-reduce {
-          font-size: 14px;
-          color: #EA3636;
-        }
-      }
-      &:hover {
-        background-color: #F0F1F5;
-        border-radius: 2px;
-        .remove {
-          display: block;
-        }
-      }
-    }
-  }
-
-  .no-expand {
-    display: none;
-  }
-  .expand-content {
-    display: block;
-    padding-left: 14px;
-    border-left: 1px solid #DCDEE5;
-    margin-left: 6px;
-  }
-  .add {
-    display: flex;
-    align-items: center;
-    color: #3A84FF;
-    cursor: pointer;
-    margin-top: 5px;
-    .icon-add {
-      font-size: 14px;
-      margin-right: 5px;
+  .config-arr-item-func {
+    font-size: 0;
+    padding: 10px;
+    border: 1px solid #c4c6cc;
+    border-radius: 2px;
+    min-height: 200px;
+    max-height: 400px;
+    overflow: auto;
+    code {
+        font-size: 12px;
     }
   }
 }

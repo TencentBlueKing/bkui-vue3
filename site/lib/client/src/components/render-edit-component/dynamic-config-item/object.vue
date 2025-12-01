@@ -1,18 +1,26 @@
 <template>
   <div class="object-input-wrapper">
-    <RenderAutoHeightTextarea
-      :height="200"
-      v-model="objectVal"
-      placeholder="请输入有效的JSON对象格式"
-      :disabled="isDisabled"
-      :class="{
-        'is-error': hasError,
-      }"
-      @blur="validateObject"
-    />
-    <div v-if="hasError" class="error-message">
-      {{ errorMessage }}
-    </div>
+    <template v-if="codeObjStr.length">
+      <pre class="config-obj-item-func g-scrollbar">
+        <code v-html="codeObjStr"></code>
+      </pre>
+    </template>
+    <template v-else>
+      <RenderAutoHeightTextarea
+        :height="200"
+        v-model="objectVal"
+        placeholder="请输入有效的JSON对象格式"
+        :disabled="disabled"
+        :class="{
+          'is-error': hasError,
+        }"
+        @blur="validateObject"
+      />
+      <div v-if="hasError" class="error-message">
+        {{ errorMessage }}
+      </div>
+    </template>
+
   </div>
 </template>
 <script lang="ts" setup>
@@ -21,7 +29,16 @@ import type { IComponentWiki } from '@/types/component';
 import RenderAutoHeightTextarea from '../config/render-auto-height-textarea.vue';
 import { filterXss } from '@blueking/xss-filter';
 
-import { factType, isString, isNumber, isBoolean, isArray, isObject, jsonStrIsHasFunc } from './utils';
+import {
+  factType,
+  isString,
+  isNumber,
+  isBoolean,
+  isArray,
+  isObject,
+  jsonStrIsHasFunc,
+  funcStrToFunc
+} from './utils';
 
 const props = defineProps({
   modelValue: {
@@ -44,7 +61,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue']);
 
 const objectVal = ref();
-const disabledInput = ref(false)
+const codeObjStr = ref('');
 const hasError = ref(false);
 const errorMessage = ref('');
 const isValidObject = ref(false);
@@ -55,15 +72,13 @@ watch(
     objectVal.value = JSON.stringify(newVal, null, 2) || '';
     // 初始变化时，有函数代码格式，是否禁止编辑
     if(preVal === undefined) {
-      disabledInput.value = jsonStrIsHasFunc(objectVal.value)
+      if(jsonStrIsHasFunc(JSON.stringify(newVal))) {
+        codeObjStr.value = funcStrToFunc(JSON.stringify(newVal), false)
+      }
     }
   },
   { immediate:true, deep: true }
 );
-
-const isDisabled = computed(() => {
-  return props.disabled || disabledInput.value
-})
 
 const filterXssObjectVal = computed(() => {
   return filterXss(objectVal.value);
@@ -204,6 +219,18 @@ const clearError = () => {
 .object-input-wrapper {
   position: relative;
   width: 100%;
+  .config-obj-item-func {
+    font-size: 0;
+    padding: 10px;
+    border: 1px solid #c4c6cc;
+    border-radius: 2px;
+    min-height: 200px;
+    max-height: 400px;
+    overflow: auto;
+    code {
+        font-size: 12px;
+    }
+  }
 }
 
 .error-message {
