@@ -12,6 +12,7 @@
 import {
   Input as BkInput,
 } from 'bkui-vue';
+import { filterXss } from '@blueking/xss-filter';
 
 interface IProps {
   modelValue: string;
@@ -25,7 +26,7 @@ defineProps<IProps>();
 const emits = defineEmits<IEmits>();
 
 const handleUpdateModelValue = (value: string) => {
-  emits('update:modelValue', value);
+  emits('update:modelValue', filterXss(value));
 };
 </script>
 <style lang="postcss">

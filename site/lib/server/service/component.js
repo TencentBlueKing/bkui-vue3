@@ -62,9 +62,30 @@ const clearModuleCache = (modulePath) => {
   }
 };
 
+// 在 service/component.js 中添加验证
+const validateVersion = (version) => {
+  // 只允许字母、数字、点、横杠
+  if (!/^[a-zA-Z0-9.-]+$/.test(version)) {
+    throw new global.BusinessError('Invalid version parameter', 400, 400);
+  }
+  // 防止路径遍历
+  if (version.includes('..') || version.includes('/') || version.includes('\\')) {
+    throw new global.BusinessError('Invalid version parameter', 400, 400);
+  }
+  return version;
+};
+
+const validateNpmPackageName = (name) => {
+  // NPM 包名规则验证
+  if (!/^(@[a-z0-9-~][a-z0-9-._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/.test(name)) {
+    throw new global.BusinessError('Invalid package name', 400, 400);
+  }
+  return name;
+};
+
 // 获取编译文件路径
 export const getDistFilePath = (version, component, type, file) => {
-  const dir =    type === 'directive'
+  const dir = type === 'directive'
     ? path.resolve(RELEASE_DIST_DIR, `${version}`, 'directives', 'src', `${component}.js`)
     : path.resolve(RELEASE_DIST_DIR, `${version}`, component, 'src');
   // 创建目录
@@ -146,7 +167,7 @@ export const getFileAuthors = async (path) => {
 // 获取组件
 export const getComponent = async (releaseZipPath, component, version, type) => {
   // 编译后的 js 文件路径
-  const compiledJsPath = getDistFilePath(version, component, type, COMPILE_JS_FILE);
+  const compiledJsPath = getDistFilePath(validateVersion(version), component, type, COMPILE_JS_FILE);
 
   // 如果编译后的 js 文件不存在，则编译组件
   if (!fs.existsSync(compiledJsPath)) {
@@ -161,7 +182,7 @@ export const getComponent = async (releaseZipPath, component, version, type) => 
 // 获取组件 CSS
 export const getCss = async (releaseZipPath, component, version, type) => {
   // 编译后的 css 文件路径
-  const compiledCssPath = getDistFilePath(version, component, type, COMPILE_CSS_FILE);
+  const compiledCssPath = getDistFilePath(validateVersion(version), component, type, COMPILE_CSS_FILE);
 
   // 如果编译后的 css 文件不存在，则编译组件
   if (!fs.existsSync(compiledCssPath)) {
@@ -261,7 +282,7 @@ export const getNavGroups = async (releaseZipPath) => {
 };
 
 // 获取组件信息
-export const getComponentInfo = async (releaseZipPath, componentName, version) => {
+export const getComponentInfo = async (releaseZipPath, componentName) => {
   const directiveList = fs.readdirSync(path.resolve(releaseZipPath, 'directives/demo'));
   const componentDemoPath = directiveList.find(item => item.includes(componentName))
     ? path.resolve(releaseZipPath, 'directives/demo', `${componentName}.ts.js`)
@@ -277,7 +298,7 @@ export const getComponentInfo = async (releaseZipPath, componentName, version) =
 
 // 获取组件 release zip 包路径
 export const getReleaseZipPath = async (version) => {
-  const releaseZipPath = path.resolve(RELEASE_DIR, `${version}`);
+  const releaseZipPath = path.resolve(RELEASE_DIR, `${validateVersion(version)}`);
   // 如果不存在，则下载
   if (version === 'dev' && !fs.existsSync(releaseZipPath)) {
     // dev 直接复制源码
@@ -292,30 +313,30 @@ export const getReleaseZipPath = async (version) => {
 
 // 获取构建目录路径
 export const getReleaseDistPath = async (version) => {
-  return path.resolve(RELEASE_DIST_DIR, `${version}`);
-};
-
-// 清空构建目录
-export const deleteReleaseZip = (version) => {
-  const releasePath = path.resolve(RELEASE_DIR, `${version}`);
-  const releaseDistPath = path.resolve(RELEASE_DIST_DIR, `${version}`);
-  fs.rmSync(releasePath, { recursive: true, force: true });
-  fs.rmSync(releaseDistPath, { recursive: true, force: true });
+  return path.resolve(RELEASE_DIST_DIR, `${validateVersion(version)}`);
 };
 
 // 获取 npm 包 markdown 内容
 export const getNpmMarkdown = async (name) => {
+  // 验证包名
+  const validatedName = validateNpmPackageName(name);
+
   const os = require('os');
   const https = require('https');
   const tar = require('tar');
 
   try {
     // 1. 获取包信息，找到 tarball URL
-    const packageInfo = await http.get(`https://registry.npmjs.org/${name}/latest`);
+    const packageInfo = await http.get(`https://registry.npmjs.org/${validatedName}/latest`);
     const tarballUrl = packageInfo.dist?.tarball;
 
+    // 只允许从 npmjs.org 下载
+    if (!tarballUrl.includes('registry.npmjs.org')) {
+      throw new global.BusinessError('Invalid tarball URL', 400, 400);
+    }
+
     // 2. 创建临时目录
-    const tempDir = path.join(os.tmpdir(), `npm-${name.replace(/\//g, '-')}-${Date.now()}`);
+    const tempDir = path.join(os.tmpdir(), `npm-${validatedName.replace(/\//g, '-')}-${Date.now()}`);
     fs.mkdirSync(tempDir, { recursive: true });
 
     try {

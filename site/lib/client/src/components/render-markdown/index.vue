@@ -21,6 +21,7 @@ import javascript from 'highlight.js/lib/languages/javascript';
 import MarkdownIt from 'markdown-it';
 import MarkdownItContainer from 'markdown-it-container';
 import { computed } from 'vue';
+import { filterXss } from '@blueking/xss-filter';
 
 import RenderSideNavgation from '../render-side-navgation/index.vue';
 
@@ -147,7 +148,14 @@ md.renderer.rules.heading_open = function (
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 const getMarkdownHtml = () => {
-  return md.render(props.content);
+  const rawHtml = md.render(props.content);
+  // 使用 filterXss 过滤
+  return filterXss(
+    rawHtml,
+    {
+      imgSrcMode: 'none',
+    }
+  );
 };
 </script>
 

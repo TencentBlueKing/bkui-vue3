@@ -13,7 +13,8 @@ const koaMount = require('koa-mount');
 const chalk = require('chalk');
 const { historyApiFallback } = require('koa2-connect-history-api-fallback');
 const convert = require('koa-convert');
-
+const { errorMiddleware } = require('./middleware/error');
+const { securityMiddleware } = require('./middleware/security');
 const { logger } = require('./logger');
 const { routes, allowedMethods } = require('./router');
 
@@ -25,35 +26,18 @@ async function startServer() {
 
   const app = new Koa();
 
-  // 统一处理，
-  // @see https://github.com/koajs/koa/wiki/Error-Handling
-  // app.use(async (ctx, next) => {
-  //   try {
-  //     await next();
-  //   } catch (err) {
-  //     const { status } = err;
-  //     const message = err.message || '服务器内部出错';
+  // 安全头配置中间件 - 防止点击劫持和其他安全风险
+  app.use(securityMiddleware);
 
-  //     // 程序出错异常
-  //     if (CODE.HTTP.indexOf(status)) {
-  //       ctx.status = err.status || 500;
-  //       ctx.body = {
-  //         code: err.status,
-  //         message,
-  //       };
-  //     } else {
-  //       const code = err.code || CODE.BIZ.NOT_DEFINED;
-  //       ctx.body = {
-  //         code,
-  //         message,
-  //       };
-  //     }
-  //     ctx.app.emit('error', err, ctx);
-  //   }
-  // });
-  // app.on('error', (err) => {
-  //   logger.error(err.message || err);
-  // });
+  // 统一错误处理
+  app.use(errorMiddleware);
+
+  app.on('error', (err) => {
+    logger.error({
+      message: err.message,
+      stack: err.stack,
+    });
+  });
 
   app.use(bodyparser());
   // app.use(json());

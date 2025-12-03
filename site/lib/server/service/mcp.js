@@ -38,7 +38,7 @@ export const createServer = () => {
     },
     async ({ name, version }) => {
       const releaseDistPath = await getReleaseDistPath(version || await getLatestVersion());
-      const componentInfo = await getComponentInfo(releaseDistPath, name, version);
+      const componentInfo = await getComponentInfo(releaseDistPath, name);
       return {
         content: [{ type: 'text', text: JSON.stringify(componentInfo) }],
         structuredContent: componentInfo,

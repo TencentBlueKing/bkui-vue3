@@ -158,32 +158,30 @@ const filteredProps = computed(() => {
 
 // 关键字高亮函数
 const highlightKeyword = (text: string): string => {
-  if (!text) {
-    return text
-  }
+  if (!text) return text;
   
-  const keyword = searchValue.value.trim()
+  const keyword = searchValue.value.trim();
+  const truncatedText = measureTwoLineText(text, keyword);
   
-  // 先进行智能省略
-  const truncatedText = measureTwoLineText(text, keyword)
-  
-  // 调试信息：检查关键字是否在截断后的文本中
-  const lowerTruncated = truncatedText.toLowerCase()
-  const lowerKeyword = keyword.toLowerCase()
-  const keywordVisible = lowerTruncated.includes(lowerKeyword)
-  
-  if (!keywordVisible) {
-    console.warn(`关键字 "${keyword}" 在截断后的文本中不可见:`, {
-      原始文本: text,
-      截断文本: truncatedText,
-      关键字: keyword
-    })
-  }
-  
-  const escapedKeyword = searchValue.value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const regex = new RegExp(`(${escapedKeyword})`, 'gi')
-  return keyword ? truncatedText.replace(regex, '<span class="highlight-text">$1</span>') : truncatedText
-}
+  // HTML 转义
+  const escapeHtml = (str: string) => {
+    return str.replace(/[&<>"']/g, (char) => {
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      };
+      return map[char as keyof typeof map];
+    });
+  };
+
+  const escapedText = escapeHtml(truncatedText);
+  const escapedKeyword = escapeHtml(keyword).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(`(${escapedKeyword})`, 'gi');
+  return keyword ? escapedText.replace(regex, '<span class="highlight-text">$1</span>') : escapedText;
+};
 
 const displayResult = () => {
   searchResultRef.value?.style.removeProperty('display')

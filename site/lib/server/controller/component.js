@@ -6,7 +6,6 @@ import {
   OutputJavascript,
 } from '../decorator';
 import {
-  deleteReleaseZip,
   getVersions,
   getFileAuthors,
   getComponent,
@@ -86,13 +85,5 @@ export default class ComponentController {
   ) {
     const releaseZipPath = await getReleaseZipPath(version);
     return getNavGroups(releaseZipPath);
-  }
-
-  @OutputJson()
-  @Get('/release/delete')
-  deleteRelease(
-    @QueryParams({ name: 'version' }) version,
-  ) {
-    return deleteReleaseZip(version);
   }
 }
