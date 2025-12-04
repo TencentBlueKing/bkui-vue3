@@ -1,12 +1,5 @@
+import { Controller, Get, QueryParams, OutputJson, OutputJavascript } from '../decorator';
 import {
-  Controller,
-  Get,
-  QueryParams,
-  OutputJson,
-  OutputJavascript,
-} from '../decorator';
-import {
-  deleteReleaseZip,
   getVersions,
   getFileAuthors,
   getComponent,
@@ -27,11 +20,8 @@ export default class ComponentController {
 
   @OutputJson()
   @Get('/authors')
-  getAuthors(
-    @QueryParams({ name: 'name' }) name,
-    @QueryParams({ name: 'type' }) type,
-  ) {
-    let filePath
+  getAuthors(@QueryParams({ name: 'name' }) name, @QueryParams({ name: 'type' }) type) {
+    let filePath;
 
     if (type === 'component') {
       filePath = 'packages/' + name;
@@ -65,34 +55,20 @@ export default class ComponentController {
 
   @OutputJson()
   @Get('/design')
-  async getDesign(
-    @QueryParams({ name: 'name' }) name,
-  ) {
+  async getDesign(@QueryParams({ name: 'name' }) name) {
     return getDesign(name);
   }
 
   @OutputJson()
   @Get('/npm/markdown')
-  async getNpmMarkdown(
-    @QueryParams({ name: 'name' }) name,
-  ) {
+  async getNpmMarkdown(@QueryParams({ name: 'name' }) name) {
     return getNpmMarkdown(name);
   }
 
   @OutputJson()
   @Get('/nav/groups')
-  async getNavGroups(
-    @QueryParams({ name: 'version' }) version,
-  ) {
+  async getNavGroups(@QueryParams({ name: 'version' }) version) {
     const releaseZipPath = await getReleaseZipPath(version);
     return getNavGroups(releaseZipPath);
-  }
-
-  @OutputJson()
-  @Get('/release/delete')
-  deleteRelease(
-    @QueryParams({ name: 'version' }) version,
-  ) {
-    return deleteReleaseZip(version);
   }
 }

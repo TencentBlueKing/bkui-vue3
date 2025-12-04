@@ -4,7 +4,10 @@ import type {
 } from 'vue';
 import * as vue from 'vue';
 
-import { kebabToCamel } from '@/common/util';
+import {
+  isFunctionString,
+  kebabToCamel,
+} from '@/common/util';
 import type { IProp } from '@/types/component';
 
 import { compile } from '@vue/compiler-dom';
@@ -16,23 +19,6 @@ type DependentComponentsMap = Record<string, Record<string, Component>>;
  */
 function cleanFunctionParams(params: string): string {
   return params.replace(/(\w+)\s*:\s*([A-Z][^,)]*|string|number|boolean)/g, '$1');
-}
-
-/**
- * 判断字符串是否是函数字符串
- */
-function isFunctionString(value: unknown): value is string {
-  if (typeof value !== 'string') return false;
-  const trimmed = value.trim();
-  // 检查是否包含箭头函数或 function 关键字
-  // 支持格式：
-  // - () => { ... }
-  // - (param) => { ... }
-  // - async () => { ... }
-  // - function() { ... }
-  // - async function() { ... }
-  return /^\s*(async\s+)?(\([^)]*\)|[a-zA-Z_$][a-zA-Z0-9_$]*)\s*=>/.test(trimmed)
-         || /^\s*(async\s+)?function\s*\(/.test(trimmed);
 }
 
 /**

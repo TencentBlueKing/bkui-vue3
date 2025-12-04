@@ -11,6 +11,7 @@ import {
   BREAK_LINE,
   ICON_IMPORT_PATH,
   typeForVue,
+  handleReservedKeyword,
 } from "../../../constant";
 
 import {
@@ -29,6 +30,9 @@ import type {
 import {
   camelKey,
 } from "@/utils";
+import {
+  isFunctionString,
+} from "@/common/util";
 
 // 生成通用script
 export const createCommonScript = (
@@ -171,11 +175,10 @@ const createRefVariables = (
     const curPropInfo = componentProps.find(item => item.name === key || camelKey(item.name) === key);
     if (curPropInfo) {
       const curValue = createValue(curPropInfo, value);
+      // 处理保留关键字
+      const variableName = handleReservedKeyword(camelKey(key));
       
-      // 判断是否为函数类型
-      const isFunctionType = curPropInfo.type && curPropInfo.type.includes('function') && typeof value === 'string' && value.includes('=>');
-      
-      if (isFunctionType) {
+      if (isFunctionString(value)) {
         // 函数类型不用ref包裹，直接使用原始值并格式化
         const formattedValue = formatCodeIndent(value as string, 2, isTypeScript);
         
@@ -183,15 +186,14 @@ const createRefVariables = (
         const types = extractTypesFromEventParams(value as string);
         propsFunctionTypes.push(...types);
         
-        return `${BREAK_LINE}const ${camelKey(key)} = ${formattedValue}`;
+        return `${BREAK_LINE}const ${variableName} = ${formattedValue}`;
       }
 
-      
       if (isTypeScript) {
         const type = `${toPascalCase(componentName)}Props['${(toPascalCase(key, false))}']`;
-        return `const ${camelKey(key)} = ref<${type}>(${curValue});`;
+        return `const ${variableName} = ref<${type}>(${curValue});`;
       }
-      return `const ${camelKey(key)} = ref(${curValue});`;
+      return `const ${variableName} = ref(${curValue});`;
     }
     return '';
   })
@@ -202,5 +204,3 @@ const createRefVariables = (
     propsFunctionTypes,
   };
 };
-
-

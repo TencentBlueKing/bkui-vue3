@@ -369,7 +369,7 @@ const presets = [
                 }),
               1000,
             ),
-          );
+          )
         }`,
         cache: true,
         trigger: ['expand'],
