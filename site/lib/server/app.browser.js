@@ -32,7 +32,7 @@ async function startServer() {
   // 统一错误处理
   app.use(errorMiddleware);
 
-  app.on('error', (err) => {
+  app.on('error', err => {
     logger.error({
       message: err.message,
       stack: err.stack,
@@ -51,33 +51,35 @@ async function startServer() {
     map: { html: 'swig' },
   });
 
-  app.use(historyApiFallback({
-    verbose: false,
-    whiteList: ['/api'],
-    rewrites: [
-      {
-        // connect-history-api-fallback 默认会对 url 中有 . 的 url 当成静态资源处理而不是当成页面地址来处理
-        // from: /\d+\.\d+\.\d+\.\d+$/,
-        from: /\/(\d+\.)*\d+$/,
-        to: '/',
-      },
-      {
-        // connect-history-api-fallback 默认会对 url 中有 . 的 url 当成静态资源处理而不是当成页面地址来处理
-        from: /\/\/+.*\..*\//,
-        to: '/',
-      },
-    ],
-  }));
+  app.use(
+    historyApiFallback({
+      verbose: false,
+      whiteList: ['/api'],
+      rewrites: [
+        {
+          // connect-history-api-fallback 默认会对 url 中有 . 的 url 当成静态资源处理而不是当成页面地址来处理
+          // from: /\d+\.\d+\.\d+\.\d+$/,
+          from: /\/(\d+\.)*\d+$/,
+          to: '/',
+        },
+        {
+          // connect-history-api-fallback 默认会对 url 中有 . 的 url 当成静态资源处理而不是当成页面地址来处理
+          from: /\/\/+.*\..*\//,
+          to: '/',
+        },
+      ],
+    }),
+  );
 
   const server = http.createServer(app.callback());
   server.listen(PORT);
 
-  server.on('error', (error) => {
+  server.on('error', error => {
     if (error.syscall !== 'listen') {
       throw error;
     }
 
-    const bind = typeof PORT === 'string' ? (`Pipe ${PORT}`) : `Port ${PORT}`;
+    const bind = typeof PORT === 'string' ? `Pipe ${PORT}` : `Port ${PORT}`;
 
     switch (error.code) {
       case 'EACCES':

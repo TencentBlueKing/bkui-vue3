@@ -9,12 +9,7 @@ export const send = (ctx, outputData) => {
 
 // 设置请求异常
 export const throwError = (ctx, error) => {
-  const {
-    status = 500,
-    code,
-    message,
-    data,
-  } = error;
+  const { status = 500, code, message, data } = error;
 
   ctx.status = status;
   ctx.body = {
@@ -33,11 +28,11 @@ export const throwMcpError = (ctx, error) => {
     JSON.stringify({
       jsonrpc: '2.0',
       error: {
-          code: error.code,
-          message: error.message,
+        code: error.code,
+        message: error.message,
       },
-      id: null
-    })
+      id: null,
+    }),
   );
 
   console.error(error);
@@ -102,7 +97,7 @@ export const CODE = {
  *
  * @return {boolean} 是否是图片文件
  */
-export const isImageFile = (filePath) => {
+export const isImageFile = filePath => {
   const imageExtensions = ['.svg', '.png', '.jpg', '.jpeg', '.gif', '.webp'];
   return imageExtensions.some(ext => filePath.endsWith(ext));
 };
@@ -128,8 +123,9 @@ export const isAjaxReq = req => req.get('X-Requested-With') || (req.header.accep
 export const list2tree = (list = [], pid = -1, childDataKey = 'children') => {
   function tree(pid) {
     const arr = [];
-    list.filter(item => item.parentId === pid)
-      .forEach((item) => {
+    list
+      .filter(item => item.parentId === pid)
+      .forEach(item => {
         arr.push({
           ...item,
           [childDataKey]: tree(item.id),
@@ -158,7 +154,7 @@ export const flattenListPath = (list = [], pid = -1, prefixKey) => {
   }
 
   const flattenList = [];
-  list.forEach((item) => {
+  list.forEach(item => {
     flattenList.push({
       ...item,
       fullPath: [].concat(getPath(item)),
@@ -166,7 +162,7 @@ export const flattenListPath = (list = [], pid = -1, prefixKey) => {
   });
 
   const pathMap = new Map();
-  flattenList.forEach((item) => {
+  flattenList.forEach(item => {
     const { fullPath, ...node } = item;
     if (prefixKey) {
       pathMap.set([item[prefixKey]].concat(fullPath.reverse()).join('/'), node);
@@ -198,7 +194,7 @@ export async function execSql(queryRunner, path) {
   }
 }
 
-export const splitSql = (sqlString) => {
+export const splitSql = sqlString => {
   const sqlArr = [];
   let strCharNum = 0;
   let lastCharIndex = 0;

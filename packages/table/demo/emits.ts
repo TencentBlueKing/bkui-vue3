@@ -111,7 +111,7 @@ export default [
     description: '列选择时触发',
     params: [
       {
-        name: '_cols',
+        name: 'cols',
         type: 'Array<IColumnActive>',
         link: '/component/table/api#IColumnActive',
       },
@@ -122,7 +122,7 @@ export default [
     description: '列排序时触发',
     params: [
       {
-        name: '_args',
+        name: 'args',
         type: '{ column: Column; index: number; type: string }',
         link: '/component/table/api#Column',
       },
@@ -133,7 +133,7 @@ export default [
     description: '拖拽结束时触发',
     params: [
       {
-        name: '_args',
+        name: 'args',
         type: '{ sourceEvent: DragEvent; data: Array<any> }',
       },
     ],
@@ -143,7 +143,7 @@ export default [
     description: '分页每页条数变化时触发',
     params: [
       {
-        name: '_arg',
+        name: 'arg',
         type: 'number',
       },
     ],
@@ -153,7 +153,7 @@ export default [
     description: '分页页码变化时触发',
     params: [
       {
-        name: '_arg',
+        name: 'arg',
         type: 'number',
       },
     ],
@@ -163,25 +163,21 @@ export default [
     description: '行点击时触发',
     params: [
       {
-        name: '_e',
+        name: 'e',
         type: 'MouseEvent',
         description: '鼠标事件',
       },
       {
-        name: '_row',
+        name: 'row',
         type: 'any',
       },
       {
-        name: '_index',
+        name: 'index',
         type: 'number',
       },
       {
-        name: '_rows',
+        name: 'rows',
         type: 'Array<any>',
-      },
-      {
-        name: '_this',
-        type: 'any',
       },
     ],
   },
@@ -190,25 +186,21 @@ export default [
     description: '行双击时触发',
     params: [
       {
-        name: '_e',
+        name: 'e',
         type: 'MouseEvent',
         description: '鼠标事件',
       },
       {
-        name: '_row',
+        name: 'row',
         type: 'any',
       },
       {
-        name: '_index',
+        name: 'index',
         type: 'number',
       },
       {
-        name: '_rows',
+        name: 'rows',
         type: 'Array<any>',
-      },
-      {
-        name: '_this',
-        type: 'any',
       },
     ],
   },
@@ -217,7 +209,7 @@ export default [
     description: '行展开时触发',
     params: [
       {
-        name: '_args',
+        name: 'args',
         type: '{ row: any; column: Column; index: number; rows: Array<any>; e: MouseEvent }',
         link: '/component/table/api#Column',
       },
@@ -228,24 +220,20 @@ export default [
     description: '鼠标进入行时触发',
     params: [
       {
-        name: '_e',
+        name: 'e',
         type: 'MouseEvent',
       },
       {
-        name: '_row',
+        name: 'row',
         type: 'any',
       },
       {
-        name: '_index',
+        name: 'index',
         type: 'number',
       },
       {
-        name: '_rows',
+        name: 'rows',
         type: 'Array<any>',
-      },
-      {
-        name: '_this',
-        type: 'any',
       },
     ],
   },
@@ -254,24 +242,20 @@ export default [
     description: '鼠标离开行时触发',
     params: [
       {
-        name: '_e',
+        name: 'e',
         type: 'MouseEvent',
       },
       {
-        name: '_row',
+        name: 'row',
         type: 'any',
       },
       {
-        name: '_index',
+        name: 'index',
         type: 'number',
       },
       {
-        name: '_rows',
+        name: 'rows',
         type: 'Array<any>',
-      },
-      {
-        name: '_this',
-        type: 'any',
       },
     ],
   },
@@ -280,7 +264,7 @@ export default [
     description: '行选择时触发',
     params: [
       {
-        name: '_args',
+        name: 'args',
         type: '{ row: any; index: number; checked: string; data: Array<any> }',
       },
     ],
@@ -290,7 +274,7 @@ export default [
     description: '全选时触发',
     params: [
       {
-        name: '_args',
+        name: 'args',
         type: '{ checked: string; data: Array<any> }',
       },
     ],
@@ -310,7 +294,7 @@ export default [
     description: '滚动到底部时触发',
     params: [
       {
-        name: '_args',
+        name: 'args',
         type: '{ translateX: number; translateY: number; scrollTop: number; scrollLeft: number; bottom: number }',
       },
     ],

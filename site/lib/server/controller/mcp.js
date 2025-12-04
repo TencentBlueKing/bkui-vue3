@@ -1,22 +1,6 @@
-import {
-  Controller,
-  Post,
-  Get,
-  Delete,
-  Ctx,
-  OutputMcp,
-  OutputJson,
-} from '../decorator';
-import {
-  createServer,
-  createTransport,
-  getTransport,
-  isInitializeRequest,
-} from '../service/mcp';
-import {
-  throwError,
-  throwMcpError,
-} from '../util';
+import { Controller, Post, Get, Delete, Ctx, OutputMcp, OutputJson } from '../decorator';
+import { createServer, createTransport, getTransport, isInitializeRequest } from '../service/mcp';
+import { throwError, throwMcpError } from '../util';
 
 @Controller('/api')
 export default class McpController {
