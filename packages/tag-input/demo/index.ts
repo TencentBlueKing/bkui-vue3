@@ -220,6 +220,28 @@ const presets = [
       trigger: 'focus',
     },
   },
+  {
+    title: '复制',
+    description: '设置 copyable 允许复制；设置 copy-eparator 定义复制内容的分隔符（默认为回车）',
+    props: {
+      modelValue: ['shenzhen'],
+      list,
+      placeholder: '请选择城市',
+      copyable: true,
+      trigger: 'focus',
+      'copy-separator': ';',
+    },
+    events: {
+      'copy-success': `(val) => {
+        BkMessage({
+          message: \`复制成功，内容为：\${val}\`,
+        });
+      }`,
+    },
+    dependent: {
+      components: ['message'],
+    },
+  },
 ];
 
 // 组件属性，用来自动生成属性文档
@@ -414,6 +436,18 @@ const props = [
     default: '',
     link: '/component/tooltips/api#tooltipsProps',
   },
+  {
+    name: 'copyable',
+    description: '是否允许复制',
+    type: 'boolean',
+    default: 'true',
+  },
+  {
+    name: 'copy-separator',
+    description: '复制内容的分隔符',
+    type: 'string',
+    default: '\n',
+  },
 ];
 
 // 组件事件，用来自动生成事件文档
@@ -489,6 +523,16 @@ const emits = [
       {
         name: 'inputValue',
         type: 'string',
+      },
+    ],
+  },
+  {
+    name: 'copy-success',
+    description: '复制成功时触发',
+    params: [
+      {
+        name: 'tagList',
+        type: 'Array<object>',
       },
     ],
   },

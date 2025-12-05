@@ -280,6 +280,21 @@ const presets = [
       `,
     },
   },
+  {
+    title: '自定义面板',
+    description: '通过插槽自定义面板内容',
+    props: {
+      modelValue: [],
+      list,
+    },
+    slots: {
+      panel: `
+        <div class="cascader-slots-demo-panel">
+          <span>Panel Level: {{ data.level }}, Nodes: {{ data.nodes.length }}</span>
+        </div>
+      `,
+    },
+  },
 ];
 
 // 组件属性，用来自动生成属性文档
@@ -399,7 +414,7 @@ const props = [
     name: 'popoverOptions',
     description: 'popover属性',
     type: 'Partial<PopoverProps>',
-    link: '/components/popover/api#IPopoverProps',
+    link: '/component/popover/api#IPopoverProps',
     default: {},
   },
   {
@@ -517,7 +532,7 @@ const slots = [
         name: 'node',
         type: 'INode',
         description: '当前节点对象',
-        link: '/components/cascader/api#INode',
+        link: '/component/cascader/api#INode',
       },
       {
         name: 'data',
@@ -547,6 +562,29 @@ const slots = [
     description: '自定义扩展内容，显示在级联面板的底部',
     params: [],
   },
+  {
+    name: 'panel',
+    description: '自定义级联面板内容',
+    params: [
+      {
+        name: 'nodes',
+        type: 'Array<INode>',
+        description: '当前面板节点列表',
+        link: '/component/cascader/api#INode',
+      },
+      {
+        name: 'level',
+        type: 'number',
+        description: '当前面板层级',
+      },
+      {
+        name: 'activePath',
+        type: 'Array<INode>',
+        description: '当前活动路径',
+        link: '/component/cascader/api#INode',
+      },
+    ],
+  },
 ];
 
 const types = [
@@ -568,13 +606,13 @@ const types = [
         name: 'config',
         type: 'IConfig',
         description: '节点配置对象',
-        link: '/components/cascader/api#IConfig',
+        link: '/component/cascader/api#IConfig',
       },
       {
         name: 'data',
         type: 'IData',
         description: '节点原始数据',
-        link: '/components/cascader/api#IData',
+        link: '/component/cascader/api#IData',
       },
       {
         name: 'leaf',
@@ -610,7 +648,7 @@ const types = [
         name: 'parent',
         type: 'INode',
         description: '父节点对象',
-        link: '/components/cascader/api#INode',
+        link: '/component/cascader/api#INode',
       },
       {
         name: 'isDisabled',
@@ -682,7 +720,7 @@ const types = [
         name: 'children',
         type: 'IData[]',
         description: '子节点数据数组（可选）',
-        link: '/components/cascader/api#IData',
+        link: '/component/cascader/api#IData',
       },
     ],
   },

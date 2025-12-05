@@ -80,10 +80,18 @@ export default defineComponent({
         if (showChildNodes) {
           const itemPath = getNodePath(item) ?? '';
           const asParentPath = `${itemPath}-`;
-          return (
-            checkNodeIsOpen(item) &&
-            (isNodeMatched(item) || matchedNodePath.some(path => asParentPath.indexOf(`${path}-`) === 0))
-          );
+          const isNodeOpen = checkNodeIsOpen(item);
+          const isNodeMatch = isNodeMatched(item);
+          const isNodeRoot = isRootNode(item);
+          if (isNodeOpen) {
+            if (isNodeRoot) {
+              return isNodeMatch;
+            }
+
+            return isNodeMatch || matchedNodePath.some(path => asParentPath.indexOf(`${path}-`) === 0);
+          }
+
+          return false;
         }
 
         return checkNodeIsOpen(item) && isNodeMatched(item);

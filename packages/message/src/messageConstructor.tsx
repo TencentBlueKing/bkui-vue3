@@ -325,9 +325,16 @@ export default defineComponent({
       return targetJson;
     };
 
-    const setDetailsShow = (e: MouseEvent, isShow?: boolean) => {
+    const setDetailsShow = (e: MouseEvent, isShow?: boolean, shouldEmit = true) => {
       toolOperation.isDetailShow = isShow ?? !toolOperation.isDetailShow;
       fixMesage(e, toolOperation.isDetailShow);
+
+      // 用于在详情内容渲染完成后 emit 事件的回调
+      const emitAfterRender = () => {
+        if (shouldEmit && typeof props.message === 'object' && !isVNode(props.message)) {
+          emit('detail', toolOperation.isDetailShow, props.id);
+        }
+      };
 
       if (toolOperation.isDetailShow && typeof props.message === 'object' && !isVNode(props.message)) {
         if (props.message.type === MessageContentType.JSON || !props.message.type) {
@@ -340,17 +347,23 @@ export default defineComponent({
               refJsonContent.value.append(formatter.render());
             }
             copyMessage();
+            // 详情内容渲染完成后，再 emit 事件以更新位置
+            emitAfterRender();
           });
-        }
-
-        if (props.message.type === MessageContentType.KEY_VALUE) {
+        } else if (props.message.type === MessageContentType.KEY_VALUE) {
           setTimeout(() => {
             copyMessage();
             copyValueItem();
+            // 详情内容渲染完成后，再 emit 事件以更新位置
+            emitAfterRender();
           });
+        } else {
+          // 如果没有详情内容需要渲染，立即 emit
+          emitAfterRender();
         }
-
-        emit('detail', toolOperation.isDetailShow, props.id);
+      } else {
+        // 收起详情时，立即 emit 事件
+        emitAfterRender();
       }
     };
 

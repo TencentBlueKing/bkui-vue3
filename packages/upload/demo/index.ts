@@ -193,7 +193,7 @@ const props = [
     description: '上传文件',
     type: 'Array<UploadFile>',
     default: [],
-    link: '/components/upload/api#UploadFile',
+    link: '/component/upload/api#UploadFile',
   },
   {
     name: 'name',
@@ -262,7 +262,7 @@ const props = [
       }
       return false;
     },
-    link: '/components/upload/api#APIResponse',
+    link: '/component/upload/api#APIResponse',
   },
   {
     name: 'headers',
@@ -275,7 +275,7 @@ const props = [
     description: '请求头',
     type: 'HeaderDataAttr | Array<HeaderDataAttr>',
     default: [],
-    link: '/components/upload/api#HeaderDataAttr',
+    link: '/component/upload/api#HeaderDataAttr',
   },
   {
     name: 'tip',
@@ -306,14 +306,14 @@ const props = [
     description: '上传文件数据',
     type: 'ExtraFormData | Array<ExtraFormData>',
     default: [],
-    link: '/components/upload/api#ExtraFormData',
+    link: '/component/upload/api#ExtraFormData',
   },
   {
     name: 'formDataAttributes',
     description: '上传文件数据属性',
     type: 'FormDataAttr | Array<FormDataAttr>',
     default: [],
-    link: '/components/upload/api#FormDataAttr',
+    link: '/component/upload/api#FormDataAttr',
   },
   {
     name: 'extCls',
@@ -326,7 +326,7 @@ const props = [
     description: '自定义请求',
     type: '(options: UploadRequestOptions) => Promise<unknown> | XMLHttpRequest',
     default: '',
-    link: '/components/upload/api#UploadRequestOptions',
+    link: '/component/upload/api#UploadRequestOptions',
   },
   {
     name: 'selectChange',
@@ -391,7 +391,7 @@ const emits = [
       {
         name: 'fileList',
         type: 'Array<UploadFile>',
-        link: '/components/upload/api#UploadFile',
+        link: '/component/upload/api#UploadFile',
       },
     ],
   },
@@ -410,7 +410,7 @@ const emits = [
       {
         name: 'fileList',
         type: 'Array<UploadFile>',
-        link: '/components/upload/api#UploadFile',
+        link: '/component/upload/api#UploadFile',
       },
     ],
   },
@@ -429,7 +429,7 @@ const emits = [
       {
         name: 'fileList',
         type: 'Array<UploadFile>',
-        link: '/components/upload/api#UploadFile',
+        link: '/component/upload/api#UploadFile',
       },
     ],
   },
@@ -444,7 +444,7 @@ const emits = [
       {
         name: 'fileList',
         type: 'Array<UploadFile>',
-        link: '/components/upload/api#UploadFile',
+        link: '/component/upload/api#UploadFile',
       },
       {
         name: 'error',
@@ -459,12 +459,12 @@ const emits = [
       {
         name: 'file',
         type: 'UploadFile',
-        link: '/components/upload/api#UploadFile',
+        link: '/component/upload/api#UploadFile',
       },
       {
         name: 'fileList',
         type: 'Array<UploadFile>',
-        link: '/components/upload/api#UploadFile',
+        link: '/component/upload/api#UploadFile',
       },
     ],
   },
@@ -475,7 +475,7 @@ const emits = [
       {
         name: 'fileList',
         type: 'Array<UploadFile>',
-        link: '/components/upload/api#UploadFile',
+        link: '/component/upload/api#UploadFile',
       },
     ],
   },
@@ -486,12 +486,12 @@ const emits = [
       {
         name: 'file',
         type: 'UploadFile',
-        link: '/components/upload/api#UploadFile',
+        link: '/component/upload/api#UploadFile',
       },
       {
         name: 'files',
         type: 'Array<UploadFile>',
-        link: '/components/upload/api#UploadFile',
+        link: '/component/upload/api#UploadFile',
       },
     ],
   },
@@ -643,13 +643,13 @@ const types = [
         name: 'data',
         type: 'ExtraFormData | Array<ExtraFormData>',
         description: '上传数据',
-        link: '/components/upload/api#ExtraFormData',
+        link: '/component/upload/api#ExtraFormData',
       },
       {
         name: 'formDataAttributes',
         type: 'FormDataAttr | Array<FormDataAttr>',
         description: '表单数据属性',
-        link: '/components/upload/api#FormDataAttr',
+        link: '/component/upload/api#FormDataAttr',
       },
       {
         name: 'filename',
@@ -670,7 +670,7 @@ const types = [
         name: 'header',
         type: 'HeaderDataAttr | Array<HeaderDataAttr>',
         description: '请求头',
-        link: '/components/upload/api#HeaderDataAttr',
+        link: '/component/upload/api#HeaderDataAttr',
       },
       {
         name: 'withCredentials',
@@ -706,7 +706,7 @@ const types = [
         name: 'onSuccess',
         type: '(res: APIResponse | XMLHttpRequestResponseType | unknown) => void',
         description: '上传成功',
-        link: '/components/upload/api#APIResponse',
+        link: '/component/upload/api#APIResponse',
       },
       {
         name: 'onComplete',
@@ -737,7 +737,7 @@ const slots = [
       {
         name: 'file',
         type: '{ file: UploadFile }',
-        link: '/components/upload/api#UploadFile',
+        link: '/component/upload/api#UploadFile',
       },
     ],
   },

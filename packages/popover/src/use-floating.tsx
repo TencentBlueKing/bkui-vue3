@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { computed, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 
 import { bkZIndexManager } from '@bkui-vue/shared';
 import {
@@ -220,6 +220,27 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
 
   let cleanup = null;
 
+  // 清理所有定时器的函数
+  const clearAllTimers = () => {
+    if (popHideTimerId) {
+      clearTimeout(popHideTimerId);
+      popHideTimerId = undefined;
+    }
+    if (popShowTimerId) {
+      clearTimeout(popShowTimerId);
+      popShowTimerId = undefined;
+    }
+  };
+
+  // 包装 cleanup 函数，确保在清理时也清理定时器
+  const wrappedCleanup = () => {
+    clearAllTimers();
+    if (cleanup) {
+      cleanup();
+      cleanup = null;
+    }
+  };
+
   const getRoundPixelVal = (val: number) => {
     const dpr = window.devicePixelRatio || 1;
     return Math.round(val * dpr) / dpr || 0;
@@ -271,8 +292,38 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     }
   };
 
-  const createPopInstance = () => {
+  const createPopInstance = (retryCount = 0) => {
     const { elReference, elContent } = resolvePopElements();
+
+    // 检查元素是否存在，如果不存在则延迟创建实例
+    // 这通常发生在 renderDirective = 'show' 时，Content 通过 Teleport 渲染，可能还未完全挂载
+    if (!elReference || !elContent) {
+      // 限制重试次数，避免无限循环
+      if (retryCount >= 10) {
+        console.warn('[Popover] Failed to create popover instance: elements not found after retries');
+        return;
+      }
+
+      // 使用 nextTick 等待 DOM 更新完成，特别是等待 Teleport 完成
+      nextTick(() => {
+        createPopInstance(retryCount + 1);
+      });
+      return;
+    }
+
+    // 确保元素已经挂载到 DOM 中（对于 Teleport 渲染的元素很重要）
+    if (!elReference.isConnected || !elContent.isConnected) {
+      if (retryCount >= 10) {
+        console.warn('[Popover] Failed to create popover instance: elements not connected to DOM after retries');
+        return;
+      }
+
+      nextTick(() => {
+        createPopInstance(retryCount + 1);
+      });
+      return;
+    }
+
     cleanup = autoUpdate(elReference, elContent, () => {
       if (localIsShow.value) {
         updatePopover(null, props);
@@ -325,6 +376,11 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     const delay = resolvePopoverDelay()[0];
     // 设置settimeout避免hidePopover导致显示问题
     popShowTimerId = setTimeout(() => {
+      // 检查组件是否仍然存在，避免在组件卸载后更新状态
+      if (!refContent.value) {
+        return;
+      }
+
       // if (popHideTimerId) {
       //   clearTimeout(popHideTimerId);
       // }
@@ -337,6 +393,11 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
   const hidePopover = () => {
     const delay = resolvePopoverDelay()[1];
     popHideTimerId = setTimeout(() => {
+      // 检查组件是否仍然存在，避免在组件卸载后更新状态
+      if (!refContent.value) {
+        return;
+      }
+
       popShowTimerId && clearTimeout(popShowTimerId);
       isMouseenter = false;
       localIsShow.value = false;
@@ -345,17 +406,34 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
 
   const handlePopoverShow = () => {
     const elContent = resolveTargetElement(refContent.value?.$el) as HTMLElement;
+    // 检查元素是否存在，避免在 null 上访问 style 属性
+    if (!elContent) {
+      return;
+    }
+
     elContent.style.setProperty('display', 'block');
     elContent.style.setProperty('z-index', `${props.zIndex ? props.zIndex : bkZIndexManager.getPopperIndex()}`);
     updatePopover();
 
-    ctx.emit(EMIT_EVENTS.CONTENT_AfterShow, { isShow: true });
+    // 检查 ctx 是否存在，避免在 null 上调用 emit
+    if (ctx?.emit) {
+      ctx.emit(EMIT_EVENTS.CONTENT_AfterShow, { isShow: true });
+    }
   };
 
   const handlePopoverHide = () => {
     const elContent = resolveTargetElement(refContent.value?.$el);
+    // 检查元素是否存在，避免在 null 上访问 style 属性
+    if (!elContent) {
+      return;
+    }
+
     elContent.style.setProperty('display', 'none');
-    ctx.emit(EMIT_EVENTS.CONTENT_AfterHidden, { isShow: false });
+
+    // 检查 ctx 是否存在，避免在 null 上调用 emit
+    if (ctx?.emit) {
+      ctx.emit(EMIT_EVENTS.CONTENT_AfterHidden, { isShow: false });
+    }
   };
 
   const triggerPopover = () => {
@@ -398,14 +476,18 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
    * 例如：鼠标移入内容区域，则取消弹出内容隐藏操作
    */
   const emitPopContentMouseEnter = (e: MouseEvent) => {
-    ctx.emit(EMIT_EVENTS.CONTENT_MOUSEENTER, e);
+    if (ctx?.emit) {
+      ctx.emit(EMIT_EVENTS.CONTENT_MOUSEENTER, e);
+    }
   };
 
   /**
    * 弹出内容鼠标移出事件
    */
   const emitPopContentMouseLeave = (e: MouseEvent) => {
-    ctx.emit(EMIT_EVENTS.CONTENT_MOUSELEAVE, e);
+    if (ctx?.emit) {
+      ctx.emit(EMIT_EVENTS.CONTENT_MOUSELEAVE, e);
+    }
   };
 
   const resolveTriggerEvents = () => {
@@ -480,6 +562,6 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     getFullscreenRoot,
     stopHide,
     localIsShow,
-    cleanup,
+    cleanup: wrappedCleanup,
   };
 };

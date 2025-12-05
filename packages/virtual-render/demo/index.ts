@@ -194,7 +194,7 @@ const props = [
     description: '是否允许滚动条改变原有DOM结构',
     type: 'IScrollbarOption',
     default: '{ enabled: true }',
-    link: '/components/virtual-render/api#IScrollbarOption',
+    link: '/component/virtual-render/api#IScrollbarOption',
   },
   {
     name: 'autoReset',

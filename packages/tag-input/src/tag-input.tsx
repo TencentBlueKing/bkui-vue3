@@ -28,7 +28,7 @@ import { computed, defineComponent, nextTick, onMounted, reactive, type Ref, ref
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
-import { Close, Error } from '@bkui-vue/icon';
+import { Close, Error, Copy } from '@bkui-vue/icon';
 import Loading, { BkLoadingSize } from '@bkui-vue/loading';
 import Popover from '@bkui-vue/popover';
 import { useFormItem } from '@bkui-vue/shared';
@@ -107,6 +107,10 @@ export default defineComponent({
         !props.disabled &&
         listState.selectedTagList.length !== 0 &&
         (props.showClearOnlyHover ? state.isHover : true),
+    );
+    const isShowCopy = computed(
+      () =>
+        props.copyable && listState.selectedTagList.length !== 0 && (props.showClearOnlyHover ? state.isHover : true),
     );
     const triggerClass = computed(() => ({
       [`${resolveClassName('tag-input-trigger')}`]: true,
@@ -962,6 +966,41 @@ export default defineComponent({
       }, []),
     );
 
+    const handleCopy = (e: MouseEvent) => {
+      e.stopPropagation();
+
+      // 获取选中的 tag 列表
+      const selectedTags = listState.selectedTagList;
+      if (selectedTags.length === 0) {
+        return;
+      }
+
+      // 将选中的 tags 按换行分隔
+      const copyText = selectedTags.map(tag => tag[props.displayKey]).join(props.copySeparator);
+
+      if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(copyText).catch(err => {
+          console.error('Failed to copy:', err);
+        });
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = copyText;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+          document.execCommand('copy');
+        } catch (err) {
+          console.error('Failed to copy:', err);
+        }
+        document.body.removeChild(textarea);
+      }
+      setTimeout(() => {
+        emit('copy-success', tagList.value);
+      });
+    };
+
     return {
       popoverProps,
       ...toRefs(state),
@@ -969,6 +1008,7 @@ export default defineComponent({
       ...toRefs(pageState),
       isShowPlaceholder,
       isShowClear,
+      isShowCopy,
       placeholderText,
       curInputValue,
       renderList,
@@ -998,6 +1038,7 @@ export default defineComponent({
       resolveClassName,
       handleTagDblclick,
       handleTagDblclickChange,
+      handleCopy,
     };
   },
   render() {
@@ -1100,13 +1141,23 @@ export default defineComponent({
                 >
                   {this.placeholderText}
                 </p>
-                {this.$slots?.suffix?.() ??
-                  (this.isShowClear && (
-                    <Close
-                      class='clear-icon'
-                      onClick={this.handleClear}
-                    />
-                  ))}
+                {this.$slots?.suffix?.() ?? (
+                  <div class='icon-wrapper'>
+                    {this.isShowCopy && (
+                      <Copy
+                        class='copy-icon'
+                        title='复制'
+                        onClick={this.handleCopy}
+                      />
+                    )}
+                    {this.isShowClear && (
+                      <Close
+                        class='clear-icon'
+                        onClick={this.handleClear}
+                      />
+                    )}
+                  </div>
+                )}
               </div>
             ),
             content: () => (
