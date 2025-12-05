@@ -1,6 +1,12 @@
 ## 更新日志
 
 
+### 2.0.2-beta.80
+
+* **[feat]**:
+    - feat(steps): 新增 disable 状态
+
+
 ### 2.0.2-beta.79
 
 * **[feat]**:
