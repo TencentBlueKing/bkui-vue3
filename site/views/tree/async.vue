@@ -16,6 +16,7 @@
           :auto-check-children="false"
           :data="treeData"
           :selected="selected"
+          :node-content-action="['selected', 'click', 'expand', 'collapse']"
           children="children"
           label="name"
           node-key="id"
