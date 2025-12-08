@@ -5,15 +5,10 @@ import { bkTooltips, Tag as BkTag } from 'bkui-vue';
 import type {
   IProp
 } from '@/types/component';
-import {
-  useClipboard,
-} from '@vueuse/core';
 
 import './index.postcss';
+import { copyToClipboard } from '@/common/util';
 
-const { copy } = useClipboard({
-  legacy: true,
-});
 const SHOW_KEYS: Record<Exclude<keyof IProp, 'link' | 'isSupportVModel' | 'params'>, string> = {
   name: '参数',
   description: '说明',
@@ -69,8 +64,9 @@ export default defineComponent({
     }));
     const copyAttrName = async () => {
       try {
-        await copy(nameVal.value);
-        content.value = '复制成功';
+        const tips = '复制成功';
+        await copyToClipboard(nameVal.value, tips, true);
+        content.value = tips;
       } catch (error) {
         content.value = '复制失败';
       } finally {

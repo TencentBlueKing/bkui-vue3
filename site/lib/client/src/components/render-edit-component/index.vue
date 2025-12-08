@@ -56,6 +56,9 @@
                   v-if="!loadingDependentComponents"
                   class="edit-component-view"
                   :key="renderPresetIndex + componentWiki.name"
+                  :style="{
+                    padding: mainPanel === MainPanel.Component ? '0 24px' : 'unset'
+                  }"
                 >
                   <render-component
                     v-if="mainPanel === MainPanel.Component"
@@ -278,7 +281,6 @@ onUnmounted(() => {
   height: 100%;
   overflow: auto;
   background: #f3f3fa;
-  padding: 0 24px;
 
   .edit-component-component {
     align-self: center;

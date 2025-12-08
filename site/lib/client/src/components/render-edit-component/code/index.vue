@@ -58,9 +58,6 @@ import type {
   ValueType,
 } from '@/types/component';
 
-import {
-  useClipboard,
-} from '@vueuse/core';
 import 'highlight.js/styles/atom-one-dark.css'; // 代码块高亮样式
 import type{
   ILanguage,
@@ -98,6 +95,7 @@ import {
 import {
   createCommonTemplate,
 } from './parser/template/type/common';
+import { copyToClipboard } from '@/common/util';
 
 interface IProps {
   componentWiki: IComponentWiki;
@@ -113,9 +111,6 @@ interface LanguageItem<T = CodeLanguages> {
 const activeLanguage = defineModel<CodeLanguages>('activeLanguage', { default: 'typescript' });
 const props = defineProps<IProps>();
 
-const { copy } = useClipboard({
-  legacy: true, // 使用 execCommand 作为后备处理副本
-});
 const { highlightFactory } = useHighLightJs();
 
 const supportLanguages = ref<LanguageItem[]>([
@@ -259,22 +254,8 @@ const getCode = () => {
 };
 
 // 复制代码
-const handleCopyCode = async () => {
-  try {
-    await copy(getCode());
-    Message({
-      message: '复制成功',
-      theme: 'success',
-      delay: 1500,
-    });
-  } catch (err) {
-    console.error(err);
-    Message({
-      message: '复制失败',
-      theme: 'error',
-      delay: 1500,
-    });
-  }
+const handleCopyCode = () => {
+  copyToClipboard(getCode());
 };
 </script>
 

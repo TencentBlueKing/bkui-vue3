@@ -1,15 +1,5 @@
-import {
-  Message,
-} from 'bkui-vue';
+import { copyToClipboard } from '@/common/util';
 import * as vue from 'vue';
-
-import {
-  useClipboard,
-} from '@vueuse/core';
-
-const { copy } = useClipboard({
-  legacy: true,
-});
 
 export default vue.defineComponent({
   name: 'RenderIcon',
@@ -36,11 +26,7 @@ export default vue.defineComponent({
               cursor: 'pointer',
             },
             onclick() {
-              copy(key);
-              Message({
-                message: `复制Icon名【${key}】成功`,
-                theme: 'success',
-              });
+              copyToClipboard(key, `复制Icon名【${key}】成功`);
             },
           },
         );
