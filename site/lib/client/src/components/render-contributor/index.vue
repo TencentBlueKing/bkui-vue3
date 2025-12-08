@@ -1,7 +1,7 @@
 <template>
   <bk-loading
     :loading="loading"
-     color="#f5f7fb"
+    color="#f5f7fb"
     class="contributor-wrapper"
   >
     <h3 class="title">
@@ -29,19 +29,20 @@
 </template>
 <script lang="ts" setup>
 import {
-  ref,
-  watch,
-} from 'vue';
-import {
   bkTooltips,
   Loading as BkLoading,
 } from 'bkui-vue';
 import {
+  ref,
+  watch,
+} from 'vue';
+
+import {
   getFileAuthors,
 } from '@/http/api';
 import {
-  useComponent
-} from "@/store/component";
+  useComponent,
+} from '@/store/component';
 import type {
   IFileAuthor,
 } from '@/types/component';
@@ -50,7 +51,7 @@ const componentStore = useComponent();
 
 const vBkTooltips = bkTooltips;
 
-const authorList = ref<IFileAuthor[]>([])
+const authorList = ref<IFileAuthor[]>([]);
 const loading = ref(false);
 
 const getFileAuthorList = async (name: string) => {
@@ -63,17 +64,17 @@ const getFileAuthorList = async (name: string) => {
   } finally {
     loading.value = false;
   }
-}
+};
 
 watch(
   () => componentStore.activeComponentWiki.name,
   (name) => {
-    getFileAuthorList(name)
+    getFileAuthorList(name);
   },
   {
-    immediate: true
-  }
-)
+    immediate: true,
+  },
+);
 </script>
 <style lang="postcss" scoped>
 .contributor-wrapper {

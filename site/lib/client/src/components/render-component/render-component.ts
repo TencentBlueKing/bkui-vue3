@@ -237,6 +237,7 @@ export default vue.defineComponent({
         },
         renderSlots,
       );
+      console.log('renderProps', renderProps);
 
       // 如果是 Backtop 组件
       if (this.component.default.name === 'Backtop') {

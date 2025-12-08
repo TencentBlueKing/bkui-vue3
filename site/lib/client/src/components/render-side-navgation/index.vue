@@ -5,7 +5,10 @@
       v-if="navItems.length > 0"
       class="sidebar"
     >
-      <nav>
+      <nav
+        ref="navListContainer"
+        class="nav-list-container g-scrollbar"
+      >
         <ul class="nav-list">
           <li
             v-for="item in navItems"
@@ -14,6 +17,7 @@
           >
             <a
               :href="`#${item.id}`"
+              :ref="(el) => setNavLinkRef(el, item.id)"
               class="nav-link"
               :class="{ active: activeAnchor === item.id }"
               @click="handleNavClick(item.id)"
@@ -31,7 +35,7 @@
 import {
   OverflowTitle as BkOverflowTitle,
 } from 'bkui-vue';
-import { nextTick, onMounted, onUnmounted, ref } from 'vue';
+import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 interface IProps {
@@ -53,8 +57,67 @@ const activeAnchor = ref('');
 const isClickScrolling = ref(false);
 // 滚动容器
 const scrollContainer = ref<HTMLElement | null>(null);
+// 导航列表容器
+const navListContainer = ref<HTMLElement | null>(null);
+// 导航链接元素引用
+const navLinkRefs = ref<Record<string, HTMLElement>>({});
 // 点击滚动的定时器
 let scrollTimer: ReturnType<typeof setTimeout> | null = null;
+// 是否正在滚动导航列表（防止循环触发）
+const isScrollingNavList = ref(false);
+
+/**
+ * @description 设置导航链接引用
+ * @param el 元素引用
+ * @param id 锚点ID
+ */
+const setNavLinkRef = (el: unknown, id: string) => {
+  if (el && el instanceof HTMLElement) {
+    navLinkRefs.value[id] = el;
+  }
+};
+
+/**
+ * @description 将激活的导航项滚动到容器中央
+ * @param id 锚点ID
+ */
+const scrollActiveNavToCenter = (id: string) => {
+  if (!navListContainer.value) return;
+
+  const activeLink = navLinkRefs.value[id];
+  if (!activeLink) return;
+
+  const container = navListContainer.value;
+  const containerRect = container.getBoundingClientRect();
+  const linkRect = activeLink.getBoundingClientRect();
+
+  // 检查链接是否在可视区域内
+  const isVisible = (
+    linkRect.top >= containerRect.top
+    && linkRect.bottom <= containerRect.bottom
+  );
+
+  // 如果不在可视区域内，滚动到中央
+  if (!isVisible) {
+    isScrollingNavList.value = true;
+    const containerHeight = containerRect.height;
+    const linkTop = activeLink.offsetTop;
+    const linkHeight = activeLink.offsetHeight;
+
+    // 计算滚动位置：将链接滚动到容器中央
+    const scrollTop = linkTop - (containerHeight / 2) + (linkHeight / 2);
+
+    container.scrollTo({
+      top: Math.max(0, scrollTop),
+      behavior: 'smooth',
+    });
+
+    // 滚动完成后重置标志
+    setTimeout(() => {
+      isScrollingNavList.value = false;
+    }, 500);
+  }
+};
 
 /**
  * @description 处理导航点击
@@ -143,6 +206,15 @@ const updateActiveAnchor = () => {
   }
 };
 
+// 监听 activeAnchor 变化，自动滚动到中央
+watch(activeAnchor, (newId) => {
+  if (newId && !isScrollingNavList.value) {
+    nextTick(() => {
+      scrollActiveNavToCenter(newId);
+    });
+  }
+});
+
 onMounted(() => {
   nextTick(() => {
     // 初始化激活的锚点
@@ -174,6 +246,11 @@ onUnmounted(() => {
   max-height: 100%;
   top: 20px;
   align-self: flex-start; /* 确保侧边栏从顶部开始 */
+}
+
+.nav-list-container {
+  height: calc(100vh - 212px);
+  overflow-y: auto;
 }
 
 .nav-list {

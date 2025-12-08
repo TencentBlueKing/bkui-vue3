@@ -16,6 +16,9 @@
           <span class="preset-name">
             {{ preset.title }}
           </span>
+          <div class="preset-description">
+            <bk-overflow-title :line-clamp="2" :content="preset.description" />
+          </div>
         </li>
       </ul>
     </div>
@@ -23,6 +26,10 @@
 </template>
 
 <script lang="ts" setup>
+import {
+  OverflowTitle as BkOverflowTitle,
+} from 'bkui-vue';
+
 import type {
   IComponentWiki,
 } from '@/types/component';
@@ -76,13 +83,25 @@ const emit = defineEmits<IEmits>();
       font-size: 12px;
 
       li {
-        padding: 8px;
+        padding: 5px 16px;
         color: #313238;
         background-color: #F5F7FA;
         margin-bottom: 12px;
-        text-align: center;
+        /* text-align: center; */
         line-height: 20px;
         cursor: pointer;
+      }
+
+      .preset-name {
+        font-weight: bold;
+        font-size: 14px;
+        line-height: 20px;
+      }
+
+      .preset-description {
+        margin-top: 4px;
+        line-height: 20px;
+        color: #63656E;
       }
 
       .active-preset {

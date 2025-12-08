@@ -37,9 +37,14 @@ function parseFunctionString(functionCode: string): (...args: unknown[]) => unkn
 }
 
 /**
- * 递归处理对象和数组中的函数字符串
+ * 递归处理对象和数组中的函数字符串或其他类型
  */
-function deepParseFunctions(value: unknown): unknown {
+function deepParseValue(value: unknown): unknown {
+  // 如果是 Date 对象，直接返回
+  if (Object.prototype.toString.call(value) === '[object Date]') {
+    return value;
+  }
+
   // 如果是函数字符串，转换为函数
   if (isFunctionString(value)) {
     return parseFunctionString(value);
@@ -47,14 +52,14 @@ function deepParseFunctions(value: unknown): unknown {
 
   // 如果是数组，递归处理每个元素
   if (Array.isArray(value)) {
-    return value.map(item => deepParseFunctions(item));
+    return value.map(item => deepParseValue(item));
   }
 
   // 如果是对象，递归处理每个属性
   if (value !== null && typeof value === 'object') {
     const result: Record<string, unknown> = {};
     for (const [key, val] of Object.entries(value)) {
-      result[key] = deepParseFunctions(val);
+      result[key] = deepParseValue(val);
     }
     return result;
   }
@@ -165,9 +170,9 @@ export function processRenderProps(
         acc[prop.name] = propValue;
       }
     } else {
-      // 对于非函数类型，也要递归处理对象和数组中的函数字符串
+      // 对于非函数类型，也要递归处理对象和数组中的函数字符串或其他类型
       // 例如：nav-items 数组中的 action 函数，async 对象中的 callback 函数
-      acc[prop.name] = deepParseFunctions(propValue);
+      acc[prop.name] = deepParseValue(propValue);
     }
 
     // 处理 v-model 支持

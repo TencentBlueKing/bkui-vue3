@@ -66,11 +66,12 @@
                   ]"
                   @click="handleChooseCom(item)"
                 >
+                  <!-- eslint-disable vue/no-v-html -->
                   <span
-                    v-html="`${item.componentWiki.title} ${item.componentWiki.titleCN}`
-                      ?.replace(new RegExp(`(${searchVal})`, 'i'), '<em>$1</em>')"
+                    v-html="highlightText(item.componentWiki.title, item.componentWiki.titleCN, searchVal)"
                     class="text"
                   />
+                  <!-- eslint-enable vue/no-v-html -->
                 </li>
               </template>
               <li
@@ -202,6 +203,8 @@ import {
   VERSION_KEY,
 } from '@/types/contants';
 
+import { filterXss } from '@blueking/xss-filter';
+
 const route = useRoute();
 const router = useRouter();
 
@@ -227,6 +230,13 @@ const startList: IComponentWiki[] = [{
   titleCN: '快速上手',
   description: '本组件库基于Vue3研发，本节介绍如何在项目中结合 webpack 一起使用 @blueking/bkui-vue。',
   presets: [] as IComponentWiki['presets'],
+}, {
+  group: '版本日志',
+  name: 'changelog',
+  title: '',
+  titleCN: '版本日志',
+  description: '本组件库版本日志',
+  presets: [] as IComponentWiki['presets'],
 }];
 
 const searchVal = ref('');
@@ -241,6 +251,35 @@ const renderList = ref<IComponentMeta[]>([]);
 
 const hidePopover = () => {
   isPopoverShow.value = false;
+};
+
+/**
+ * 高亮文本并过滤 XSS，允许 em 标签
+ */
+const highlightText = (title: string, titleCN: string, searchVal: string): string => {
+  const text = `${title || ''} ${titleCN || ''}`.trim();
+  if (!searchVal.trim()) {
+    return filterXss(text);
+  }
+  // 先高亮匹配的文本
+  const highlighted = text.replace(new RegExp(`(${searchVal})`, 'gi'), '<em>$1</em>');
+  // 使用 filterXss 过滤，但允许 em 标签
+  return filterXss(highlighted, {
+    onTagAttr: (tag: string, name: string) => {
+      // 允许 em 标签的所有属性
+      if (tag === 'em') {
+        return name;
+      }
+      return false;
+    },
+    onTag: (tag: string, html: string) => {
+      // 允许 em 标签
+      if (tag === 'em') {
+        return html;
+      }
+      return '';
+    },
+  });
 };
 
 const handleSearch = () => {
@@ -331,7 +370,7 @@ const handleChoose = async (value: IComponentWiki, routerName = 'component') => 
     componentStore.activeComponentWiki = value;
   }
   await router.push({
-    name: routerName,
+    name: value.name === 'changelog' ? 'changelog' : routerName,
     params: {
       name: value.name,
     },

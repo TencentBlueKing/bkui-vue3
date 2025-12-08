@@ -6,6 +6,7 @@ const ComponentDemo = () => import(/* webpackChunkName: "component" */ '../views
 const ComponentApi = () => import(/* webpackChunkName: "component" */ '../views/children/component/children/api.vue');
 const ComponentDesign = () => import(/* webpackChunkName: "component" */ '../views/children/component/children/design.vue');
 const Markdown = () => import(/* webpackChunkName: "markdown" */ '../views/children/markdown/index.vue');
+const Changelog = () => import(/* webpackChunkName: "changelog" */ '../views/children/changelog/index.vue');
 
 const router = createRouter({
   history: createWebHistory(window.SITE_URL),
@@ -69,6 +70,11 @@ const router = createRouter({
           path: 'business-component/:name',
           name: 'business-component',
           component: Markdown,
+        },
+        {
+          path: 'markdown/:name',
+          name: 'changelog',
+          component: Changelog,
         },
         {
           path: 'markdown/:name',
