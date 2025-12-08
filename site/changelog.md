@@ -1,6 +1,12 @@
 ## 更新日志
 
 
+### 2.0.2-beta.81
+
+* **[feat]**:
+    - fix(tree): 修复tree组件nodeContentAction配置在异步加载过程中展开收起支持的问题修复
+
+
 ### 2.0.2-beta.80
 
 * **[feat]**:
