@@ -1,6 +1,38 @@
 ## 更新日志
 
 
+### 2.0.2-beta.81
+
+* **[feat]**:
+    - fix(tree): 修复tree组件nodeContentAction配置在异步加载过程中展开收起支持的问题修复
+
+
+### 2.0.2-beta.80
+
+* **[feat]**:
+    - feat(steps): 新增 disable 状态
+
+
+### 2.0.2-beta.79
+
+* **[feat]**:
+    - bugfix(tree): 刷新tree列表后搜索异常
+    - fix(popover): 修复renderDirective=show渲染问题
+
+
+### 2.0.2-beta.77
+
+* **[feat]**:
+    - bugfix(select): 修复 select 搜索时loading 没有盖住下拉 & 快速输入时抖动问题
+    - fix(message): 多个消息弹出时展开详情自动计算并更新弹出位置
+
+
+### 2.0.2-beta.76
+
+* **[feat]**:
+    - bugfix(loading): 指令模式下与v-if合用存在遮罩异常
+
+
 ### 2.0.2-beta.75
 
 * **[feat]**:

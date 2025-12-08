@@ -312,9 +312,13 @@ export default defineComponent({
       return false;
     });
     // 是否显示select下拉内容
-    const isShowSelectContent = computed(
-      () => !(searchLoading.value || isOptionsEmpty.value || isSearchEmpty.value) || customContent.value,
-    );
+    const isShowSelectContent = computed(() => {
+      // 自定义内容时始终显示
+      if (customContent.value) return true;
+
+      // 加载中、无数据、无搜索结果时不显示下拉内容
+      return !(searchLoading.value || isOptionsEmpty.value || isSearchEmpty.value);
+    });
     // 是否显示全选
     const isShowSelectAll = computed(
       () => multiple.value && showSelectAll.value && (!curSearchValue.value || !filterable.value),
@@ -1133,7 +1137,10 @@ export default defineComponent({
             <span>{this.curContentText}</span>
           </div>
         )}
-        <div class={this.resolveClassName('select-content')}>
+        <div
+          class={this.resolveClassName('select-content')}
+          v-show={this.isShowSelectContent}
+        >
           <div
             ref='scrollContainerRef'
             style={{ maxHeight: `${this.scrollHeight}px`, minHeight: `${this.minHeight}px` }}
