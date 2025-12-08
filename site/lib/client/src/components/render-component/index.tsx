@@ -88,7 +88,6 @@ export default vue.defineComponent({
   },
   methods: {
     handleUpdateRenderProps(value: Record<string, unknown>) {
-      console.log('handleUpdateRenderProps', value, this.renderProps);
       // 如果新值和当前 renderProps，避免不必要的更新
       if (isEqual(value, this.renderProps)) {
         return;

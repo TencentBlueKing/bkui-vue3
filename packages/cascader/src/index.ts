@@ -32,7 +32,7 @@ const BkCascader = withInstallProps(Component, { CascaderPanel });
 export default BkCascader;
 export { BkCascader, CascaderPanel as BkCascaderPanel };
 export type { CascaderEmits, CascaderPanelEmits } from './emits';
-export type { CascaderProps, CascaderPanelProps } from './props';
 export type { INode, IConfig, IData } from './interface';
+export type { CascaderProps, CascaderPanelProps } from './props';
 export type CascaderInstance = InstanceType<typeof Component>;
 export type CascaderPanelInstance = InstanceType<typeof CascaderPanel>;

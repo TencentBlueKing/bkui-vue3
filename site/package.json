@@ -26,7 +26,7 @@
     "@blueking/ai-blueking": "^1.2.9",
     "@blueking/babel-preset-bk": "^2.1.0",
     "@blueking/cli-service": "0.1.0-beta.31",
-    "@blueking/eslint-config-bk": "3.0.0-beta.6",
+    "@blueking/eslint-config-bk": "3.0.0-beta.8",
     "@blueking/fork-resize-detector": "0.0.2",
     "@blueking/magicbox-header": "1.1.63",
     "@blueking/stylelint-config-bk": "3.0.0-beta.1",

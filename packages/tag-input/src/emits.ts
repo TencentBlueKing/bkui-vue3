@@ -35,6 +35,7 @@ export const emits = {
   removeAll: () => true,
   blur: (_inputType: string, _value: TagInputProps['saveKey'][]) => true,
   input: (_value: string) => _value,
+  'copy-success': (_value: TagInputProps['list']) => _value,
 };
 
 export type TagInputEmits = typeof emits;

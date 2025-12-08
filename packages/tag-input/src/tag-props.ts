@@ -91,6 +91,8 @@ export const props = {
     type: Object as PropType<Partial<IOptions>>,
     default: () => ({}),
   },
+  copyable: PropTypes.bool.def(true),
+  copySeparator: PropTypes.string.def('\n'),
 };
 
 export type TagInputProps = Partial<ExtractPropTypes<typeof props>>;

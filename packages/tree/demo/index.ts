@@ -462,7 +462,7 @@ const props = [
     description: '异步加载节点数据配置',
     type: 'AsyncOption',
     default: '{callback: undefined, cache: true, deepAutoOpen: "once", trigger: null}',
-    link: '/components/tree/api#AsyncOption',
+    link: '/component/tree/api#AsyncOption',
   },
   {
     name: 'offsetLeft',
@@ -475,7 +475,7 @@ const props = [
     description: '搜索配置,可以为一个配置项 SearchOption, 或者直接为一个字符串|数值|布尔值，如此则模糊匹配此值',
     type: 'SearchOption | string | number | boolean',
     default: 'undefined',
-    link: '/components/tree/api#SearchOption',
+    link: '/component/tree/api#SearchOption',
   },
   {
     name: 'emptyText',
@@ -626,7 +626,7 @@ const emits = [
       {
         name: 'node',
         type: '{ selected: boolean, node: TreeNode }',
-        link: '/components/tree/api#TreeNode',
+        link: '/component/tree/api#TreeNode',
       },
     ],
   },
@@ -637,7 +637,7 @@ const emits = [
       {
         name: 'item',
         type: 'TreeNode',
-        link: '/components/tree/api#TreeNode',
+        link: '/component/tree/api#TreeNode',
       },
       {
         name: 'resolveScopedSlotParam',
@@ -660,7 +660,7 @@ const emits = [
       {
         name: 'item',
         type: 'TreeNode',
-        link: '/components/tree/api#TreeNode',
+        link: '/component/tree/api#TreeNode',
       },
       {
         name: 'resolveScopedSlotParam',
@@ -683,7 +683,7 @@ const emits = [
       {
         name: 'item',
         type: 'TreeNode',
-        link: '/components/tree/api#TreeNode',
+        link: '/component/tree/api#TreeNode',
       },
       {
         name: 'resolveScopedSlotParam',
@@ -738,12 +738,12 @@ const emits = [
       {
         name: 'sourceNode',
         type: 'TreeNode',
-        link: '/components/tree/api#TreeNode',
+        link: '/component/tree/api#TreeNode',
       },
       {
         name: 'targetNode',
         type: 'TreeNode',
-        link: '/components/tree/api#TreeNode',
+        link: '/component/tree/api#TreeNode',
       },
       {
         name: 'sourceIndex',
@@ -798,7 +798,7 @@ const emits = [
       {
         name: 'result',
         type: '{ level: number, target: HTMLElement, index: number, parent: TreeNode, node: TreeNode, isRoot: boolean }',
-        link: '/components/tree/api#TreeNode',
+        link: '/component/tree/api#TreeNode',
       },
     ],
   },
@@ -909,7 +909,7 @@ const slots = [
       {
         name: 'node',
         type: 'TreeNode',
-        link: '/components/tree/api#TreeNode',
+        link: '/component/tree/api#TreeNode',
       },
     ],
   },
@@ -920,7 +920,7 @@ const slots = [
       {
         name: 'node',
         type: 'TreeNode',
-        link: '/components/tree/api#TreeNode',
+        link: '/component/tree/api#TreeNode',
       },
     ],
   },
@@ -931,7 +931,7 @@ const slots = [
       {
         name: 'node',
         type: 'TreeNode',
-        link: '/components/tree/api#TreeNode',
+        link: '/component/tree/api#TreeNode',
       },
     ],
   },

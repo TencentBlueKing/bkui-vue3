@@ -230,7 +230,7 @@ const props = [
     description:
       '弹出位置偏移， IAxesOffsets：{ mainAxis?: number; crossAxis?: number; alignmentAxis?: number | null; }',
     type: 'number | IAxesOffsets',
-    link: '/components/popover/api#IAxesOffsets',
+    link: '/component/popover/api#IAxesOffsets',
     default: 6,
   },
   {
