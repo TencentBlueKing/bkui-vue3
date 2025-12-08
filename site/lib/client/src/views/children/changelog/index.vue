@@ -2,7 +2,6 @@
   <article>
     <render-header
       :title="headerInfo.title"
-      :title-c-n="headerInfo.titleCN"
       :description="headerInfo.description"
     />
     <div class="changelog-home g-scrollbar">
@@ -23,13 +22,13 @@ import { onBeforeMount, ref } from 'vue';
 
 import RenderHeader from '@/components/render-header/index.vue';
 import RenderMarkdown from '@/components/render-markdown/index.vue';
-import ChangelogMarkdown from '@/markdowns/changelog.md';
+
+import ChangelogMarkdown from '../../../../../../changelog.md';
 
 const content = ref('');
 
 const headerInfo =  ref({
   title: '版本日志',
-  titleCN: '版本日志',
   description: 'MagicBox 版本更新严格遵循 Semantic Versioning 2.0.0 语义化版本规范。',
 });
 

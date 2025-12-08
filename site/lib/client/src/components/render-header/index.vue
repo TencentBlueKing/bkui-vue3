@@ -31,7 +31,7 @@ import { useRoute } from 'vue-router';
 
 interface IProps {
   title: string;
-  titleCN: string;
+  titleCN?: string;
   description: string;
 }
 
@@ -45,7 +45,7 @@ const getTags = () => {
       'clickoutside',
       'ellipsis',
       'tooltips',
-    ]
+    ];
     const componentName = route.params.name as string;
     return `https://github.com/TencentBlueKing/bkui-vue3/tree/staging/packages/${directives.includes(componentName) ? 'directives/src' : componentName}`;
   };
@@ -61,7 +61,7 @@ const getTags = () => {
         icon: 'bkui-vue-wiki-icon icon-mcp',
         name: 'MCP',
         url: process.env.BK_MCP,
-      }
+      },
     ] : []),
   ];
 };
