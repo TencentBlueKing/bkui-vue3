@@ -21,6 +21,7 @@ import javascript from 'highlight.js/lib/languages/javascript';
 import MarkdownIt from 'markdown-it';
 import MarkdownItContainer from 'markdown-it-container';
 import { computed } from 'vue';
+
 import { filterXss } from '@blueking/xss-filter';
 
 import RenderSideNavgation from '../render-side-navgation/index.vue';
@@ -154,7 +155,7 @@ const getMarkdownHtml = () => {
     rawHtml,
     {
       imgSrcMode: 'none',
-    }
+    },
   );
 };
 </script>

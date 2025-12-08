@@ -13,7 +13,7 @@
       />
       <bk-resize-layout
         collapsible
-        initial-divide="160px"
+        :initial-divide="260"
         class="edit-component-body"
         :min="160"
         :max="400"
