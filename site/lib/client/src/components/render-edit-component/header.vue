@@ -7,28 +7,22 @@
         :class="mainPanel === MainPanel.Component ? 'active-tab-item' : ''"
         @click="toggleShow(MainPanel.Component)"
       >
-        <Popover
-          theme="dark"
+        <i
+          v-bk-tooltips="'UI'"
+          class="bkui-vue-wiki-icon icon-component"
         >
-          <i class="bkui-vue-wiki-icon icon-component"></i>
-          <template #content>
-            <span>UI</span>
-          </template>
-        </Popover>
+        </i>
       </div>
       <div
         class="tab-item"
         :class="mainPanel === MainPanel.Code ? 'active-tab-item' : ''"
         @click="toggleShow(MainPanel.Code)"
       >
-        <Popover
-          theme="dark"
+        <i 
+          v-bk-tooltips="'Code'"
+          class="bkui-vue-wiki-icon icon-code"
         >
-          <i class="bkui-vue-wiki-icon icon-code"></i>
-          <template #content>
-            <span>Code</span>
-          </template>
-        </Popover>
+        </i>
       </div>
     </div>
     <div class="tools-bar">
@@ -51,7 +45,7 @@
 
 <script lang="ts" setup>
 import {
-  Popover,
+  bkTooltips,
 } from 'bkui-vue';
 
 import {
@@ -65,6 +59,8 @@ interface IProps {
 
 defineProps<IProps>();
 const emit = defineEmits(['update:mainPanel', 'fullScreen']);
+
+const vBkTooltips = bkTooltips;
 
 const toggleShow = (type: MainPanel) => {
   emit('update:mainPanel', type);
