@@ -44,6 +44,7 @@
                 :preset-slots="componentWiki.presets[renderPresetIndex].slots"
                 :slots="componentWiki.slots"
                 :active-language="activeLanguage"
+                @update:render-props="handleUpdateRenderComponent"
               />
             </template>
             <template #main>
@@ -74,6 +75,7 @@
                     :dependent-components="dependentComponents"
                     :dependent-props="componentWiki.presets[renderPresetIndex]?.dependent?.props"
                     class="edit-component-component"
+                    ref="renderComponentRef"
                   />
                   <render-code
                     v-if="mainPanel === MainPanel.Code"
@@ -100,6 +102,7 @@ import {
   ResizeLayout as bkResizeLayout,
 } from 'bkui-vue';
 import {
+  nextTick,
   onMounted,
   onUnmounted,
   ref,
@@ -151,6 +154,16 @@ const isFullScreen = ref(false);
 const activeLanguage = ref<CodeLanguages>('typescript');
 // 依赖组件加载状态
 const loadingDependentComponents = ref(false);
+// 渲染组件ref
+const renderComponentRef = ref<InstanceType<typeof RenderComponent>>();
+
+// 修改属性以后，需要强制更新渲染组件
+const handleUpdateRenderComponent = () => {
+  // 等待下一帧，确保属性已经更新
+  nextTick(() => {
+    renderComponentRef.value?.forceUpdate();
+  });
+};
 
 // 选择预设
 const handleChoosePreset = async (preset: IComponentWiki['presets'][number]) => {

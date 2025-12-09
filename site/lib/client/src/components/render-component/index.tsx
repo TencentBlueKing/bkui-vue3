@@ -61,6 +61,7 @@ export default vue.defineComponent({
   },
   data() {
     return {
+      renderKey: 0,
       errorMessage: '',
       loading: true,  // 添加准备状态
     };
@@ -94,23 +95,27 @@ export default vue.defineComponent({
       }
       this.$emit('update:renderProps', value);
     },
+    forceUpdate() {
+      this.renderKey += 1;
+    },
   },
   render() {
     if (this.loading) {
       return <RenderLoading />;
     } if (this.errorMessage) {
       return <RenderError
-        key={this.errorMessage}
+        key={this.errorMessage + this.renderKey}
         errorMessage={this.errorMessage}
       />;
     } if (this.name === 'icon') {
       return <RenderIcon
+        key={this.name + this.renderKey}
         component={this.component}
         renderProps={this.renderProps}
       />;
     } if (this.group === '指令') {
       return <RenderDirective
-        key={this.name}
+        key={this.name + this.renderKey}
         name={this.name}
         template={this.template}
         component={this.component}
@@ -118,7 +123,7 @@ export default vue.defineComponent({
       />;
     } if (typeof this.component.default === 'function') {
       return <RenderFunction
-        key={this.component.default}
+        key={this.name + this.renderKey}
         component={this.component}
         renderProps={this.renderProps}
         events={this.events}
@@ -129,7 +134,7 @@ export default vue.defineComponent({
     }
 
     return <RenderComponent
-      key={this.name}
+      key={this.name + this.renderKey}
       name={this.name}
       group={this.group}
       template={this.template}

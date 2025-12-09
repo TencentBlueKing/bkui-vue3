@@ -48,7 +48,7 @@
       <Collapse
         :class="{ 'sticky-title': !activeKeys.includes('slot') }"
         v-model:active-keys="activeKeys"
-        title="插槽" 
+        title="插槽"
         name="slot"
         ref="slotRef"
         @expand="scrollToSlot"
@@ -69,7 +69,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onBeforeUnmount, ref, watch, nextTick } from 'vue';
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 import type {
@@ -78,19 +78,20 @@ import type {
   IProp,
   ValueType as PropValue,
 } from '@/types/component';
+import { camelKey } from '@/utils';
+
+import { filterXss } from '@blueking/xss-filter';
 
 import DynamicConfigItem from '../dynamic-config-item';
-import { filterXss } from '@blueking/xss-filter';
-import { camelKey } from '@/utils'
 import { debounce } from '../dynamic-config-item/utils';
 
 import Collapse from './collapse';
+import Empty from './empty.vue';
 import Header from './header.vue';
 import RenderNameTip from './name-tip';
 import Search from './search.vue';
 import Slot from './slot';
-import Empty from './empty.vue';
-import Tab, { type ITab } from './tab'
+import Tab, { type ITab } from './tab';
 
 interface IProps {
   props?: IProp[];
@@ -111,13 +112,13 @@ const props = defineProps<IProps>();
 const emits = defineEmits<IEmits>();
 
 const handleUpdateProps = (name: string, value: PropValue) => {
-  const newName = Object.keys(props.renderProps || {}).find((key) => camelKey(key) === camelKey(name) && key !== name);
+  const newName = Object.keys(props.renderProps || {}).find(key => camelKey(key) === camelKey(name) && key !== name);
   emits(
     'update:renderProps',
     {
       ...props.renderProps,
       [newName ?? name]: filterXss(value, {
-        escapeHtml: (value: string) => value
+        escapeHtml: (value: string) => value,
       }),
     },
   );
@@ -150,8 +151,8 @@ const isSelectedPreset = (name: string) => {
   return Object.keys(props.presetProps).includes(name);
 };
 const handleSelectedAttr = (item: IProp) => {
-  if(!activeKeys.value.includes('attr')) {
-    activeKeys.value.push('attr')
+  if (!activeKeys.value.includes('attr')) {
+    activeKeys.value.push('attr');
   }
   if (isSelectedPreset(item.name)) {
     activeTab.value = tabs[1].value;
@@ -198,7 +199,7 @@ const filterPropSlots = <T extends { name: string }, U extends object>(all: T[],
 };
 const allValidTypeProps = computed(() => {
   return JSON.parse(JSON.stringify(props?.props ?? []));
-})
+});
 const comProps = computed(() => {
   return filterPropSlots(allValidTypeProps.value, props.presetProps ?? {});
 });
@@ -207,64 +208,64 @@ const comSlots = computed(() => {
 });
 
 const renderCamelKeyProps = (key: string) => {
-  const newKey = Object.keys(props.renderProps || {}).find((propKey) => camelKey(propKey) === camelKey(key));
-  return props.renderProps[newKey ?? key]
-}
+  const newKey = Object.keys(props.renderProps || {}).find(propKey => camelKey(propKey) === camelKey(key));
+  return props.renderProps[newKey ?? key];
+};
 
 const resetProp = () => {
   emits('update:renderProps', { ...props.presetProps });
 };
 
-const activeKeys = ref(['attr', 'slot'])
-const configRef = ref()
-const slotRef = ref()
+const activeKeys = ref(['attr', 'slot']);
+const configRef = ref();
+const slotRef = ref();
 const parentChildPos = () => {
-  if(!configRef.value || !slotRef.value) return
-  const parentTop = configRef.value.getBoundingClientRect().top
-  const childEl = slotRef.value.$el
-  const childRect = childEl.getBoundingClientRect()
-  const childTop = childRect.top
-  const childBottom = childRect.bottom
+  if (!configRef.value || !slotRef.value) return;
+  const parentTop = configRef.value.getBoundingClientRect().top;
+  const childEl = slotRef.value.$el;
+  const childRect = childEl.getBoundingClientRect();
+  const childTop = childRect.top;
+  const childBottom = childRect.bottom;
   return {
     parentTop,
     childTop,
     childBottom,
-  }
-}
+  };
+};
 const showSlot = () => {
-  if(!configRef.value || !slotRef.value) return
-  const { parentTop, childTop, childBottom } = parentChildPos()
-  const isVisible = childTop - parentTop + 36 <= configRef.value.clientHeight || childBottom - parentTop < configRef.value.clientHeight
-  if(!isVisible) {
-    activeKeys.value = activeKeys.value.filter(item => item !== 'slot')
+  if (!configRef.value || !slotRef.value) return;
+  const { parentTop, childTop, childBottom } = parentChildPos();
+  const isVisible = childTop - parentTop + 36 <= configRef.value.clientHeight || childBottom - parentTop < configRef.value.clientHeight;
+  if (!isVisible) {
+    activeKeys.value = activeKeys.value.filter(item => item !== 'slot');
   }
-}
+};
 const handleScroll = debounce(() => {
-  showSlot()
-}, 100)
+  showSlot();
+}, 100);
 watch(() => activeTab.value, () => {
   nextTick(() => {
-    showSlot()
-  })
-}, { immediate: true })
+    showSlot();
+  });
+}, { immediate: true });
 const scrollToSlot = () => {
   nextTick(() => {
-    if(!configRef.value || !slotRef.value) return
-    const { parentTop, childTop } = parentChildPos()
+    if (!configRef.value || !slotRef.value) return;
+    const { parentTop, childTop } = parentChildPos();
     configRef.value.scrollTo({
       top: childTop - parentTop + configRef.value.scrollTop - 36,
       behavior: 'smooth',
-    })
-  })
-}
+    });
+  });
+};
 
-const route = useRoute()
+const route = useRoute();
 const isDisableProp = computed(() => {
   return (propName: string) => {
-    const componentName = route.params.name as string || ''
-    return componentName === 'timeline' && propName === 'list'
-  }
-})
+    const componentName = route.params.name as string || '';
+    return componentName === 'timeline' && propName === 'list';
+  };
+});
 
 // 组件卸载时清理定时器
 onBeforeUnmount(() => {

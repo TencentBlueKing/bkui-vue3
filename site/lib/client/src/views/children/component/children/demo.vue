@@ -65,7 +65,8 @@ const getComponentType = () => {
 
 const handleGetComponent = () => {
   if (componentStore.activeComponentWiki) {
-    const currentRequestId = ++requestSequence;
+    requestSequence += 1;
+    const currentRequestId = requestSequence;
     loading.value = true;
     Promise
       .all([

@@ -27,6 +27,7 @@
 
 const chokidar = require('chokidar');
 const path = require('path');
+const rimraf = require('rimraf');
 
 module.exports = {
   assetsDir: './lib/client/static',
@@ -80,6 +81,9 @@ module.exports = {
           // 监听目标文件夹
           const watcher = chokidar.watch(path.resolve(__dirname, '../packages'));
           watcher.on('all', () => {
+            // 清空 release-dist 目录
+            rimraf.sync(path.resolve(__dirname, './lib/server/release-dist/dev'));
+            rimraf.sync(path.resolve(__dirname, './lib/server/release-dir/dev'));
             // 通知前端
             devServer.sendMessage(devServer.webSocketServer.clients, 'content-changed');
           });
@@ -89,7 +93,7 @@ module.exports = {
       },
     };
   },
-  chainWebpack (config) {
+  chainWebpack(config) {
     config.module.rule('md')
       .test(/\.md/)
       .set('type', 'asset/source');

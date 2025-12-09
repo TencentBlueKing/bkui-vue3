@@ -32,7 +32,7 @@ const presets = [
     title: '基础用法',
     description: 'hover提示',
     template: `
-      <div style="cursor: pointer;" v-tooltips="{ content: '提示信息' }">
+      <div style="cursor: pointer;" v-tooltips="$attrs">
         <p>元素</p>
       </div>
     `,
@@ -45,7 +45,7 @@ const presets = [
     description: '支持多个位置的提示',
     template: `
       <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-        <div style="cursor: pointer; padding: 10px; border: 1px solid #ddd;" v-tooltips="{ content: '多种位置的提示', placement: 'top' }">
+        <div style="cursor: pointer; padding: 10px; border: 1px solid #ddd;" v-tooltips="$attrs">
           元素
         </div>
       </div>
@@ -60,7 +60,7 @@ const presets = [
     description: '点击元素时显示提示',
     template: `
       <div style="display: flex; gap: 20px;">
-        <div style="cursor: pointer; padding: 10px; border: 1px solid #ddd; background-color: #f0f8ff;" v-tooltips="{ content: '点击我显示提示', trigger: 'click' }">
+        <div style="cursor: pointer; padding: 10px; border: 1px solid #ddd; background-color: #f0f8ff;" v-tooltips="$attrs">
           点击触发
         </div>
       </div>
@@ -75,7 +75,7 @@ const presets = [
     description: '支持浅色和深色主题',
     template: `
       <div style="display: flex; gap: 20px;">
-        <div style="cursor: pointer; padding: 10px; border: 1px solid #ddd; background-color: black; color: white;" v-tooltips="{ content: '主题提示', theme: 'dark' }">
+        <div style="cursor: pointer; padding: 10px; border: 1px solid #ddd; background-color: black; color: white;" v-tooltips="$attrs">
           主题
         </div>
       </div>
@@ -90,14 +90,8 @@ const presets = [
     description: '支持箭头、延迟、距离等配置',
     template: `
       <div style="display: flex; gap: 20px; flex-wrap: wrap;">
-        <div style="cursor: pointer; padding: 10px; border: 1px solid #ddd;" v-tooltips="{ content: '延迟显示的提示', delay: 1000 }">
+        <div style="cursor: pointer; padding: 10px; border: 1px solid #ddd;" v-tooltips="$attrs">
           延迟显示
-        </div>
-        <div style="cursor: pointer; padding: 10px; border: 1px solid #ddd;" v-tooltips="{ content: '距离较远的提示', distance: 20 }">
-          远距离
-        </div>
-        <div style="cursor: pointer; padding: 10px; border: 1px solid #ddd;" v-tooltips="{ content: '禁用状态的提示', disabled: true }">
-          禁用状态
         </div>
       </div>
     `,
@@ -106,6 +100,7 @@ const presets = [
       delay: 1000,
       distance: 20,
       disabled: true,
+      arrow: false,
     },
   },
 ];

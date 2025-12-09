@@ -1,7 +1,3 @@
-import {
-  deleteReleaseCache,
-} from '@/http/api';
-
 if (window.WebSocket && process.env.NODE_ENV === 'development') {
   // 查找 dev server 注入的 socket
   const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
@@ -24,16 +20,14 @@ if (window.WebSocket && process.env.NODE_ENV === 'development') {
   });
 }
 
-const hotUpdateFunctions: Function[] = [
-  () => deleteReleaseCache('dev'),
-];
+const hotUpdateFunctions: (() => void)[] = [];
 
 export const useHotUpdate = () => {
-  const addHotUpdateFunction = (fn: Function) => {
+  const addHotUpdateFunction = (fn: () => void) => {
     hotUpdateFunctions.push(fn);
   };
 
-  const removeHotUpdateFunction = (fn: Function) => {
+  const removeHotUpdateFunction = (fn: () => void) => {
     const index = hotUpdateFunctions.indexOf(fn);
     hotUpdateFunctions.splice(index, 1);
   };

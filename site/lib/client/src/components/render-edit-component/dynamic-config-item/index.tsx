@@ -1,27 +1,27 @@
-import { defineComponent, ref, computed, watch, type PropType } from 'vue';
+import { computed, defineComponent, type PropType, ref, watch } from 'vue';
 
-import type { IComponentWiki, ValueType as ComponentPropValue, CodeLanguages } from '@/types/component';
+import type { CodeLanguages, IComponentWiki, ValueType as ComponentPropValue } from '@/types/component';
 
-import RenderNumber from './number.vue';
-import RenderString from './string.vue';
+import Tab from '../config/tab';
+
+import RenderArray from './array.vue';
 import RenderBoolean from './boolean.vue';
 import RenderEnum from './enum.vue';
-import RenderArray from './array.vue';
-import RenderObject from './object.vue';
-import RenderFunction from './function.vue';
 import RenderErrorType from './errortype.vue';
-import Tab from '../config/tab'
-
-import './index.postcss';
-
+import RenderFunction from './function.vue';
+import RenderNumber from './number.vue';
+import RenderObject from './object.vue';
+import RenderString from './string.vue';
 import {
   basicTypeToDefVal,
-  splitType,
   factType,
   isTypeArray,
+  isTypeFunction,
+  splitType,
   valueType,
-  isTypeFunction
 } from './utils';
+
+import './index.postcss';
 
 // 根据类型渲染不同的组件
 export default defineComponent({
@@ -42,11 +42,11 @@ export default defineComponent({
     // options 仅在 数据类型 为 enum 时有效
     options: {
       type: Array as PropType<IComponentWiki['props'][number]['options']>,
-      default: () => [],
+      default: () => [] as IComponentWiki['props'][number]['options'],
     },
     complexTypes: {
       type: Array as PropType<IComponentWiki['types']>,
-      default: () => [],
+      default: () => [] as IComponentWiki['types'],
     },
     activeLanguage: {
       type: String as PropType<CodeLanguages>,
@@ -63,43 +63,43 @@ export default defineComponent({
   setup(props, { emit }) {
     const singleType = ref('');
     const typeList = computed(() => {
-      return [...new Set(splitType(props.type))].map(item => {
+      return [...new Set(splitType(props.type))].map((item) => {
         const factTypeVal = factType(item, props.options);
         const typeInfo = {
           label: item,
           value: item,
           factType: factTypeVal,
-        }
-        if(isTypeArray(item)) {
+        };
+        if (isTypeArray(item)) {
           typeInfo.label = 'Array';
         }
-        if(isTypeFunction(item)) {
+        if (isTypeFunction(item)) {
           typeInfo.label = 'Function';
         }
-        return typeInfo
-      })
-    })
+        return typeInfo;
+      });
+    });
     const typeValue = computed(() => {
       const factTypeVal = typeList.value.find(typeItem => typeItem.value === singleType.value);
       return factTypeVal?.factType || 'errortype';
     });
-    
+
     const handleUpdate = (value: ComponentPropValue) => {
       emit('update:modelValue', value);
     };
-    const newModelValue = ref<ComponentPropValue>()
+    const newModelValue = ref<ComponentPropValue>();
     watch(() => props.modelValue, (val) => {
-      newModelValue.value = val
+      newModelValue.value = val;
       const valType = valueType(val, singleType.value);
       const matchedType = typeList.value.find(typeItem => typeItem.factType === valType);
       singleType.value = matchedType ? matchedType.value : typeList.value[0]?.value || '';
     }, {
-      immediate: true
-    })
+      immediate: true,
+    });
     const handleTypeToValUpdate = () => {
-      newModelValue.value = basicTypeToDefVal?.[typeValue.value as keyof typeof basicTypeToDefVal] ?? ''
-      handleUpdate(newModelValue.value)
-    }
+      newModelValue.value = basicTypeToDefVal?.[typeValue.value as keyof typeof basicTypeToDefVal] ?? '';
+      handleUpdate(newModelValue.value);
+    };
     return {
       singleType,
       typeList,
@@ -111,22 +111,22 @@ export default defineComponent({
   },
   render() {
     const typeSelectRender = () => {
-      if(this.typeList.length > 1) {
+      if (this.typeList.length > 1) {
         return (
           <div class='dynamic-type-select'>
-            <Tab 
+            <Tab
               tabs={this.typeList}
               activeTab={this.singleType}
               onUpdate:activeTab={(val) => {
-                this.singleType = val
-                this.handleTypeToValUpdate()
-              }} 
+                this.singleType = val;
+                this.handleTypeToValUpdate();
+              }}
             />
           </div>
-        )
+        );
       }
-      return null
-    }
+      return null;
+    };
     const typeConfigItemRender = () => {
       switch (this.typeValue) {
         case 'string':
@@ -195,11 +195,11 @@ export default defineComponent({
     };
 
     return (
-      <div class={`config-item`}>
+      <div class={'config-item'}>
         <div class="config-item-name">
           {this.$slots.nameTip?.()}
         </div>
-        <div class={`config-item-content`}>
+        <div class={'config-item-content'}>
           {typeSelectRender()}
           <div>
             {typeConfigItemRender()}

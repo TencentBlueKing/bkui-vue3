@@ -28,7 +28,6 @@ const path = require('path');
 const nodemon = require('nodemon');
 const chalk = require('chalk');
 const { runDev } = require('@blueking/cli-service');
-const rimraf = require('rimraf');
 
 const backendDir = path.resolve(__dirname, '../lib/server');
 const sharedDir = path.resolve(__dirname, '../lib/shared');
@@ -62,8 +61,6 @@ function startServer() {
       console.log('\n', chalk.red('API server crashed'), '\n');
     })
     .on('restart', () => {
-      // 清空 release-dist 目录
-      rimraf.sync(releaseDistDir);
       // 打印日志
       console.log('\n', chalk.yellow('API server restarted'), '\n');
     });

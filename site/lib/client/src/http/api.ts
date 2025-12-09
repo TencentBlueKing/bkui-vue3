@@ -33,7 +33,8 @@ export const getComponent = (
     },
   )
   .then((scriptText) => {
-    const run = new Function(scriptText);
+    const Fn = Function;
+    const run = new Fn(scriptText);
     run();
   });
 
@@ -77,6 +78,3 @@ export const getNpmMarkdown = (name: string) => fetch
 export const getNavGroups = (version: string) => fetch
   .get<INavGroups>(`${apiPrefix}/nav/groups`, { version });
 
-// 删除版本缓存
-export const deleteReleaseCache = (version: string) => fetch
-  .get(`${apiPrefix}/release/delete`, { version });
