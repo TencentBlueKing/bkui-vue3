@@ -165,7 +165,6 @@ const getMarkdownHtml = () => {
   display: flex;
   width: 100%;
   gap: 24px;
-  scroll-behavior: smooth;
 }
 
 .markdown-body-content {

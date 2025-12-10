@@ -7,6 +7,7 @@
     >
       <nav
         ref="navListContainer"
+        :style="{ height }"
         class="nav-list-container g-scrollbar"
       >
         <ul class="nav-list">
@@ -17,7 +18,7 @@
           >
             <a
               :href="`#${item.id}`"
-              :ref="(el) => setNavLinkRef(el, item.id)"
+              :ref="(el: unknown) => setNavLinkRef(el, item.id)"
               class="nav-link"
               :class="{ active: activeAnchor === item.id }"
               @click="handleNavClick(item.id)"
@@ -35,7 +36,7 @@
 import {
   OverflowTitle as BkOverflowTitle,
 } from 'bkui-vue';
-import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 interface IProps {
@@ -65,6 +66,10 @@ const navLinkRefs = ref<Record<string, HTMLElement>>({});
 let scrollTimer: ReturnType<typeof setTimeout> | null = null;
 // 是否正在滚动导航列表（防止循环触发）
 const isScrollingNavList = ref(false);
+
+const height = computed(() => {
+  return route.path.includes('markdown') ? 'calc(100vh - 252px)' : 'calc(100vh - 290px)';
+});
 
 /**
  * @description 设置导航链接引用
@@ -249,7 +254,6 @@ onUnmounted(() => {
 }
 
 .nav-list-container {
-  height: calc(100vh - 212px);
   overflow-y: auto;
 }
 
