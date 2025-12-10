@@ -223,22 +223,6 @@ const {
 const vClickoutside = clickoutside;
 const BkOption = BkSelect.Option;
 
-const startList: IComponentWiki[] = [{
-  group: '开始',
-  name: 'start',
-  title: '',
-  titleCN: '快速上手',
-  description: '本组件库基于Vue3研发，本节介绍如何在项目中结合 webpack 一起使用 @blueking/bkui-vue。',
-  presets: [] as IComponentWiki['presets'],
-}, {
-  group: '版本日志',
-  name: 'changelog',
-  title: '',
-  titleCN: '版本日志',
-  description: '本组件库版本日志',
-  presets: [] as IComponentWiki['presets'],
-}];
-
 const searchVal = ref('');
 const activeName = ref('');
 const selectIndex = ref(0);
@@ -370,7 +354,7 @@ const handleChoose = async (value: IComponentWiki, routerName = 'component') => 
     componentStore.activeComponentWiki = value;
   }
   await router.push({
-    name: value.name === 'changelog' ? 'changelog' : routerName,
+    name: routerName,
     params: {
       name: value.name,
     },
@@ -394,7 +378,6 @@ const handleInit = async () => {
     componentStore.isLoadingNavGroups = true;
     // 设置 navGroups
     const navGroups = await getNavGroups(componentStore.version);
-    navGroups.startList = startList;
 
     navGroups.componentGroupMap = sortGroupByOrder(navGroups.componentGroupMap);
     componentStore.navGroups = navGroups;
@@ -408,7 +391,9 @@ const handleInit = async () => {
         .filter(item => item.routerName === routerName)
         .find(item => item.componentWiki.name === componentName);
       if (component) {
-        componentStore.activeComponentWiki = component.componentWiki;
+        if (routerName === 'component' || routerName === 'directive') {
+          componentStore.activeComponentWiki = component.componentWiki;
+        }
         activeName.value = `${routerName}:${componentName}`;
         await nextTick(scrollToCurNavItem);
       }

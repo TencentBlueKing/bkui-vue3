@@ -247,31 +247,54 @@ export const getNavGroups = async releaseZipPath => {
       name: '@blueking/date-picker',
       title: 'DatePicker',
       titleCN: '时间选择器',
+      description: '业务组件 Date Picker， 用于页面上更复杂的时间选择使用，支持 Vue2/Vue3 版本 无差别使用',
     },
     {
       name: '@blueking/log-search',
       title: 'LogSearch',
       titleCN: '日志检索',
+      description:
+        '业务组件 Log Search， 由索引集选择、查询语句输入、过滤条件选择等多方检索条件组合而成，还包含了自动解析查询语句，切换自动查询或手动查询能力等。支持 Vue2/Vue3 版本 无差别使用',
     },
     {
       name: '@blueking/functional-dependency',
       title: 'FunctionalDeps',
       titleCN: '功能依赖展示',
+      description:
+        '业务组件 Functional Dependency， 用于蓝鲸平台下各个应用中功能依赖项展示使用，支持 Vue2/Vue3 版本 无差别使用',
     },
     {
       name: '@blueking/ediatable',
       title: 'Ediatable',
       titleCN: '可编辑表格',
+      description: '业务组件 Ediatable， 用于可编辑表格的场景，支持 Vue2/Vue3 版本 无差别使用',
     },
     {
       name: '@blueking/release-note',
       title: 'ReleaseNote',
       titleCN: '版本日志',
+      description: '业务组件 Release， 用于呈现产品版本更新明细的组件',
     },
     {
       name: '@blueking/crontab',
       title: 'Cronatb',
       titleCN: '周期选择器',
+      description: 'Liunx 定时任务表达',
+    },
+  ];
+  // 开始列表
+  const startList = [
+    {
+      name: 'start',
+      title: '',
+      titleCN: '快速上手',
+      description: '本组件库基于Vue3研发，本节介绍如何在项目中结合 webpack 一起使用 @blueking/bkui-vue。',
+    },
+    {
+      name: 'changelog',
+      title: '',
+      titleCN: '版本日志',
+      description: '本组件库版本日志',
     },
   ];
 
@@ -279,6 +302,7 @@ export const getNavGroups = async releaseZipPath => {
     componentGroupMap,
     directiveList,
     customComponentList,
+    startList,
   };
 };
 
