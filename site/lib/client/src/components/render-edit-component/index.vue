@@ -268,7 +268,7 @@ onUnmounted(() => {
 
 <style lang="postcss" scoped>
 .edit-component {
-  height: calc(100% - 180px);
+  height: calc(100% - 55px);
   min-height: 640px;
   background: #FAFBFD;
   box-shadow: 0 2px 4px 0 #1919290d;
