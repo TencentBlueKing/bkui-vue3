@@ -11,7 +11,6 @@
         :loading="loading"
       />
       <render-contributor />
-      <render-bottom-nav />
     </template>
   </bk-loading>
 </template>
@@ -28,7 +27,6 @@ import {
   watch,
 } from 'vue';
 
-import RenderBottomNav from '@/components/render-bottom-nav/index.vue';
 import RenderContributor from '@/components/render-contributor/index.vue';
 import RenderEditComponent from '@/components/render-edit-component/index.vue';
 import {
@@ -123,7 +121,7 @@ onBeforeUnmount(() => {
 <style lang="postcss" scoped>
 .demo-home {
   height: calc(100% - 149px);
-  padding: 24px 40px 32px;
+  padding: 24px 40px 20px;
   overflow: auto;
 }
 </style>
