@@ -7,7 +7,7 @@
     <h3 class="title">
       Contributor
     </h3>
-    <div class="contributor-list">
+    <div class="contributor-list g-scrollbar">
       <a
         v-for="item in authorList"
         v-bk-tooltips="{
@@ -78,28 +78,44 @@ watch(
 </script>
 <style lang="postcss" scoped>
 .contributor-wrapper {
-  height: 80px;
-  .title {
-    font-weight: 700;
-    font-size: 20px;
-    line-height: 28px;
-    margin: 48px 0px 12px;
-  }
-  .contributor-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    height: 40px;
+  display: flex;
+  margin-top: 20px;
+  align-items: center;
 
-    .contributor-item{
+  .title {
+    margin-right: 16px;
+    line-height: 32px;
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .contributor-list {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-wrap: nowrap;
+    column-gap: 8px;
+    overflow-x: auto;
+    &::-webkit-scrollbar {
+      width: 3px;
+      height: 3px;
+    }
+
+    .contributor-item {
+      height: 32px;
+      width: 32px;
       cursor: pointer;
+      flex-shrink: 0;
     }
 
     .contributor-item-img {
-      width: 40px;
-      height: 40px;
+      display: block;
+      width: 100%;
+      height: 100%;
       border: 1px solid #DCDEE5;
+      box-sizing: border-box;
       border-radius: 50%;
+      object-fit: cover;
     }
   }
 }
