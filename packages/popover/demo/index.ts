@@ -435,6 +435,17 @@ const types = [
   },
 ];
 
+const slots = [
+  {
+    name: 'default',
+    description: '默认插槽',
+  },
+  {
+    name: 'content',
+    description: '弹框内容插槽',
+  },
+];
+
 // 组件分组
 const group = NavGroupMeta.Feedback;
 
@@ -453,6 +464,7 @@ const description = '当鼠标指向页面元素时给出简单的提示';
 const wiki: IComponentWiki = {
   group,
   name,
+  slots,
   title,
   titleCN,
   props,

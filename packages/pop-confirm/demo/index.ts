@@ -319,6 +319,21 @@ const emits = [
 // 组件自定义的复杂类型
 const types = [];
 
+const slots = [
+  {
+    name: 'default',
+    description: '触发弹框插槽',
+  },
+  {
+    name: 'icon',
+    description: 'icon 插槽，只在 title 属性不为空时生效',
+  },
+  {
+    name: 'content',
+    description: '弹框内容插槽',
+  },
+];
+
 // 组件分组
 const group = NavGroupMeta.Feedback;
 
@@ -338,6 +353,7 @@ const description =
 const wiki: IComponentWiki = {
   group,
   name,
+  slots,
   title,
   titleCN,
   props,
