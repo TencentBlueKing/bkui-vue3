@@ -54,7 +54,9 @@ const presets = [
       modelValue: 3.5,
       editable: true,
       withValidate: true,
-      onChange: `(val) => {
+    },
+    events: {
+      change: `(val) => {
         BkMessage({
           message: \`评分：\${val}\`,
         });

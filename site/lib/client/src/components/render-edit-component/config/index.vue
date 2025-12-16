@@ -284,6 +284,12 @@ onBeforeUnmount(() => {
   padding-top: 11px;
   display: flex;
   flex-direction: column;
+  :deep(.bk-input) {
+    width: 100%;
+  }
+  :deep(.bk-select) {
+    width: 100%;
+  }
   .prl16 {
     padding: 0 16px;
   }

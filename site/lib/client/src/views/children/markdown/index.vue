@@ -9,15 +9,16 @@
         :title="wikiHeaderInfo.title"
         :title-c-n="wikiHeaderInfo.titleCN"
         :description="wikiHeaderInfo.description"
+        class="markdown-header"
       />
-      <div class="markdown-home g-scrollbar">
+      <section class="markdown-home g-scrollbar">
         <render-markdown
           v-if="content"
           :parse-tag-list="parseTagList"
           :content="content"
           container-class-name=".markdown-home"
         />
-      </div>
+      </section>
     </bk-loading>
   </article>
 </template>
@@ -99,8 +100,12 @@ watch(
 </script>
 
 <style lang="postcss" scoped>
+:deep(.markdown-header) {
+  box-shadow: 0 3px 3px 0 #0000000f;
+}
 .markdown-home {
-  height: calc(100% - 112px);
+  margin-top: 3px;
+  height: calc(100% - 115px);
   padding: 16px 8px 40px 16px;
   overflow: auto;
   scroll-behavior: smooth;

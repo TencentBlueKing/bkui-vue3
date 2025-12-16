@@ -21,6 +21,7 @@
   </h3>
   <h5
     class="wiki-description"
+    v-bind="$attrs"
   >
     {{ props.description }}
   </h5>

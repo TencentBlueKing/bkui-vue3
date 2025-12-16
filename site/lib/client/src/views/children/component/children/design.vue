@@ -60,7 +60,8 @@ onBeforeMount(handleGetDesign);
 
 <style lang="postcss" scoped>
 .design-home {
-  height: calc(100% - 149px);
+  margin-top: 3px;
+  height: calc(100% - 152px);
   padding: 16px 8px 40px 16px;
   overflow: auto;
   scroll-behavior: smooth;

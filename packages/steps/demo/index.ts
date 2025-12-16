@@ -25,6 +25,15 @@
  */
 import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
+const style = `
+  .bk-steps-vertical {
+    min-height: 500px;
+  }
+  .bk-steps-horizontal {
+    min-width: 100%;
+  }
+`;
+
 // 组件示例
 const presets = [
   {
@@ -33,6 +42,7 @@ const presets = [
     props: {
       'cur-step': 1,
     },
+    style,
   },
   {
     title: '不带序的水平步骤条',
@@ -45,6 +55,7 @@ const presets = [
         { title: '步骤三', icon: 'icon3', description: '描述信息三' },
       ],
     },
+    style,
   },
   {
     title: '带状态的步骤条',
@@ -53,6 +64,7 @@ const presets = [
       'cur-step': 2,
       status: 'loading',
     },
+    style,
   },
   {
     title: '带图标的步骤条',
@@ -65,6 +77,7 @@ const presets = [
         { title: '步骤三', icon: 'icon3' },
       ],
     },
+    style,
   },
   {
     title: '垂直方向步骤条',
@@ -73,6 +86,7 @@ const presets = [
       'cur-step': 1,
       direction: 'vertical',
     },
+    style,
   },
   {
     title: '不同尺寸步骤条',
@@ -80,6 +94,7 @@ const presets = [
     props: {
       size: 'small',
     },
+    style,
   },
   {
     title: '可点击步骤条',
@@ -93,6 +108,10 @@ const presets = [
         curStep.value = index;
       }`,
     },
+    dependent: {
+      props: ['curStep'],
+    },
+    style,
   },
 ];
 

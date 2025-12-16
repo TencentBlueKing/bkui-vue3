@@ -17,7 +17,8 @@ const componentStore = useComponent();
 
 <style lang="postcss">
 .documentation-container {
-  height: calc(100% - 149px);
+  margin-top: 3px;
+  height: calc(100% - 152px);
   padding: 24px 8px 32px 40px;
   overflow: auto;
   scroll-behavior: smooth;

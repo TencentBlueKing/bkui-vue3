@@ -26,6 +26,11 @@
 
 import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
+const style = `
+  .bk-date-picker {
+    width: 300px;
+  }
+`;
 // 组件示例
 const presets = [
   {
@@ -34,6 +39,7 @@ const presets = [
     props: {
       modelValue: new Date(),
     },
+    style,
   },
   {
     title: '时间范围选择',
@@ -42,6 +48,7 @@ const presets = [
       modelValue: [['00:00:00', '23:59:59']],
       type: 'timerange',
     },
+    style,
   },
 ];
 

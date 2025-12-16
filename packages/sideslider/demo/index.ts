@@ -88,7 +88,7 @@ const presets = [
             onConfirm: () => resolve(true),
             onCancel: () => reject(),
           });
-        });
+        })
       `,
     },
     slots: {

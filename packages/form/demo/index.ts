@@ -26,6 +26,12 @@
 
 import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
+const style = `
+  .bk-form {
+    width: 100%;
+  }
+`;
+
 const presets = [
   {
     title: '垂直布局表单',
@@ -41,25 +47,35 @@ const presets = [
           property="name"
         >
           <bk-input
+            v-model="model.name"
             placeholder="请输入"
             clearable
           />
         </bk-form-item>
-        <bk-form-item label="性别">
-          <bk-radio-group>
+        <bk-form-item
+          label="性别"
+          property="gender"
+        >
+          <bk-radio-group v-model="model.gender">
             <bk-radio label="男" />
             <bk-radio label="女" />
           </bk-radio-group>
         </bk-form-item>
-        <bk-form-item label="联系方式">
-          <bk-checkbox-group>
+        <bk-form-item
+          label="联系方式"
+          property="contact"
+        >
+          <bk-checkbox-group v-model="model.contact">
             <bk-checkbox label="QQ" />
             <bk-checkbox label="微信" />
             <bk-checkbox label="Email" />
           </bk-checkbox-group>
         </bk-form-item>
-        <bk-form-item label="学历">
-          <bk-select>
+        <bk-form-item
+          label="学历"
+          property="education"
+        >
+          <bk-select v-model="model.education">
             <bk-option
               label="本科以下"
               value="1"
@@ -70,10 +86,14 @@ const presets = [
             />
           </bk-select>
         </bk-form-item>
-        <bk-form-item label="介绍">
+        <bk-form-item
+          label="介绍"
+          property="introduction"
+        >
           <bk-input
             placeholder="请输入"
             type="textarea"
+            v-model="model.introduction"
           />
         </bk-form-item>
         <bk-form-item style="margin-top: 32px">
@@ -87,7 +107,9 @@ const presets = [
     },
     dependent: {
       components: ['input', 'radio', 'checkbox', 'select', 'button'],
+      props: ['model'],
     },
+    style,
   },
   {
     title: 'label 描述',
@@ -150,6 +172,7 @@ const presets = [
         </bk-form-item>
       `,
     },
+    style,
   },
   {
     title: '顶部对齐',
@@ -165,25 +188,35 @@ const presets = [
           property="name"
         >
           <bk-input
+            v-model="model.name"
             placeholder="请输入"
             clearable
           />
         </bk-form-item>
-        <bk-form-item label="性别">
-          <bk-radio-group>
+        <bk-form-item
+          label="性别"
+          property="gender"
+        >
+          <bk-radio-group v-model="model.gender">
             <bk-radio label="男" />
             <bk-radio label="女" />
           </bk-radio-group>
         </bk-form-item>
-        <bk-form-item label="联系方式">
-          <bk-checkbox-group>
+        <bk-form-item
+          label="联系方式"
+          property="contact"
+        >
+          <bk-checkbox-group v-model="model.contact">
             <bk-checkbox label="QQ" />
             <bk-checkbox label="微信" />
             <bk-checkbox label="Email" />
           </bk-checkbox-group>
         </bk-form-item>
-        <bk-form-item label="学历">
-          <bk-select>
+        <bk-form-item
+          label="学历"
+          property="education"
+        >
+          <bk-select v-model="model.education">
             <bk-option
               label="本科以下"
               value="1"
@@ -194,8 +227,12 @@ const presets = [
             />
           </bk-select>
         </bk-form-item>
-        <bk-form-item label="介绍">
+        <bk-form-item
+          label="介绍"
+          property="introduction"
+        >
           <bk-input
+            v-model="model.introduction"
             placeholder="请输入"
             type="textarea"
           />
@@ -209,6 +246,10 @@ const presets = [
         </bk-form-item>
       `,
     },
+    dependent: {
+      props: ['model'],
+    },
+    style,
   },
   {
     title: '行内布局表单',
@@ -221,10 +262,11 @@ const presets = [
       default: `
         <bk-compose-form-item>
           <bk-input
+            v-model="model.name"
             placeholder="请输入"
             clearable
           />
-          <bk-select>
+          <bk-select v-model="model.education">
             <bk-option
               label="本科以下"
               value="1"
@@ -237,17 +279,109 @@ const presets = [
           <bk-input
             placeholder="请输入"
             type="number"
+            v-model="model.number"
           />
           <bk-tag-input
             style="width: 100px"
+            v-model="model.tag"
           />
-          <bk-date-picker />
+          <bk-date-picker v-model="model.date" />
         </bk-compose-form-item>
       `,
     },
     dependent: {
       components: ['tag-input', 'date-picker'],
+      props: ['model'],
     },
+    style,
+  },
+  {
+    title: '表单校验',
+    description: '表单校验，通过 rules 属性配置表单项验证规则',
+    props: {
+      model: {},
+      formType: 'vertical',
+      rules: {
+        name: [
+          {
+            validator: 'value => value?.length > 2',
+            message: '姓名长度不能小于2',
+            trigger: 'change',
+          },
+        ],
+      },
+    },
+    slots: {
+      default: `
+        <bk-form-item
+          label="姓名"
+          property="name"
+        >
+          <bk-input
+            v-model="model.name"
+            placeholder="请输入"
+            clearable
+          />
+        </bk-form-item>
+        <bk-form-item
+          label="性别"
+          property="gender"
+        >
+          <bk-radio-group v-model="model.gender">
+            <bk-radio label="男" />
+            <bk-radio label="女" />
+          </bk-radio-group>
+        </bk-form-item>
+        <bk-form-item
+          required
+          label="联系方式"
+          property="contact"
+        >
+          <bk-checkbox-group v-model="model.contact">
+            <bk-checkbox label="QQ" />
+            <bk-checkbox label="微信" />
+            <bk-checkbox label="Email" />
+          </bk-checkbox-group>
+        </bk-form-item>
+        <bk-form-item
+          label="学历"
+          property="education"
+        >
+          <bk-select v-model="model.education">
+            <bk-option
+              label="本科以下"
+              value="1"
+            />
+            <bk-option
+              label="本科以上"
+              value="2"
+            />
+          </bk-select>
+        </bk-form-item>
+        <bk-form-item
+          label="介绍"
+          property="introduction"
+        >
+          <bk-input
+            v-model="model.introduction"
+            placeholder="请输入"
+            type="textarea"
+          />
+        </bk-form-item>
+        <bk-form-item style="margin-top: 32px">
+          <bk-button
+            theme="primary"
+            @click="handleValidate"
+          >
+            提交
+          </bk-button>
+        </bk-form-item>
+      `,
+    },
+    dependent: {
+      props: ['model'],
+    },
+    style,
   },
 ];
 

@@ -68,7 +68,8 @@ Substitution Scholia and Thucydides' Use of Prepositions
     description: '设置属性 always 总是显示提示框',
     props: {
       width: 300,
-      content: '这里是提示文字当鼠标经过这段文字时，会显示一个气泡框当鼠标经过这段文字时，会显示一个气泡框当鼠标经过这段文字时',
+      content:
+        '这里是提示文字当鼠标经过这段文字时，会显示一个气泡框当鼠标经过这段文字时，会显示一个气泡框当鼠标经过这段文字时',
       placement: 'right',
       theme: 'light',
       always: true,
@@ -386,27 +387,27 @@ const exposes = [
   {
     name: 'show',
     description: '弹出popover',
-    type: 'Function'
+    type: 'Function',
   },
   {
     name: 'hide',
     description: '隐藏popover',
-    type: 'Function'
+    type: 'Function',
   },
   {
     name: 'stopHide',
     description: '阻止隐藏popover',
-    type: 'Function'
+    type: 'Function',
   },
   {
     name: 'updatePopover',
     description: '更新popover配置，参数 (virtualEl = null, props = {})',
-    type: 'Function'
+    type: 'Function',
   },
   {
     name: 'handleClickOutside',
     description: '触发click outside',
-    type: 'Function'
+    type: 'Function',
   },
 ];
 

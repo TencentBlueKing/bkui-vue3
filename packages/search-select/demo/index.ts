@@ -129,6 +129,11 @@ const dataSource = [
   },
 ];
 
+const style = `
+  .bk-search-select {
+    width: 300px;
+  }
+`;
 // 组件示例
 const presets = [
   {
@@ -139,6 +144,7 @@ const presets = [
       modelValue: [],
       uniqueSelect: true,
     },
+    style,
   },
   {
     title: '复杂条件',
@@ -152,6 +158,7 @@ const presets = [
         { id: 'or', name: '或' },
       ],
     },
+    style,
   },
   {
     title: '远程加载子列表',
@@ -228,6 +235,7 @@ const presets = [
         return data.find(set => set.id === item.id)?.children;
       }`,
     },
+    style,
   },
   {
     title: '校验输入的选择项',
@@ -242,6 +250,7 @@ const presets = [
           return !item ? '格式错误' : true;
         }`,
     },
+    style,
   },
   {
     title: '配置每个选项独立的placeholder',
@@ -363,6 +372,7 @@ const presets = [
       uniqueSelect: true,
       placeholder: '请选择',
     },
+    style,
   },
   {
     title: '自定义 menu 面板',
@@ -450,6 +460,7 @@ const presets = [
       `,
     },
     style: `
+      ${style}
       .custom-panel {
         display: flex;
         flex-direction: column;
@@ -472,6 +483,7 @@ const presets = [
       uniqueSelect: true,
       valueBehavior: 'need-key',
     },
+    style,
   },
 ];
 

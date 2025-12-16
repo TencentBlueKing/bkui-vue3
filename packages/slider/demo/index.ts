@@ -26,12 +26,19 @@
 
 import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
+const style = `
+  .bk-slider {
+    width: 100%;
+  }
+`;
+
 // 组件示例
 const presets = [
   {
     title: '基础滑块',
     description: '基础的滑块组件',
     style: `
+      ${style}
       .edit-component-component {
         width: 80%;
         min-width: 200px;
@@ -47,6 +54,7 @@ const presets = [
       modelValue: [0, 100],
       step: 5,
     },
+    style,
   },
   {
     title: '带输入',
@@ -55,6 +63,7 @@ const presets = [
       showInput: true,
       modelValue: 20,
     },
+    style,
   },
 ];
 
@@ -65,6 +74,7 @@ const props = [
     description: '绑定值，可以是数字或数字数组（范围模式）',
     type: 'number | Array<number>',
     default: '',
+    isSupportVModel: true,
   },
   {
     name: 'extCls',

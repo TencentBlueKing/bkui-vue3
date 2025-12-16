@@ -1151,25 +1151,6 @@
     - bugfix(dialog): 样式修复
 
 
-### 1.0.3-beta.50
-
-* **[feat]**:
-    - fix(timeline): 修复样式没有构建加载问题 #1724
-
-
-### 1.0.3-beta.49
-
-* **[feat]**:
-    - bugfix(dialog): 样式修复
-
-
-### 1.0.3-beta.48
-
-* **[feat]**:
-    - bugfix(pop-confirm): 与Select组件一起使用时，Change事件会导致整个pop-confirm一起关闭
-    - bugfix(dialog): 样式修复
-
-
 ### 1.0.3-beta.47
 
 * **[feat]**:
@@ -1230,12 +1211,6 @@
 
 * **[feat]**:
     - fix(table): bk-table-column增加内置UniqueId用于更新判定 & 修复自动排序问题 #1629
-
-
-### 1.0.3-beta.35
-
-* **[feat]**:
-    - fix(date-picker): 日期、时间 icon 问题修复
 
 
 ### 1.0.3-beta.35

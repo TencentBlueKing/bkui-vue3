@@ -76,6 +76,7 @@ function createProxy<T>(
   onUpdate: (newValue: T) => void,
 ): { value: T } {
   let currentValue = initialValue;
+  const isObject = typeof initialValue === 'object' && initialValue !== null;
 
   return new Proxy(
     {},
@@ -83,6 +84,9 @@ function createProxy<T>(
       get(_target, prop) {
         if (prop === 'value') {
           return currentValue;
+        }
+        if (isObject) {
+          return currentValue[prop as keyof T];
         }
         return undefined;
       },
@@ -92,6 +96,12 @@ function createProxy<T>(
           onUpdate(newValue);
           return true;
         }
+        if (isObject) {
+          currentValue[prop as keyof T] = newValue;
+          onUpdate(currentValue);
+          return true;
+        }
+
         return false;
       },
     },
@@ -196,11 +206,32 @@ export function processRenderProps(
 /**
  * 处理 slots，将插槽字符串转换为可执行函数
  */
-export function processRenderSlots(renderSlots: Record<string, string>): Record<string, (data?: unknown) => object> {
+export function processRenderSlots(
+  renderSlots: Record<string, string>,
+  renderProps: Record<string, unknown>,
+  dependentProps: string[],
+  emit: (event: 'update:renderProps', value: Record<string, unknown>) => void,
+  handleValidate?: () => Promise<unknown> | null,
+): Record<string, (data?: unknown) => object> {
+  const propsRefs = dependentProps.reduce((acc, prop) => {
+    acc[prop] = createProxy(
+      renderProps[prop],
+      (newValue: unknown) => {
+        emit('update:renderProps', {
+          ...renderProps,
+          [prop]: newValue,
+        });
+      },
+    );
+    return acc;
+  }, {} as Record<string, { value: unknown }>);
   return Object.keys(renderSlots).reduce(
     (acc, slotName) => {
       const Fn = Function;
-      acc[slotName] = (data?: unknown) => Fn('Vue', 'data', compile(renderSlots[slotName]).code)(vue, data)(vue);
+      const paramNames = Object.keys(propsRefs);
+      const paramValues = Object.values(propsRefs);
+      const compiledCode = compile(renderSlots[slotName]).code;
+      acc[slotName] = (data?: unknown) => Fn('Vue', 'data', 'handleValidate', ...paramNames, compiledCode)(vue, data, handleValidate, ...paramValues)(vue);
       return acc;
     },
     {} as Record<string, (data?: unknown) => object>,

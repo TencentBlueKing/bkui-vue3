@@ -120,7 +120,8 @@ onBeforeUnmount(() => {
 
 <style lang="postcss" scoped>
 .demo-home {
-  height: calc(100% - 149px);
+  margin-top: 3px;
+  height: calc(100% - 152px);
   padding: 24px 40px 20px;
   overflow: auto;
 }

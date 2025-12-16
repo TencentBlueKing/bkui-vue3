@@ -38,6 +38,12 @@ const sourceList = [
   { service_code: 'turbo', service_name: '编译加速' },
 ];
 
+const style = `
+  .bk-transfer {
+    width: 100%;
+  }
+`;
+
 // 组件示例
 const presets = [
   {
@@ -54,6 +60,7 @@ const presets = [
     slots: {
       default: '<div>基础的穿梭框使用</div>',
     },
+    style,
   },
   {
     title: '多选穿梭框',
@@ -67,6 +74,7 @@ const presets = [
       targetList: [],
       multiple: true,
     },
+    style,
   },
   {
     title: '配置 target-list 以及设置排序',
@@ -80,6 +88,7 @@ const presets = [
       searchable: true,
       sortable: true,
     },
+    style,
   },
   {
     title: '普通数组配置',
@@ -90,6 +99,7 @@ const presets = [
       searchable: true,
       sortable: true,
     },
+    style,
   },
   {
     title: '自定义 header 和无数据时显示内容',
@@ -117,6 +127,7 @@ const presets = [
         <div>自定义右侧无数据时显示内容</div>
       `,
     },
+    style,
   },
   {
     title: '自定义 选项 模板',
@@ -131,12 +142,13 @@ const presets = [
     },
     slots: {
       'source-option': `
-        <div>code: {{ data.code }}, name: {{ data.name }}</div>
+        <div>service_code: {{ data.service_code }}, service_name: {{ data.service_name }}</div>
       `,
       'target-option': `
-        <div>code: {{ data.code }}, name: {{ data.name }}</div>
+        <div>service_code: {{ data.service_code }}, service_name: {{ data.service_name }}</div>
       `,
     },
+    style,
   },
 ];
 

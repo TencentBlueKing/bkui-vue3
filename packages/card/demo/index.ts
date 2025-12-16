@@ -112,7 +112,7 @@ const presets = [
     `,
     dependent: {
       components: ['icon'],
-    }
+    },
   },
 ];
 

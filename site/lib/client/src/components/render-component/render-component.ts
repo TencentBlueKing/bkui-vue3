@@ -225,8 +225,20 @@ export default vue.defineComponent({
         },
       );
 
+      // 创建组件实例引用
+      const componentRef = vue.ref<ComponentInstance<Component> | null>(null);
+
       // 处理 slots
-      const renderSlots = processRenderSlots(this.renderSlots);
+      // form 表单组件需要额外的处理，因为表单组件的验证需要通过组件实例引用调用
+      const renderSlots = processRenderSlots(
+        this.renderSlots,
+        this.renderProps,
+        this.dependentProps,
+        (event: 'update:renderProps', value: Record<string, unknown>) => {
+          this.$emit(event, value);
+        },
+        () => componentRef.value?.validate?.(),
+      );
 
       // 渲染组件
       const component = vue.h(
@@ -234,6 +246,7 @@ export default vue.defineComponent({
         {
           ...renderEvents,
           ...renderProps,
+          ref: componentRef,
         },
         renderSlots,
       );

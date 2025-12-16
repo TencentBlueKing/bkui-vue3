@@ -32,11 +32,11 @@ const dataSource = [
     label: '爬山',
   },
   {
-    value: { a: 123 },
+    value: 'running',
     label: '跑步',
   },
   {
-    value: { b: 456 },
+    value: 'unknown',
     label: '未知',
   },
   {
@@ -58,6 +58,12 @@ const dataSource = [
   },
 ];
 
+const style = `
+  .bk-select {
+    width: 300px;
+  }
+`;
+
 // 组件示例
 const presets = [
   {
@@ -67,6 +73,7 @@ const presets = [
       list: dataSource,
       modelValue: 'climbing',
     },
+    style,
   },
   {
     title: '多选模式',
@@ -76,6 +83,7 @@ const presets = [
       list: dataSource,
       modelValue: [],
     },
+    style,
   },
   {
     title: '可搜索',
@@ -85,6 +93,7 @@ const presets = [
       list: dataSource,
       modelValue: [],
     },
+    style,
   },
   {
     title: '分组选项',
@@ -110,6 +119,7 @@ const presets = [
         </bk-option-group>
       `,
     },
+    style,
   },
   {
     title: '标签模式',
@@ -120,6 +130,7 @@ const presets = [
       list: dataSource,
       modelValue: [],
     },
+    style,
   },
   {
     title: '全选功能',
@@ -130,6 +141,7 @@ const presets = [
       list: dataSource,
       modelValue: [],
     },
+    style,
   },
   {
     title: '自定义创建',
@@ -142,6 +154,7 @@ const presets = [
       multipleMode: 'tag',
       modelValue: [],
     },
+    style,
   },
   {
     title: '尺寸 & 风格',
@@ -152,6 +165,7 @@ const presets = [
       list: dataSource,
       modelValue: [],
     },
+    style,
   },
   {
     title: 'trigger插槽',
@@ -165,6 +179,7 @@ const presets = [
         <div>{{ data.selected }}</div>
       `,
     },
+    style,
   },
 ];
 

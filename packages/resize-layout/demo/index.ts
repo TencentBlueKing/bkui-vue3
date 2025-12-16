@@ -25,6 +25,14 @@
  */
 import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
+const style = `
+  .bk-resize-layout {
+    min-width: 100%;
+    height: 500px;
+    background-color: #fff;
+  }
+`;
+
 // 组件示例
 const presets = [
   {
@@ -38,6 +46,7 @@ const presets = [
       aside: `<div>aside</div>`,
       main: `<div>main</div>`,
     },
+    style,
   },
   {
     title: '最小化',
@@ -49,6 +58,7 @@ const presets = [
       aside: `<div>aside</div>`,
       main: `<div>main</div>`,
     },
+    style,
   },
   {
     title: '实时拉伸',
@@ -60,6 +70,7 @@ const presets = [
       aside: `<div>aside</div>`,
       main: `<div>main</div>`,
     },
+    style,
   },
   {
     title: '可折叠',
@@ -72,6 +83,7 @@ const presets = [
       aside: `<div>aside</div>`,
       main: `<div>main</div>`,
     },
+    style,
   },
   {
     title: '多级嵌套',
@@ -124,6 +136,7 @@ const presets = [
     dependent: {
       components: ['resize-layout'],
     },
+    style,
   },
 ];
 

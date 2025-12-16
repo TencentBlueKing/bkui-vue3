@@ -39,6 +39,7 @@
         disable-teleport
       >
         <bk-input
+          class="aside-nav-search-input"
           v-model="searchVal"
           type="search"
           clearable
@@ -495,6 +496,7 @@ onBeforeUnmount(() => {
     width: 70px;
 
     &:deep(.bk-input) {
+      width: 70px;
       border: none;
 
       .bk-input--text{
@@ -508,6 +510,10 @@ onBeforeUnmount(() => {
 
 .aside-nav-search-wrapper {
   padding: 0px 16px 4px 16px;
+
+  .aside-nav-search-input {
+    width: 100%;
+  }
 
   .search-dropdown-list {
 

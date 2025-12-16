@@ -297,39 +297,10 @@ onUnmounted(() => {
 
   .edit-component-component {
     align-self: center;
-    margin: 0 auto;
     width: 100%;
-    text-align: center;
-  }
-  .bk-steps-vertical {
-    min-height: 500px;
-  }
-  /*
-    为了面包屑、单选框组等组件需要居中显示额外添加的样式
-  */
-  .search-container {
-    position: revert !important;
-  }
-
-  .bk-rate-stars {
     display: flex;
     justify-content: center;
   }
-
-  .bk-tree {
-    text-align: left;
-  }
-
-  .bk-resize-layout {
-    height: 500px;
-    text-align: left;
-    background-color: #fff;
-  }
-
-  .bk-breadcrumb, .bk-checkbox-group {
-    justify-content: center;
-  }
-
 
   .edit-component-code {
     width: 100%;

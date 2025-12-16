@@ -30,7 +30,8 @@ import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 const presets = [
   {
     title: '基础用法',
-    description: '由标题+通知文本+按钮组成，例如提交表单，与 confirm 弹出的全屏居中模态对话框相比，在目标元素附近弹出浮层提示，询问用户。',
+    description:
+      '由标题+通知文本+按钮组成，例如提交表单，与 confirm 弹出的全屏居中模态对话框相比，在目标元素附近弹出浮层提示，询问用户。',
     props: {
       width: 288,
       content: '删除操作无法撤回，请谨慎操作！',
@@ -62,7 +63,8 @@ const presets = [
   },
   {
     title: '简单样式',
-    description: '由通知文本+按钮组成，比较轻量的交互模态，用于一句话承载的内容也相对较少，在目标元素附近弹出浮层提示，询问用户。',
+    description:
+      '由通知文本+按钮组成，比较轻量的交互模态，用于一句话承载的内容也相对较少，在目标元素附近弹出浮层提示，询问用户。',
     props: {
       width: 288,
       content: '删除结果数据时，将同时删除该结果数据下的所有样本曲线，请确认！',
