@@ -40,11 +40,7 @@
 
 <script lang="ts" setup>
 import {
-  filterXss,
-} from '@blueking/xss-filter';
-import {
   Button as bkButton,
-  Message,
 } from 'bkui-vue';
 import {
   computed,
@@ -52,22 +48,25 @@ import {
   toRefs,
 } from 'vue';
 
+import {
+  copyToClipboard,
+} from '@/common/util';
 import type {
-  IComponentWiki,
-  CodeLanguages,
-  ValueType,
-} from '@/types/component';
-
-import 'highlight.js/styles/atom-one-dark.css'; // 代码块高亮样式
-import type{
   ILanguage,
 } from '@/hooks/use-highlighjs';
 import {
   useHighLightJs,
 } from '@/hooks/use-highlighjs';
+import type {
+  CodeLanguages,
+  IComponentWiki,
+  ValueType,
+} from '@/types/component';
+
 import {
-  renderCssStyle,
-} from './parser/css/style-parser';
+  filterXss,
+} from '@blueking/xss-filter';
+
 import {
   BREAK_LINE,
   clickoutsideDirective,
@@ -75,17 +74,27 @@ import {
   functionComponents,
 } from './constant';
 import {
-  generateHtmlTag,
-} from './util';
+  applySpecialComponentProps,
+  applySpecialEvents,
+  applySpecialPreset,
+  applySpecialRenderProps,
+  findSpecialConfig,
+} from './extra';
+import {
+  renderCssStyle,
+} from './parser/css/style-parser';
 import {
   createCommonScript,
 } from './parser/script/type/common';
 import {
+  createClickOutSideScript,
+} from './parser/script/type/directive';
+import {
   createFunctionScript,
 } from './parser/script/type/method';
 import {
-  createClickOutSideScript,
-} from './parser/script/type/directive';
+  createCommonTemplate,
+} from './parser/template/type/common';
 import {
   createDirectiveTemplate,
 } from './parser/template/type/directive';
@@ -93,9 +102,10 @@ import {
   createFunctionTemplate,
 } from './parser/template/type/method';
 import {
-  createCommonTemplate,
-} from './parser/template/type/common';
-import { copyToClipboard } from '@/common/util';
+  generateHtmlTag,
+} from './util';
+
+import 'highlight.js/styles/atom-one-dark.css'; // 代码块高亮样式
 
 interface IProps {
   componentWiki: IComponentWiki;
@@ -151,15 +161,36 @@ const scriptSuffix = computed(() => {
 const isDirectiveComponent = computed(() => directiveComponents.includes(componentName.value));
 // 是否为函数组件
 const isFunctionComponent = computed(() => functionComponents.includes(componentName.value));
+
+// 当前匹配的特殊配置
+const currentSpecialConfig = computed(() => findSpecialConfig(componentName.value, componentPresets.value[props.index]?.title));
+
 // 当前使用的预设
 const curPreset = computed(() => {
   if (!isNaN(props.index) && props.index >= 0 && props.index < componentPresets.value.length) {
-    return componentPresets.value[props.index];
+    // 使用深拷贝避免修改原始数据导致栈溢出
+    const curPreset = JSON.parse(JSON.stringify(componentPresets.value[props.index]));
+    // 应用特殊配置（如果有）
+    return applySpecialPreset(curPreset, currentSpecialConfig.value);
   }
   return null;
 });
+
 // 是否可以生成style
 const isShowCss = computed(() => curPreset.value?.style && typeof curPreset.value.style === 'string');
+
+/** 特殊处理的renderProps - 基于配置自动扩展 */
+const specialRenderProps = computed(() => applySpecialRenderProps(renderProps.value, currentSpecialConfig.value));
+
+/** 特殊处理的componentProps - 基于配置自动扩展 */
+// eslint-disable-next-line @stylistic/max-len
+const specialComponentsProps = computed(() => applySpecialComponentProps(componentProps.value, currentSpecialConfig.value));
+
+/** 特殊处理的presetEvents - 基于配置自动扩展 */
+const specialPresetEvents = computed(() => {
+  const curEvents = curPreset.value?.events || {};
+  return applySpecialEvents(curEvents, currentSpecialConfig.value);
+});
 
 // filterXss处理过的highlight
 const filterHighlightXssFactory = (
@@ -172,15 +203,15 @@ const templateContent = () => {
   if (isDirectiveComponent.value) {
     return createDirectiveTemplate(
       curPreset.value,
-      renderProps.value,
+      specialRenderProps.value,
       componentName.value,
     );
-  } else if (isFunctionComponent.value) {
+  } if (isFunctionComponent.value) {
     return createFunctionTemplate();
   }
   return createCommonTemplate(
-    renderProps.value,
-    componentProps.value,
+    specialRenderProps.value,
+    specialComponentsProps.value,
     renderSlots.value,
     componentName.value,
     componentSlots?.value,
@@ -192,8 +223,8 @@ const templateContent = () => {
 const scriptContent = () => {
   if (isFunctionComponent.value) {
     return createFunctionScript(
-      renderProps.value,
-      componentProps.value,
+      specialRenderProps.value,
+      specialComponentsProps.value,
       componentName.value,
     );
   }
@@ -202,15 +233,14 @@ const scriptContent = () => {
   }
   return createCommonScript(
     curPreset.value,
-    renderProps.value,
-    componentProps.value,
+    specialRenderProps.value,
+    specialComponentsProps.value,
     renderSlots.value,
     activeLanguage.value === 'typescript',
     componentName.value,
-    curPreset.value?.events || {},
+    specialPresetEvents.value,
     componentTypes?.value || [],
   );
-
 };
 
 // css生成
@@ -234,8 +264,8 @@ const toggleLanguage = ({
 
 // 获取复制代码内容
 const getCode = () => {
-  const styleTemplate = isShowCss.value ?
-    BREAK_LINE
+  const styleTemplate = isShowCss.value
+    ? BREAK_LINE
     + generateHtmlTag('style', 'start', 'scoped')
     + BREAK_LINE
     + cssContent()

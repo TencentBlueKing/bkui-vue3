@@ -1,21 +1,25 @@
 import type {
   IComponentWiki,
   ValueType,
-} from "@/types/component";
+} from '@/types/component';
 import {
   camelKey,
-} from "@/utils";
+} from '@/utils';
+
+import {
+  SpecialComponentProps,
+} from '../../../extra';
 import {
   camelToKebab,
-} from "../../../util";
+} from '../../../util';
 import {
   createLabel,
   createSlots,
-} from "../generate";
+} from '../generate';
 import {
   parseStringTemplate,
   serializeElementTree,
-} from "../template-parser";
+} from '../template-parser';
 
 // 生成通用模板
 export const createCommonTemplate = (
@@ -29,7 +33,8 @@ export const createCommonTemplate = (
   const curSlots = Object.entries(curSlot).map(([slotName, slotContent]) => {
     const slotParams = componentSlots?.find(item => item.name === slotName)?.params;
     return createSlots(slotContent, slotName, slotParams);
-  }).join('');
+  })
+    .join('');
   const str =  createLabel(
     'template',
     createLabel(
@@ -48,18 +53,21 @@ export const createCommonTemplate = (
 };
 
 export const createTemplateProps = (
-  componentProps: IComponentWiki['props'],
+  componentProps: SpecialComponentProps,
   renderProps: Record<string, ValueType>,
 ) => {
   const result: Record<string, ValueType> = {};
-  const vModelKeys = componentProps.filter(item => item.isSupportVModel).map(item => camelKey(item.name));
+  const vModelKeys = componentProps.filter(item => item?.isSupportVModel).map(item => camelKey(item.name));
   for (const [key, value] of Object.entries(renderProps)) {
+    const curPropInfo = componentProps.find(item => item.name === key || camelKey(item.name) === key);
     if (vModelKeys.includes(key)) {
       if (key === 'modelValue') {
         result['v-model'] = value;
       } else {
         result[`v-model-${camelToKebab(camelKey(key))}`] = value;
       }
+    } else if (curPropInfo.isRef) {
+      result['ref'] = value;
     } else {
       result[key] = value;
     }

@@ -1,17 +1,22 @@
+import {
+  isFunctionString,
+} from '@/common/util';
 import type {
-  IComponentWiki,
   IParam,
   ValueType,
-} from "@/types/component";
+} from '@/types/component';
 import {
   camelKey,
   camelToSnakeCase,
-} from "@/utils";
+} from '@/utils';
+
+import {
+  handleReservedKeyword,
+} from '../../constant';
+
 import {
   toPascalCase,
-} from "./template-parser";
-import { isFunctionString } from "@/common/util";
-import { handleReservedKeyword } from "../../constant";
+} from './template-parser';
 
 // 创建插槽
 export const createSlots = (
@@ -24,7 +29,7 @@ export const createSlots = (
   }
   let slotParamsStr = '';
   if (Array.isArray(slotParams) && slotParams.length > 0) {
-    slotParamsStr = `="data"`;
+    slotParamsStr = '="data"';
   }
   const curSlotName = (slotName === 'default' && !slotParamsStr) ? '' : ` #${slotName}${slotParamsStr}`;
   const name = `template${curSlotName}`;
@@ -50,6 +55,8 @@ export const createLabel = (
       curValue = curKey.slice(8);
     } else if (key.startsWith('v-model')) { // modelValue处理
       curValue = 'modelValue';
+    } else if (key.startsWith('ref')) {
+      curValue = value as string;
     } else {
       curKey = `:${curKey}`;
     }
