@@ -30,6 +30,7 @@ import { array } from 'vue-types';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
 import { AngleUp, Close, Error } from '@bkui-vue/icon';
+import OverflowTitle from '@bkui-vue/overflow-title';
 import Popover, { type PopoverPropTypes } from '@bkui-vue/popover';
 import { useHover } from '@bkui-vue/select';
 import { debounce, PropTypes, PlacementEnum, TriggerEnum } from '@bkui-vue/shared';
@@ -423,6 +424,25 @@ export default defineComponent({
       return acc;
     }, []);
 
+    // 定义renderInput函数
+    const renderInput = () => (
+      <input
+        ref='inputRef'
+        class={[
+          this.resolveClassName('cascader-search-input'),
+          {
+            'is-disabled': this.disabled,
+          },
+        ]}
+        disabled={this.disabled}
+        placeholder={this.calcuPlaceholder}
+        type='text'
+        value={this.searchKey}
+        onBlur={this.searchBlueHandler}
+        onInput={this.searchInputHandler}
+      />
+    );
+
     // 定义renderTags函数，用于渲染选中的tag
     const renderTags = () => {
       if (this.limitOneLine) {
@@ -459,6 +479,7 @@ export default defineComponent({
               +{this.selectedTags.length - this.overflowTagIndex}
             </Tag>
           )}
+          {this.filterable && renderInput()}
         </div>
       );
     };
@@ -499,25 +520,7 @@ export default defineComponent({
             ) : (
               <div class={[this.resolveClassName('cascader-name'), this.resolveClassName('scroll-y')]}>
                 {this.multiple && this.selectedTags.length > 0 && renderTags()}
-                {this.filterable
-                  ? (this.isCollapse || this.selectedTags.length === 0) && (
-                      <input
-                        ref='inputRef'
-                        class={[
-                          this.resolveClassName('cascader-search-input'),
-                          {
-                            'is-disabled': this.disabled,
-                          },
-                        ]}
-                        disabled={this.disabled}
-                        placeholder={this.calcuPlaceholder}
-                        type='text'
-                        value={this.searchKey}
-                        onBlur={this.searchBlueHandler}
-                        onInput={this.searchInputHandler}
-                      />
-                    )
-                  : textRender()}
+                {this.filterable ? this.selectedTags.length === 0 && renderInput() : textRender()}
               </div>
             ),
           content: () => (
@@ -532,7 +535,9 @@ export default defineComponent({
                     this.$slots.default ? (
                       this.$slots.default(scope)
                     ) : (
-                      <span class={this.resolveClassName('cascader-node-name')}>{scope.node.name}</span>
+                      <OverflowTitle type='tips'>
+                        <span class={this.resolveClassName('cascader-node-name')}>{scope.node.name}</span>
+                      </OverflowTitle>
                     ),
                   panel: scope => (this.$slots.panel ? this.$slots.panel(scope) : null),
                 }}
