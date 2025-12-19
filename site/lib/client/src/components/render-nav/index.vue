@@ -60,7 +60,7 @@
               <template v-if="renderList.length">
                 <li
                   v-for="(item,index) in renderList"
-                  :key="item.componentWiki.name"
+                  :key="item.routerName + item.componentWiki.name"
                   :class="[
                     'search-dropdown-list-item',
                     selectIndex === index ? 'cur' : ''
@@ -95,7 +95,7 @@
       </li>
       <li
         v-for="start in componentStore.navGroups?.startList"
-        :key="start.name"
+        :key="`${'markdown'}:${start.name}`"
         :class="{
           'aside-nav-group-item': true,
           active: `${'markdown'}:${start.name}` === activeName,
@@ -113,7 +113,7 @@
         </li>
         <li
           v-for="componentWiki in componentWikis"
-          :key="componentWiki.title"
+          :key="`${'component'}:${componentWiki.name}`"
           :class="{
             'aside-nav-group-item': true,
             active: `${'component'}:${componentWiki.name}` === activeName,
@@ -130,7 +130,7 @@
         </li>
         <li
           v-for="directive in componentStore.navGroups?.directiveList"
-          :key="directive.name"
+          :key="`${'directive'}:${directive.name}`"
           :class="{
             'aside-nav-group-item': true,
             active: `${'directive'}:${directive.name}` === activeName,
@@ -147,7 +147,7 @@
         </li>
         <li
           v-for="customCom in componentStore.navGroups?.customComponentList"
-          :key="customCom.name"
+          :key="`${'business-component'}:${customCom.name}`"
           :class="{
             'aside-nav-group-item': true,
             active: `${'business-component'}:${customCom.name}` === activeName,
@@ -344,17 +344,13 @@ const handleKeydown = (_val: string, e: KeyboardEvent) => {
 const handleChooseCom = async (config?: IComponentMeta) => {
   const item = config || renderList.value[selectIndex.value];
   if (!item) return;
-  await handleChoose(item.componentWiki, item.routerName);
-  scrollToCurNavItem();
+  handleChoose(item.componentWiki, item.routerName);
   hidePopover();
   searchVal.value = '';
 };
 
-const handleChoose = async (value: IComponentWiki, routerName = 'component') => {
-  if (routerName === 'component' || routerName === 'directive') {
-    componentStore.activeComponentWiki = value;
-  }
-  await router.push({
+const handleChoose = (value: IComponentWiki, routerName = 'component') => {
+  router.push({
     name: routerName,
     params: {
       name: value.name,
@@ -384,21 +380,8 @@ const handleInit = async () => {
     componentStore.navGroups = navGroups;
 
     renderList.value = [...componentStore.componentMetaList];
-    // 设置 activeComponentWiki
-    const componentName = Array.isArray(route.params.name) ? route.params.name[0] : route.params.name;
-    const routerName = route.path.split('/')[1];
-    if (componentName) {
-      const component = componentStore.componentMetaList
-        .filter(item => item.routerName === routerName)
-        .find(item => item.componentWiki.name === componentName);
-      if (component) {
-        if (routerName === 'component' || routerName === 'directive') {
-          componentStore.activeComponentWiki = component.componentWiki;
-        }
-        activeName.value = `${routerName}:${componentName}`;
-        await nextTick(scrollToCurNavItem);
-      }
-    }
+
+    await updateStateByRoute();
   } catch (error) {
     console.error(error);
   } finally {
@@ -426,15 +409,37 @@ const scrollToCurNavItem = () => {
   }
 };
 
+const updateStateByRoute = async () => {
+  const { name } = route.params;
+  const componentName = Array.isArray(name) ? name[0] : name;
+  if (!componentName) return;
+
+  // URL 倒推逻辑,防止子目录影响routerName
+  const pathSegments = route.path.split('/')
+    .map(segment => decodeURIComponent(segment))
+    .filter(Boolean);
+  const index = pathSegments.indexOf(componentName);
+  const routerName = index > 0 ? pathSegments[index - 1] : 'component';
+
+  const componentList = componentStore.componentMetaList;
+  if (!componentList || componentList.length === 0) return;
+
+  const component = componentList
+    .filter(item => item.routerName === routerName)
+    .find(item => item.componentWiki.name === componentName);
+
+  if (!component) return;
+  if (['component', 'directive'].includes(routerName)) {
+    componentStore.activeComponentWiki = component.componentWiki;
+  }
+
+  activeName.value = `${routerName}:${componentName}`;
+  await nextTick(scrollToCurNavItem);
+};
+
 watch(
-  () => route.params.name,
-  (name) => {
-    const nameValue = Array.isArray(name) ? name[0] : name;
-    if (nameValue) {
-      const routerName = route.path.split('/')[1] || 'component';
-      activeName.value = `${routerName}:${nameValue}`;
-    }
-  },
+  () => route.path,
+  updateStateByRoute,
 );
 
 watch(
