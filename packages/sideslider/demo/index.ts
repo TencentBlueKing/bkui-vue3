@@ -51,28 +51,34 @@ const presets = [
     },
     slots: {
       default: `
-        <bk-form>
-          <bk-form-item
-            label="姓名"
-            property="name"
-          >
-            <bk-input
-              placeholder="请输入"
-              clearable
-            />
-          </bk-form-item>
-          <bk-form-item label="性别">
-            <bk-radio-group>
-              <bk-radio label="男" />
-              <bk-radio label="女" />
-            </bk-radio-group>
-          </bk-form-item>
-        </bk-form>
+        <div class="content-body">
+          <bk-form form-type="vertical">
+            <bk-form-item
+              label="姓名"
+              property="name"
+            >
+              <bk-input
+                placeholder="请输入"
+                clearable
+              />
+            </bk-form-item>
+            <bk-form-item label="性别">
+              <bk-radio-group>
+                <bk-radio label="男" />
+                <bk-radio label="女" />
+              </bk-radio-group>
+            </bk-form-item>
+          </bk-form>
+        </div>
       `,
     },
     dependent: {
       components: ['form', 'input', 'radio'],
     },
+    style: `
+      .content-body {
+        padding: 30px 40px 0;
+      }`,
   },
   {
     title: '关闭前确认',
@@ -82,11 +88,12 @@ const presets = [
       title: '我是标题',
       beforeClose: `
         () => new Promise((resolve, reject) => {
-          InfoBox({
+          BkInfoBox({
             title: '确认关闭?',
             infoType: 'warning',
             onConfirm: () => resolve(true),
             onCancel: () => reject(),
+            class: 'close-box',
           });
         })
       `,
@@ -97,6 +104,11 @@ const presets = [
     dependent: {
       components: ['info-box'],
     },
+    style: `
+      .close-box {
+        position: relative;
+        z-index: 3000 !important;
+      }`,
   },
   {
     title: '显示方向',

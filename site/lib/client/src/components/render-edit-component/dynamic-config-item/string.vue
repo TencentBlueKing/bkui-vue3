@@ -4,6 +4,10 @@
     :model-value="modelValue"
     behavior="simplicity"
     :disabled="disabled"
+    :tooltipsOptions="{
+      boundary: 'parent',
+      extCls: 'config-string-tip-content g-scrollbar',
+    }"
     @update:model-value="handleUpdateModelValue"
   />
 </template>
@@ -49,5 +53,10 @@ const handleUpdateModelValue = (value: string) => {
   .bk-input--text {
     padding-left: 0;
   }
+}
+.config-string-tip-content {
+  max-height: 200px;
+  /* overflow-y: scroll; */
+  overflow: auto;
 }
 </style>
