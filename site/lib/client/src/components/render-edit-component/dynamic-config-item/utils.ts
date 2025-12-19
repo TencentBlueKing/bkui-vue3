@@ -114,6 +114,7 @@ export const isNumber = (value: unknown) => typeof value === 'number' || value i
 export const isBoolean = (value: unknown) => typeof value === 'boolean' || value instanceof Boolean;
 export const isArray = (value: unknown) => Array.isArray(value)
 export const isObject = (value: unknown) => Object.prototype.toString.call(value) === '[object Object]';
+export const isUndefined = (value: unknown) => typeof value === 'undefined';
 
 export const debounce = (func: Function, wait: number) => {
   let timeout: ReturnType<typeof setTimeout> | null;

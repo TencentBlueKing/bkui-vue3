@@ -31,10 +31,11 @@ const RenderFunc = computed(() => {
 
 <style lang="postcss" scoped>
 .config-item-func {
+    background-color: #F5F7FA;
     font-size: 0;
-    padding: 10px;
-    border: 1px solid #c4c6cc;
+    padding: 3px 8px;
     border-radius: 2px;
+    min-height: 85px;
     max-height: 200px;
     overflow: auto;
     code {

@@ -19,6 +19,7 @@ import {
   isTypeFunction,
   splitType,
   valueType,
+  isUndefined
 } from './utils';
 
 import './index.postcss';
@@ -36,6 +37,10 @@ export default defineComponent({
       required: true,
     },
     modelValue: {
+      type: [String, Number, Boolean, Object, Array] as PropType<ComponentPropValue>,
+      default: undefined,
+    },
+    defaultVal: {
       type: [String, Number, Boolean, Object, Array] as PropType<ComponentPropValue>,
       default: undefined,
     },
@@ -89,8 +94,9 @@ export default defineComponent({
     };
     const newModelValue = ref<ComponentPropValue>();
     watch(() => props.modelValue, (val) => {
-      newModelValue.value = val;
-      const valType = valueType(val, singleType.value);
+      const newVal = isUndefined(val) ? props.defaultVal : val;
+      newModelValue.value = newVal;
+      const valType = valueType(newVal, singleType.value);
       const matchedType = typeList.value.find(typeItem => typeItem.factType === valType);
       singleType.value = matchedType ? matchedType.value : typeList.value[0]?.value || '';
     }, {

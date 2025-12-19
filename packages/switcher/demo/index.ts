@@ -32,8 +32,7 @@ const presets = [
     description: '可以通过 value / v-model 属性来定义开关状态',
     props: {
       modelValue: true,
-      'show-text': true,
-      theme: 'success',
+      theme: 'primary',
     },
   },
   {
@@ -100,7 +99,7 @@ const props = [
     description: '开关的主题',
     type: 'string',
     default: 'success',
-    options: ['success', 'danger'],
+    options: ['success', 'primary'],
   },
   {
     name: 'disabled',

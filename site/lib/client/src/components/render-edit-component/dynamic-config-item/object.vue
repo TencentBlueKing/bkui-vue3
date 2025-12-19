@@ -221,11 +221,11 @@ const clearError = () => {
   width: 100%;
   .config-obj-item-func {
     font-size: 0;
-    padding: 10px;
-    border: 1px solid #c4c6cc;
+    padding: 3px 8px;
     border-radius: 2px;
     min-height: 200px;
     max-height: 400px;
+    background-color: #F5F7FA;
     overflow: auto;
     code {
         font-size: 12px;

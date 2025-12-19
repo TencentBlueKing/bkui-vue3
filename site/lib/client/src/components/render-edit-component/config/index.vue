@@ -31,6 +31,7 @@
             :name="prop.name"
             :type="prop.type"
             :model-value="renderCamelKeyProps(prop.name)"
+            :default-val="prop.default"
             :options="prop.options"
             :complex-types="types"
             :active-language="activeLanguage"
@@ -284,6 +285,7 @@ onBeforeUnmount(() => {
   padding-top: 11px;
   display: flex;
   flex-direction: column;
+  font-family: initial;
   :deep(.bk-input) {
     width: 100%;
   }
