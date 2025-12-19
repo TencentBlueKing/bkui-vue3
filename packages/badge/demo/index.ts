@@ -33,10 +33,10 @@ const presets = [
     props: {
       theme: 'danger',
       dot: true,
-      position: 'top-left',
+      position: 'top-right',
     },
     slots: {
-      default: `<bk-button theme="primary"> top-left </bk-button>`,
+      default: `<bk-button theme="primary"> top-right </bk-button>`,
     },
     dependent: {
       components: ['button'],
@@ -49,7 +49,7 @@ const presets = [
       theme: 'danger',
       count: 10,
       valLength: 2,
-      position: 'top-left',
+      position: 'top-right',
     },
     slots: {
       default: `<bk-button theme="primary"> 未读消息  </bk-button>`,
@@ -62,7 +62,7 @@ const presets = [
       theme: 'danger',
       count: 'fiwesfjk',
       valLength: 8,
-      position: 'top-left',
+      position: 'top-right',
     },
     slots: {
       default: `<bk-button theme="primary"> 未读消息  </bk-button>`,
