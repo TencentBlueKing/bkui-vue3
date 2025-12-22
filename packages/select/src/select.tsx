@@ -1137,12 +1137,10 @@ export default defineComponent({
             <span>{this.curContentText}</span>
           </div>
         )}
-        <div
-          class={this.resolveClassName('select-content')}
-          v-show={this.isShowSelectContent}
-        >
+        <div class={this.resolveClassName('select-content')}>
           <div
             ref='scrollContainerRef'
+            v-show={this.isShowSelectContent}
             style={{ maxHeight: `${this.scrollHeight}px`, minHeight: `${this.minHeight}px` }}
             class={this.isEnableVirtualRender ? '' : this.resolveClassName('select-dropdown')}
             onScroll={this.handleScroll}
