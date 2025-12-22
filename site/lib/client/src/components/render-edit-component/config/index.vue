@@ -54,7 +54,7 @@
         ref="slotRef"
         @expand="scrollToSlot"
       >
-        <div class="prl16" v-if="comSlots.length">
+        <div class="slot-padding-wrapper" v-if="comSlots.length">
           <Slot
             v-for="slot in comSlots"
             :name="slot.name"
@@ -292,10 +292,10 @@ onBeforeUnmount(() => {
   :deep(.bk-select) {
     width: 100%;
   }
-  .prl16 {
+  .slot-padding-wrapper {
     padding: 4px 16px 0;
   }
-  .mr16 {
+  .config-item-mlr16 {
     margin-left:  16px;
     margin-right: 16px;
   }
