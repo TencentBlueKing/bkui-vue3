@@ -831,6 +831,11 @@ export default defineComponent({
       virtualRenderRef.value?.scrollTo(0, 1);
     };
 
+    // 处理扩展区域点击事件
+    const handleExtensionClick = (e: MouseEvent) => {
+      e.stopPropagation();
+    }
+
     return {
       t,
       selected,
@@ -896,6 +901,7 @@ export default defineComponent({
       preloadItemCount,
       virtualRenderRef,
       setSelected,
+      handleExtensionClick,
     };
   },
   render() {
@@ -1166,7 +1172,7 @@ export default defineComponent({
             </ul>
           </div>
           {this.$slots?.extension && (
-            <div class={this.resolveClassName('select-extension')}>{this.$slots?.extension()}</div>
+            <div class={this.resolveClassName('select-extension')} onClick={this.handleExtensionClick}>{this.$slots?.extension()}</div>
           )}
         </div>
       </div>
