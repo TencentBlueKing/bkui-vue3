@@ -24,7 +24,7 @@
         title="属性"
         name="attr"
       >
-        <div class="prl16" v-if="comProps.length">
+        <div :style="{ paddingTop: '4px' }" v-if="comProps.length">
           <DynamicConfigItem
             v-for="prop in comProps"
             :key="prop.name"
@@ -36,7 +36,7 @@
             :complex-types="types"
             :active-language="activeLanguage"
             :disabled="isDisableProp(prop.name)"
-            :class="{ 'selected-prop': selectedProp === prop.name }"
+            :class="{ 'mr16': true, 'selected-prop': selectedProp === prop.name }"
             @update:model-value="(value) => handleUpdateProps(prop.name, value)"
           >
             <template #nameTip>
@@ -54,7 +54,7 @@
         ref="slotRef"
         @expand="scrollToSlot"
       >
-        <div class="prl16" v-if="comSlots.length">
+        <div class="slot-padding-wrapper" v-if="comSlots.length">
           <Slot
             v-for="slot in comSlots"
             :name="slot.name"
@@ -292,18 +292,24 @@ onBeforeUnmount(() => {
   :deep(.bk-select) {
     width: 100%;
   }
-  .prl16 {
-    padding: 0 16px;
+  .slot-padding-wrapper {
+    padding: 4px 16px 0;
+  }
+  .config-item-mlr16 {
+    margin-left:  16px;
+    margin-right: 16px;
   }
   .header-wrapper {
     margin-bottom: 3px;
   }
   .config-tabs {
-    padding: 12px 0 8px 0;
+    padding: 8px 0 12px 0;
   }
 
   /* 选中属性的高亮样式 */
   .selected-prop {
+    padding: 4px;
+    margin: -4px 12px 16px;
     background-color: #FDF4E8 !important;
     border-radius: 2px;
     transition: all 0.2s ease;

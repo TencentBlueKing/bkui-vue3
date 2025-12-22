@@ -240,7 +240,7 @@ onUnmounted(() => {
       align-items: flex-start;
       .icon-peizhi {
         margin-top: 4px;
-        font-size: 14px;
+        font-size: 16px;
         color: #979BA5;
       }
       &:hover {
