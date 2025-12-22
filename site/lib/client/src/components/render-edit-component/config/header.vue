@@ -36,6 +36,7 @@
     &-left {
       font-size: 14px;
       .icon-peizhi {
+        font-size: 16px;
         margin-right: 8px;
         color: #4D4F56;
       }
