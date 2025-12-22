@@ -2,7 +2,7 @@
   <section
     class="edit-component-config"
   >
-    <div class="prl16">
+    <div class="mlr16">
       <Header class="header-wrapper" @refresh="resetProp" />
       <Search
         :props="allValidTypeProps"
@@ -24,7 +24,7 @@
         title="属性"
         name="attr"
       >
-        <div :style="{ paddingTop: '4px' }" v-if="comProps.length">
+        <div class="pt4" v-if="comProps.length">
           <DynamicConfigItem
             v-for="prop in comProps"
             :key="prop.name"
@@ -36,7 +36,7 @@
             :complex-types="types"
             :active-language="activeLanguage"
             :disabled="isDisableProp(prop.name)"
-            :class="{ 'mr16': true, 'selected-prop': selectedProp === prop.name }"
+            :class="{ 'mlr16': true, 'selected-prop': selectedProp === prop.name }"
             @update:model-value="(value) => handleUpdateProps(prop.name, value)"
           >
             <template #nameTip>
@@ -54,7 +54,7 @@
         ref="slotRef"
         @expand="scrollToSlot"
       >
-        <div class="slot-padding-wrapper" v-if="comSlots.length">
+        <div class="pt4 mlr16" v-if="comSlots.length">
           <Slot
             v-for="slot in comSlots"
             :name="slot.name"
@@ -292,10 +292,10 @@ onBeforeUnmount(() => {
   :deep(.bk-select) {
     width: 100%;
   }
-  .slot-padding-wrapper {
-    padding: 4px 16px 0;
+  .pt4 {
+    padding-top: 4px;
   }
-  .config-item-mlr16 {
+  .mlr16 {
     margin-left:  16px;
     margin-right: 16px;
   }
