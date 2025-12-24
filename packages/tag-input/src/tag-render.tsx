@@ -137,7 +137,7 @@ export default defineComponent({
 
     const editValue = ref(props.node[props.displayKey]);
 
-    watch(props.node[props.displayKey], val => {
+    watch(() => props.node[props.displayKey], val => {
       editValue.value = val;
     });
 
