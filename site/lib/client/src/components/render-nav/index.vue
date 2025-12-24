@@ -223,6 +223,8 @@ const {
 
 const vClickoutside = clickoutside;
 const BkOption = BkSelect.Option;
+const SCROLL_OFFSET_TOP = 171;
+const SCROLL_PADDING = 85;
 
 const searchVal = ref('');
 const activeName = ref('');
@@ -344,13 +346,14 @@ const handleKeydown = (_val: string, e: KeyboardEvent) => {
 const handleChooseCom = async (config?: IComponentMeta) => {
   const item = config || renderList.value[selectIndex.value];
   if (!item) return;
-  handleChoose(item.componentWiki, item.routerName);
+  await handleChoose(item.componentWiki, item.routerName);
   hidePopover();
   searchVal.value = '';
+  await nextTick(scrollToCurNavItem);
 };
 
-const handleChoose = (value: IComponentWiki, routerName = 'component') => {
-  router.push({
+const handleChoose = async (value: IComponentWiki, routerName = 'component') => {
+  await router.push({
     name: routerName,
     params: {
       name: value.name,
@@ -381,7 +384,8 @@ const handleInit = async () => {
 
     renderList.value = [...componentStore.componentMetaList];
 
-    await updateStateByRoute();
+    updateStateByRoute();
+    await nextTick(scrollToCurNavItem);
   } catch (error) {
     console.error(error);
   } finally {
@@ -402,14 +406,19 @@ const sortGroupByOrder = (data: INavGroups['componentGroupMap']) => {
 };
 
 const scrollToCurNavItem = () => {
-  const curAsideNavGroupItem  = document.querySelector('.aside-nav-group-item.active');
+  if (!asideNavGroupRef.value) return;
+
+  const curAsideNavGroupItem = asideNavGroupRef.value.querySelector('.aside-nav-group-item.active') as HTMLElement;
   if (curAsideNavGroupItem) {
     // 171 是距离顶部的距离，85 是留出多余的高度，不给 85 的话，会显得太顶到顶部了
-    asideNavGroupRef.value.scrollTop = (curAsideNavGroupItem as HTMLElement).offsetTop - 171 - 85;
+    const top = curAsideNavGroupItem.offsetTop - SCROLL_OFFSET_TOP - SCROLL_PADDING;
+    asideNavGroupRef.value.scrollTo({
+      top,
+    });
   }
 };
 
-const updateStateByRoute = async () => {
+const updateStateByRoute = () => {
   const { name } = route.params;
   const componentName = Array.isArray(name) ? name[0] : name;
   if (!componentName) return;
@@ -434,7 +443,6 @@ const updateStateByRoute = async () => {
   }
 
   activeName.value = `${routerName}:${componentName}`;
-  await nextTick(scrollToCurNavItem);
 };
 
 watch(
