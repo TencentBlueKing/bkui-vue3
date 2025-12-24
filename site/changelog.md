@@ -1,6 +1,17 @@
 ## 更新日志
 
 
+### 2.0.2-beta.82
+
+* **[feat]**:
+    - bugfix(select): 列表为空时，extension slot 失效
+    - bugfix(select): 点击extension slot会导致下拉面板收起
+    - bugfix(popover): hideIgnoreReference属性失效
+    - feat(status-tag): 添加新的业务组件 status-tag & 国际化支持
+    - fix(cascader): 修复光标位置问题
+    - bugfix(select): 校验时报错的样式错误
+
+
 ### 2.0.2-beta.81
 
 * **[feat]**:
