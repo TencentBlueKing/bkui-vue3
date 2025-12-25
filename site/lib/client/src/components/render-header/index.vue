@@ -75,6 +75,8 @@ const createMcpTag = () => {
 const tags = computed(() => {
   const componentName = route.params.name as string;
 
+  if (!componentStore.navGroups) return [];
+
   // 1. 如果是noTag组件，不显示tags
   if (noTagComponents.value.includes(componentName)) {
     return createMcpTag();
