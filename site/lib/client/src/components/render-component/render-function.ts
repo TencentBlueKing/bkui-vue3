@@ -65,15 +65,21 @@ export default vue.defineComponent({
     );
 
     return vue.h(
-      BkButton,
-      {
-        theme: 'primary',
-        onClick: () => this.component.default({
-          ...renderEvents,
-          ...renderProps,
-        }),
-      },
-      ['点击展示组件'],
+      'div',
+      {},
+      [
+        vue.h(
+          BkButton,
+          {
+            theme: 'primary',
+            onClick: () => this.component.default({
+              ...renderEvents,
+              ...renderProps,
+            }),
+          },
+          ['点击展示组件'],
+        ),
+      ],
     );
   },
 });

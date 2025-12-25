@@ -50,12 +50,6 @@ const presets = [
       isShowPreview: true,
       url: 'https://jsonplaceholder.typicode.com/posts/',
     },
-    style: `
-      .edit-component-component {
-        display: flex;
-        justify-content: center;
-      }
-    `,
   },
   {
     title: '拖拽上传',
@@ -91,11 +85,6 @@ const presets = [
       isShowPreview: true,
       url: 'https://jsonplaceholder.typicode.com/posts/',
     },
-    style: `
-      .edit-component-view-wrapper .edit-component-view .edit-component-component {
-        text-align: left;
-      }
-    `,
   },
   {
     title: '设置文件大小和个数',
@@ -108,11 +97,6 @@ const presets = [
       isShowPreview: true,
       url: 'https://jsonplaceholder.typicode.com/posts/',
     },
-    style: `
-      .edit-component-view-wrapper .edit-component-view .edit-component-component {
-        text-align: left;
-      }
-    `,
   },
   {
     title: '自定义文件列表项',
@@ -164,11 +148,6 @@ const presets = [
         </div>
       `,
     },
-    style: `
-      .edit-component-view-wrapper .edit-component-view .edit-component-component {
-        text-align: left;
-      }
-    `,
   },
 ];
 

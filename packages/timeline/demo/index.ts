@@ -61,12 +61,6 @@ const presets = [
         alert(\`选择了：\${data.tag}\`);
       }`,
     },
-    style: `
-      .edit-component-component {
-        display: flex;
-        justify-content: center;
-      }
-    `,
   },
   {
     title: '节点状态',
@@ -102,12 +96,6 @@ const presets = [
         },
       ],
     },
-    style: `
-      .edit-component-component {
-        display: flex;
-        justify-content: center;
-      }
-    `,
   },
   {
     title: '节点样式可配置',
@@ -141,12 +129,6 @@ const presets = [
         },
       ],
     },
-    style: `
-      .edit-component-component {
-        display: flex;
-        justify-content: center;
-      }
-    `,
   },
   {
     title: '可配置 HTML 模板',
@@ -177,12 +159,6 @@ const presets = [
         },
       ],
     },
-    style: `
-      .edit-component-component {
-        display: flex;
-        justify-content: center;
-      }
-    `,
   },
 ];
 

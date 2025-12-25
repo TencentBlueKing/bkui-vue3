@@ -49,11 +49,6 @@ const presets = [
         },
       ],
     },
-    style: `
-      .edit-component-component {
-        transform: translate(0,0);
-      }
-    `,
     dependent: {
       components: ['icon'],
     },
@@ -79,11 +74,6 @@ const presets = [
         },
       ],
     },
-    style: `
-      .edit-component-component {
-        transform: translate(0,0);
-      }
-    `,
   },
   {
     title: '文字和图标类型',
@@ -106,11 +96,6 @@ const presets = [
         },
       ],
     },
-    style: `
-      .edit-component-component {
-        transform: translate(0,0);
-      }
-    `,
   },
 ];
 

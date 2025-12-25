@@ -81,12 +81,6 @@ const list = [
   },
 ];
 
-const style = `
-  .bk-cascader-wrapper {
-    width: 300px;
-  }
-`;
-
 // 组件示例
 const presets = [
   {
@@ -101,7 +95,6 @@ const presets = [
       // showCompleteName: true,
       list,
     },
-    style,
   },
   {
     title: '多选级联',
@@ -118,7 +111,6 @@ const presets = [
       // separator: '/',
       list,
     },
-    style,
   },
   {
     title: '任意级可选',
@@ -129,7 +121,6 @@ const presets = [
       checkAnyLevel: true,
       list,
     },
-    style,
   },
   {
     title: '列表别名设置',
@@ -162,7 +153,6 @@ const presets = [
         },
       ],
     },
-    style,
   },
   {
     title: '分隔符设置',
@@ -181,7 +171,6 @@ const presets = [
       showCompleteName: false,
       list,
     },
-    style,
   },
   {
     title: '自定义节点',
@@ -207,7 +196,6 @@ const presets = [
         </div>
       `,
     },
-    style,
   },
   {
     title: '远程加载',
@@ -246,7 +234,6 @@ const presets = [
         }, 1000);
       }`,
     },
-    style,
   },
   {
     title: '自定义Trigger',
@@ -262,7 +249,6 @@ const presets = [
         </div>
       `,
     },
-    style,
   },
   {
     title: '自定义填充回调',
@@ -293,7 +279,6 @@ const presets = [
             .join('/')
       `,
     },
-    style,
   },
   {
     title: '自定义面板',
@@ -309,7 +294,6 @@ const presets = [
         </div>
       `,
     },
-    style,
   },
 ];
 

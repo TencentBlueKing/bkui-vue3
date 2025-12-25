@@ -38,7 +38,7 @@ const presets = [
       theme: 'light',
     },
     slots: {
-      default: `<div>当鼠标经过这段文字时，会显示一个气泡框</div>`,
+      default: `<div class="bk-popover-demo">当鼠标经过这段文字时，会显示一个气泡框</div>`,
       content: `<div>
 JSX value should be either an expression or a quoted JSX text ...
 Quoted JSX attributes use XML-style escapes #1225 - GitHub
@@ -57,7 +57,7 @@ Substitution Scholia and Thucydides' Use of Prepositions
       theme: 'light',
     },
     slots: {
-      default: `<bk-button>placement</bk-button>`,
+      default: `<bk-button class="bk-popover-demo">placement</bk-button>`,
     },
     dependent: {
       components: ['button'],
@@ -75,7 +75,7 @@ Substitution Scholia and Thucydides' Use of Prepositions
       always: true,
     },
     slots: {
-      default: `<bk-button>总是显示</bk-button>`,
+      default: `<bk-button class="bk-popover-demo">总是显示</bk-button>`,
     },
     dependent: {
       components: ['button'],
@@ -90,7 +90,7 @@ Substitution Scholia and Thucydides' Use of Prepositions
       hideIgnoreReference: true,
     },
     slots: {
-      default: `<div>点我不会收起弹窗</div>`,
+      default: `<div class="bk-popover-demo">点我不会收起弹窗</div>`,
     },
   },
 ];

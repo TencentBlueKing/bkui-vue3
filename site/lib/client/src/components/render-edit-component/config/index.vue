@@ -285,7 +285,6 @@ onBeforeUnmount(() => {
   padding-top: 11px;
   display: flex;
   flex-direction: column;
-  font-family: initial;
   :deep(.bk-input) {
     width: 100%;
   }

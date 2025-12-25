@@ -31,7 +31,7 @@ const presets = [
     title: '基础用法',
     description: '向下滚动以显示按钮',
     props: {
-      target: '.edit-component-view',
+      target: '.edit-component-component',
       'visibility-height': 40,
     },
   },
@@ -39,7 +39,7 @@ const presets = [
     title: '文字类型',
     description: '向下滚动以显示按钮',
     props: {
-      target: '.edit-component-view',
+      target: '.edit-component-component',
       'visibility-height': 40,
     },
     slots: {
@@ -50,7 +50,7 @@ const presets = [
     title: '图标文字组合',
     description: '向下滚动以显示按钮',
     props: {
-      target: '.edit-component-view',
+      target: '.edit-component-component',
       'visibility-height': 40,
       extCls: 'border-radius-0',
     },
@@ -82,7 +82,7 @@ const presets = [
     title: '自定义样式',
     description: '向下滚动以显示按钮',
     props: {
-      target: '.edit-component-view',
+      target: '.edit-component-component',
       'visibility-height': 40,
     },
     slots: {

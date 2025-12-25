@@ -110,6 +110,7 @@ export default vue.defineComponent({
     } if (this.name === 'icon') {
       return <RenderIcon
         key={this.name + this.renderKey}
+        componentStyle={this.style}
         component={this.component}
         renderProps={this.renderProps}
       />;

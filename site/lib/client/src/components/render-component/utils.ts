@@ -294,3 +294,22 @@ export function registerComponents(
   });
 }
 
+/**
+ * 添加样式到head中
+ */
+export function addStyleToHead(style: string): void {
+  const styleElement = document.createElement('style');
+  styleElement.textContent = style;
+  styleElement.id = 'render-component-style';
+  document.head.appendChild(styleElement);
+}
+
+/**
+ * 移除样式
+ */
+export function removeStyleFromHead(style: string): void {
+  const styleElement = document.getElementById(style);
+  if (styleElement) {
+    document.head.removeChild(styleElement);
+  }
+}

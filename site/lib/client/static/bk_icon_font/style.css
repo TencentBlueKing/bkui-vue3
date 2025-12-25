@@ -71,3 +71,6 @@ url("fonts/iconcool.eot?#iefix") format("embedded-opentype");
 .icon-edit:before {
 	content: "\e111";
 }
+.icon-npm:before {
+	content: "\e113";
+}

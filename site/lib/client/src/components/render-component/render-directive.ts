@@ -50,6 +50,12 @@ export default vue.defineComponent({
       });
     };
 
-    return renderDirectiveComponent();
+    return vue.h(
+      'div',
+      {},
+      [
+        renderDirectiveComponent(),
+      ],
+    );
   },
 });
