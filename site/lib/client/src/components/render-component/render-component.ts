@@ -10,11 +10,13 @@ import * as vue from 'vue';
 import type { IProp } from '@/types/component';
 
 import {
+  addStyleToHead,
   buildDependentComponentsMap,
   processRenderEvents,
   processRenderProps,
   processRenderSlots,
   registerComponents,
+  removeStyleFromHead,
 } from './utils';
 
 export default vue.defineComponent({
@@ -74,28 +76,15 @@ export default vue.defineComponent({
     this.initStyle();
   },
   beforeUnmount() {
-    this.removeStyle();
+    removeStyleFromHead('render-component-style');
     // 移除在window上注册的依赖组件
     this.removeDependentFunctionComps();
   },
   methods: {
     initStyle() {
-      // 移除已有的样式
-      this.removeStyle();
+      removeStyleFromHead('render-component-style');
 
-      // 添加新的样式
-      if (this.componentStyle) {
-        const style = document.createElement('style');
-        style.textContent = this.componentStyle;
-        style.id = 'render-component-style';
-        document.head.appendChild(style);
-      }
-    },
-    removeStyle() {
-      const style = document.getElementById('render-component-style');
-      if (style) {
-        document.head.removeChild(style);
-      }
+      addStyleToHead(this.componentStyle);
     },
     removeDependentFunctionComps() {
       Object.keys(this.dependentComponents).forEach((componentName) => {
@@ -132,20 +121,26 @@ export default vue.defineComponent({
     // 处理 Backtop 组件
     const processBackTopRender = (component: vue.VNode) => {
       return vue.h(
-        'section',
-        {
-          style: {
-            width: '100%',
-            height: '1000px',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            transform: 'translate(0,0)',
-          },
-        },
+        'div',
+        {},
         [
-          vue.h('div', ['继续滚动查看出现 Backtop 效果']),
-          component,
+          vue.h(
+            'section',
+            {
+              style: {
+                width: '100%',
+                height: '1000px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                transform: 'translate(0,0)',
+              },
+            },
+            [
+              vue.h('div', ['继续滚动查看出现 Backtop 效果']),
+              component,
+            ],
+          ),
         ],
       );
     };
@@ -153,44 +148,50 @@ export default vue.defineComponent({
     // 处理 Affix 组件
     const processAffixRender = (component: vue.VNode) => {
       return vue.h(
-        'section',
-        {
-          style: {
-            width: '100%',
-            height: '2000px',
-            alignSelf: 'initial',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '10px',
-            textAlign: 'left',
-          },
-        },
+        'div',
+        {},
         [
-          vue.h('div', {
-            style: {
-              width: '100%',
-              height: '1000px',
-              color: '#63656e',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              border: '1px solid #63656e',
-            },
-          }, ['继续滚动查看固定效果']),
-          component,
           vue.h(
-            'div', {
+            'section',
+            {
               style: {
                 width: '100%',
-                height: '1000px',
-                color: '#63656e',
+                height: '2000px',
+                alignSelf: 'flex-start',
                 display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border: '1px solid #63656e',
+                flexDirection: 'column',
+                gap: '10px',
+                textAlign: 'left',
               },
             },
-            ['继续滚动查看固定效果'],
+            [
+              vue.h('div', {
+                style: {
+                  width: '100%',
+                  height: '1000px',
+                  color: '#63656e',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  // border: '1px solid #63656e',
+                },
+              }, ['继续滚动查看固定效果']),
+              component,
+              vue.h(
+                'div', {
+                  style: {
+                    width: '100%',
+                    height: '1000px',
+                    color: '#63656e',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    // border: '1px solid #63656e',
+                  },
+                },
+                ['继续滚动查看固定效果'],
+              ),
+            ],
           ),
         ],
       );

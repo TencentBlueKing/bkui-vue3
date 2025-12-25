@@ -32,7 +32,7 @@ const presets = [
     title: '基础用法',
     description: '鼠标悬停显示完整内容',
     template: `
-      <div v-ellipsis="$attrs">
+      <div class="bk-ellipsis-demo" v-ellipsis="$attrs">
         鼠标悬停时可以看到完整内容
       </div>
     `,

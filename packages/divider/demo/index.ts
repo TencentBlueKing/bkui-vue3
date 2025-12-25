@@ -34,11 +34,6 @@ const presets = [
     props: {
       direction: 'horizontal',
     },
-    style: `
-      .edit-component-component {
-        height: 250px;
-      }
-    `,
   },
   {
     title: '文字分割线',
@@ -49,11 +44,6 @@ const presets = [
     slots: {
       default: '<div>文字分割线</div>',
     },
-    style: `
-      .edit-component-component {
-        height: 250px;
-      }
-    `,
   },
 ];
 

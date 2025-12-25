@@ -25,6 +25,13 @@
  */
 import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
+const style = `
+  .input-icon {
+    display: inline-flex;
+    align-items: center;
+  }
+`;
+
 // 组件示例
 const presets = [
   {
@@ -59,11 +66,7 @@ const presets = [
     dependent: {
       components: ['menu'],
     },
-    style: `
-      .bk-resize-layout-main .edit-component-view .edit-component-component {
-        align-self: start;
-      }
-    `,
+    style,
   },
   {
     title: '组合导航',
@@ -105,19 +108,7 @@ const presets = [
       header: '<div class="header-demo">这里是头部导航</div>',
       'side-icon': '<span class="input-icon"><tree-application-shape /></span>',
     },
-    style: `
-      .bk-resize-layout-main .edit-component-view .edit-component-component {
-        align-self: start;
-      }
-
-      .input-icon {
-        display: inline-flex;
-        align-items: center;
-      }
-    `,
-    dependent: {
-      components: ['icon'],
-    },
+    style,
   },
 ];
 

@@ -25,6 +25,28 @@
  */
 import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
+const style = `
+  .bk-grid-container {
+    width: 100%;
+  }
+    
+  .content {
+    height: 100%;
+    font-size: 12px;
+    line-height: 60px;
+    background-color: #e1ecff;
+    border-radius: 2px;
+  }
+
+  .bk-grid-row {
+    text-align: center;
+  }
+
+  .bk-grid-row + .bk-grid-row {
+    margin-top: 30px;
+  }
+`;
+
 // 组件示例
 const presets = [
   {
@@ -111,30 +133,7 @@ const presets = [
         </bk-row>
       `,
     },
-    style: `
-      .edit-component-component {
-        padding: 20px 0;
-        overflow: hidden;
-        border: 1px solid #ddd;
-        border-radius: 2px;
-      }
-
-      .content {
-        height: 100%;
-        font-size: 12px;
-        line-height: 60px;
-        background-color: #e1ecff;
-        border-radius: 2px;
-      }
-
-      .bk-grid-row {
-        text-align: center;
-      }
-
-      .bk-grid-row + .bk-grid-row {
-        margin-top: 30px;
-      }
-    `,
+    style,
   },
   {
     title: '自定义设置栅格数以及整个栅格容器的左右边距',
@@ -186,30 +185,7 @@ const presets = [
         </bk-row>
       `,
     },
-    style: `
-      .edit-component-component {
-        padding: 20px 0;
-        overflow: hidden;
-        border: 1px solid #ddd;
-        border-radius: 2px;
-      }
-
-      .content {
-        height: 100%;
-        font-size: 12px;
-        line-height: 60px;
-        background-color: #e1ecff;
-        border-radius: 2px;
-      }
-
-      .bk-grid-row {
-        text-align: center;
-      }
-
-      .bk-grid-row + .bk-grid-row {
-        margin-top: 30px;
-      }
-    `,
+    style,
   },
   {
     title: '自定义设置栅格之间的边距以及每个栅格的占位数',
@@ -268,30 +244,7 @@ const presets = [
         </bk-row>
       `,
     },
-    style: `
-      .edit-component-component {
-        padding: 20px 0;
-        overflow: hidden;
-        border: 1px solid #ddd;
-        border-radius: 2px;
-      }
-
-      .content {
-        height: 100%;
-        font-size: 12px;
-        line-height: 60px;
-        background-color: #e1ecff;
-        border-radius: 2px;
-      }
-
-      .bk-grid-row {
-        text-align: center;
-      }
-
-      .bk-grid-row + .bk-grid-row {
-        margin-top: 30px;
-      }
-    `,
+    style,
   },
   {
     title: '自定义设置栅格的顺序以及栅格的偏移',
@@ -356,30 +309,7 @@ const presets = [
         </bk-row>
       `,
     },
-    style: `
-      .edit-component-component {
-        padding: 20px 0;
-        overflow: hidden;
-        border: 1px solid #ddd;
-        border-radius: 2px;
-      }
-
-      .content {
-        height: 100%;
-        font-size: 12px;
-        line-height: 60px;
-        background-color: #e1ecff;
-        border-radius: 2px;
-      }
-
-      .bk-grid-row {
-        text-align: center;
-      }
-
-      .bk-grid-row + .bk-grid-row {
-        margin-top: 30px;
-      }
-    `,
+    style,
   },
   {
     title: 'flex 布局',
@@ -415,36 +345,7 @@ const presets = [
         </bk-row>
       `,
     },
-    style: `
-      .edit-component-component {
-        padding: 20px 0;
-        overflow: hidden;
-        border: 1px solid #ddd;
-        border-radius: 2px;
-      }
-
-      .content {
-        height: 100%;
-        font-size: 12px;
-        line-height: 60px;
-        background-color: #e1ecff;
-        border-radius: 2px;
-      }
-
-      .bk-grid-row {
-        text-align: center;
-      }
-
-      .bk-grid-row + .bk-grid-row {
-        margin-top: 30px;
-      }
-
-      .flex {
-        .bk-grid-row + .bk-grid-row {
-          margin-top: 10px;
-        }
-      }
-    `,
+    style,
   },
 ];
 

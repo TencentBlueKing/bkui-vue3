@@ -39,12 +39,6 @@ const list = [
   },
 ];
 
-const style = `
-  .bk-collapse-wrapper {
-    width: 100%;
-  }
-`;
-
 // 组件示例
 const presets = [
   {
@@ -55,7 +49,6 @@ const presets = [
       modelValue: [],
       accordion: false,
     },
-    style,
   },
   {
     title: '线条型',
@@ -66,7 +59,6 @@ const presets = [
       modelValue: [],
       accordion: false,
     },
-    style,
   },
   {
     title: '色块型',
@@ -76,7 +68,6 @@ const presets = [
       list,
       accordion: false,
     },
-    style,
   },
   {
     title: '卡片型',
@@ -87,7 +78,6 @@ const presets = [
       modelValue: [],
       accordion: false,
     },
-    style,
   },
   {
     title: '自定义图标',
@@ -98,7 +88,6 @@ const presets = [
       modelValue: [],
       accordion: false,
     },
-    style,
   },
   {
     title: '图标位置',
@@ -108,7 +97,6 @@ const presets = [
       list,
       modelValue: [],
     },
-    style,
   },
   {
     title: '是否使用手风琴模式',
@@ -118,7 +106,6 @@ const presets = [
       list,
       modelValue: [0],
     },
-    style,
   },
   {
     title: '自定义面板标题',
@@ -132,7 +119,6 @@ const presets = [
         <span> {{ data.name }} 自定义title</span>
       `,
     },
-    style,
   },
   {
     title: '点击事件',
@@ -154,7 +140,6 @@ const presets = [
     dependent: {
       components: ['message'],
     },
-    style,
   },
   {
     title: '列表不可点击',
@@ -178,7 +163,6 @@ const presets = [
       ],
       modelValue: [],
     },
-    style,
   },
   {
     title: 'collapse-panel 组件',
@@ -214,7 +198,6 @@ const presets = [
         </bk-collapse-panel>
       `,
     },
-    style,
   },
   {
     title: '面板插槽',
@@ -246,7 +229,6 @@ const presets = [
           </bk-collapse-panel>
         `,
     },
-    style,
   },
 ];
 

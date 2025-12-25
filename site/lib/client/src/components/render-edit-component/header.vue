@@ -18,7 +18,7 @@
         :class="mainPanel === MainPanel.Code ? 'active-tab-item' : ''"
         @click="toggleShow(MainPanel.Code)"
       >
-        <i 
+        <i
           v-bk-tooltips="'Code'"
           class="bkui-vue-wiki-icon icon-code"
         >

@@ -26,24 +26,11 @@
 
 import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
-const style = `
-  .bk-slider {
-    width: 100%;
-  }
-`;
-
 // 组件示例
 const presets = [
   {
     title: '基础滑块',
     description: '基础的滑块组件',
-    style: `
-      ${style}
-      .edit-component-component {
-        width: 80%;
-        min-width: 200px;
-      }
-    `,
   },
   {
     title: '刻度',
@@ -54,7 +41,6 @@ const presets = [
       modelValue: [0, 100],
       step: 5,
     },
-    style,
   },
   {
     title: '带输入',
@@ -63,7 +49,6 @@ const presets = [
       showInput: true,
       modelValue: 20,
     },
-    style,
   },
 ];
 

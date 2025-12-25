@@ -362,11 +362,6 @@ const presets = [
     dependent: {
       components: ['button'],
     },
-    style: `
-      .edit-component-view-wrapper .edit-component-view .edit-component-component {
-        text-align: left;
-      }
-    `,
   },
   {
     title: '斑马纹表格',
@@ -399,11 +394,6 @@ const presets = [
         </bk-table-column>
       `,
     },
-    style: `
-      .edit-component-view-wrapper .edit-component-view .edit-component-component {
-        text-align: left;
-      }
-    `,
   },
   {
     title: '多级表头: bk-table-column 模板模式 ',
@@ -553,11 +543,6 @@ const presets = [
     dependent: {
       components: ['button'],
     },
-    style: `
-      .edit-component-view-wrapper .edit-component-view .edit-component-component {
-        text-align: left;
-      }
-    `,
   },
   {
     title: '设置边框',
@@ -598,11 +583,6 @@ const presets = [
         },
       ],
     },
-    style: `
-      .edit-component-view-wrapper .edit-component-view .edit-component-component {
-        text-align: left;
-      }
-    `,
   },
   {
     title: '自定义头部',
@@ -624,11 +604,6 @@ const presets = [
         },
       ],
     },
-    style: `
-      .edit-component-view-wrapper .edit-component-view .edit-component-component {
-        text-align: left;
-      }
-    `,
   },
   {
     title: '启用虚拟滚动-渲染大数据表格',
@@ -677,11 +652,6 @@ const presets = [
         },
       ],
     },
-    style: `
-      .edit-component-view-wrapper .edit-component-view .edit-component-component {
-        text-align: left;
-      }
-    `,
   },
   {
     title: '自定义Column渲染',
@@ -731,11 +701,6 @@ const presets = [
         },
       ],
     },
-    style: `
-      .edit-component-view-wrapper .edit-component-view .edit-component-component {
-        text-align: left;
-      }
-    `,
   },
   {
     title: 'table event',
@@ -792,11 +757,6 @@ const presets = [
         console.log('handleRowClick', e, row, index, rows);
       }`,
     },
-    style: `
-      .edit-component-view-wrapper .edit-component-view .edit-component-component {
-        text-align: left;
-      }
-    `,
   },
   {
     title: 'Pagination - Local',
@@ -849,11 +809,6 @@ const presets = [
         },
       ],
     },
-    style: `
-      .edit-component-view-wrapper .edit-component-view .edit-component-component {
-        text-align: left;
-      }
-    `,
   },
   {
     title: 'Pagination - Remote',
@@ -947,11 +902,6 @@ const presets = [
     dependent: {
       props: ['pagination', 'data'],
     },
-    style: `
-      .edit-component-view-wrapper .edit-component-view .edit-component-component {
-        text-align: left; 
-      }
-    `,
   },
   {
     title: '批量操作',
@@ -1013,11 +963,6 @@ const presets = [
         },
       ],
     },
-    style: `
-      .edit-component-view-wrapper .edit-component-view .edit-component-component {
-        text-align: left;
-      }
-    `,
   },
   {
     title: '底部加载',
@@ -1077,11 +1022,6 @@ const presets = [
     dependent: {
       props: ['scrollLoading'],
     },
-    style: `
-      .edit-component-view-wrapper .edit-component-view .edit-component-component {
-        text-align: left;
-      }
-    `,
   },
   {
     title: '底部和头部插槽',
@@ -1145,11 +1085,6 @@ const presets = [
         <div style="height: 100px; background-color: #f0f0f0;">头部插槽</div>
       `,
     },
-    style: `
-      .edit-component-view-wrapper .edit-component-view .edit-component-component {
-        text-align: left;
-      }
-    `,
   },
   {
     title: '折叠表格功能',
@@ -1202,11 +1137,6 @@ const presets = [
         <div>expand content</div>
       `,
     },
-    style: `
-      .edit-component-view-wrapper .edit-component-view .edit-component-component {
-        text-align: left;
-      }
-    `,
   },
   {
     title: '过滤范围和匹配模式',
@@ -1366,11 +1296,6 @@ const presets = [
         },
       ],
     },
-    style: `
-      .edit-component-view-wrapper .edit-component-view .edit-component-component {
-        text-align: left;
-      }
-    `,
   },
   {
     title: '排序范围',
@@ -1433,11 +1358,6 @@ const presets = [
         },
       ],
     },
-    style: `
-      .edit-component-view-wrapper .edit-component-view .edit-component-component {
-        text-align: left;
-      }
-    `,
   },
   {
     title: '表格合并',
@@ -1495,11 +1415,6 @@ const presets = [
         },
       ],
     },
-    style: `
-      .edit-component-view-wrapper .edit-component-view .edit-component-component {
-        text-align: left;
-      }
-    `,
   },
   {
     title: '单元格空数据展示',
@@ -1548,11 +1463,6 @@ const presets = [
         },
       ],
     },
-    style: `
-      .edit-component-view-wrapper .edit-component-view .edit-component-component {
-        text-align: left;
-      }
-    `,
   },
   {
     title: '空状态表格',

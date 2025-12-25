@@ -58,7 +58,7 @@
                   class="edit-component-view"
                   :key="renderPresetIndex + componentWiki.name"
                   :style="{
-                    padding: mainPanel === MainPanel.Component ? '0 24px' : 'unset'
+                    padding: mainPanel === MainPanel.Component ? '24px 24px' : 'unset'
                   }"
                 >
                   <render-component
@@ -74,7 +74,7 @@
                     :component="component"
                     :dependent-components="dependentComponents"
                     :dependent-props="componentWiki.presets[renderPresetIndex]?.dependent?.props"
-                    class="edit-component-component"
+                    class="edit-component-component g-scrollbar"
                     ref="renderComponentRef"
                   />
                   <render-code
@@ -295,11 +295,50 @@ onUnmounted(() => {
   overflow: auto;
   background: #f3f3fa;
 
+
   .edit-component-component {
+    overflow: auto;
     align-self: center;
+    background: #fff;
     width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
+    align-items: center;
+
+    > :first-child:not(
+      .bk-button,
+      .bk-breadcrumb,
+      .bk-divider,
+      .bk-fixed-navbar,
+      .bk-link,
+      .bk-timeline,
+      .bk-checkbox,
+      .bk-checkbox-group,
+      .bk-color-picker,
+      .bk-radio,
+      .bk-radio-group,
+      .bk-switcher,
+      .bk-upload,
+      .bk-badge-main,
+      .bk-dropdown,
+      .bk-tag,
+      .bk-alert,
+      .bk-loading-wrapper,
+      .bk-popover-demo,
+      .bk-ellipsis-demo,
+      .bk-tooltips-demo,
+      .bk-progress-circle,
+      span
+    ) {
+      width: 60%;
+      min-width: 240px;
+      max-width: 800px;
+    }
+
+    &:has(.bk-fixed-navbar) {
+      transform: translate(0,0);
+    }
   }
 
   .edit-component-code {

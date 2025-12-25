@@ -32,7 +32,7 @@ const presets = [
     title: '基础用法',
     description: 'hover提示',
     template: `
-      <div style="cursor: pointer;" v-tooltips="$attrs">
+      <div class="bk-tooltips-demo" style="cursor: pointer;" v-tooltips="$attrs">
         <p>元素</p>
       </div>
     `,
@@ -44,7 +44,7 @@ const presets = [
     title: '不同位置',
     description: '支持多个位置的提示',
     template: `
-      <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+      <div class="bk-tooltips-demo" style="display: flex; gap: 20px; flex-wrap: wrap;">
         <div style="cursor: pointer; padding: 10px; border: 1px solid #ddd;" v-tooltips="$attrs">
           元素
         </div>
@@ -59,7 +59,7 @@ const presets = [
     title: '点击触发',
     description: '点击元素时显示提示',
     template: `
-      <div style="display: flex; gap: 20px;">
+      <div class="bk-tooltips-demo" style="display: flex; gap: 20px;">
         <div style="cursor: pointer; padding: 10px; border: 1px solid #ddd; background-color: #f0f8ff;" v-tooltips="$attrs">
           点击触发
         </div>
@@ -74,7 +74,7 @@ const presets = [
     title: '主题样式',
     description: '支持浅色和深色主题',
     template: `
-      <div style="display: flex; gap: 20px;">
+      <div class="bk-tooltips-demo" style="display: flex; gap: 20px;">
         <div style="cursor: pointer; padding: 10px; border: 1px solid #ddd; background-color: black; color: white;" v-tooltips="$attrs">
           主题
         </div>
@@ -89,7 +89,7 @@ const presets = [
     title: '高级配置',
     description: '支持箭头、延迟、距离等配置',
     template: `
-      <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+      <div class="bk-tooltips-demo" style="display: flex; gap: 20px; flex-wrap: wrap;">
         <div style="cursor: pointer; padding: 10px; border: 1px solid #ddd;" v-tooltips="$attrs">
           延迟显示
         </div>

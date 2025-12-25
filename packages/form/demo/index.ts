@@ -26,12 +26,6 @@
 
 import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
-const style = `
-  .bk-form {
-    width: 100%;
-  }
-`;
-
 const presets = [
   {
     title: '垂直布局表单',
@@ -109,7 +103,6 @@ const presets = [
       components: ['input', 'radio', 'checkbox', 'select', 'button'],
       props: ['model'],
     },
-    style,
   },
   {
     title: 'label 描述',
@@ -172,7 +165,6 @@ const presets = [
         </bk-form-item>
       `,
     },
-    style,
   },
   {
     title: '顶部对齐',
@@ -249,7 +241,6 @@ const presets = [
     dependent: {
       props: ['model'],
     },
-    style,
   },
   {
     title: '行内布局表单',
@@ -293,7 +284,6 @@ const presets = [
       components: ['tag-input', 'date-picker'],
       props: ['model'],
     },
-    style,
   },
   {
     title: '表单校验',
@@ -381,7 +371,6 @@ const presets = [
     dependent: {
       props: ['model'],
     },
-    style,
   },
 ];
 
