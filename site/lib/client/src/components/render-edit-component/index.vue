@@ -329,11 +329,17 @@ onUnmounted(() => {
       .bk-ellipsis-demo,
       .bk-tooltips-demo,
       .bk-progress-circle,
+      .bk-rate,
+      .bk-navigation,
       span
     ) {
       width: 60%;
       min-width: 240px;
       max-width: 800px;
+    }
+
+    > :first-child.bk-navigation {
+      width: 100%;
     }
 
     &:has(.bk-fixed-navbar) {
