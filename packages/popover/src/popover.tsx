@@ -61,7 +61,6 @@ export default defineComponent({
     const {
       onMountedFn,
       onUnmountedFn,
-      // handleClickOutside,
       beforeInstanceUnmount,
       initPopInstance,
       showFn,

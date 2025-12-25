@@ -14,8 +14,8 @@
     left: 100%;
     width: 99999px;
     height: 1px;
-    background-color: transparent;
     content: '';
+    background-color: transparent;
   }
 }
 
@@ -54,15 +54,36 @@
 
   .@{bk-prefix}-step {
     position: relative;
+    flex: 1;
     margin-right: 16px;
     overflow: hidden;
     text-align: left;
     white-space: nowrap;
-    flex: 1;
+
+
+    &.is-controllable {
+      cursor: pointer;
+    }
+
+    &.is-disabled {
+      cursor: not-allowed;
+      .@{bk-prefix}-step-indicator {
+        color: #dcdee5;
+        border-color: #dcdee5;
+      }
+      .@{bk-prefix}-step-title {
+        color: #dcdee5;
+
+
+      }
+    }
 
     .@{bk-prefix}-step-indicator {
       z-index: 1;
+      box-sizing: border-box;
       display: inline-flex;
+      align-items: center;
+      justify-content: center;
       width: 24px;
       height: 24px;
       padding: 0;
@@ -74,9 +95,6 @@
       background-color: #fff;
       border: 1px solid #979ba5;
       border-radius: 50%;
-      box-sizing: border-box;
-      align-items: center;
-      justify-content: center;
 
       // .@{bk-prefix}-steps-icon {
       //   color: @white-color;
@@ -126,8 +144,8 @@
     }
 
     &:last-child {
-      margin-right: 0;
       flex: none;
+      margin-right: 0;
 
       .@{bk-prefix}-step-title {
         padding-right: 0;
@@ -253,8 +271,8 @@
       .@{bk-prefix}-step-indicator {
         &::after {
           background-image: linear-gradient(to right, @light-gray 50%, transparent 0%);
-          background-position: bottom;
           background-repeat: repeat-x;
+          background-position: bottom;
           background-size: 6px 1px;
         }
       }
@@ -293,11 +311,11 @@
         left: 12px;
         width: 1px;
         height: 100%;
-        background-image: linear-gradient(@light-gray 50%, transparent 0%);
-        background-position: right;
-        background-repeat: repeat-y;
-        background-size: 1px 6px;
         content: '';
+        background-image: linear-gradient(@light-gray 50%, transparent 0%);
+        background-repeat: repeat-y;
+        background-position: right;
+        background-size: 1px 6px;
       }
 
       &.done {
@@ -311,10 +329,10 @@
 
       .@{bk-prefix}-step-title {
         display: flex;
+        align-items: center;
         height: 100%;
         margin-top: 0;
         text-align: left;
-        align-items: center;
       }
     }
   }

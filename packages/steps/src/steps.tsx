@@ -56,6 +56,7 @@ export default defineComponent({
             description: step.description,
             status: step.status,
             border: step.border ?? true,
+            disabled: step.disabled ?? false,
           });
         }
       });
@@ -221,17 +222,20 @@ export default defineComponent({
               isCurrent(index) ? 'current' : '',
               isCurrent(index) && this.status === 'error' ? 'is-error' : '',
               step.status && isCurrent(index) ? [`${this.resolveClassName(`step-${step.status}`)}`] : '',
+              step.disabled ? 'is-disabled' : '',
+              this.controllable && !step.disabled ? 'is-controllable' : ''
             ]}
           >
             <span
-              style={{ cursor: this.controllable ? 'pointer' : '' }}
               class={[
                 `${this.resolveClassName('step-indicator')}`,
                 `${this.resolveClassName(`step-${iconType(step) ? 'icon' : 'number'}`)}`,
-                `${this.resolveClassName(`step-icon${step.status}`)}`,
+                `${step.status ?this.resolveClassName(`step-icon${step.status}`) : ''}`,
               ]}
               onClick={() => {
-                this.jumpTo(index + 1);
+                if (!step.disabled){
+                  this.jumpTo(index + 1);
+                }
               }}
             >
               {this.$slots[index + 1]?.() ?? renderIcon(index, step)}
@@ -239,10 +243,11 @@ export default defineComponent({
             {step.title ? (
               <div class={`${this.resolveClassName('step-content')}`}>
                 <div
-                  style={{ cursor: this.controllable ? 'pointer' : '' }}
                   class={`${this.resolveClassName('step-title')}`}
                   onClick={() => {
-                    this.jumpTo(index + 1);
+                    if (!step.disabled){
+                      this.jumpTo(index + 1);
+                    }
                   }}
                 >
                   {step.title}

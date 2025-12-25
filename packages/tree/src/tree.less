@@ -11,8 +11,16 @@
     padding-left: calc(var(--offset-left));
     position: relative;
 
+    &:hover {
+      background-color: #f5f7fa;
+    }
+
     &.is-selected {
       background-color: #ebf2ff;
+
+      &:hover {
+        background-color: #e1ecff;
+      }
     }
 
     &.drop-before {

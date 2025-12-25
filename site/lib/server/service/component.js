@@ -287,6 +287,12 @@ export const getNavGroups = async (releaseZipPath) => {
       titleCN: '周期选择器',
       description: 'Liunx 定时任务表达',
     },
+    {
+      name: '@blueking/status-tag',
+      title: 'StatusTag',
+      titleCN: '状态标签',
+      description: '业务组件 Status Tag， 用于呈现状态标签的组件',
+    },
   ];
   // 开始列表
   const startList = [

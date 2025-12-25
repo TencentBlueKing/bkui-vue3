@@ -249,7 +249,7 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
    * @param hideIgnoreReference - 是否忽略隐藏参考元素
    * @returns
    */
-  const handleClickOutside = (e: MouseEvent, hideIgnoreReference = false) => {
+  const handleClickOutside = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
     if (isClickInside(target)) {
       e.preventDefault();
@@ -275,7 +275,7 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
      * @param hideIgnoreReference - 是否忽略隐藏参考元素
      * @returns
      */
-    if (hideIgnoreReference) {
+    if (props.hideIgnoreReference) {
       setTimeout(() => {
         if (ReferenceClickSharedState[uniqKey]) {
           ReferenceClickSharedState[uniqKey] = false;
