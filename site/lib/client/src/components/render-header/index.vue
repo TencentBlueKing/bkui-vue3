@@ -77,7 +77,7 @@ const tags = computed(() => {
 
   // 1. 如果是noTag组件，不显示tags
   if (noTagComponents.value.includes(componentName)) {
-    return [];
+    return createMcpTag();
   }
 
   // 2. 如果是custom组件，显示npm地址
