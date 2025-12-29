@@ -33,7 +33,7 @@ import DOMPurify from 'dompurify';
 const timelineProps = {
   list: PropTypes.arrayOf(
     PropTypes.shape({
-      tag: PropTypes.string,
+      tag: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
       content: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
       type: PropTypes.string,
       size: PropTypes.string,
@@ -128,6 +128,16 @@ export default defineComponent({
       );
     };
 
+    const renderTag = (item: TimelinePropTypes['list'][number]) => {
+      if (item.nodeType === 'vnode') {
+        return item.tag;
+      }
+      if (typeof item.tag === 'object') {
+        return item.tag;
+      }
+      return <span v-html={DOMPurify.sanitize(item.tag || '')}></span>;
+    };
+
     return (
       <ul class={this.resolveClassName('timeline')}>
         {this.defaultTimelines.map(item => (
@@ -151,7 +161,7 @@ export default defineComponent({
                   class={`${this.resolveClassName('timeline-title')}`}
                   onClick={() => this.handleTitleSelect(item)}
                 >
-                  {item.nodeType === 'vnode' ? item.tag : <span v-html={DOMPurify.sanitize(item.tag || '')}></span>}
+                  {renderTag(item)}
                 </div>
               }
               {renderContent(item)}
