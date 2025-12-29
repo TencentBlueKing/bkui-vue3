@@ -34,6 +34,7 @@ import Popover from '@bkui-vue/popover';
 import { useFormItem } from '@bkui-vue/shared';
 import debounce from 'lodash/debounce';
 import trim from 'lodash/trim';
+import filter from 'lodash/filter';
 
 import { getCharLength, INPUT_MIN_WIDTH, useFlatList, usePage, useTagsOverflow } from './common';
 import ListTagRender from './list-tag-render';
@@ -261,7 +262,7 @@ export default defineComponent({
         listState.selectedTagListCache = [...listState.selectedTagList];
 
         curInputValue.value = listState.selectedTagListCache[0][props.saveKey];
-        removeTag(listState.selectedTagList[0], 0);
+        removeTag(listState.selectedTagList[0]);
 
         handleInput();
       }
@@ -600,9 +601,9 @@ export default defineComponent({
      * @param index tag index
      * @param e mouse event
      */
-    const handleTagRemove = (data, index: number, e?: MouseEvent) => {
+    const handleTagRemove = (data, e?: MouseEvent) => {
       e?.stopPropagation();
-      removeTag(data, index);
+      removeTag(data);
       clearInput();
       handleChange('remove', data);
       tagInputRef.value.style.width = `${INPUT_MIN_WIDTH}px`;
@@ -937,10 +938,9 @@ export default defineComponent({
     /**
      * remove current tag
      * @param data tag data
-     * @param index tag index
      */
-    const removeTag = (data, index) => {
-      listState.selectedTagList.splice(index, 1);
+    const removeTag = (data) => {
+      listState.selectedTagList = filter(listState.selectedTagList, (item) => item[props.saveKey] !== data[props.saveKey]);
 
       const isExistInit = saveKeyMap.value[data[props.saveKey]];
 
@@ -1089,7 +1089,7 @@ export default defineComponent({
                         {this.showTagClose && (
                           <Error
                             class='remove-tag'
-                            onClick={this.handleTagRemove.bind(this, item, index)}
+                            onClick={this.handleTagRemove.bind(this, item)}
                           />
                         )}
                       </li>
