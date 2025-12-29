@@ -120,12 +120,15 @@ export default defineComponent({
       if (item.nodeType === 'vnode') {
         return <div class={`${this.resolveClassName('timeline-content')}`}>{item.content}</div>;
       }
-      return (
-        <div
-          class={`${this.resolveClassName('timeline-content')}`}
-          v-html={typeof item.content === 'string' ? DOMPurify.sanitize(item.content) : item.content}
-        />
-      );
+      if (typeof item.content === 'string') {
+        return (
+          <div
+            class={`${this.resolveClassName('timeline-content')}`}
+            v-html={DOMPurify.sanitize(item.content)}
+          />
+        );
+      }
+      return <div class={`${this.resolveClassName('timeline-content')}`}>{item.content}</div>;
     };
 
     const renderTag = (item: TimelinePropTypes['list'][number]) => {
@@ -135,7 +138,10 @@ export default defineComponent({
       if (typeof item.tag === 'object') {
         return item.tag;
       }
-      return <span v-html={DOMPurify.sanitize(item.tag || '')}></span>;
+      if (typeof item.tag === 'string') {
+        return <span v-html={DOMPurify.sanitize(item.tag)}></span>;
+      }
+      return <span></span>;
     };
 
     return (
