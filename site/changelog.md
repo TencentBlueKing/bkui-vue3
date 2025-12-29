@@ -1,6 +1,13 @@
 ## 更新日志
 
 
+### 2.0.2-beta.83
+
+* **[feat]**:
+    - perf(tag-input): 优化 watch warn
+    - feature(tree): 点击checkbox，希望不触发展开/收起
+
+
 ### 2.0.2-beta.82
 
 * **[feat]**:
