@@ -193,16 +193,23 @@ const renderLink = (row: IProp | IParam) => {
 };
 
 /**
-   * @description 渲染普通文本
-   * @param text 文本值
+   * @description 渲染普通文本， text不总是string，可能是object、array等
+   * object是第二个参数会被当做属性传入，无法显示
+   * array是第二个参数会被当做子元素传入，造成vue内部死循环
+   * @param text 值
    */
-const renderText = (text: string, row?: IProp) => {
+const renderText = (text: unknown, row?: IProp) => {
+  let formatText = text;
+  if (typeof formatText === 'object') {
+    // JSON.stringify 不能处理symbol、function等无法序列化的值(遇到再说吧~)
+    formatText = JSON.stringify(text);
+  }
   if (!row?.isSupportVModel) {
-    return h('span', text);
+    return h('span', formatText);
   }
   // 如果支持v-model，添加v-model标签提示
   return h('span', [
-    h('span', text),
+    h('span', formatText),
     renderVModelTag(),
   ]);
 };
@@ -251,13 +258,13 @@ const computedTableData = computed(() => {
 
       // 定义渲染策略映射
       const renderStrategies = {
-        name: () => renderText(value as string, item),
+        name: () => renderText(value, item),
         type: () => (item.link ? renderLink(item) : renderText(item.options?.join(' | ') ?? value as string)),
         default: () => {
           if (value === undefined || value === '') {
             return renderText('--');
           }
-          return renderText(value as string);
+          return renderText(value);
         },
         params: () => {
           return renderFunctionSignature(value as IParam[]);
