@@ -669,5 +669,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     setOpen,
     setNodeAttribute,
     isIndeterminate,
+    deepUpdateChildNode,
+    updateParentChecked,
   };
 };

@@ -114,6 +114,8 @@ export default defineComponent({
       asyncNodeClick,
       setNodeAttribute,
       isIndeterminate,
+      deepUpdateChildNode,
+      updateParentChecked,
     } = useNodeAction(props, ctx, flatData, renderData, { registerNextLoop });
 
     const handleSearch = debounce(120, () => {
@@ -148,12 +150,55 @@ export default defineComponent({
 
     /**
      * 设置指定节点是否选中
-     * @param item Node item | Node Id
+     * @param item Node item | Node Id | Array of Node items or Node Ids
      * @param checked
      * @param triggerEvent 是否触发抛出事件
      */
-    const setChecked = (item: TreeNode | TreeNode[], checked = true, triggerEvent = false) => {
-      setNodeAction(resolveNodeItem(item as TreeNode), NODE_ATTRIBUTES.IS_CHECKED, checked);
+    const setChecked = (
+      item: (number | string)[] | TreeNode | TreeNode[] | number | string,
+      checked = true,
+      triggerEvent = false,
+    ) => {
+      // 将 item 转换为 TreeNode 数组
+      const resolveToNodes = (input: (number | string)[] | TreeNode | TreeNode[] | number | string): TreeNode[] => {
+        if (Array.isArray(input)) {
+          return input
+            .map(i => {
+              if (typeof i === 'string' || typeof i === 'number') {
+                return getNodeById(i as string);
+              }
+              return i as TreeNode;
+            })
+            .filter(Boolean);
+        }
+
+        if (typeof input === 'string' || typeof input === 'number') {
+          const node = getNodeById(input as string);
+          return node ? [node] : [];
+        }
+
+        return [input as TreeNode].filter(Boolean);
+      };
+
+      const nodes = resolveToNodes(item);
+      nodes.forEach(node => {
+        const resolvedNode = resolveNodeItem(node);
+        setNodeAction(resolvedNode, NODE_ATTRIBUTES.IS_CHECKED, checked);
+        if (checked) {
+          setNodeAction(resolvedNode, NODE_ATTRIBUTES.IS_INDETERMINATE, false);
+        }
+
+        // 如果设置了 checkStrictly，需要同步更新子节点和父节点的状态
+        if (props.checkStrictly) {
+          deepUpdateChildNode(
+            resolvedNode,
+            [NODE_ATTRIBUTES.IS_CHECKED, NODE_ATTRIBUTES.IS_INDETERMINATE],
+            [checked, false],
+          );
+          updateParentChecked(resolvedNode, checked);
+        }
+      });
+
       if (triggerEvent) {
         ctx.emit(
           EVENTS.NODE_CHECKED,
@@ -203,7 +248,18 @@ export default defineComponent({
     watch(
       () => [props.checked],
       () => {
+        // 先清除所有节点的选中和半选状态
+        flatData.data.forEach(node => {
+          if (isNodeChecked(node) || isIndeterminate(node)) {
+            setNodeAction(node, NODE_ATTRIBUTES.IS_CHECKED, false);
+            setNodeAction(node, NODE_ATTRIBUTES.IS_INDETERMINATE, false);
+          }
+        });
+        // 再设置新的选中节点
         setChecked(props.checked, true);
+      },
+      {
+        immediate: true,
       },
     );
 
