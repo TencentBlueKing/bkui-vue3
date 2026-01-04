@@ -1,6 +1,12 @@
 ## 更新日志
 
 
+### 2.0.2-beta.85
+
+* **[feat]**:
+    - bugfix(tree): 设置show-checkbox后，selected值变化不会动态更新
+
+
 ### 2.0.2-beta.84
 
 * **[feat]**:
