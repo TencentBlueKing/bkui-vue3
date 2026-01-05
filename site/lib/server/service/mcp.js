@@ -5,7 +5,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 
 // import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
-import { getComponentInfo, getLatestVersion, getNavGroups, getReleaseDistPath } from './component.js';
+import { getComponentInfo, getLatestVersion, getNavGroups, getReleaseDistPath, getReleaseZipPath } from './component.js';
 
 // 存储 transport 实例，用于多会话管理
 const transports = new Map();
@@ -60,8 +60,8 @@ export const createServer = () => {
       },
     },
     async ({ version }) => {
-      const releaseDistPath = await getReleaseDistPath(version || (await getLatestVersion()));
-      const navGroups = await getNavGroups(releaseDistPath);
+      const releaseZipPath = await getReleaseZipPath(version || (await getLatestVersion()));
+      const navGroups = await getNavGroups(releaseZipPath);
       const components = Object
         .values(navGroups.componentGroupMap)
         .flat()

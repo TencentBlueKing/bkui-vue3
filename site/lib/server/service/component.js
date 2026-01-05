@@ -234,7 +234,7 @@ export const getNavGroups = async (releaseZipPath) => {
         `${version}`,
         'directives',
         'demo',
-        directivePath,
+        `${directivePath}.js`,
       );
       if (!fs.existsSync(directiveCompiledDemoPath)) {
         await compileDemo(releaseZipPath, directiveDemoPath);
