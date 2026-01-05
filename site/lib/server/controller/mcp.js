@@ -43,7 +43,6 @@ export default class McpController {
         transport = createTransport();
 
         // 连接 MCP server
-        const connectStartTime = Date.now();
         await createServer().connect(transport);
       } else {
         throwMcpError(ctx, new BusinessError('Bad Request: No valid session ID provided', -32000, 400));
