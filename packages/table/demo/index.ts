@@ -1417,6 +1417,30 @@ const presets = [
     },
   },
   {
+    title: '表格settings',
+    description: '表格settings配置',
+    props: {
+      data: new Array(10).fill('').map((_r, rIndex) =>
+        new Array(20).fill('').reduce(
+          (output, _cr, cIndex) =>
+            Object.assign(output, {
+              [`col_${cIndex + 1}`]: `row_${rIndex + 1}_col_${cIndex + 1}`,
+            }),
+          {},
+        ),
+      ),
+      columns: new Array(20).fill('').map((_c, index) => ({
+        label: `Column${index + 1}`,
+        field: `col_${index + 1}`,
+        minWidth: 200,
+        render: ({ row }) => {
+          return row[`col_${index + 1}`];
+        },
+      })),
+      settings: true,
+    },
+  },
+  {
     title: '单元格空数据展示',
     description: '单元格空数据展示',
     props: {
