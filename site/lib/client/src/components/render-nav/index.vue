@@ -506,10 +506,9 @@ onBeforeUnmount(() => {
   }
 
   .aside-nav-header-version {
-    width: 70px;
+    flex: 1;
 
     &:deep(.bk-input) {
-      width: 70px;
       border: none;
 
       .bk-input--text{
