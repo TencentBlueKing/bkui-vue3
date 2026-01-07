@@ -342,6 +342,14 @@ onUnmounted(() => {
       width: 100%;
     }
 
+    > :first-child.bk-menu {
+      max-height: 100%;
+    }
+
+    > :first-child.bk-resize-layout {
+      height: 500px;
+    }
+
     &:has(.bk-fixed-navbar) {
       transform: translate(0,0);
     }

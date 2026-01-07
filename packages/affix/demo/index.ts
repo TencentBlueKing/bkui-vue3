@@ -144,13 +144,6 @@ const props = [
     type: 'number',
     default: 1000,
   },
-  {
-    name: 'testType',
-    description: '测试复杂类型',
-    type: 'ITestType',
-    link: '/component/affix/api#ITestType',
-    default: 1000,
-  },
 ];
 
 // 组件事件，用来自动生成事件文档

@@ -60,6 +60,7 @@ const presets = [
       'before-close': `() => {
         return new Promise((resolve, reject) => {
           BkInfoBox({
+            class: 'dialog-demo-close-before-close',
             title: '确认关闭弹框',
             onConfirm: () => resolve(true),
             onCancel: () => reject(),
@@ -76,15 +77,15 @@ const presets = [
       components: ['info-box'],
     },
     style: `
-      .bk-infobox {
-        z-index: 3000 !important;
-      }
-      
-      .bk-infobox .bk-modal-mask {
+      .dialog-demo-close-before-close {
         z-index: 3000 !important;
       }
 
-      .bk-infobox .bk-modal-wrapper {
+      .dialog-demo-close-before-close .bk-modal-mask {
+        z-index: 3000 !important;
+      }
+
+      .dialog-demo-close-before-close .bk-modal-wrapper {
         z-index: 3000 !important;
       }
     `,

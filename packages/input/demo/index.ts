@@ -25,12 +25,6 @@
  */
 import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
-const style = `
-  .bk-input {
-    width: 300px;
-  }
-`;
-
 // 组件示例
 const presets = [
   {
@@ -44,7 +38,6 @@ const presets = [
       suffix: '.com',
       clearable: true,
     },
-    style,
   },
   {
     title: '文本域 textarea',
@@ -58,7 +51,6 @@ const presets = [
       showWordLimit: true,
       overMaxLengthLimit: true,
     },
-    style,
   },
   {
     title: '数值输入框 numberinput',
@@ -70,7 +62,6 @@ const presets = [
       min: 0,
       precision: 2,
     },
-    style,
   },
   {
     title: '密码输入框 passport',
@@ -80,7 +71,6 @@ const presets = [
       type: 'password',
       clearable: true,
     },
-    style,
   },
   {
     title: '带Icon输入框',
@@ -93,16 +83,16 @@ const presets = [
       suffix: '<span class="input-icon"><info-line /></span>',
     },
     style: `
-    ${style}
-    .input-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 8px;
-      font-size: 16px;
-      background-color: #fff;
-      color: #c4c6cc;
-    }`,
+      .input-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 8px;
+        font-size: 16px;
+        background-color: #fff;
+        color: #c4c6cc;
+      }
+    `,
     dependent: {
       components: ['icon'],
     },
@@ -115,7 +105,6 @@ const presets = [
       clearable: true,
       showClearOnlyHover: true,
     },
-    style,
   },
   {
     title: '尺寸',
@@ -124,7 +113,6 @@ const presets = [
       modelValue: '',
       size: 'small',
     },
-    style,
   },
   {
     title: '带状态输入框',
@@ -134,7 +122,6 @@ const presets = [
       disabled: true,
       readonly: false,
     },
-    style,
   },
   {
     title: '事件回调',
@@ -145,7 +132,6 @@ const presets = [
     events: {
       change: '(newVal, event) => {console.log(newVal, event);}',
     },
-    style,
   },
   {
     title: 'HTML 原生属性透传',
@@ -154,7 +140,6 @@ const presets = [
       modelValue: '',
       type: 'password',
     },
-    style,
   },
   {
     title: '简约风格输入框',
@@ -163,7 +148,6 @@ const presets = [
       modelValue: '',
       behavior: 'simplicity',
     },
-    style,
   },
 ];
 
