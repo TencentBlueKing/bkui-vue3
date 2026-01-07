@@ -37,12 +37,6 @@ const list = [
   { id: 'haikou', name: '海口' },
 ];
 
-const style = `
-  .bk-tag-input {
-    width: 300px;
-  }
-`;
-
 // 组件示例
 const presets = [
   {
@@ -55,7 +49,6 @@ const presets = [
       clearable: true,
       trigger: 'focus',
     },
-    style,
   },
   {
     title: 'hover 时才显示 clear 按钮',
@@ -67,7 +60,6 @@ const presets = [
       'show-clear-only-hover': true,
       trigger: 'focus',
     },
-    style,
   },
   {
     title: '自定义标签',
@@ -81,7 +73,6 @@ const presets = [
       'has-delete-icon': true,
       trigger: 'focus',
     },
-    style,
   },
   {
     title: '失去焦点自动匹配',
@@ -95,7 +86,6 @@ const presets = [
       'has-delete-icon': true,
       trigger: 'focus',
     },
-    style,
   },
   {
     title: '更多自定义配置',
@@ -119,7 +109,6 @@ const presets = [
       'save-key': 'username',
       trigger: 'focus',
     },
-    style,
   },
   {
     title: '分组展示',
@@ -157,7 +146,6 @@ const presets = [
       trigger: 'focus',
       'use-group': true,
     },
-    style,
   },
   {
     title: '设置选中标签 tooltips',
@@ -198,7 +186,6 @@ const presets = [
       'collapse-tags': true,
       'use-group': true,
     },
-    style,
   },
   {
     title: '列表项禁用',
@@ -219,7 +206,6 @@ const presets = [
       placeholder: '请选择城市',
       trigger: 'focus',
     },
-    style,
   },
   {
     title: '支持批量录入',
@@ -233,7 +219,6 @@ const presets = [
       }`,
       trigger: 'focus',
     },
-    style,
   },
   {
     title: '复制',
@@ -256,7 +241,6 @@ const presets = [
     dependent: {
       components: ['message'],
     },
-    style,
   },
 ];
 

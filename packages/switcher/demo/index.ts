@@ -117,8 +117,8 @@ const props = [
     name: 'size',
     description: '尺寸，显示文本时此属性无效',
     type: 'string',
-    default: 'medium',
-    options: ['default', 'large', 'small'],
+    default: 'default',
+    options: ['default', 'large', 'small', 'huge'],
   },
   {
     name: 'isOutline',

@@ -74,11 +74,6 @@ const presets = [
         </bk-submenu>
       `,
     },
-    style: `
-      .bk-menu {
-        max-height: 100%;
-      }
-    `,
   },
 ];
 

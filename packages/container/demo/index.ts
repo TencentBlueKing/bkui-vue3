@@ -26,23 +26,16 @@
 import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
 const style = `
-  .bk-grid-container {
-    width: 100%;
-  }
-    
   .content {
     height: 100%;
     font-size: 12px;
     line-height: 60px;
     background-color: #e1ecff;
     border-radius: 2px;
-  }
-
-  .bk-grid-row {
     text-align: center;
   }
 
-  .bk-grid-row + .bk-grid-row {
+  .container-demo-row:not(:first-child) {
     margin-top: 30px;
   }
 `;
@@ -196,7 +189,7 @@ const presets = [
     },
     slots: {
       default: `
-        <bk-row>
+        <bk-row class="container-demo-row">
           <bk-col>
             <div class="content">1/12</div>
           </bk-col>
@@ -234,7 +227,7 @@ const presets = [
             <div class="content">1/12</div>
           </bk-col>
         </bk-row>
-        <bk-row>
+        <bk-row class="container-demo-row">
           <bk-col :span="7">
             <div class="content">7/12</div>
           </bk-col>
@@ -254,7 +247,7 @@ const presets = [
     },
     slots: {
       default: `
-        <bk-row>
+        <bk-row class="container-demo-row">
           <bk-col
             :push="5"
             :span="7"
@@ -268,7 +261,7 @@ const presets = [
             <div class="content">5/12 (pull: 7)</div>
           </bk-col>
         </bk-row>
-        <bk-row>
+        <bk-row class="container-demo-row">
           <bk-col
             :push="9"
             :span="3"
@@ -282,7 +275,7 @@ const presets = [
             <div class="content">9/12 (pull: 3)</div>
           </bk-col>
         </bk-row>
-        <bk-row>
+        <bk-row class="container-demo-row">
           <bk-col
             :offset="3"
             :span="4"
@@ -293,7 +286,7 @@ const presets = [
             <div class="content">5/12</div>
           </bk-col>
         </bk-row>
-        <bk-row>
+        <bk-row class="container-demo-row">
           <bk-col
             :push="8"
             :span="4"
@@ -320,7 +313,7 @@ const presets = [
     },
     slots: {
       default: `
-        <bk-row>
+        <bk-row class="container-demo-row">
           <bk-col :span="4">
             <div class="content">4/12</div>
           </bk-col>

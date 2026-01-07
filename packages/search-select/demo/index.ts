@@ -533,8 +533,8 @@ const props = [
   },
   {
     name: 'uniqueSelect',
-    type: 'string',
-    default: 'false',
+    type: 'boolean',
+    default: false,
     description: '是否唯一选择，同一选项只能选择一次',
   },
   {

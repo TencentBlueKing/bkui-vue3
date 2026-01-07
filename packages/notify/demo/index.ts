@@ -69,7 +69,8 @@ const presets = [
   },
   {
     title: '不自动关闭',
-    description: '配置 delay 字段定义通知自动关闭的时间，当值为 0 时不自动关闭。配置 dismissable 字段控制是否显示右侧的手动关闭 icon。',
+    description:
+      '配置 delay 字段定义通知自动关闭的时间，当值为 0 时不自动关闭。配置 dismissable 字段控制是否显示右侧的手动关闭 icon。',
     props: {
       id: 'notify',
       title: '你好！欢迎你使用蓝鲸智云产品',
@@ -80,7 +81,8 @@ const presets = [
   },
   {
     title: '不显示关闭 icon',
-    description: '配置 delay 字段定义通知自动关闭的时间，当值为 0 时不自动关闭。配置 dismissable 字段控制是否显示右侧的手动关闭 icon。',
+    description:
+      '配置 delay 字段定义通知自动关闭的时间，当值为 0 时不自动关闭。配置 dismissable 字段控制是否显示右侧的手动关闭 icon。',
     props: {
       id: 'notify',
       title: '你好！欢迎你使用蓝鲸智云产品',
