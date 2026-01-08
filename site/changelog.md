@@ -1,6 +1,12 @@
 ## 更新日志
 
 
+### 2.0.2-beta.86
+
+* **[feat]**:
+    - bugfix(select): 点击遮罩关闭dialog，dialog内的select下拉面板销毁不干净
+
+
 ### 2.0.2-beta.85
 
 * **[feat]**:
