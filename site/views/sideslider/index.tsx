@@ -34,6 +34,7 @@ import BaseDemo from './base-demo.vue';
 import BeforeCloseDemo from './before-close-demo.vue';
 import DirectionDemo from './direction-demo.vue';
 import FooterDemo from './footer-demo.vue';
+import ResizeDemo from './resize-demo.vue';
 import TitleDemo from './title-demo.vue';
 
 const SideSliserPropsJson: IPropsTableItem[] = [
@@ -121,6 +122,41 @@ const SideSliserPropsJson: IPropsTableItem[] = [
     desc: '关闭前的钩子函数',
     optional: [],
   },
+  {
+    name: 'resizable',
+    type: 'Boolean',
+    default: 'false',
+    desc: '是否可以通过拖拽调整侧栏宽度',
+    optional: [],
+  },
+  {
+    name: 'min-width',
+    type: 'Number',
+    default: '400',
+    desc: '拖拽调整时的最小宽度',
+    optional: [],
+  },
+  {
+    name: 'max-width',
+    type: 'Number',
+    default: 'Infinity',
+    desc: '拖拽调整时的最大宽度',
+    optional: [],
+  },
+  {
+    name: 'trigger-width',
+    type: 'Number',
+    default: '5',
+    desc: '拖拽触发区域的宽度（单位：px）',
+    optional: [],
+  },
+  {
+    name: 'immediate',
+    type: 'Boolean',
+    default: 'false',
+    desc: '是否实时拖拽（拖拽时立即改变宽度，不显示辅助线）',
+    optional: [],
+  },
 ];
 
 const SideSliserEventJson: IPropsTableItem[] = [
@@ -147,6 +183,24 @@ const SideSliserEventJson: IPropsTableItem[] = [
     type: '',
     default: null,
     desc: '关闭组件后动画结束的回调函数',
+  },
+  {
+    name: 'before-resize',
+    type: 'Function(event)',
+    default: null,
+    desc: '拖拽开始前的回调函数',
+  },
+  {
+    name: 'resizing',
+    type: 'Function(width)',
+    default: null,
+    desc: '拖拽过程中的回调函数，参数为当前宽度',
+  },
+  {
+    name: 'after-resize',
+    type: 'Function(width)',
+    default: null,
+    desc: '拖拽结束后的回调函数，参数为最终宽度',
   },
 ];
 
@@ -226,6 +280,15 @@ export default defineComponent({
           title='自定义footer'
         >
           <FooterDemo></FooterDemo>
+        </DemoBox>
+        <DemoBox
+          componentName='sideslider'
+          demoName='resize-demo'
+          desc='配置 resizable 参数，可以通过拖拽调整侧栏宽度，支持设置最小和最大宽度'
+          subtitle=''
+          title='可拖拽调整宽度'
+        >
+          <ResizeDemo></ResizeDemo>
         </DemoBox>
         <PropsBox
           propsData={SideSliserPropsJson}
