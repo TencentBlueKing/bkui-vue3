@@ -96,6 +96,7 @@ export const enum EVENTS {
   KEYUP = 'keyup',
   PASTE = 'paste',
   UPDATE = 'update:modelValue',
+  SEARCH = 'search',
 }
 // TODO: 泛型
 /* eslint-disable-next-line */
@@ -108,6 +109,7 @@ function EventFunction(_value: any, _evt: Event) {
 function PastEventFunction(_value: any, _e: ClipboardEvent) {
   return true;
 }
+
 
 function CompositionEventFunction(evt: CompositionEvent) {
   return evt;
@@ -128,6 +130,7 @@ export const inputEmitEventsType = {
   [EVENTS.COMPOSITIONSTART]: CompositionEventFunction,
   [EVENTS.COMPOSITIONUPDATE]: CompositionEventFunction,
   [EVENTS.COMPOSITIONEND]: CompositionEventFunction,
+  [EVENTS.SEARCH]: (evt: Event) => evt,
 };
 
 // type InputEventUnion = `${EVENTS}`;
@@ -179,8 +182,9 @@ export default defineComponent({
     const textareaCalcStyle = ref<StyleValue>();
 
     const suffixCls = getCls('suffix-icon');
+
     const suffixIconMap = {
-      search: () => <Search />,
+      search: () => <Search onClick={handleSearch}/>,
       password: () => (
         <Unvisible
           class={suffixCls}
@@ -377,6 +381,10 @@ export default defineComponent({
       if (props.withValidate) {
         formItem?.validate?.('blur');
       }
+    }
+    // type = search suffix icon click event
+    function handleSearch(e: Event) {
+      ctx.emit(EVENTS.SEARCH, e);
     }
 
     // 事件句柄生成器
