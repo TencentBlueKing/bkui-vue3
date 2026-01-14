@@ -1,6 +1,14 @@
 ## 更新日志
 
 
+### 2.0.2-beta.89
+
+* **[feat]**:
+    - feature(sideslider): 新增拖动宽度配置
+    - bugfix(input): search模式下search icon没有回调事件抛出
+    - bugfix(select): 修复 select 单选自定义创建时无法清空输入框问题
+
+
 ### 2.0.2-beta.88
 
 * **[feat]**:
