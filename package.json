@@ -1,6 +1,6 @@
 {
   "name": "bkui-vue",
-  "version": "2.0.2-beta.86",
+  "version": "2.0.2-beta.87",
   "workspaces": [
     "packages/**",
     "scripts/cli",
