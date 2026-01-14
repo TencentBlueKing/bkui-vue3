@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent, getCurrentInstance, nextTick, onBeforeUnmount, ref, useAttrs, useSlots, watch, withModifiers } from 'vue';
+import { defineComponent, getCurrentInstance, nextTick, ref, useAttrs, useSlots, watch, withModifiers } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { AngleLeft, AngleRight } from '@bkui-vue/icon';
@@ -69,7 +69,7 @@ export default defineComponent({
     const { resolveClassName } = usePrefix();
 
     // 拖拽相关状态
-    const currentWidth = ref<number>(typeof props.width === 'number' ? props.width : parseInt(props.width) || 400);
+    const currentWidth = ref<number | string>(props.width);
     // 代理线
     const resizeProxyRef = ref<HTMLElement>(null);
     // 遮罩
@@ -156,10 +156,8 @@ export default defineComponent({
       const rect = modalWrapperRef.value?.getBoundingClientRect();
       if (!rect) return;
 
-      // 在 immediate 模式下，先同步 currentWidth 为实际宽度，避免闪动
-      if (props.immediate) {
-        currentWidth.value = rect.width;
-      }
+      // 拖拽开始时，将 currentWidth 设置为实际像素宽度作为基准
+      currentWidth.value = rect.width;
 
       state.value = Object.freeze({
         mouse: {
@@ -221,10 +219,9 @@ export default defineComponent({
       document.addEventListener('mouseup', handleMouseUp);
     };
 
-    // 监听 width prop 变化
+    // 监听 width prop 变化，保持用户设置的原值
     watch(() => props.width, (newWidth) => {
-      const width = typeof newWidth === 'number' ? newWidth : parseInt(newWidth) || 400;
-      currentWidth.value = width;
+      currentWidth.value = newWidth;
     });
 
 
