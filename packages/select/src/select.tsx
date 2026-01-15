@@ -831,10 +831,6 @@ export default defineComponent({
       });
     });
 
-    const handlePopoverShown = () => {
-      virtualRenderRef.value?.scrollTo(0, 1);
-    };
-
     // 处理扩展区域点击事件
     const handleExtensionClick = (e: MouseEvent) => {
       e.stopPropagation();
@@ -899,7 +895,6 @@ export default defineComponent({
       localSelectAllText,
       resolveClassName,
       handleCreateCustomOption,
-      handlePopoverShown,
       virtualLineHeight,
       isEnableVirtualRender,
       preloadItemCount,
@@ -1194,7 +1189,6 @@ export default defineComponent({
             default: () => renderSelectTrigger(),
             content: () => renderSelectContent(),
           }}
-          onAfterShow={this.handlePopoverShown}
           onClickoutside={this.handleClickOutside}
         />
       </div>
