@@ -243,7 +243,7 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
             hideFn();
           }
         });
-        
+
         parentVisibilityObserver.observe(targetNode, {
           attributes: true,
           attributeFilter: ['style', 'class'],
@@ -260,7 +260,7 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
     clearParentNodeId(root);
     document.body.removeEventListener('fullscreenchange', handleFullscreenChange);
     document.removeEventListener('click', handleClickOutside);
-    
+
     // 清理父元素可见性监听器
     if (parentVisibilityObserver) {
       parentVisibilityObserver.disconnect();
@@ -278,11 +278,11 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
    */
   const checkParentVisibility = () => {
     if (!localIsShow.value) return false;
-    
+
     const { elReference, root } = resolvePopElements();
     const element = elReference || root;
     if (!element) return false;
-    
+
     // 查找最近的 Modal 或 Dialog 父元素
     let parent = element.parentElement;
     while (parent && parent !== document.body) {
@@ -295,7 +295,7 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
             return true; // 父元素被隐藏
           }
         }
-        
+
         // 检查父元素本身是否被隐藏
         const style = window.getComputedStyle(parent);
         if (style.display === 'none' || style.visibility === 'hidden') {
@@ -304,7 +304,7 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
       }
       parent = parent.parentElement;
     }
-    
+
     return false;
   };
 
@@ -317,7 +317,8 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
   const handleClickOutside = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
     if (isClickInside(target)) {
-      e.preventDefault();
+      // 不要阻止默认行为，否则 checkbox 等表单元素无法正常工作
+      // e.preventDefault();
       e.stopPropagation();
       e.stopImmediatePropagation();
       return;
