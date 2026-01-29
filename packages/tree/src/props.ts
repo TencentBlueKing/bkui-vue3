@@ -49,6 +49,12 @@ export type TreeNode = {
   children?: TreeNode[];
 };
 
+/**
+ * 拖拽放置类型
+ * - child: 作为目标节点的子节点
+ * - move: 作为目标节点的同级节点（非排序模式）
+ * - sort: 同父节点下排序（排序模式）
+ */
 export type DropType = 'child' | 'move' | 'sort';
 
 export type DisableDropHandler = (data: TreeNode, type: DropType, target: TreeNode) => boolean;
