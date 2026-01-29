@@ -107,7 +107,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
   };
 
   const getLoadingIcon = (item: TreeNode) =>
-    ctx.slots.nodeLoading?.(getScopedSlotData(item)) ?? isNodeLoading(item) ? <Spinner></Spinner> : '';
+    (ctx.slots.nodeLoading?.(getScopedSlotData(item)) ?? isNodeLoading(item)) ? <Spinner></Spinner> : '';
 
   /**
    * 根据节点状态获取节点操作Icon
@@ -263,9 +263,9 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
         onClick={handleNodeCheckboxClick}
       >
         <Checkbox
+          disabled={props.disableCheck}
           indeterminate={isIndeterminate(item)}
           modelValue={isNodeChecked(item)}
-          disabled={props.disableCheck}
           size='small'
           onChange={(val, event) => handleNodeItemCheckboxChange(item, !!val, event)}
         ></Checkbox>
@@ -373,7 +373,9 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
       return;
     }
 
-    if (isRemoteFnExec(event)) {
+    /** 如果是异步节点，尝试加载数据 */
+    const isAsyncNode = getNodeAttr(item, NODE_ATTRIBUTES.IS_ASYNC);
+    if (isAsyncNode && isRemoteFnExec(event)) {
       /** 如果是异步请求加载 */
       asyncNodeClick(item).finally(() => {
         if (getNodeAttr(item, NODE_ATTRIBUTES.IS_LOADING)) {
@@ -385,6 +387,9 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
           setNodeOpened(item, true, e, true);
         }
       });
+    } else {
+      /** 非异步节点或者 trigger 不匹配时，直接展开 */
+      setNodeOpened(item, true, e, true);
     }
   };
 
@@ -495,28 +500,40 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
   };
 
   /**
-   * 点击节点事件
-   * @param item
+   * 点击节点内容事件
+   * 处理节点内容（除展开/收起按钮外）的点击行为
+   * @param item 当前节点
+   * @param e 鼠标事件
+   * @param event 事件类型
    */
   const handleNodeContentClick = (item: TreeNode, e: MouseEvent, event?: string) => {
     const nodeActions = resolveNodeAction(item);
+    const isOpened = isNodeOpened(item);
+
+    // checkbox 点击事件不应触发 expand/collapse 行为
+    const isCheckboxEvent = event === 'checked';
+
+    // 1. 处理 selected 行为：选中节点
     if (nodeActions.includes('selected')) {
-      setSelect(item, true, true, true, event);
+      // 如果配置了 expand 或 collapse，selected 不应该自动展开节点
+      // 让展开/收起逻辑由 expand/collapse 单独处理
+      const hasExpandOrCollapse = nodeActions.includes('expand') || nodeActions.includes('collapse');
+      const autoOpen = !hasExpandOrCollapse;
+      setSelect(item, true, autoOpen, true, event);
     }
 
-    if (nodeActions.includes('expand')) {
-      if (!isNodeOpened(item)) {
-        handleTreeNodeClick(item, e, event);
-      }
+    // 2. 处理 expand 行为：仅当节点是收起状态时展开
+    if (nodeActions.includes('expand') && !isOpened && !isCheckboxEvent) {
+      handleTreeNodeClick(item, e, 'expand');
     }
 
-    if (nodeActions.includes('collapse')) {
-      if (isNodeOpened(item)) {
-        handleTreeNodeClick(item, e, event);
-      }
+    // 3. 处理 collapse 行为：仅当节点是展开状态时收起
+    if (nodeActions.includes('collapse') && isOpened && !isCheckboxEvent) {
+      handleTreeNodeClick(item, e, 'expand');
     }
 
-    if (nodeActions.includes('click')) {
+    // 4. 处理 click 行为：触发 node-click 事件
+    if (nodeActions.includes('click') && !isCheckboxEvent) {
       const eventName: string = EVENTS.NODE_CLICK;
       ctx.emit(eventName, item, resolveScopedSlotParam(item), getSchemaVal(item), e);
     }
@@ -660,5 +677,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     setOpen,
     setNodeAttribute,
     isIndeterminate,
+    deepUpdateChildNode,
+    updateParentChecked,
   };
 };

@@ -21,7 +21,7 @@
           { title: '测试一', icon: Bk, description: '这是描述' },
           { title: '测试二', icon: 2, description: '这是描述2', status: 'error' },
           { title: '测试三', icon: 3 },
-          { title: '测试四' },
+          { title: '测试四', disabled: true },
         ],
         curStep: 1,
         controllable: true,

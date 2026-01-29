@@ -785,6 +785,15 @@ const routes: RouteRecordRaw[] = [
     },
     component: () => import('../views/blueking/crontab/index'),
   },
+  {
+    path: '/bk/status-tag',
+    name: 'StatusTag',
+    meta: {
+      group: NavGroupMeta.Business,
+      navName: 'Status Tag 状态标签',
+    },
+    component: () => import('../views/blueking/status-tag/index'),
+  },
 ];
 
 const router = createRouter({

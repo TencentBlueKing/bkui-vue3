@@ -210,6 +210,9 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
     updatePopover(null, props);
   };
 
+  // 监听父元素（Modal/Dialog）的可见性变化
+  let parentVisibilityObserver: MutationObserver | null = null;
+
   const onMountedFn = () => {
     if (props.disabled) {
       return;
@@ -228,6 +231,26 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
 
     document.body.addEventListener('fullscreenchange', handleFullscreenChange);
     document.addEventListener('click', handleClickOutside);
+
+    // 监听父元素的可见性变化
+    const { elReference, root } = resolvePopElements();
+    const element = elReference || root;
+    if (element) {
+      const targetNode = element.closest('.bk-modal, .bk-dialog');
+      if (targetNode) {
+        parentVisibilityObserver = new MutationObserver(() => {
+          if (checkParentVisibility() && localIsShow.value) {
+            hideFn();
+          }
+        });
+
+        parentVisibilityObserver.observe(targetNode, {
+          attributes: true,
+          attributeFilter: ['style', 'class'],
+          subtree: true,
+        });
+      }
+    }
   };
 
   const onUnmountedFn = () => {
@@ -237,10 +260,52 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
     clearParentNodeId(root);
     document.body.removeEventListener('fullscreenchange', handleFullscreenChange);
     document.removeEventListener('click', handleClickOutside);
+
+    // 清理父元素可见性监听器
+    if (parentVisibilityObserver) {
+      parentVisibilityObserver.disconnect();
+      parentVisibilityObserver = null;
+    }
   };
 
   const isClickInside = (target: HTMLElement) => {
     return refContent.value?.$el?.contains?.(target) ?? false;
+  };
+
+  /**
+   * 检查父元素（Modal/Dialog）是否被隐藏
+   * 如果父元素被隐藏，应该关闭 Popover
+   */
+  const checkParentVisibility = () => {
+    if (!localIsShow.value) return false;
+
+    const { elReference, root } = resolvePopElements();
+    const element = elReference || root;
+    if (!element) return false;
+
+    // 查找最近的 Modal 或 Dialog 父元素
+    let parent = element.parentElement;
+    while (parent && parent !== document.body) {
+      if (parent.classList.contains('bk-modal') || parent.classList.contains('bk-dialog')) {
+        // 检查 Modal wrapper 是否被隐藏（Dialog 关闭时 wrapper 会被 v-show 隐藏）
+        const wrapper = parent.querySelector('.bk-modal-wrapper');
+        if (wrapper) {
+          const wrapperStyle = window.getComputedStyle(wrapper);
+          if (wrapperStyle.display === 'none' || wrapperStyle.visibility === 'hidden') {
+            return true; // 父元素被隐藏
+          }
+        }
+
+        // 检查父元素本身是否被隐藏
+        const style = window.getComputedStyle(parent);
+        if (style.display === 'none' || style.visibility === 'hidden') {
+          return true; // 父元素被隐藏
+        }
+      }
+      parent = parent.parentElement;
+    }
+
+    return false;
   };
 
   /**
@@ -249,12 +314,21 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
    * @param hideIgnoreReference - 是否忽略隐藏参考元素
    * @returns
    */
-  const handleClickOutside = (e: MouseEvent, hideIgnoreReference = false) => {
+  const handleClickOutside = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
     if (isClickInside(target)) {
-      e.preventDefault();
+      // 不要阻止默认行为，否则 checkbox 等表单元素无法正常工作
+      // e.preventDefault();
       e.stopPropagation();
       e.stopImmediatePropagation();
+      return;
+    }
+
+    // 检查父元素（Modal/Dialog）是否被隐藏，如果隐藏则关闭 Popover
+    if (checkParentVisibility()) {
+      if (localIsShow.value) {
+        hideFn();
+      }
       return;
     }
 
@@ -275,7 +349,7 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
      * @param hideIgnoreReference - 是否忽略隐藏参考元素
      * @returns
      */
-    if (hideIgnoreReference) {
+    if (props.hideIgnoreReference) {
       setTimeout(() => {
         if (ReferenceClickSharedState[uniqKey]) {
           ReferenceClickSharedState[uniqKey] = false;

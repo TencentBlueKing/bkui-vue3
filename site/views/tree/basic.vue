@@ -13,9 +13,7 @@
       label="name"
       level-line
       show-checkbox
-      @node-click="handleNodeClick"
-      @node-collapse="handleNodeCollapse"
-      @node-expand="handleNodeExpand"
+
     />
   </div>
 </template>

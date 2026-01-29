@@ -5,6 +5,23 @@
     .@{bk-prefix}-modal-wrapper {
       right: 0;
     }
+
+    &.@{bk-prefix}-sideslider-resizable {
+      .@{bk-prefix}-sideslider-resize-trigger {
+        left: 0;
+        cursor: col-resize;
+
+        &:after {
+          left: 1px;
+        }
+      }
+
+      .@{bk-prefix}-sideslider-resize-proxy {
+        &.right {
+          border-left: 2px solid #3a84ff;
+        }
+      }
+    }
   }
 
   &.is-position-left {
@@ -14,6 +31,23 @@
 
     .@{bk-prefix}-sideslider-header {
       flex-direction: row-reverse;
+    }
+
+    &.@{bk-prefix}-sideslider-resizable {
+      .@{bk-prefix}-sideslider-resize-trigger {
+        right: 0;
+        cursor: col-resize;
+
+        &:after {
+          right: 1px;
+        }
+      }
+
+      .@{bk-prefix}-sideslider-resize-proxy {
+        &.left {
+          border-left: 2px solid #3a84ff;
+        }
+      }
     }
   }
 
@@ -62,6 +96,10 @@
   color: #313238;
 }
 
+.@{bk-prefix}-sideslider-content {
+  position: relative;
+}
+
 .@{bk-prefix}-sideslider-footer {
   display: flex;
   align-items: center;
@@ -69,4 +107,49 @@
   padding-right: 24px;
   padding-left: 24px;
   margin-top: 24px;
+}
+
+// 拖拽相关样式
+.@{bk-prefix}-sideslider-resize-trigger {
+  position: absolute;
+  top: 0;
+  z-index: 3;
+  width: 5px;
+  height: calc(100vh - 52px);
+  background-color: transparent;
+
+  &:after {
+    position: absolute;
+    top: 50%;
+    width: 2px;
+    height: 2px;
+    color: #c4c6cc;
+    content: '';
+    background: currentColor;
+    box-shadow: 0 4px 0 0 currentColor, 0 8px 0 0 currentColor, 0 -4px 0 0 currentColor, 0 -8px 0 0 currentColor;
+    transform: translateY(-50%);
+  }
+
+  &:hover:after {
+    color: #3a84ff;
+  }
+}
+
+.@{bk-prefix}-sideslider-resize-proxy {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  z-index: 9999;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.@{bk-prefix}-sideslider-resize-mask {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 9998;
+  display: none;
 }

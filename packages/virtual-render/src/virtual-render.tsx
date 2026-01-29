@@ -211,6 +211,11 @@ export default defineComponent({
     onMounted(() => {
       instance = new VisibleRender(binding, refRoot.value);
 
+      // 在执行渲染前，先设置正确的容器尺寸
+      // 当 props.height 是数字时，使用 props.height 作为 offsetHeight
+      // 避免 popover 首次显示时 DOM 元素 offsetHeight 为 0 导致计算错误
+      setDelegateEl();
+
       if (props.scrollbar?.enabled) {
         virtualRoot.value = new VirtualElement({
           delegateElement: refRoot.value,

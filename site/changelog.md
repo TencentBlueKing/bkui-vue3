@@ -1,6 +1,86 @@
 ## 更新日志
 
 
+### 2.0.2-beta.92
+
+* **[feat]**:
+    - 修复表格设置列无法checkbox无法选中的问题
+
+
+### 2.0.2-beta.91
+
+* **[feat]**:
+    - bugfix(select): 修复 开启虚拟滚动在list有值时下拉为空问题
+
+
+### 2.0.2-beta.89
+
+* **[feat]**:
+    - feature(sideslider): 新增拖动宽度配置
+    - bugfix(input): search模式下search icon没有回调事件抛出
+    - bugfix(select): 修复 select 单选自定义创建时无法清空输入框问题
+
+
+### 2.0.2-beta.88
+
+* **[feat]**:
+    - bugfix(select): 点击Mask不关闭下拉面板
+
+
+### 2.0.2-beta.87
+
+* **[feat]**:
+    - bugfix(tag): tag作为select下拉选项使用时无法被选中
+
+
+### 2.0.2-beta.86
+
+* **[feat]**:
+    - bugfix(select): 点击遮罩关闭dialog，dialog内的select下拉面板销毁不干净
+
+
+### 2.0.2-beta.85
+
+* **[feat]**:
+    - bugfix(tree): 设置show-checkbox后，selected值变化不会动态更新
+
+
+### 2.0.2-beta.84
+
+* **[feat]**:
+    - bugfix(tag-input): 删除 tag 不符合预期
+
+
+### 2.0.2-beta.83
+
+* **[feat]**:
+    - perf(tag-input): 优化 watch warn
+    - feature(tree): 点击checkbox，希望不触发展开/收起
+
+
+### 2.0.2-beta.82
+
+* **[feat]**:
+    - bugfix(select): 列表为空时，extension slot 失效
+    - bugfix(select): 点击extension slot会导致下拉面板收起
+    - bugfix(popover): hideIgnoreReference属性失效
+    - feat(status-tag): 添加新的业务组件 status-tag & 国际化支持
+    - fix(cascader): 修复光标位置问题
+    - bugfix(select): 校验时报错的样式错误
+
+
+### 2.0.2-beta.81
+
+* **[feat]**:
+    - fix(tree): 修复tree组件nodeContentAction配置在异步加载过程中展开收起支持的问题修复
+
+
+### 2.0.2-beta.80
+
+* **[feat]**:
+    - feat(steps): 新增 disable 状态
+
+
 ### 2.0.2-beta.79
 
 * **[feat]**:

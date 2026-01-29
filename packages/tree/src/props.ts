@@ -165,7 +165,7 @@ export const treeProps = {
      * 触发异步加载的时机
      * 可选值：'expand', 'click', 'checked'
      */
-    trigger: PropTypes.arrayOf(PropTypes.oneOf(['expand', 'click', 'checked'])).def(null),
+    trigger: PropTypes.arrayOf(PropTypes.oneOf(['expand', 'click', 'checked'])).def(undefined),
   }),
 
   /**
@@ -254,7 +254,7 @@ export const treeProps = {
    * 是否支持多选
    */
   showCheckbox: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]).def(false),
-  
+
   /**
    * 是否禁用节点复选框
    */
