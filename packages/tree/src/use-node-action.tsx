@@ -520,6 +520,14 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
       const eventName: string = EVENTS.NODE_CLICK;
       ctx.emit(eventName, item, resolveScopedSlotParam(item), getSchemaVal(item), e);
     }
+
+    // 处理 checked 操作：当 showCheckbox 为 true 时，点击节点内容切换复选框状态
+    if (nodeActions.includes('checked') && event !== 'checked') {
+      if (showCheckbox(props, extendNodeScopedData(item)) && !props.disableCheck) {
+        const currentChecked = isNodeChecked(item);
+        handleNodeItemCheckboxChange(item, !currentChecked, e);
+      }
+    }
   };
 
   /**
