@@ -33,3 +33,26 @@ export default BkPopover;
 export { default as $bkPopover } from './plugin-popover';
 
 export { PopoverProps, type PopoverPropTypes } from './props';
+
+// 导出类型
+export type {
+  TriggerType,
+  RenderDirectiveType,
+  RenderType,
+  ThemeType,
+  IAxesOffsets,
+  PopoverContent,
+  PopoverTarget,
+  PopoverBoundary,
+  PopoverDelay,
+  PopoverPlacement,
+  PopoverShowHidePayload,
+  PopoverClickOutsidePayload,
+  PopoverEmits,
+  PopoverExpose,
+  PopoverPluginOptions,
+  PopoverPluginInstance,
+} from './types';
+
+// 导出 composables
+export { useDelay, useTrigger, usePopoverFloating } from './composables';

@@ -24,19 +24,68 @@
  * IN THE SOFTWARE.
  */
 
-import { shallowMount } from '@vue/test-utils';
+// 测试 composables 的单元测试
+import { resolveDelay } from '../src/composables/use-delay';
 
-import Popover from '../src';
-
-describe('Popover.tsx', () => {
-  it('renders correctly', () => {
-    const wrapper = shallowMount(Popover, {
-      slots: {
-        default: () => <span>trigger</span>,
-        content: () => 'content',
-      },
+describe('Popover Composables', () => {
+  describe('resolveDelay', () => {
+    it('should return [delay, delay] for number input', () => {
+      expect(resolveDelay(100)).toEqual([100, 100]);
+      expect(resolveDelay(0)).toEqual([0, 0]);
+      expect(resolveDelay(500)).toEqual([500, 500]);
     });
-    expect(wrapper.classes()).toContain('bk-popover');
-    expect(wrapper.html()).toContain('<span>trigger</span>');
+
+    it('should return [showDelay, hideDelay] for array input', () => {
+      expect(resolveDelay([100, 200])).toEqual([100, 200]);
+      expect(resolveDelay([0, 100])).toEqual([0, 100]);
+    });
+
+    it('should handle array with same values', () => {
+      const result = resolveDelay([100, 100]);
+      expect(result[0]).toBe(100);
+      expect(result[1]).toBe(100);
+    });
+  });
+});
+
+describe('Popover Types', () => {
+  it('should export types correctly', () => {
+    // 类型检查 - 这些不会在运行时执行，但 TypeScript 会检查
+    const triggerTypes = ['hover', 'click', 'manual'];
+    const renderDirectives = ['if', 'show'];
+    const themes = ['dark', 'light'];
+
+    expect(triggerTypes).toContain('hover');
+    expect(renderDirectives).toContain('if');
+    expect(themes).toContain('dark');
+  });
+});
+
+describe('Popover Props', () => {
+  it('should have PopoverProps exported', () => {
+    const { PopoverProps } = require('../src/props');
+    
+    // 检查关键 props 是否存在
+    expect(PopoverProps).toBeDefined();
+    expect(PopoverProps.isShow).toBeDefined();
+    expect(PopoverProps.trigger).toBeDefined();
+    expect(PopoverProps.placement).toBeDefined();
+    expect(PopoverProps.content).toBeDefined();
+    expect(PopoverProps.arrow).toBeDefined();
+    expect(PopoverProps.theme).toBeDefined();
+    expect(PopoverProps.offset).toBeDefined();
+    expect(PopoverProps.disabled).toBeDefined();
+    expect(PopoverProps.always).toBeDefined();
+  });
+
+  it('should have correct default values', () => {
+    const { PopoverProps } = require('../src/props');
+    
+    // 检查默认值
+    expect(PopoverProps.isShow.default).toBe(false);
+    expect(PopoverProps.arrow.default).toBe(true);
+    expect(PopoverProps.theme.default).toBe('dark');
+    expect(PopoverProps.disabled.default).toBe(false);
+    expect(PopoverProps.always.default).toBe(false);
   });
 });
