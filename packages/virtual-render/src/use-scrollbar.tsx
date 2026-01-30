@@ -45,11 +45,17 @@ export default () => {
    */
   const scrollTo = (x: number, y: number) => {
     if (targetElement) {
-      targetElement.scrollTo({
-        left: x,
-        top: y,
-        behavior: 'auto',
-      });
+      if (typeof (targetElement as any).scrollTo === 'function') {
+        targetElement.scrollTo({
+          left: x,
+          top: y,
+          behavior: 'auto',
+        });
+      } else {
+        // jsdom 等环境可能没有 scrollTo，降级为直接赋值
+        targetElement.scrollLeft = x;
+        targetElement.scrollTop = y;
+      }
     }
   };
 

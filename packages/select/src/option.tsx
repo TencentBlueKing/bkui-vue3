@@ -54,6 +54,8 @@ export default defineComponent({
     name: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     disabled: PropTypes.bool.def(false),
     order: PropTypes.number.def(0),
+    // 虚拟滚动模式下跳过注册，避免频繁 register/unregister 造成更新风暴
+    skipRegister: PropTypes.bool.def(false),
   },
   setup(props, { attrs }) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -116,11 +118,15 @@ export default defineComponent({
     };
 
     onBeforeMount(() => {
+      // 虚拟滚动模式下跳过注册，避免频繁 mount/unmount 造成 optionsMap 抖动
+      if (props.skipRegister) return;
       select?.register(optionID.value, proxy);
       group?.register(optionID.value, proxy);
     });
 
     onBeforeUnmount(() => {
+      // 虚拟滚动模式下跳过注销
+      if (props.skipRegister) return;
       select?.unregister(optionID.value, proxy);
       group?.unregister(optionID.value, proxy);
     });
@@ -145,14 +151,18 @@ export default defineComponent({
     };
   },
   render() {
-    const selectItemClass = classes({
-      'is-selected': this.selected,
-      'is-disabled': this.disabled,
-      'is-multiple': this.multiple,
-      'is-hover': this.isHover,
-      'is-checkbox': this.selectedStyle === SelectedTypeEnum.CHECKBOX,
-      [this.resolveClassName('select-option')]: true,
-    });
+    const selectItemClass = [
+      classes({
+        'is-selected': this.selected,
+        'is-disabled': this.disabled,
+        'is-multiple': this.multiple,
+        'is-hover': this.isHover,
+        'is-checkbox': this.selectedStyle === SelectedTypeEnum.CHECKBOX,
+        [this.resolveClassName('select-option')]: true,
+      }),
+      // 允许透传 class（用于虚拟分组等场景的样式扩展）
+      this.$attrs.class,
+    ];
     return (
       <li
         class={selectItemClass}

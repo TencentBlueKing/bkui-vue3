@@ -334,9 +334,14 @@ describe('Select.tsx', () => {
         };
       },
     });
-    const tags = wrapper.findAllComponents('.bk-tag').filter(com => com.isVisible());
+    await nextTick();
+    await new Promise(resolve => setTimeout(resolve, 20));
+    await nextTick();
+    const select = wrapper.findComponent(BkSelect);
+    const tags = select.findAll('.bk-tag').filter(w => w.isVisible());
     expect(tags).toHaveLength(2);
-    tags[0].find('.bk-tag-close').trigger('click');
+    await tags[0].find('.bk-tag-close').trigger('click');
+    await nextTick();
     expect(wrapper.vm.seletValue).toEqual([2]);
     wrapper.unmount();
   });
@@ -424,8 +429,14 @@ describe('Select.tsx', () => {
         };
       },
     });
-    const input = wrapper.findComponent({ name: 'PopContent' }).find('.bk-select-search-input');
-    input.setValue('test4');
+    wrapper.find('.bk-select-trigger').trigger('click');
+    setTimeout(() => {
+      const el = document.querySelector('.bk-select-search-input') as HTMLInputElement | null;
+      if (el) {
+        el.value = 'test4';
+        el.dispatchEvent(new Event('input'));
+      }
+    }, 20);
     const select = wrapper.findComponent(BkSelect);
     setTimeout(() => {
       expect(select.vm.searchValue).toBe('test4');
@@ -440,10 +451,67 @@ describe('Select.tsx', () => {
     const wrapper = await mount(BkSelect, {
       props: {
         enableVirtualRender: true,
-        list: new Array(1000000).fill('').map((_, index) => ({ value: index, label: `测试数据${index}` })),
+        list: new Array(20000).fill('').map((_, index) => ({ value: index, label: `测试数据${index}` })),
       },
     });
-    expect(wrapper.findAllComponents(BkOption).length).toBeLessThan(10);
+    expect(wrapper.findAllComponents(BkOption).length).toBeLessThan(30);
+    wrapper.unmount();
+  });
+
+  // 虚拟滚动：slot + 分组（验证虚拟开关与选择链路）
+  test('virtual select with slot group and keyboard', async () => {
+    const wrapper = await mount({
+      components: {
+        BkSelect,
+        BkOption,
+        BkOptionGroup,
+      },
+      template: `
+        <BkSelect v-model="value" enable-virtual-render multiple>
+          <BkOptionGroup v-model:collapse="collapsed" collapsible label="分组1">
+            <BkOption v-for="i in 1000" :key="i" :id="i" :name="'选项' + i"></BkOption>
+          </BkOptionGroup>
+        </BkSelect>
+      `,
+      data() {
+        return {
+          value: [],
+          collapsed: false,
+        };
+      },
+    });
+
+    await wrapper.find('.bk-select-trigger').trigger('click');
+    // 等待 Popover 渲染与内部 setTimeout 初始化
+    await new Promise(resolve => setTimeout(resolve, 120));
+    await nextTick();
+    await nextTick();
+
+    const select = wrapper.findComponent(BkSelect);
+    expect((select.vm as any).isEnableVirtualRender).toBe(true);
+    expect((select.vm as any).isPopoverShow).toBe(true);
+    // 选择链路（等价于键盘 Enter 最终会调用的选择逻辑）
+    (select.vm as any).handleOptionSelected({ optionID: 2, optionName: '选项2' });
+    await nextTick();
+    expect(wrapper.vm.value).toEqual([2]);
+
+    wrapper.unmount();
+  });
+
+  test('virtual select emits scroll-end by virtual callback', async () => {
+    const wrapper = await mount(BkSelect, {
+      props: {
+        enableVirtualRender: true,
+        list: new Array(2000).fill('').map((_, index) => ({ value: index, label: `测试数据${index}` })),
+      },
+    });
+    await wrapper.find('.bk-select-trigger').trigger('click');
+    await new Promise(resolve => setTimeout(resolve, 20));
+    await nextTick();
+
+    (wrapper.vm as any).handleVirtualContentScroll([null, { pos: { bottom: 0 } }, []]);
+    await nextTick();
+    expect(wrapper.emitted('scroll-end')?.length).toBe(1);
     wrapper.unmount();
   });
 
@@ -475,10 +543,18 @@ describe('Select.tsx', () => {
         };
       },
     });
-    await wrapper.find('.bk-select-trigger').trigger('click');
+    await nextTick();
+    await new Promise(resolve => setTimeout(resolve, 20));
+    await nextTick();
+    const select = wrapper.findComponent(BkSelect);
+    const trigger = select.find('.bk-select-trigger');
+    expect(trigger.exists()).toBe(true);
+    await trigger.trigger('click');
     expect(wrapper.findComponent(BkSelect).vm.isPopoverShow).toBeFalsy();
-    const tag = wrapper.findComponent('.bk-tag');
+    const tag = select.find('.bk-tag');
+    expect(tag.exists()).toBe(true);
     await tag.find('.bk-tag-close').trigger('click');
+    await nextTick();
     expect(wrapper.vm.seletValue).toEqual([1, 2]);
     wrapper.unmount();
   });

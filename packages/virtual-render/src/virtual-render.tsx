@@ -158,37 +158,6 @@ export default defineComponent({
       return startIndex * props.lineHeight;
     };
 
-    const getOffsetHeight = () => {
-      if (typeof props.height === 'number') {
-        return props.height;
-      }
-
-      return refRoot.value?.offsetHeight ?? 0;
-    };
-
-    const getLastPageIndex = () => {
-      const elHeight = getOffsetHeight();
-      let startIndex = Math.ceil(listLength.value / props.groupItemCount);
-      let rowsHeight = 0;
-      let lastHeight = 0;
-      let diffHeight = 0;
-      for (; startIndex > 0; startIndex--) {
-        lastHeight = props.lineHeight(getRowHeightArgs(startIndex));
-
-        rowsHeight = rowsHeight + lastHeight;
-
-        if (rowsHeight > elHeight) {
-          diffHeight = rowsHeight - elHeight;
-          break;
-        }
-      }
-
-      return {
-        diffHeight,
-        startIndex,
-      };
-    };
-
     /** 指令触发Scroll事件，计算当前startIndex & endIndex & scrollTop & translateY */
     const handleScrollCallback = (event, startIndex, endIndex, scrollTop, translateY, scrollLeft, pos) => {
       const translateX = scrollLeft;
