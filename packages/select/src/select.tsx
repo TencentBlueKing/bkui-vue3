@@ -418,6 +418,10 @@ export default defineComponent({
           focusInput();
           initActiveOptionValue();
           scrollActiveOptionIntoView();
+          // 重置虚拟滚动状态，确保再次打开时正确渲染
+          if (isEnableVirtualRender.value) {
+            virtualRenderRef.value?.reset?.();
+          }
         }, 10); // 等待Popover content出来，options加载完成
       }
     });
@@ -1072,7 +1076,6 @@ export default defineComponent({
           lineHeight={this.virtualLineHeight}
           list={this.filterList}
           preloadItemCount={this.preloadItemCount}
-          scrollbar={{ enabled: true, size: 'small' }}
         >
           {{
             default: ({ data }) => {

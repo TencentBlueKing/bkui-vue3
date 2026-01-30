@@ -30,9 +30,25 @@
       color: #26323d;
       background-color: #fff;
       box-shadow: 0 0 6px 0 #dcdee5;
-
+      border: 1px solid #dcdee5;
       .@{bk-prefix}-pop2-arrow {
         background-color: #fff;
+        &[data-arrow='top']{
+          border-right: 1px solid #dcdee5;
+          border-bottom: 1px solid #dcdee5;
+        }
+        &[data-arrow='right']{
+          border-left: 1px solid #dcdee5;
+          border-bottom: 1px solid #dcdee5;
+        }
+        &[data-arrow='left']{
+          border-right: 1px solid #dcdee5;
+          border-top: 1px solid #dcdee5;
+        }
+        &[data-arrow='bottom']{
+          border-left: 1px solid #dcdee5;
+          border-top: 1px solid #dcdee5;
+        }
       }
     }
   }
