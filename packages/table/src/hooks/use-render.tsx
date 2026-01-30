@@ -40,12 +40,13 @@ import {
   formatPropAsArray,
   resolveCellSpan,
   resolveColumnSpan,
+  resolveActiveColumns,
   resolveHeadConfig,
   resolveNumberOrStringToPix,
   resolvePropVal,
   resolveWidth,
 } from '../utils';
-import useCell, { createCellRenderer } from './use-cell';
+import { createCellRenderer } from './use-cell';
 import { UseColumns } from './use-columns';
 import useHead from './use-head';
 import { UsePagination } from './use-pagination';
@@ -75,6 +76,7 @@ export default ({ props, ctx, columns, rows, pagination }: RenderType) => {
    * @returns
    */
   const renderColgroup = () => {
+    const activeCols = resolveActiveColumns(props);
     return (
       <colgroup>
         {(columns.visibleColumns || []).map((column: Column, _index: number) => {
@@ -83,6 +85,9 @@ export default ({ props, ctx, columns, rows, pagination }: RenderType) => {
           const minWidth = columns.getColumnAttribute(column, COLUMN_ATTRIBUTE.COL_MIN_WIDTH);
           return (
             <col
+              class={{
+                active: activeCols.includes(_index),
+              }}
               style={{
                 width: resolveNumberOrStringToPix(width, 'auto'),
                 minWidth: resolveNumberOrStringToPix(minWidth as string, 'auto'),

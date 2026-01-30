@@ -36,7 +36,8 @@ describe('Popover.tsx', () => {
         content: () => 'content',
       },
     });
-    expect(wrapper.classes()).toContain('bk-popover');
-    expect(wrapper.html()).toContain('<span>trigger</span>');
+    // popover2 已废弃，仅用于提示替换为 bk-popover
+    expect(wrapper.text()).toContain('已经合并为');
+    expect(wrapper.text()).toContain('<bk-popover>');
   });
 });

@@ -39,10 +39,6 @@
       overflow: hidden;
     }
 
-    .prepend-row {
-      transform: translate(var(--translate-x), 0);
-    }
-
   }
 
   // body overlay wrapper（让 overlay 不参与原生滚动）
@@ -50,6 +46,36 @@
     position: relative;
     width: 100%;
     height: 100%;
+
+    // 表头右侧设置按钮：固定在可视区域右侧（不随横向滚动移动）
+    .bk-table-head-settings-wrapper {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: calc(var(--row-height));
+      height: calc(var(--row-height));
+      z-index: 8;
+      pointer-events: auto;
+
+      > div {
+        height: 100%;
+      }
+
+      .table-head-settings {
+        display: flex;
+        height: 100%;
+        width: calc(var(--row-height));
+        height: calc(var(--row-height));
+        font-size: 14px;
+        cursor: pointer;
+
+        background: @table-head-bg-color;
+        border-left: 1px solid @table-border-color;
+        border-radius: 0 2px 0 0;
+        justify-content: center;
+        align-items: center;
+      }
+    }
 
     // 列宽拖拽指示线（overlay）
     .resize-column {
@@ -319,9 +345,6 @@
             }
           }
 
-          &.column_fixed {
-            transform: translateX(var(--translate-x));
-          }
         }
       }
 
@@ -394,12 +417,19 @@
   }
 
   .@{bk-prefix}-table-head {
-    position: relative;
-    z-index: 2;
-    overflow: hidden;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    // 若设置 overflow: hidden，会让 th.column_fixed 的 sticky 参照变为 table-head 自身（其 scrollLeft 不变化）
+    // 导致横向滚动时 header 固定列不生效；这里保持 visible，让 sticky 参照外层滚动容器
+    overflow: visible;
     background-color: var(--background-color);
     height: var(--row-height);
     min-height: var(--row-height);
+
+    th.column_fixed {
+      z-index: 6;
+    }
 
     &.has-group {
       .is-head-group {
@@ -431,27 +461,8 @@
       transform: translate(0, 0);
     }
 
-    thead {
-      transform: translate(var(--translate-x-1), 0);
-    }
-
     .table-head-settings {
-      position: absolute;
-      top: 0;
-      right: 1px;
-      bottom: 0;
-      z-index: 8;
-      display: flex;
-      width: calc(var(--row-height));
-      font-size: 14px;
-      cursor: pointer;
-
-      background: @table-head-bg-color;
-      border-left: 1px solid @table-border-color;
-      border-radius: 0 2px 0 0;
-      justify-content: center;
-      align-items: center;
-
+      // 由 .bk-table-head-settings-wrapper 负责定位，这里只保留内部图标布局
       > span {
         display: flex;
         width: 1em;

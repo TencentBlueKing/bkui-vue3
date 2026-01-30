@@ -70,7 +70,10 @@ export default defineComponent({
     const { resolveClassName } = usePrefix();
 
     // 元素引用
-    const referenceRef = ref<HTMLElement | null>(null);
+    // 默认 slot 的包裹元素（仅用于渲染与事件冒泡承载）
+    const referenceWrapperRef = ref<HTMLElement | null>(null);
+    // 提供给 floating-ui 的实际定位 reference（可能是 wrapper，也可能是 slot 内部元素）
+    const floatingReferenceRef = ref<HTMLElement | VirtualElement | null>(null);
     const floatingRef = ref<HTMLElement | null>(null);
     const arrowRef = ref<HTMLElement | null>(null);
 
@@ -181,6 +184,43 @@ export default defineComponent({
       return null;
     };
 
+    /**
+     * 解析默认 slot reference 元素
+     *
+     * 兼容一些历史用法：default slot 内部元素可能是 `position: absolute`，
+     * 这会导致外层包裹的 referenceWrapperRef（inline-block）尺寸为 0，
+     * 从而让 floating-ui 使用错误的 reference 位置，并触发 hide middleware 的 referenceHidden。
+     *
+     * 策略：当 referenceWrapperRef 自身尺寸为 0 时，优先使用第一个元素子节点作为 reference；否则向下寻找第一个具有可见尺寸的 HTMLElement。
+     */
+    const resolveDefaultReferenceElement = (): HTMLElement | null => {
+      const wrapper = referenceWrapperRef.value;
+      if (!wrapper) return null;
+
+      const wrapperRect = wrapper.getBoundingClientRect();
+      if (wrapperRect.width > 0 || wrapperRect.height > 0) {
+        return wrapper;
+      }
+
+      // 常见场景：slot 内元素为 absolute，wrapper 自身尺寸为 0，但第一个元素子节点就是实际触发器
+      const firstChild = wrapper.firstElementChild;
+      if (firstChild instanceof HTMLElement) {
+        return firstChild;
+      }
+
+      const descendants = wrapper.querySelectorAll('*');
+      for (const node of Array.from(descendants)) {
+        if (!(node instanceof HTMLElement)) continue;
+        const rect = node.getBoundingClientRect();
+        if (rect.width > 0 || rect.height > 0) {
+          return node;
+        }
+      }
+
+      // 兜底仍返回 wrapper，保证类型与行为一致
+      return wrapper;
+    };
+
     // 延迟控制
     const delayOptions = computed(() => ({
       isShow: isShow.value,
@@ -218,12 +258,28 @@ export default defineComponent({
       isOpen: isOpen.value,
     }));
 
-    // 计算实际使用的 reference 元素（用于 floating-ui 定位）
-    const actualReferenceRef = computed(() => {
+    // 更新 floating-ui 定位 reference（避免 computed 缓存导致 DOM 布局变化时 reference 解析不生效）
+    const updateFloatingReference = () => {
       if (useCustomReference.value) {
-        return getFloatingReference();
+        floatingReferenceRef.value = getFloatingReference();
+        return;
       }
-      return referenceRef.value;
+      floatingReferenceRef.value = resolveDefaultReferenceElement();
+    };
+
+    // wrapper/props/展开状态变化时，重新解析 reference
+    watch(
+      () => referenceWrapperRef.value,
+      () => {
+        nextTick(updateFloatingReference);
+      },
+      { immediate: true },
+    );
+    watch([() => reference.value, () => target.value], () => nextTick(updateFloatingReference));
+    watch(isOpen, (val) => {
+      if (val) {
+        nextTick(updateFloatingReference);
+      }
     });
 
     const {
@@ -231,7 +287,7 @@ export default defineComponent({
       arrowStyles,
       update,
       arrowSide,
-    } = usePopoverFloating(floatingProps, actualReferenceRef, floatingRef, arrowRef);
+    } = usePopoverFloating(floatingProps, floatingReferenceRef, floatingRef, arrowRef);
 
     // 触发事件管理
     const triggerProps = computed(() => ({
@@ -314,6 +370,27 @@ export default defineComponent({
       return baseTheme;
     });
 
+    /**
+     * 兼容旧样式约定：
+     * 一些组件（如 table settings）会在主题 class 上再依赖一个 data-xxx-theme 标记来开启样式。
+     * 例如：`.bk-table-settings[data-bk-table-settings-theme='true']`
+     *
+     * 这里根据 theme 里解析出的额外 class 自动补齐对应的 data 属性，确保旧用法不需要改调用方。
+     */
+    const extraThemeDataAttrs = computed<Record<string, string>>(() => {
+      const { extraClasses } = parseTheme(theme.value);
+      const attrs: Record<string, string> = {};
+      extraClasses.forEach(cls => {
+        const normalized = String(cls || '').trim().toLowerCase();
+        // data-* 属性名只允许字母/数字/连字符/下划线
+        if (!normalized || !/^[a-z0-9_-]+$/.test(normalized)) {
+          return;
+        }
+        attrs[`data-${normalized}-theme`] = 'true';
+      });
+      return attrs;
+    });
+
     // 处理 clickoutside
     const handleClickOutside = (event: MouseEvent) => {
       if (disabled.value || always.value) {
@@ -323,10 +400,10 @@ export default defineComponent({
       const target = event.target as HTMLElement;
 
       // 点击在 reference 内（包括自定义 reference 和默认 reference）
-      const actualRef = actualReferenceRef.value;
+      const actualRef = floatingReferenceRef.value;
       const isInReference = (
         (actualRef instanceof HTMLElement && actualRef.contains(target)) ||
-        referenceRef.value?.contains(target)
+        referenceWrapperRef.value?.contains(target)
       );
       if (isInReference) {
         // 对于 click 和 hover 模式，点击 reference 的行为由 referenceListeners 处理
@@ -531,6 +608,7 @@ export default defineComponent({
             pointerEvents: contentPointerEvents.value,
           }}
           data-theme={dataTheme.value}
+          {...extraThemeDataAttrs.value}
           data-arrow={arrowSide.value}
           onClick={handleClickContent}
           {...floatingListeners.value}
@@ -564,7 +642,7 @@ export default defineComponent({
       return (
         <>
           <span
-            ref={referenceRef}
+            ref={referenceWrapperRef}
             class={referenceCls.value}
             style={{ display: 'inline-block' }}
             {...referenceListeners.value}

@@ -60,7 +60,6 @@ type CellRenderArgsType = CellRenderContextType & {
  */
 export const createCellRenderer = (context: CellRenderContextType) => {
   const { props, rows, ctx, columns, multiShiftKey } = context;
-  const { isShiftKeyDown, getStore, setStore, setStoreStart, clearStoreStart } = multiShiftKey;
 
   /**
    * 渲染单元格
