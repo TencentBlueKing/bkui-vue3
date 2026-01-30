@@ -45,7 +45,7 @@ import {
   resolvePropVal,
   resolveWidth,
 } from '../utils';
-import useCell from './use-cell';
+import useCell, { createCellRenderer } from './use-cell';
 import { UseColumns } from './use-columns';
 import useHead from './use-head';
 import { UsePagination } from './use-pagination';
@@ -66,6 +66,9 @@ export default ({ props, ctx, columns, rows, pagination }: RenderType) => {
   let dragEvents = {};
 
   const multiShiftKey = useShiftKey(props);
+
+  // 创建复用的单元格渲染器，避免在循环中重复创建闭包
+  const cellRenderer = createCellRenderer({ props, rows, ctx, columns, multiShiftKey });
 
   /**
    * 渲染table colgroup
@@ -378,7 +381,7 @@ export default ({ props, ctx, columns, rows, pagination }: RenderType) => {
         >
           {columns.visibleColumns.map((column: Column, index: number) => {
             const cellStyle = [
-              columns.getFixedStlye(column),
+              columns.getFixedStyle(column),
               ...formatPropAsArray(props.cellStyle, [column, index, row, rowIndex]),
             ];
 
@@ -410,17 +413,8 @@ export default ({ props, ctx, columns, rows, pagination }: RenderType) => {
 
               const columnKey = `${rowId}_${index}`;
               const cellKey = `${rowId}_${index}_cell`;
-              const { renderCell } = useCell({
-                props,
-                rows,
-                ctx,
-                columns,
-                row,
-                index: rowIndex,
-                column,
-                isChild,
-                multiShiftKey,
-              });
+              // 使用优化后的渲染器，避免在循环中重复创建闭包
+              const renderCellContent = () => cellRenderer(row, rowIndex, column, isChild);
 
               const handleEmit = (event, type: string) => {
                 const args = {
@@ -428,7 +422,7 @@ export default ({ props, ctx, columns, rows, pagination }: RenderType) => {
                   row,
                   column,
                   cell: {
-                    getValue: () => renderCell(),
+                    getValue: renderCellContent,
                   },
                   rowIndex,
                   columnIndex: index,
@@ -458,7 +452,7 @@ export default ({ props, ctx, columns, rows, pagination }: RenderType) => {
                     parentSetting={props.showOverflowTooltip}
                     row={row}
                   >
-                    {renderCell()}
+                    {renderCellContent()}
                   </TableCell>
                 </td>
               );

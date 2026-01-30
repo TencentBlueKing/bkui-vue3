@@ -30,9 +30,10 @@ import { bkTooltips } from '@bkui-vue/directives';
 import debounce from 'lodash/debounce';
 import isElement from 'lodash/isElement';
 
-import { COLUMN_ATTRIBUTE, PROVIDE_KEY_INIT_COL, SCROLLY_WIDTH, TABLE_ROW_ATTRIBUTE } from './const';
+import { COLUMN_ATTRIBUTE, PROVIDE_KEY_INIT_COL, PROVIDE_KEY_COLUMN_REGISTRY, SCROLLY_WIDTH, TABLE_ROW_ATTRIBUTE } from './const';
 import { EMIT_EVENT_TYPES } from './events';
 import useColumnResize from './hooks/use-column-resize';
+import useColumnRegistry from './hooks/use-column-registry';
 import useColumnTemplate from './hooks/use-column-template';
 import useColumns from './hooks/use-columns';
 import useDraggable from './hooks/use-draggable';
@@ -118,7 +119,12 @@ export default defineComponent({
 
     const { resolveColumns } = useColumnTemplate();
 
+    // 创建列注册表（用于增量更新）
+    const columnRegistry = useColumnRegistry();
+
     const instance = getCurrentInstance();
+
+    // 旧模式：VNode 全量解析（作为降级方案）
     const initTableColumns = () => {
       const children = instance.subTree?.children ?? [];
       columns.debounceUpdateColumns(resolveColumns(children), () => {
@@ -126,7 +132,26 @@ export default defineComponent({
       });
     };
 
+    // 提供旧的初始化函数（降级模式使用）
     provide(PROVIDE_KEY_INIT_COL, initTableColumns);
+    // 提供列注册表（新模式使用）
+    provide(PROVIDE_KEY_COLUMN_REGISTRY, columnRegistry);
+
+    // 监听列注册表版本变化（模板方式）
+    // 当 TableColumn 组件注册/更新/注销时，版本号会递增
+    watch(
+      () => columnRegistry.version.value,
+      () => {
+        // 只有当没有使用 props.columns 配置时，才使用注册表中的列
+        // 避免配置式和模板式混用时的冲突
+        if (!props.columns?.length && columnRegistry.hasColumns()) {
+          const registryColumns = columnRegistry.getColumns();
+          columns.debounceUpdateColumns(registryColumns, () => {
+            setHeaderRowCount(columns.columnGroup.length);
+          });
+        }
+      },
+    );
 
     const { renderFixedRows, resolveFixedColumnStyle } = useFixedColumn(props, columns);
 
@@ -158,7 +183,15 @@ export default defineComponent({
       return list.slice(startIndex, endIndex);
     };
 
-    const getFilterAndSortList = () => {
+    // 使用 computed 缓存过滤和排序结果，避免重复计算
+    // 依赖：rows.tableRowList, columns.filterColumns, columns.sortColumns, filterVersion, sortVersion
+    const filteredAndSortedList = computed(() => {
+      // 引用版本号以确保依赖追踪正确
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const _filterVer = columns.filterVersion.value;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const _sortVer = columns.sortVersion.value;
+
       let renderList = rows.tableRowList.value.slice();
 
       columns.filterColumns.forEach(item => {
@@ -188,7 +221,7 @@ export default defineComponent({
       });
 
       return renderList;
-    };
+    });
 
     const footHeight = computed(() => {
       return pagination.isShowPagination.value ? props.paginationHeight : 0;
@@ -204,7 +237,8 @@ export default defineComponent({
     const scrollTo00 = ref(false);
 
     const setTableData = debounce((resetScroll = true) => {
-      const filterOrderList = getFilterAndSortList();
+      // 使用缓存的过滤排序结果
+      const filterOrderList = filteredAndSortedList.value;
       if (!props.remotePagination) {
         pagination.setPagination({ count: filterOrderList.length });
       }
@@ -271,12 +305,16 @@ export default defineComponent({
       }
     };
 
+    // 监听 props.columns 变化（配置式用法）
+    // 只有当 props.columns 有值时才使用，避免与模板方式冲突
     watch(
       () => [props.columns],
       () => {
-        columns.debounceUpdateColumns(props.columns, () => {
-          setHeaderRowCount(columns.columnGroup.length);
-        });
+        if (props.columns?.length > 0) {
+          columns.debounceUpdateColumns(props.columns, () => {
+            setHeaderRowCount(columns.columnGroup.length);
+          });
+        }
       },
       { immediate: true },
     );
@@ -288,28 +326,27 @@ export default defineComponent({
       },
     );
 
+    // 使用版本号监听替代深度监听，提升性能
     watch(
-      () => [columns.visibleColumns],
+      () => columns.columnsVersion.value,
       () => {
         nextTick(() => computedColumnRect());
       },
-      { immediate: true, deep: true },
+      { immediate: true },
     );
 
     watch(
-      () => [columns.filterColumns],
+      () => columns.filterVersion.value,
       () => {
         setTableData();
       },
-      { deep: true },
     );
 
     watch(
-      () => [columns.sortColumns],
+      () => columns.sortVersion.value,
       () => {
         setTableData(false);
       },
-      { deep: true },
     );
 
     watch(
@@ -320,13 +357,27 @@ export default defineComponent({
       { immediate: true },
     );
 
+    // 监听 data 变化
+    // 注意：deep: true 对大数据量有性能影响，建议用户通过替换数组引用来触发更新
+    // 如需手动刷新，可调用 exposed 的 refreshData 方法
     watch(
-      () => [props.data],
+      () => props.data,
       () => {
         rows.setTableRowList(props.data);
         setTableData(false);
       },
-      { immediate: true, deep: true },
+      { immediate: true },
+    );
+
+    // 监听 data 数组长度变化，用于处理数组元素增减的情况
+    watch(
+      () => props.data?.length,
+      (newLen, oldLen) => {
+        if (newLen !== oldLen) {
+          rows.setTableRowList(props.data);
+          setTableData(false);
+        }
+      },
     );
 
     watch(
@@ -346,6 +397,12 @@ export default defineComponent({
       }
     });
 
+    // 手动刷新数据方法，用于用户直接修改数据对象属性后触发更新
+    const refreshData = () => {
+      rows.setTableRowList(props.data);
+      setTableData(false);
+    };
+
     ctx.expose({
       setRowExpand: rows.setRowExpand,
       setAllRowExpand: rows.setAllRowExpand,
@@ -360,6 +417,7 @@ export default defineComponent({
       clearSort: columns.clearColumnSort,
       scrollTo,
       getRoot: () => refRoot.value,
+      refreshData,
     });
 
     return () =>

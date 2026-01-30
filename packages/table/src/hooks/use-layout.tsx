@@ -88,10 +88,13 @@ export default (props: TablePropTypes, ctx) => {
   );
 
   const setFixedColumnShawdow = () => {
-    const rightShawdow = offsetRight.value > 0 ? '0 0 10px rgb(0 0 0 / 12%)' : null;
-    const leftShawdow = translateX.value > 0 ? '0 0 10px rgb(0 0 0 / 12%)' : null;
-    refRoot.value?.style?.setProperty('--shadow-right', rightShawdow);
-    refRoot.value?.style?.setProperty('--shadow-left', leftShawdow);
+    const shadowColor = 'rgb(0 0 0 / 12%)';
+    // 使用“方向性阴影”，避免阴影在固定区域两侧同时扩散
+    // 隐藏时写入 'none'，避免 setProperty(null) 触发无效值抖动
+    const rightShadow = offsetRight.value > 0 ? `-6px 0 6px -4px ${shadowColor}` : 'none';
+    const leftShadow = translateX.value > 0 ? `6px 0 6px -4px ${shadowColor}` : 'none';
+    refRoot.value?.style?.setProperty('--shadow-right', rightShadow);
+    refRoot.value?.style?.setProperty('--shadow-left', leftShadow);
   };
 
   const setRootStyleVars = throttle(() => {
@@ -331,30 +334,30 @@ export default (props: TablePropTypes, ctx) => {
 
   const renderBody = (list, childrend?, fixedRows?) => {
     return (
-      <VirtualRender
-        ref={refBody}
-        height={bodyHeight.value}
-        class={bodyClass}
-        contentClassName={scrollContentClass.value}
-        enabled={props.virtualEnabled}
-        lineHeight={lineHeight.value}
-        list={list}
-        maxHeight={bodyMaxHeight.value}
-        rowKey={props.rowKey}
-        scrollEvent={true}
-        scrollbar={{ enabled: props.scrollbar }}
-        throttleDelay={120}
-        onContentScroll={handleScrollChanged}
-      >
-        {{
-          beforeContent: () => renderPrepend(),
-          default: (scope: Record<string, object>) => childrend?.(scope?.data ?? []),
-          afterSection: () => [
-            <div class={resizeColumnClass}></div>,
-            <div class={fixedWrapperClass.value}>{fixedRows?.()}</div>,
-          ],
-        }}
-      </VirtualRender>
+      <div class='bk-table-body-wrapper'>
+        <VirtualRender
+          ref={refBody}
+          height={bodyHeight.value}
+          class={bodyClass}
+          contentClassName={scrollContentClass.value}
+          enabled={props.virtualEnabled}
+          lineHeight={lineHeight.value}
+          list={list}
+          maxHeight={bodyMaxHeight.value}
+          rowKey={props.rowKey}
+          scrollEvent={true}
+          throttleDelay={120}
+          onContentScroll={handleScrollChanged}
+        >
+          {{
+            beforeContent: () => renderPrepend(),
+            default: (scope: Record<string, object>) => childrend?.(scope?.data ?? []),
+          }}
+        </VirtualRender>
+        {/* overlay：不参与原生滚动，避免 .bk-table-fixed 跟随 scrollLeft 偏移 */}
+        <div class={resizeColumnClass}></div>
+        <div class={fixedWrapperClass.value}>{fixedRows?.()}</div>
+      </div>
     );
   };
 

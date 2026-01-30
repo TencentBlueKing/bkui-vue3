@@ -37,17 +37,224 @@ import { getRowText, isRowSelectEnable, resolvePropVal } from '../utils';
 import { UseColumns } from './use-columns';
 import { UseRows } from './use-rows';
 import { UseMultiShiftKey } from './use-shift-key';
-type CellRenderArgsType = {
+// 通用参数类型（不依赖具体行列）
+type CellRenderContextType = {
   props: TablePropTypes;
   rows: UseRows;
   ctx: SetupContext;
   columns: UseColumns;
+  multiShiftKey: UseMultiShiftKey;
+};
+
+// 具体渲染参数类型
+type CellRenderArgsType = CellRenderContextType & {
   row: Record<string, object>;
   index: number;
   column: Column;
   isChild: boolean;
-  multiShiftKey: UseMultiShiftKey;
 };
+
+/**
+ * 创建单元格渲染器工厂函数
+ * 将通用逻辑抽取到外部，减少循环中闭包创建的开销
+ */
+export const createCellRenderer = (context: CellRenderContextType) => {
+  const { props, rows, ctx, columns, multiShiftKey } = context;
+  const { isShiftKeyDown, getStore, setStore, setStoreStart, clearStoreStart } = multiShiftKey;
+
+  /**
+   * 渲染单元格
+   * @param row 当前行数据
+   * @param index 行索引
+   * @param column 列配置
+   * @param isChild 是否为子行
+   */
+  return (row: Record<string, object>, index: number, column: Column, isChild = false) => {
+    return renderCellContent({ props, rows, ctx, columns, row, index, column, isChild, multiShiftKey });
+  };
+};
+
+/**
+ * 渲染单元格内容的核心函数
+ */
+const renderCellContent = (args: CellRenderArgsType) => {
+  const { props, rows, ctx, columns, row, index, column, isChild, multiShiftKey } = args;
+  const { isShiftKeyDown, getStore, setStore, setStoreStart, clearStoreStart } = multiShiftKey;
+
+  // 内部辅助函数
+  const isEmptyCellText = (cellText: unknown) => {
+    if (Array.isArray(props.isEmptyCell)) {
+      return props.isEmptyCell.some(item => item === cellText);
+    }
+
+    if (typeof props.isEmptyCell === 'function') {
+      return props.isEmptyCell({ cellText, row, column });
+    }
+
+    return isEmpty(cellText);
+  };
+
+  const renderCellCallbackFn = () => {
+    const cell = getRowText(row, resolvePropVal(column, 'field', [column, row]));
+    const data = row;
+    return (column.render as (...args: unknown[]) => void)({ cell, data, row, column, index, rows: rows.tableRowList.value });
+  };
+
+  const getExpandCell = () => {
+    const isExpand = rows.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_EXPAND);
+    const icon = isExpand ? <DownShape></DownShape> : <RightShape></RightShape>;
+    return <span>{[icon, ctx.slots.expandContent?.(row) ?? '']}</span>;
+  };
+
+  const handleRowExpandClick = (e: MouseEvent) => {
+    rows.setRowExpand(row, !rows.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_EXPAND));
+    ctx.emit(EMIT_EVENTS.ROW_EXPAND_CLICK, { row, column, index, rows: rows.tableRowList.value, e });
+  };
+
+  const renderExpandColumn = () => {
+    const renderExpandSlot = () => {
+      if (typeof column.render === 'function') {
+        return renderCellCallbackFn();
+      }
+      return ctx.slots.expandCell?.({ row, column, index, rows }) ?? getExpandCell();
+    };
+
+    return (
+      <span
+        class='expand-btn-action'
+        onClick={(e: MouseEvent) => handleRowExpandClick(e)}
+      >
+        {renderExpandSlot()}
+      </span>
+    );
+  };
+
+  const renderDraggableCell = () => {
+    const renderFn = props.rowDraggable?.render ?? props.rowDraggable;
+    if (typeof renderFn === 'function') {
+      return renderFn(row, column, index, rows.tableRowList.value);
+    }
+
+    const fontSize = props.rowDraggable?.fontSize ?? '14px';
+    const fontIcon = props.rowDraggable?.icon ?? (
+      <GragFill
+        style={`'--font-size: ${fontSize};'`}
+        class='drag-cell'
+      ></GragFill>
+    );
+
+    return fontIcon;
+  };
+
+  const renderCheckboxColumn = () => {
+    const handleChecked = (value: boolean, event: Event) => {
+      event.stopImmediatePropagation();
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (!isShiftKeyDown.value) {
+        if (value) {
+          setStoreStart(row, index);
+        } else {
+          clearStoreStart();
+        }
+      }
+
+      rows.setRowSelection(row, value);
+      columns.setColumnAttribute(column, COLUMN_ATTRIBUTE.SELECTION_INDETERMINATE, rows.getRowIndeterminate());
+      columns.setColumnAttribute(column, COLUMN_ATTRIBUTE.SELECTION_VAL, rows.getRowCheckedAllValue());
+
+      ctx.emit(EMIT_EVENTS.ROW_SELECT, { row, index, checked: value, data: props.data });
+      ctx.emit(EMIT_EVENTS.ROW_SELECT_CHANGE, { row, index, checked: value, data: props.data });
+    };
+
+    const beforeRowChange = () => {
+      if (isShiftKeyDown.value) {
+        const result = setStore(row, index);
+        if (result) {
+          const { start, end } = getStore();
+          const startIndex = start.index < end.index ? start.index : end.index;
+          const endIndex = start.index < end.index ? end.index : start.index;
+
+          (rows.pageRowList.slice(startIndex, endIndex + 1) ?? []).forEach(item => {
+            const isRowEnabled = isRowSelectEnable(props, { row, index, isCheckAll: false });
+            isRowEnabled && rows.setRowSelection(item, true);
+          });
+        }
+
+        ctx.emit(EMIT_EVENTS.ROW_SELECT, { row, index, checked: true, data: props.data, isShiftKeyDown: true });
+        ctx.emit(EMIT_EVENTS.ROW_SELECT_CHANGE, {
+          row,
+          index,
+          checked: true,
+          data: props.data,
+          isShiftKeyDown: true,
+        });
+
+        return Promise.resolve(!result);
+      }
+
+      return Promise.resolve(true);
+    };
+
+    const indeterminate = rows.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION_INDETERMINATE);
+    const isChecked = rows.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_SELECTION);
+    const isEnable = isRowSelectEnable(props, { row, index, isCheckAll: false });
+
+    return (
+      <Checkbox
+        beforeChange={beforeRowChange}
+        disabled={!isEnable}
+        indeterminate={indeterminate as boolean}
+        modelValue={isChecked}
+        onChange={handleChecked}
+      />
+    );
+  };
+
+  // 默认渲染函数
+  const defaultFn = () => {
+    const type = resolvePropVal(column, 'type', [column, row]);
+    if (type === 'index') {
+      return rows.getRowAttribute(toRaw(row), TABLE_ROW_ATTRIBUTE.ROW_INDEX);
+    }
+
+    const key = resolvePropVal(column, 'field', [column, row]);
+    const cell = getRowText(row, key);
+    if (typeof column.render === 'function') {
+      return renderCellCallbackFn();
+    }
+    if (typeof cell === 'boolean' || typeof cell === 'number') {
+      return `${cell}`;
+    }
+
+    if (typeof cell === 'object' && cell !== null) {
+      return JSON.stringify(unref(cell));
+    }
+
+    if (isEmptyCellText(cell)) {
+      const { emptyCellText } = props;
+      if (emptyCellText) {
+        if (typeof emptyCellText === 'function') {
+          return emptyCellText({ row, column, index });
+        }
+        return emptyCellText;
+      }
+    }
+
+    return cell;
+  };
+
+  const renderFn: Record<string, () => unknown> = {
+    expand: () => (isChild ? '' : renderExpandColumn()),
+    selection: () => renderCheckboxColumn(),
+    drag: renderDraggableCell,
+  };
+
+  return renderFn[column.type]?.() ?? defaultFn();
+};
+
+// 保持向后兼容的默认导出
 export default ({
   props,
   rows,

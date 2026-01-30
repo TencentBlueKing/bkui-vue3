@@ -23,12 +23,12 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { defineComponent, ExtractPropTypes, inject, onUnmounted, watch, toRaw, h } from 'vue';
+import { defineComponent, ExtractPropTypes, inject, onMounted, onBeforeUnmount, watch, toRaw, h, getCurrentInstance } from 'vue';
 
 import { PropTypes } from '@bkui-vue/shared';
-import isEqual from 'lodash/isEqual';
 
-import { COL_MIN_WIDTH, PROVIDE_KEY_INIT_COL } from '../const';
+import { COL_MIN_WIDTH, PROVIDE_KEY_INIT_COL, PROVIDE_KEY_COLUMN_REGISTRY } from '../const';
+import { generateColumnId, ColumnRegistry } from '../hooks/use-column-registry';
 import {
   columnType,
   fixedType,
@@ -66,43 +66,149 @@ const TableColumnProp = {
 
 export type ITableColumn = Partial<ExtractPropTypes<typeof TableColumnProp>>;
 
+/**
+ * 从 props 构建列配置
+ */
+const buildColumnConfig = (props: ITableColumn, slots?: Record<string, unknown>) => {
+  return {
+    label: props.label,
+    field: props.field || props.prop,
+    render: props.render ?? slots?.default,
+    width: props.width,
+    minWidth: props.minWidth,
+    columnKey: props.columnKey,
+    showOverflowTooltip: props.showOverflowTooltip,
+    type: props.type,
+    resizable: props.resizable,
+    fixed: props.fixed,
+    sort: props.sort,
+    filter: props.filter,
+    colspan: props.colspan,
+    rowspan: props.rowspan,
+    align: props.align,
+    className: props.className,
+    prop: props.prop,
+  };
+};
+
 export default defineComponent({
   name: 'TableColumn',
   props: TableColumnProp,
-  setup(props: ITableColumn, {}) {
+  setup(props: ITableColumn, { slots }) {
+    // 注入列注册表（新模式）
+    const columnRegistry = inject<ColumnRegistry | null>(PROVIDE_KEY_COLUMN_REGISTRY, null);
+    // 注入旧的初始化函数（降级模式）
     const initTableColumns = inject(PROVIDE_KEY_INIT_COL, () => {});
-    const lastPropsVal = {};
 
-    const isPropsEqual = (sorce: Record<string, unknown>, target: Record<string, unknown>) => {
-      const rawProps = toRaw(target);
-      const keys = Object.keys(rawProps);
-      return keys.every(key => {
-        if (typeof rawProps[key] === 'function') {
-          return sorce[key] !== undefined;
-        }
+    // 获取父 TableColumn 的 ID（用于嵌套列）
+    const instance = getCurrentInstance();
+    const parentColumnId = (instance?.parent?.type as { name?: string })?.name === 'TableColumn'
+      ? (instance?.parent as unknown as { columnId?: string })?.columnId
+      : undefined;
 
-        if (key === 'children') {
-          return true;
-        }
+    // 生成列 ID
+    const columnId = generateColumnId();
+    // 将 columnId 暴露到组件实例，供子列获取
+    if (instance) {
+      (instance as unknown as { columnId: string }).columnId = columnId;
+    }
 
-        return isEqual(sorce[key], target[key]);
+    // 标记是否使用注册表模式
+    const useRegistryMode = !!columnRegistry;
+
+    if (useRegistryMode) {
+      // === 新模式：使用列注册表 ===
+
+      // mounted 时注册列
+      onMounted(() => {
+        columnRegistry.registerColumn(columnId, buildColumnConfig(props, slots), parentColumnId);
       });
-    };
 
-    watch(
-      () => [props],
-      () => {
-        if (!isPropsEqual(lastPropsVal, props)) {
-          initTableColumns();
-          Object.assign(lastPropsVal, toRaw(props));
-        }
-      },
-      { immediate: true, deep: true },
-    );
+      // 监听关键 props 变化（不使用 deep: true，提升性能）
+      watch(
+        () => [
+          props.label,
+          props.field,
+          props.prop,
+          props.width,
+          props.minWidth,
+          props.fixed,
+          props.sort,
+          props.filter,
+          props.type,
+          props.resizable,
+          props.colspan,
+          props.rowspan,
+          props.align,
+          props.className,
+          props.showOverflowTooltip,
+        ],
+        () => {
+          columnRegistry.updateColumn(columnId, buildColumnConfig(props, slots));
+        },
+      );
 
-    onUnmounted(() => {
-      initTableColumns();
-    });
+      // unmounted 前注销列
+      onBeforeUnmount(() => {
+        columnRegistry.unregisterColumn(columnId);
+      });
+    } else {
+      // === 降级模式：使用旧的全量解析 ===
+      let lastPropsSnapshot = '';
+
+      /**
+       * 生成 props 快照用于比较
+       */
+      const getPropsSnapshot = () => {
+        const rawProps = toRaw(props);
+        // 只比较关键属性，忽略函数和 children
+        const keyProps = {
+          label: rawProps.label,
+          field: rawProps.field,
+          prop: rawProps.prop,
+          width: rawProps.width,
+          minWidth: rawProps.minWidth,
+          fixed: rawProps.fixed,
+          type: rawProps.type,
+          resizable: rawProps.resizable,
+          colspan: rawProps.colspan,
+          rowspan: rawProps.rowspan,
+          align: rawProps.align,
+          className: typeof rawProps.className === 'string' ? rawProps.className : undefined,
+        };
+        return JSON.stringify(keyProps);
+      };
+
+      watch(
+        () => [
+          props.label,
+          props.field,
+          props.prop,
+          props.width,
+          props.minWidth,
+          props.fixed,
+          props.sort,
+          props.filter,
+          props.type,
+          props.resizable,
+          props.colspan,
+          props.rowspan,
+          props.align,
+        ],
+        () => {
+          const snapshot = getPropsSnapshot();
+          if (snapshot !== lastPropsSnapshot) {
+            initTableColumns();
+            lastPropsSnapshot = snapshot;
+          }
+        },
+        { immediate: true },
+      );
+
+      onBeforeUnmount(() => {
+        initTableColumns();
+      });
+    }
   },
 
   render() {

@@ -268,7 +268,7 @@ export default ({
     }
   };
 
-  const headStyle = Object.assign(columns.getFixedStlye(column), {
+  const headStyle = Object.assign(columns.getFixedStyle(column), {
     '--background-color': DEF_COLOR[props.thead?.color ?? IHeadColor.DEF1],
   });
 
