@@ -77,7 +77,8 @@ const useColumns = (props: TablePropTypes) => {
     let colWidth = 0;
     if (/^\d+\.?\d*(px)?$/.test(`${col[attrName]}`)) {
       colWidth = Number(`${col[attrName]}`.replace(/px/, ''));
-      setColumnAttribute(col, COLUMN_ATTRIBUTE.WIDTH, colWidth);
+      // 计算宽度统一落到 calcWidth，避免覆盖用户拖拽的 resizeWidth
+      setColumnAttribute(col, COLUMN_ATTRIBUTE.CALC_WIDTH, colWidth);
       setColumnRect(col, {
         width: colWidth,
         left: null,
@@ -87,7 +88,7 @@ const useColumns = (props: TablePropTypes) => {
 
     if (/^\d+\.?\d*%$/.test(`${col[attrName]}`)) {
       colWidth = (Number(`${col[attrName]}`.replace(/%/, '')) / 100) * width;
-      setColumnAttribute(col, COLUMN_ATTRIBUTE.WIDTH, colWidth);
+      setColumnAttribute(col, COLUMN_ATTRIBUTE.CALC_WIDTH, colWidth);
       setColumnRect(col, {
         width: colWidth,
         left: null,
@@ -130,7 +131,7 @@ const useColumns = (props: TablePropTypes) => {
 
     autoWidthList.forEach(col => {
       const calcWidth = minColWidth > COL_MIN_WIDTH ? minColWidth : COL_MIN_WIDTH;
-      setColumnAttribute(col, COLUMN_ATTRIBUTE.WIDTH, calcWidth);
+      setColumnAttribute(col, COLUMN_ATTRIBUTE.CALC_WIDTH, calcWidth);
       setColumnRect(col, {
         width: calcWidth,
         left: null,
@@ -491,7 +492,7 @@ const useColumns = (props: TablePropTypes) => {
   };
 
   const getColumnWidth = (column: Column) => {
-    return getColumnAttribute(column, COLUMN_ATTRIBUTE.WIDTH);
+    return getColumnOrderWidth(column);
   };
 
   type ColumnRect = { left?: number; right?: number; width?: number; height?: number };
@@ -579,7 +580,8 @@ const useColumns = (props: TablePropTypes) => {
     }
   };
 
-  const ORDER_LIST = [COLUMN_ATTRIBUTE.WIDTH];
+  // 宽度优先级：拖拽宽度 > 计算宽度 > 配置宽度
+  const ORDER_LIST = [COLUMN_ATTRIBUTE.RESIZE_WIDTH, COLUMN_ATTRIBUTE.CALC_WIDTH, COLUMN_ATTRIBUTE.WIDTH];
 
   /**
    * 获取当前列实际宽度
@@ -640,7 +642,8 @@ const useColumns = (props: TablePropTypes) => {
     const diffWidth = getColumnOrderWidth(col) - newWidth;
     const nextColumn = visibleColumns[index + 1];
     if (nextColumn) {
-      setColumnAttribute(nextColumn, COLUMN_ATTRIBUTE.WIDTH, getColumnOrderWidth(nextColumn) + diffWidth);
+      // 兼容旧逻辑：该方法仅在 resize 场景使用，应写入 resizeWidth
+      setColumnAttribute(nextColumn, COLUMN_ATTRIBUTE.RESIZE_WIDTH, getColumnOrderWidth(nextColumn) + diffWidth);
     }
   };
 

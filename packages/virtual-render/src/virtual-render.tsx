@@ -307,7 +307,8 @@ export default defineComponent({
         height,
         width: typeof props.width === 'number' ? `${props.width}px` : props.width,
         display: 'inline-block',
-        maxHeight: props.maxHeight ? `${props.maxHeight}px` : false,
+        // maxHeight 支持 number（px）与 string（如 50%、calc(...)）
+        maxHeight: props.maxHeight ? (typeof props.maxHeight === 'number' ? `${props.maxHeight}px` : props.maxHeight) : false,
         minHeight: props.minHeight ? `${props.minHeight}px` : false,
         overflow: 'auto', // 使用原生滚动
         ...(props.scrollPosition === 'container' ? innerContentStyle.value : {}),

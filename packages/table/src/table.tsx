@@ -76,6 +76,7 @@ export default defineComponent({
       getBodyHeight,
       refBody,
       refRoot,
+      translateX,
     } = useLayout(props, ctx);
 
     const scrollTo = (...args) => refBody.value?.scrollTo(...args);
@@ -165,7 +166,12 @@ export default defineComponent({
       resolveFixedColumnStyle();
     };
 
-    const { dragOffsetX } = useColumnResize(columns, { afterResize: resolveFixedColumnStyle });
+    useColumnResize(columns, {
+      afterResize: resolveFixedColumnStyle,
+      onDragOffsetXChange: (val: number) => setDragOffsetX(val),
+      getRootEl: () => refRoot.value,
+      getTranslateX: () => translateX.value,
+    });
 
     const isResizeBodyHeight = ref(false);
 
@@ -292,16 +298,19 @@ export default defineComponent({
 
     const setRowsBodyHeight = () => {
       if (props.virtualEnabled) {
-        const rowsHeight = rows.getCurrentPageRowsHeight();
-        let bodyHeight = rowsHeight;
-        if (/^\d+\.?\d*(px)?$/.test(`${props.maxHeight}`)) {
-          const maxHeight = getBodyHeight(Number(`${props.maxHeight}`.replace('px', '')));
-          if (bodyHeight > maxHeight) {
-            setBodyHeight(maxHeight, false);
-            return;
-          }
+        // 虚拟滚动下，VirtualRender 的 height 应表达“可视窗口高度”，不应被内容总高度覆盖
+        // - 当显式设置了 props.height（px/number）时，bodyHeight 已由 setTableFootHeight / resize 逻辑维护
+        // - 当显式设置了 props.maxHeight（px/number）时，可按内容高度与 maxHeight 取最小值（短列表不出现滚动条）
+        // - 其他情况保持现有 bodyHeight（通常来自 resize observer 或 '100%'）
+        if (/^\d+\.?\d*(px)?$/.test(`${props.height}`)) {
+          return;
         }
-        setBodyHeight(bodyHeight, false);
+
+        if (/^\d+\.?\d*(px)?$/.test(`${props.maxHeight}`)) {
+          const rowsHeight = rows.getCurrentPageRowsHeight();
+          const maxHeight = getBodyHeight(Number(`${props.maxHeight}`.replace('px', '')));
+          setBodyHeight(Math.min(rowsHeight, maxHeight), false);
+        }
       }
     };
 
@@ -319,12 +328,7 @@ export default defineComponent({
       { immediate: true },
     );
 
-    watch(
-      () => [dragOffsetX.value],
-      () => {
-        setDragOffsetX(dragOffsetX.value);
-      },
-    );
+    // drag offset is pushed into layout by useColumnResize via onDragOffsetXChange
 
     // 使用版本号监听替代深度监听，提升性能
     watch(

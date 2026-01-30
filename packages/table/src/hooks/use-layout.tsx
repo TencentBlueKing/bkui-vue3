@@ -99,7 +99,8 @@ export default (props: TablePropTypes, ctx) => {
 
   const setRootStyleVars = throttle(() => {
     refRoot.value?.style?.setProperty('--drag-offset-x', `${dragOffsetX.value + translateX.value}px`);
-    refRoot.value?.style?.setProperty('--drag-offset-h-x', `${dragOffsetX.value - 2}px`);
+    // header 的拖拽线不受 thead translate 影响，需要与 body overlay 使用同一套坐标系
+    refRoot.value?.style?.setProperty('--drag-offset-h-x', `${dragOffsetX.value + translateX.value - 2}px`);
     refRoot.value?.style?.setProperty('--translate-y', `${translateY.value}px`);
     refRoot.value?.style?.setProperty('--translate-x', `${translateX.value}px`);
     refRoot.value?.style?.setProperty('--translate-x-1', `-${translateX.value}px`);
@@ -203,7 +204,8 @@ export default (props: TablePropTypes, ctx) => {
     return null;
   };
 
-  const bodyHeight: Ref<number | string> = ref('auto');
+  // 虚拟滚动需要可计算的 viewport 高度（否则 height 会随内容撑开，无法产生滚动条）
+  const bodyHeight: Ref<number | string> = ref(props.virtualEnabled ? '100%' : 'auto');
 
   const bodyMaxHeight = computed(() => {
     if (/^\d+\.?\d*(px|%)$/.test(`${tableStyle.value.maxHeight}`)) {
@@ -399,6 +401,8 @@ export default (props: TablePropTypes, ctx) => {
     setLineHeight,
     setHeaderRowCount,
     initRootStyleVars,
+    // expose for plugins that need scroll offset (e.g. column resize indicator)
+    translateX,
     refRoot,
     refHead,
     refBody,
