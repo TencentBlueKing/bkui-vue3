@@ -68,8 +68,8 @@ export function computedVirtualIndex(lineHeight, callback, pagination, wrapper, 
   let translateY = 0;
 
   if (typeof lineHeight === 'number') {
-    targetStartIndex = Math.ceil(elScrollTop / lineHeight);
-    targetEndIndex = Math.ceil(elOffsetHeight / lineHeight) + targetStartIndex;
+    targetStartIndex = Math.floor(elScrollTop / lineHeight);
+    targetEndIndex = Math.ceil(elOffsetHeight / lineHeight) + targetStartIndex + 1;
     translateY = elScrollTop % lineHeight;
   }
 
@@ -84,9 +84,8 @@ export function computedVirtualIndex(lineHeight, callback, pagination, wrapper, 
 
   const bottom = elScrollHeight - elOffsetHeight - elScrollTop;
   typeof callback === 'function' &&
-    callback(event, targetStartIndex, targetEndIndex, elScrollTop, elScrollTop, elScrollLeft, {
+    callback(event, targetStartIndex, targetEndIndex, elScrollTop, translateY, elScrollLeft, {
       bottom: bottom >= 0 ? bottom : 0,
-      scrollbar: event,
     });
 
   return {
@@ -100,15 +99,18 @@ export function computedVirtualIndex(lineHeight, callback, pagination, wrapper, 
 
 export class VisibleRender {
   private binding;
-  private wrapper;
-  private delay;
+  private wrapper: HTMLElement;
+  private delay: number;
   private delegateWrapper;
-  constructor(binding, el) {
+  private boundScrollHandler: (e: Event) => void;
+
+  constructor(binding, el: HTMLElement) {
     this.binding = binding;
     this.wrapper = el;
     const { throttleDelay } = binding.value;
     this.delay = throttleDelay;
     this.delegateWrapper = undefined;
+    this.boundScrollHandler = this.handleScroll.bind(this);
   }
 
   get scrollHeight() {
@@ -123,7 +125,7 @@ export class VisibleRender {
     this.delegateWrapper = el;
   }
 
-  public render(e) {
+  public render(e: { offset: { x: number; y: number } }) {
     const { lineHeight = 30, handleScrollCallback, pagination = {}, onlyScroll } = this.binding.value;
     if (onlyScroll) {
       const elScrollTop = e.offset?.y;
@@ -131,7 +133,6 @@ export class VisibleRender {
       const bottom = this.scrollHeight - this.offsetHeight - elScrollTop;
       handleScrollCallback(e, null, null, elScrollTop, elScrollTop, elScrollLeft, {
         bottom: bottom >= 0 ? bottom : 0,
-        scrollbar: e,
       });
       return;
     }
@@ -146,46 +147,76 @@ export class VisibleRender {
     );
   }
 
-  public executeThrottledRender(e) {
-    throttle(this.render.bind(this), this.delay)(this.getEvent(e));
+  /**
+   * 节流渲染
+   */
+  private throttledRender = throttle((e: { offset: { x: number; y: number } }) => {
+    this.render(e);
+  }, this.delay);
+
+  public executeThrottledRender(e: { offset?: { x: number; y: number } }) {
+    const event = this.getEvent(e);
+    this.throttledRender(event);
+  }
+
+  /**
+   * 原生滚动事件处理
+   */
+  private handleScroll(e: Event) {
+    const target = e.target as HTMLElement;
+    this.executeThrottledRender({
+      offset: {
+        x: target.scrollLeft,
+        y: target.scrollTop,
+      },
+    });
   }
 
   public install() {
-    this.wrapper?.addEventListener('scroll', this.executeThrottledRender.bind(this));
+    this.wrapper?.addEventListener('scroll', this.boundScrollHandler, { passive: true });
   }
 
   public uninstall() {
-    this.wrapper?.removeListener?.('scroll', this.executeThrottledRender.bind(this));
+    this.wrapper?.removeEventListener('scroll', this.boundScrollHandler);
   }
 
   public setBinding(binding) {
     this.binding = binding;
+    // 更新节流延迟
+    const { throttleDelay } = binding.value;
+    if (throttleDelay !== this.delay) {
+      this.delay = throttleDelay;
+      this.throttledRender = throttle((e: { offset: { x: number; y: number } }) => {
+        this.render(e);
+      }, this.delay);
+    }
   }
 
-  private getEvent = (event: { offset: number; target: HTMLElement } & Event) => {
-    const { scrollbar = { enabled: false } } = this.binding.value;
-    if (scrollbar.enabled) {
+  /**
+   * 统一事件格式
+   */
+  private getEvent = (event: { offset?: { x: number; y: number }; target?: HTMLElement }): { offset: { x: number; y: number } } => {
+    if (event?.offset) {
       return {
-        offset: event.offset ?? {
-          x: event.target.scrollLeft,
-          y: event.target.scrollTop,
+        offset: event.offset,
+      };
+    }
+
+    // 从 target 元素获取滚动位置
+    if (event?.target) {
+      return {
+        offset: {
+          x: event.target.scrollLeft ?? 0,
+          y: event.target.scrollTop ?? 0,
         },
       };
     }
 
-    if (event?.offset) {
-      return {
-        offset: event?.offset,
-      };
-    }
-
-    const elScrollTop = (event.target as HTMLElement).scrollTop;
-    const elScrollLeft = (event.target as HTMLElement).scrollLeft;
-
+    // 默认返回 0
     return {
       offset: {
-        x: elScrollLeft,
-        y: elScrollTop,
+        x: 0,
+        y: 0,
       },
     };
   };
@@ -195,22 +226,17 @@ let instance: VisibleRender = null;
 
 export default {
   mounted(el, binding) {
-    const wrapper = el.parentNode;
-    instance = new VisibleRender(binding, el);
-    wrapper.addEventListener('scroll', instance.executeThrottledRender.bind(instance));
+    const wrapper = el.parentNode as HTMLElement;
+    instance = new VisibleRender(binding, wrapper);
+    instance.install();
   },
 
   updated(_el, binding) {
     instance?.setBinding(binding);
   },
 
-  unbind(el) {
-    if (el) {
-      const wrapper = el.parentNode;
-      if (!wrapper || !instance) {
-        return;
-      }
-      wrapper.removeEventListener('scroll', instance.executeThrottledRender);
-    }
+  unbind(_el) {
+    instance?.uninstall();
+    instance = null;
   },
 };

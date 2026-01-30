@@ -88,15 +88,19 @@ export default (props: TablePropTypes, ctx) => {
   );
 
   const setFixedColumnShawdow = () => {
-    const rightShawdow = offsetRight.value > 0 ? '0 0 10px rgb(0 0 0 / 12%)' : null;
-    const leftShawdow = translateX.value > 0 ? '0 0 10px rgb(0 0 0 / 12%)' : null;
-    refRoot.value?.style?.setProperty('--shadow-right', rightShawdow);
-    refRoot.value?.style?.setProperty('--shadow-left', leftShawdow);
+    const shadowColor = 'rgb(0 0 0 / 12%)';
+    // 使用“方向性阴影”，避免阴影在固定区域两侧同时扩散
+    // 隐藏时写入 'none'，避免 setProperty(null) 触发无效值抖动
+    const rightShadow = offsetRight.value > 0 ? `-6px 0 6px -4px ${shadowColor}` : 'none';
+    const leftShadow = translateX.value > 0 ? `6px 0 6px -4px ${shadowColor}` : 'none';
+    refRoot.value?.style?.setProperty('--shadow-right', rightShadow);
+    refRoot.value?.style?.setProperty('--shadow-left', leftShadow);
   };
 
   const setRootStyleVars = throttle(() => {
     refRoot.value?.style?.setProperty('--drag-offset-x', `${dragOffsetX.value + translateX.value}px`);
-    refRoot.value?.style?.setProperty('--drag-offset-h-x', `${dragOffsetX.value - 2}px`);
+    // header 的拖拽线不受 thead translate 影响，需要与 body overlay 使用同一套坐标系
+    refRoot.value?.style?.setProperty('--drag-offset-h-x', `${dragOffsetX.value + translateX.value - 2}px`);
     refRoot.value?.style?.setProperty('--translate-y', `${translateY.value}px`);
     refRoot.value?.style?.setProperty('--translate-x', `${translateX.value}px`);
     refRoot.value?.style?.setProperty('--translate-x-1', `-${translateX.value}px`);
@@ -200,7 +204,8 @@ export default (props: TablePropTypes, ctx) => {
     return null;
   };
 
-  const bodyHeight: Ref<number | string> = ref('auto');
+  // 虚拟滚动需要可计算的 viewport 高度（否则 height 会随内容撑开，无法产生滚动条）
+  const bodyHeight: Ref<number | string> = ref(props.virtualEnabled ? '100%' : 'auto');
 
   const bodyMaxHeight = computed(() => {
     if (/^\d+\.?\d*(px|%)$/.test(`${tableStyle.value.maxHeight}`)) {
@@ -331,30 +336,30 @@ export default (props: TablePropTypes, ctx) => {
 
   const renderBody = (list, childrend?, fixedRows?) => {
     return (
-      <VirtualRender
-        ref={refBody}
-        height={bodyHeight.value}
-        class={bodyClass}
-        contentClassName={scrollContentClass.value}
-        enabled={props.virtualEnabled}
-        lineHeight={lineHeight.value}
-        list={list}
-        maxHeight={bodyMaxHeight.value}
-        rowKey={props.rowKey}
-        scrollEvent={true}
-        scrollbar={{ enabled: props.scrollbar }}
-        throttleDelay={120}
-        onContentScroll={handleScrollChanged}
-      >
-        {{
-          beforeContent: () => renderPrepend(),
-          default: (scope: Record<string, object>) => childrend?.(scope?.data ?? []),
-          afterSection: () => [
-            <div class={resizeColumnClass}></div>,
-            <div class={fixedWrapperClass.value}>{fixedRows?.()}</div>,
-          ],
-        }}
-      </VirtualRender>
+      <div class='bk-table-body-wrapper'>
+        <VirtualRender
+          ref={refBody}
+          height={bodyHeight.value}
+          class={bodyClass}
+          contentClassName={scrollContentClass.value}
+          enabled={props.virtualEnabled}
+          lineHeight={lineHeight.value}
+          list={list}
+          maxHeight={bodyMaxHeight.value}
+          rowKey={props.rowKey}
+          scrollEvent={true}
+          throttleDelay={120}
+          onContentScroll={handleScrollChanged}
+        >
+          {{
+            beforeContent: () => renderPrepend(),
+            default: (scope: Record<string, object>) => childrend?.(scope?.data ?? []),
+          }}
+        </VirtualRender>
+        {/* overlay：不参与原生滚动，避免 .bk-table-fixed 跟随 scrollLeft 偏移 */}
+        <div class={resizeColumnClass}></div>
+        <div class={fixedWrapperClass.value}>{fixedRows?.()}</div>
+      </div>
     );
   };
 
@@ -396,6 +401,8 @@ export default (props: TablePropTypes, ctx) => {
     setLineHeight,
     setHeaderRowCount,
     initRootStyleVars,
+    // expose for plugins that need scroll offset (e.g. column resize indicator)
+    translateX,
     refRoot,
     refHead,
     refBody,

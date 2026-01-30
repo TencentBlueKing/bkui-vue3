@@ -43,6 +43,15 @@
       transform: translate(var(--translate-x), 0);
     }
 
+  }
+
+  // body overlay wrapper（让 overlay 不参与原生滚动）
+  .bk-table-body-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+
+    // 列宽拖拽指示线（overlay）
     .resize-column {
       position: absolute;
       top: 0;
@@ -51,6 +60,8 @@
       width: 1px;
       background-color: #3785ff;
       transform: translate(var(--drag-offset-x), var(--translate-y));
+      z-index: 8;
+      pointer-events: none;
     }
   }
 
@@ -78,7 +89,19 @@
   .@{bk-prefix}-table-body {
     background: @table-bg-color;
     transform: translateZ(0);
+  }
 
+  // body 及其内 table 不设 transform，否则会破坏 tbody td.column_fixed 的 position: sticky 粘滞参照，导致固定列与可滚动列错位重叠
+  .@{bk-prefix}-table-body {
+    transform: none;
+
+    table {
+      transform: none;
+    }
+  }
+
+  .@{bk-prefix}-table-head,
+  .@{bk-prefix}-table-body {
     &.__is-empty {
       display: flex;
       height: 100%;
@@ -175,7 +198,12 @@
 
         &.column_fixed {
           position: sticky;
-          z-index: 1;
+          // 固定列需要盖住可滚动区域的内容（避免内容透传/重叠）
+          // 阴影层再由 .bk-table-fixed 以更高层级渲染
+          z-index: 3;
+          // 不要使用 inherit（它会从 tr/table 继承，导致固定列背景变透明）
+          // 保持 td 自身的背景（stripe/hover 等）即可
+          background-clip: padding-box;
         }
 
         &.row_expend {
@@ -392,7 +420,7 @@
       top: 0;
       left: 0;
       bottom: 0;
-      z-index: 1;
+      z-index: 7;
       width: 6px;
       background-color: #3785ff;
       transform: translate3d(var(--drag-offset-h-x), 0, 0);
@@ -412,7 +440,7 @@
       top: 0;
       right: 1px;
       bottom: 0;
-      z-index: 2;
+      z-index: 8;
       display: flex;
       width: calc(var(--row-height));
       font-size: 14px;
@@ -562,11 +590,10 @@
     bottom: 0;
     left: 0;
     pointer-events: none;
-    transform: translate(var(--translate-x), var(--translate-y));
-
-    &.has-virtual-scroll {
-      transform: translate(var(--translate-x), 0);
-    }
+    // 阴影层应固定在可视区域，不应随滚动位移（避免抖动/错位）
+    transform: none;
+    // 确保阴影不被 sticky 单元格盖住
+    z-index: 4;
 
     .column_fixed_right {
       box-shadow: var(--shadow-right);
@@ -578,7 +605,7 @@
 
     .column_fixed {
       position: absolute;
-      z-index: 2;
+      z-index: 4;
       bottom: 0;
       top: 0;
     }
