@@ -466,6 +466,15 @@
             &.collapsible {
               cursor: pointer;
             }
+
+            // 虚拟滚动模式下不再有 .bk-option-group 容器包裹，
+            // 这里补齐 disabled 的 label 样式
+            &.disabled {
+              .default-group-label {
+                color: #c4c6cc;
+                cursor: not-allowed;
+              }
+            }
           }
 
           &.collapsible {
@@ -503,6 +512,17 @@
 
           .@{bk-prefix}-select-option {
             padding-left: 24px;
+          }
+        }
+
+        // 虚拟滚动模式：分组项缩进（无 .bk-option-group 容器时用）
+        .@{bk-prefix}-select-option {
+          &.is-grouped {
+            padding-left: 24px;
+          }
+
+          &.is-grouped.is-group-collapsible {
+            padding-left: 40px;
           }
         }
 

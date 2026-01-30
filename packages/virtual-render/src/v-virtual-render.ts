@@ -103,6 +103,7 @@ export class VisibleRender {
   private delay: number;
   private delegateWrapper;
   private boundScrollHandler: (e: Event) => void;
+  private throttledRender: (e: { offset: { x: number; y: number } }) => void;
 
   constructor(binding, el: HTMLElement) {
     this.binding = binding;
@@ -111,6 +112,9 @@ export class VisibleRender {
     this.delay = throttleDelay;
     this.delegateWrapper = undefined;
     this.boundScrollHandler = this.handleScroll.bind(this);
+    this.throttledRender = throttle((e: { offset: { x: number; y: number } }) => {
+      this.render(e);
+    }, this.delay);
   }
 
   get scrollHeight() {
@@ -146,13 +150,6 @@ export class VisibleRender {
       e,
     );
   }
-
-  /**
-   * 节流渲染
-   */
-  private throttledRender = throttle((e: { offset: { x: number; y: number } }) => {
-    this.render(e);
-  }, this.delay);
 
   public executeThrottledRender(e: { offset?: { x: number; y: number } }) {
     const event = this.getEvent(e);

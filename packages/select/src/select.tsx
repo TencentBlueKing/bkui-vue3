@@ -24,12 +24,12 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent, onMounted, PropType, provide, reactive, ref, toRefs, watch } from 'vue';
+import { cloneVNode, computed, defineComponent, isVNode, nextTick, onMounted, PropType, provide, reactive, ref, toRefs, watch, type VNode } from 'vue';
 
 import Checkbox from '@bkui-vue/checkbox';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { clickoutside, IOptions } from '@bkui-vue/directives';
-import { AngleDown, Close, Search, TextAll } from '@bkui-vue/icon';
+import { AngleDown, AngleUpFill, Close, Search, TextAll } from '@bkui-vue/icon';
 import Input from '@bkui-vue/input';
 import Loading from '@bkui-vue/loading';
 import Popover, { PopoverPropTypes } from '@bkui-vue/popover';
@@ -129,7 +129,7 @@ export default defineComponent({
     'deselect',
     'search-change',
   ],
-  setup(props, { emit }) {
+  setup(props, { emit, slots }) {
     const t = useLocale('select');
     const { resolveClassName } = usePrefix();
     const {
@@ -247,6 +247,101 @@ export default defineComponent({
       }, {}),
     );
 
+    type SlotOptionMeta = {
+      label: string | number;
+      disabled: boolean;
+      raw: Record<string, any>;
+    };
+    const slotOptionMetaMap = ref<Map<PropertyKey, SlotOptionMeta>>(new Map());
+
+    const normalizeVNodes = (nodes: unknown): VNode[] => {
+      if (!nodes) return [];
+      const list = Array.isArray(nodes) ? nodes : [nodes];
+      return list.filter(isVNode) as VNode[];
+    };
+
+    const getVNodeName = (vnode: VNode): string => {
+      const type = vnode.type as any;
+      return typeof type === 'object' ? type?.name : String(type);
+    };
+    const isOptionName = (name: string) => name === 'Option' || name === 'BkOption';
+    const isOptionGroupName = (name: string) => name === 'OptionGroup' || name === 'BkOptionGroup';
+
+    const parseOptionValueLabel = (vnode: VNode) => {
+      const rawProps = (vnode.props ?? {}) as Record<string, any>;
+      // Option 内部兼容：id 优先，其次 attrs.value
+      const value = rawProps.id !== undefined ? rawProps.id : rawProps.value;
+      // Option 内部兼容：name 优先，其次 attrs.label
+      const label = rawProps.name !== undefined ? rawProps.name : rawProps.label;
+      const disabled = !!rawProps.disabled;
+      return { value, label, disabled, rawProps };
+    };
+
+    const refreshSlotOptionMetaMap = () => {
+      const nodes = normalizeVNodes(slots.default?.() ?? []);
+      const map = new Map<PropertyKey, SlotOptionMeta>();
+
+      const walk = (vnodes: VNode[]) => {
+        for (const vnode of vnodes) {
+          const name = getVNodeName(vnode);
+          if (isOptionName(name)) {
+            const { value, label, disabled, rawProps } = parseOptionValueLabel(vnode);
+            if (value !== undefined) {
+              map.set(value, {
+                label: (label ?? value) as string | number,
+                disabled,
+                raw: rawProps,
+              });
+            }
+            continue;
+          }
+          if (isOptionGroupName(name)) {
+            const childrenSlot = (vnode.children as any)?.default;
+            const children = typeof childrenSlot === 'function' ? normalizeVNodes(childrenSlot()) : [];
+            walk(children);
+          }
+        }
+      };
+
+      walk(nodes);
+      slotOptionMetaMap.value = map;
+    };
+
+    const countSlotOptions = () => {
+      const nodes = normalizeVNodes(slots.default?.() ?? []);
+      let count = 0;
+      const walk = (vnodes: VNode[]) => {
+        for (const vnode of vnodes) {
+          const name = getVNodeName(vnode);
+          if (isOptionName(name)) {
+            count += 1;
+            continue;
+          }
+          if (isOptionGroupName(name)) {
+            const childrenSlot = (vnode.children as any)?.default;
+            const children = typeof childrenSlot === 'function' ? normalizeVNodes(childrenSlot()) : [];
+            walk(children);
+          }
+        }
+      };
+      walk(nodes);
+      return count;
+    };
+
+    // 初始同步一次（让虚拟模式在首帧即可根据 slot/options 判断是否启用）
+    refreshSlotOptionMetaMap();
+
+    // 虚拟模式下的分组折叠状态（key 来自 vnode.key 或 fallback）
+    const groupCollapseState = ref<Map<PropertyKey, boolean>>(new Map());
+    const setGroupCollapse = (groupKey: PropertyKey, collapsed: boolean) => {
+      const next = new Map(groupCollapseState.value);
+      next.set(groupKey, collapsed);
+      groupCollapseState.value = next;
+    };
+    const getGroupCollapse = (groupKey: PropertyKey, fallback = false) => {
+      return groupCollapseState.value.get(groupKey) ?? fallback;
+    };
+
     watch([optionsMap, list], () => {
       handleSetSelectedData();
     });
@@ -263,46 +358,97 @@ export default defineComponent({
     );
 
     watch(selected, () => {
-      popoverRef.value?.updatePopover(null, popoverConfig.value);
+      // 仅在下拉展开时更新定位；并放到 DOM 更新后执行，避免更新链路互相触发导致递归更新
+      if (!isPopoverShow.value) return;
+      nextTick(() => {
+        if (!isPopoverShow.value) return;
+        popoverRef.value?.updatePopover(null, popoverConfig.value);
+      });
     });
 
     // list模式下搜索后的值
-    const filterList = computed(() =>
-      isRemoteSearch.value
-        ? list.value
-        : list.value.filter(item => {
-            return defaultSearchMethod(curSearchValue.value, String(item[displayKey.value]), item);
-          }),
-    );
+    const filterList = computed(() => {
+      // 远程搜索：list 由外部 remoteMethod 更新，不在这里做过滤
+      if (isRemoteSearch.value) return list.value;
+
+      const keyword = curSearchValue.value;
+      // 关键字为空时直接返回原始 list，避免无意义的拷贝导致虚拟列表反复重算
+      if (!keyword) return list.value;
+
+      return list.value.filter(item => {
+        return defaultSearchMethod(keyword, String(item[displayKey.value]), item);
+      });
+    });
     // select组件是否禁用
     const isDisabled = computed(() => disabled.value || loading.value);
     // modelValue对应的label
     const selectedLabel = computed(() =>
       selected.value.map(
-        item => optionsMap.value?.get(item.value)?.optionName || listMap.value[item.value] || item.label,
+        item =>
+          optionsMap.value?.get(item.value)?.optionName ||
+          listMap.value[item.value] ||
+          slotOptionMetaMap.value.get(item.value)?.label ||
+          item.label,
       ),
     );
     // 是否全选(todo: 优化)
     const isAllSelected = computed(() => {
-      const normalSelectedValues = options.value.reduce<string[]>((pre, option) => {
-        if (!option.disabled) {
-          pre.push(option.optionID);
-        }
-        return pre;
-      }, []);
-      return (
-        normalSelectedValues.length <= selected.value.length &&
-        normalSelectedValues.every(val => selected.value.some(item => item.value === val))
-      );
+      const valueSet = new Set<PropertyKey>();
+
+      // slot/options 模式：优先使用已注册的 options；否则使用解析出来的 slotOptionMetaMap（虚拟模式）
+      if (options.value.length > 0) {
+        options.value.forEach(option => {
+          if (!option.disabled) valueSet.add(option.optionID);
+        });
+      } else {
+        slotOptionMetaMap.value.forEach((meta, value) => {
+          if (!meta.disabled) valueSet.add(value);
+        });
+      }
+
+      // list 模式
+      list.value?.forEach(item => {
+        if (item?.disabled) return;
+        valueSet.add(item[idKey.value]);
+      });
+
+      const allSelectableValues = [...valueSet.values()];
+      if (!allSelectableValues.length) return false;
+
+      return allSelectableValues.every(val => selected.value.some(item => isEqual(item.value, val)));
     });
     // 全部选项
     const isAll = computed(() => selected.value.length === 1 && selected.value[0]?.value === allOptionId.value);
     // 是否含有分组
     const isGroup = computed(() => !!groupsMap.value.size);
-    // options是否为空
-    const isOptionsEmpty = computed(() => !options.value.length);
-    // 是否搜索为空
-    const isSearchEmpty = computed(() => options.value.length && options.value.every(option => !option.visible));
+    // options是否为空（list 模式使用 list 判断，slot 模式使用 options 判断；虚拟 slot 额外使用 slotOptionMetaMap 判断）
+    const isOptionsEmpty = computed(() => {
+      // 如果有 list 数据，以 list 为准
+      if (list.value.length > 0) return false;
+      // 虚拟 slot/options
+      if (slotOptionMetaMap.value.size > 0) return false;
+      // 否则以 options（slot 模式）为准
+      return !options.value.length;
+    });
+    // 是否搜索为空（list 模式使用 filterList 判断，slot 模式使用 options.visible 判断；虚拟 slot 用 slotOptionMetaMap + defaultSearchMethod 判断）
+    const isSearchEmpty = computed(() => {
+      // 如果有 list 数据，以 filterList 为准
+      if (list.value.length > 0) {
+        return curSearchValue.value && filterList.value.length === 0;
+      }
+      if (slotOptionMetaMap.value.size > 0) {
+        const keyword = curSearchValue.value;
+        if (!keyword) return false;
+        for (const meta of slotOptionMetaMap.value.values()) {
+          if (defaultSearchMethod(keyword, String(meta.label), meta.raw)) {
+            return false;
+          }
+        }
+        return true;
+      }
+      // 否则以 options（slot 模式）为准
+      return options.value.length && options.value.every(option => !option.visible);
+    });
     // 是否远程搜索
     const isRemoteSearch = computed(() => filterable.value && typeof remoteMethod.value === 'function');
     // options过滤函数
@@ -329,8 +475,12 @@ export default defineComponent({
     const virtualLineHeight = ref(32);
     // 是否启用虚拟滚动(如果配置了启用，但是数据小于滚动高度则不开启)
     const isEnableVirtualRender = computed(() => {
-      if (enableVirtualRender.value) return filterList.value.length * virtualLineHeight.value > virtualHeight.value;
-      return false;
+      if (!enableVirtualRender.value) return false;
+      const slotCount = slotOptionMetaMap.value.size || countSlotOptions();
+      const candidateCount = filterList.value.length + slotCount;
+      // 兜底：如果存在 slot 内容但无法可靠计数，避免首屏渲染全部节点，直接启用虚拟滚动
+      if (candidateCount === 0 && typeof slots.default === 'function') return true;
+      return candidateCount * virtualLineHeight.value > virtualHeight.value;
     });
     // 预加载滚动数据
     const preloadItemCount = computed(() => Math.ceil(virtualHeight.value / virtualLineHeight.value));
@@ -361,7 +511,6 @@ export default defineComponent({
           arrow: false,
           placement: 'bottom-start',
           isShow: isPopoverShow.value,
-          reference: selectTagInputRef.value,
           offset: 4,
           popoverDelay: 0,
           renderType: RenderType.AUTO,
@@ -413,6 +562,8 @@ export default defineComponent({
         }
         document.removeEventListener('keydown', handleDocumentKeydown);
       } else {
+        // 打开时刷新一次 slot options 元信息（用于虚拟模式回显/空态判断）
+        refreshSlotOptionMetaMap();
         document.addEventListener('keydown', handleDocumentKeydown);
         setTimeout(() => {
           focusInput();
@@ -427,7 +578,17 @@ export default defineComponent({
     });
     // 滚动到当前选中的options中
     const scrollActiveOptionIntoView = () => {
-      if (isEnableVirtualRender.value || disableScrollToSelectedOption.value) return;
+      if (disableScrollToSelectedOption.value) return;
+      if (isEnableVirtualRender.value) {
+        const rows = buildVirtualRows();
+        const idx = rows.findIndex(
+          row => row?.rowType === 'option' && isEqual(row?.value, activeOptionValue.value),
+        );
+        if (idx >= 0) {
+          virtualRenderRef.value?.scrollTo?.(0, idx * virtualLineHeight.value);
+        }
+        return;
+      }
       const optionsDom = contentRef.value?.querySelectorAll?.('.is-selected');
       optionsDom?.[0]?.scrollIntoView({
         block: 'center',
@@ -436,6 +597,23 @@ export default defineComponent({
 
     // 初始化当前悬浮的option项
     const initActiveOptionValue = () => {
+      if (isEnableVirtualRender.value) {
+        const rows = buildVirtualRows();
+        const selectableValues = rows
+          .filter(row => row?.rowType === 'option' && !row?.disabled)
+          .map(row => row.value);
+        if (!selectableValues.length) {
+          activeOptionValue.value = '';
+          return;
+        }
+        const firstSelected = selected.value[0]?.value;
+        if (firstSelected !== undefined && selectableValues.some(v => isEqual(v, firstSelected))) {
+          activeOptionValue.value = firstSelected;
+        } else {
+          activeOptionValue.value = selectableValues[0];
+        }
+        return;
+      }
       const firstSelected = selected.value[0];
       const option = optionsMap.value.get(firstSelected?.value);
       if (option && !option.disabled && option.visible) {
@@ -471,6 +649,8 @@ export default defineComponent({
     // 处理options模式时默认搜索方法
     const handleDefaultOptionSearch = (searchValue: string) => {
       if (!filterable.value) return;
+      // Popover 关闭时：下拉搜索无需处理；但 inputSearch/allowCreate 仍需要更新可见性
+      if (!isPopoverShow.value && !(inputSearch.value || allowCreate.value)) return;
 
       if (!searchValue) {
         options.value.forEach(option => {
@@ -492,7 +672,13 @@ export default defineComponent({
 
     // 派发search change事件
     watch(searchValue, () => {
-      scrollContainerRef.value.scrollTop = 0;
+      // Popover 关闭时跳过搜索相关的副作用，避免不必要的 DOM 操作和状态更新
+      if (!isPopoverShow.value) return;
+      if (isEnableVirtualRender.value) {
+        virtualRenderRef.value?.scrollTo?.(0, 0);
+      } else if (scrollContainerRef.value) {
+        scrollContainerRef.value.scrollTop = 0;
+      }
       activeOptionValue.value = '';
       emit('search-change', searchValue.value);
     });
@@ -513,6 +699,8 @@ export default defineComponent({
     // 派发toggle事件
     const handleTogglePopover = () => {
       if (isDisabled.value || trigger.value === 'manual') return;
+      // 打开前先刷新 slot/options 元信息，避免首帧先走非虚拟导致大量 mount
+      refreshSlotOptionMetaMap();
       handleFocus();
       togglePopover();
     };
@@ -690,6 +878,138 @@ export default defineComponent({
         emit('scroll-end');
       }
     };
+    // 虚拟滚动的滚动事件（VirtualRender 会回传 pagination.pos.bottom）
+    const handleVirtualContentScroll = (args: unknown[]) => {
+      const pagination = args?.[1] as any;
+      if (pagination?.pos?.bottom === 0) {
+        emit('scroll-end');
+      }
+    };
+
+    /**
+     * 虚拟模式：把 list + slot + OptionGroup 扁平化成虚拟行（作为 VirtualRender 的 list）
+     * 注意：该函数会在 render/键盘处理时被调用，需保持纯函数（不要在这里写入响应式状态）。
+     */
+    const buildVirtualRows = () => {
+      const keyword = curSearchValue.value || '';
+      const optionRender = slots.optionRender || slots.virtualScrollRender;
+
+      const rows: any[] = [];
+
+      // 1) list 模式数据（已通过 filterList 过滤）
+      filterList.value.forEach(item => {
+        const value = item[idKey.value];
+        rows.push({
+          rowType: 'option',
+          key: `__list_${String(value)}`,
+          value,
+          disabled: !!item.disabled,
+          vnode: (
+            <Option
+              id={value}
+              key={value}
+              v-slots={typeof optionRender === 'function' ? { default: () => optionRender({ item }) } : null}
+              disabled={!!item.disabled}
+              name={item[displayKey.value]}
+              skipRegister={true}
+            />
+          ),
+        });
+      });
+
+      // 2) slot/options + OptionGroup
+      const slotNodes = normalizeVNodes(slots.default?.() ?? []);
+      slotNodes.forEach((vnode, index) => {
+        const name = getVNodeName(vnode);
+        if (isOptionName(name)) {
+          const { value, label, disabled, rawProps } = parseOptionValueLabel(vnode);
+          if (value === undefined) return;
+          if (keyword && !defaultSearchMethod(keyword, String(label ?? value), rawProps)) return;
+          rows.push({
+            rowType: 'option',
+            key: vnode.key ?? `__slot_${index}_${String(value)}`,
+            value,
+            disabled,
+            vnode: cloneVNode(vnode, { skipRegister: true }, true),
+          });
+          return;
+        }
+
+        if (isOptionGroupName(name)) {
+          const groupProps = (vnode.props ?? {}) as Record<string, any>;
+          if (groupProps.visible === false) return;
+
+          const groupKey = vnode.key ?? `__group_${index}`;
+          const groupLabel = String(groupProps.label ?? '');
+          const groupDisabled = !!groupProps.disabled;
+          const groupCollapsible = !!groupProps.collapsible;
+          const groupCollapsed = getGroupCollapse(groupKey, !!groupProps.collapse);
+          const labelSlot = typeof (vnode.children as any)?.label === 'function' ? (vnode.children as any).label : null;
+
+          const childrenSlot = (vnode.children as any)?.default;
+          const children = typeof childrenSlot === 'function' ? normalizeVNodes(childrenSlot()) : [];
+
+          const optionNodes = children.filter(v => isOptionName(getVNodeName(v)));
+          const matchedOptionNodes = optionNodes.filter(optVNode => {
+            const { value, label, rawProps } = parseOptionValueLabel(optVNode);
+            if (value === undefined) return false;
+            if (!keyword) return true;
+            return defaultSearchMethod(keyword, String(label ?? value), rawProps);
+          });
+
+          // 搜索命中为空时隐藏整个分组
+          if (keyword && matchedOptionNodes.length === 0) return;
+          // 分组内无任何 option 时不渲染
+          if (!optionNodes.length) return;
+
+          rows.push({
+            rowType: 'groupHeader',
+            key: `__group_header_${String(groupKey)}`,
+            groupKey,
+            groupProps,
+            label: groupLabel,
+            disabled: groupDisabled,
+            collapsible: groupCollapsible,
+            collapsed: groupCollapsed,
+            count: matchedOptionNodes.length,
+            labelSlot,
+          });
+
+          if (!groupCollapsed) {
+            matchedOptionNodes.forEach((optVNode, optIndex) => {
+              const { value, disabled } = parseOptionValueLabel(optVNode);
+              if (value === undefined) return;
+              const mergedClass = [
+                (optVNode.props as any)?.class,
+                'is-grouped',
+                groupCollapsible ? 'is-group-collapsible' : '',
+              ];
+              rows.push({
+                rowType: 'option',
+                key: optVNode.key ?? `__group_${index}_opt_${optIndex}_${String(value)}`,
+                value,
+                disabled,
+                vnode: cloneVNode(optVNode, { skipRegister: true, class: mergedClass }, true),
+              });
+            });
+          }
+          return;
+        }
+
+        // 其它未知节点按原样插入（与非虚拟模式一致）
+        rows.push({
+          rowType: 'vnode',
+          key: vnode.key ?? `__vnode_${index}`,
+          vnode,
+        });
+      });
+
+      if (props.scrollLoading) {
+        rows.push({ rowType: 'loading', key: '__loading' });
+      }
+
+      return rows;
+    };
     // tag删除事件
     const handleDeleteTag = (val: string) => {
       if (isDisabled.value) return;
@@ -715,30 +1035,38 @@ export default defineComponent({
       return (
         optionsMap.value?.get(tmpValue)?.optionName ||
         listMap.value[tmpValue] ||
+        slotOptionMetaMap.value.get(tmpValue)?.label ||
         selectedCacheMap.value[tmpValue] ||
         tmpValue
       );
     };
     // 设置selected选项
     const handleSetSelectedData = () => {
+      // 用于虚拟模式下的 slot/options 回显
+      refreshSlotOptionMetaMap();
+      const setIfChanged = (nextSelected: ISelected[]) => {
+        // 防止 options/list 变化时重复写入同一份 selected，造成不必要的更新风暴
+        if (isEqual(nextSelected, selected.value)) return;
+        selected.value = nextSelected;
+      };
       // 同步内部value值
       if (Array.isArray(modelValue.value)) {
-        selected.value = [
+        setIfChanged([
           ...(modelValue.value as string[]).map(value => ({
             value,
             label: handleGetLabelByValue(value),
           })),
-        ];
+        ]);
       } else {
-        if (modelValue.value || allowEmptyValues.value.includes(modelValue.value)) {
-          selected.value = [
+        if (modelValue.value || modelValue.value === 0 || allowEmptyValues.value.includes(modelValue.value)) {
+          setIfChanged([
             {
               value: modelValue.value,
               label: handleGetLabelByValue(modelValue.value),
             },
-          ];
+          ]);
         } else {
-          selected.value = [];
+          setIfChanged([]);
         }
       }
     };
@@ -751,7 +1079,68 @@ export default defineComponent({
     };
     // 处理键盘事件
     const handleDocumentKeydown = (e: KeyboardEvent) => {
-      if (!isPopoverShow.value || isEnableVirtualRender.value) return;
+      if (!isPopoverShow.value) return;
+
+      if (isEnableVirtualRender.value) {
+        const rows = buildVirtualRows();
+        const selectableValues = rows
+          .filter(row => row?.rowType === 'option' && !row?.disabled)
+          .map(row => row.value);
+        if (!selectableValues.length) return;
+
+        const curIndex = selectableValues.findIndex(v => isEqual(v, activeOptionValue.value));
+
+        const scrollToValue = (val: PropertyKey) => {
+          const idx = rows.findIndex(row => row?.rowType === 'option' && isEqual(row?.value, val));
+          if (idx >= 0) {
+            virtualRenderRef.value?.scrollTo?.(0, idx * virtualLineHeight.value);
+          }
+        };
+
+        switch (e.code) {
+          case 'ArrowUp':
+          case 'ArrowDown': {
+            e.preventDefault();
+            let nextIndex = 0;
+            if (e.code === 'ArrowDown') {
+              nextIndex = curIndex >= selectableValues.length - 1 ? 0 : Math.max(0, curIndex + 1);
+            } else {
+              nextIndex = curIndex <= 0 ? selectableValues.length - 1 : curIndex - 1;
+            }
+            activeOptionValue.value = selectableValues[nextIndex];
+            scrollToValue(activeOptionValue.value);
+            break;
+          }
+          case 'Backspace': {
+            if (
+              !multiple.value ||
+              !selected.value.length ||
+              customOptionName.value.length ||
+              e.target === searchRef.value
+            )
+              return;
+
+            selected.value.pop();
+            emitChange(selected.value.map(item => item.value));
+            break;
+          }
+          case 'NumpadEnter':
+          case 'Enter': {
+            const { value } = e.target as HTMLInputElement;
+            // 搜索和创建的时候不触发enter事件
+            if ((allowCreate.value && value) || (e.target === searchRef.value && searchRef.value?.value)) return;
+            const activeVal = activeOptionValue.value;
+            if (activeVal === undefined || activeVal === '') return;
+            handleOptionSelected({
+              optionID: activeVal as any,
+              optionName: handleGetLabelByValue(activeVal),
+            } as any);
+            break;
+          }
+        }
+
+        return;
+      }
 
       const availableOptions = options.value.filter(option => !option.disabled && option.visible);
       const index = availableOptions.findIndex(option => option.optionID === activeOptionValue.value);
@@ -835,6 +1224,15 @@ export default defineComponent({
       });
     });
 
+    // 虚拟滚动：切换分组折叠（兼容 OptionGroup 的 update:collapse）
+    const handleToggleGroupCollapseVirtual = (groupKey: PropertyKey, groupProps: Record<string, any>) => {
+      if (!groupProps?.collapsible || groupProps?.disabled) return;
+      const nextCollapsed = !getGroupCollapse(groupKey, !!groupProps?.collapse);
+      setGroupCollapse(groupKey, nextCollapsed);
+      const cb = groupProps?.['onUpdate:collapse'];
+      if (typeof cb === 'function') cb(nextCollapsed);
+    };
+
     // 处理扩展区域点击事件
     const handleExtensionClick = (e: MouseEvent) => {
       e.stopPropagation();
@@ -890,6 +1288,7 @@ export default defineComponent({
       handleOptionSelected,
       handleClickOutside,
       handleScroll,
+      handleVirtualContentScroll,
       handleDeleteTag,
       handleInputChange,
       handleSelectedAllOptionMouseEnter,
@@ -899,11 +1298,16 @@ export default defineComponent({
       localSelectAllText,
       resolveClassName,
       handleCreateCustomOption,
+      defaultSearchMethod,
       virtualLineHeight,
       isEnableVirtualRender,
       preloadItemCount,
       virtualRenderRef,
       setSelected,
+      buildVirtualRows,
+      groupCollapseState,
+      getGroupCollapse,
+      handleToggleGroupCollapseVirtual,
       handleExtensionClick,
     };
   },
@@ -1067,46 +1471,92 @@ export default defineComponent({
         {this.$slots?.trigger?.({ selected: this.selected }) || renderTriggerInput()}
       </div>
     );
-    // 渲染列表模式
+    // 渲染列表模式（非虚拟）
     const renderList = () => {
-      return this.isEnableVirtualRender ? (
+      return this.filterList.map(item => {
+        // 兼容以前slots
+        const optionRender = this.$slots?.optionRender || this.$slots?.virtualScrollRender;
+        return (
+          <Option
+            id={item[this.idKey]}
+            key={item[this.idKey]}
+            v-slots={typeof optionRender === 'function' ? { default: () => optionRender({ item }) } : null}
+            disabled={!!item.disabled}
+            name={item[this.displayKey]}
+          />
+        );
+      });
+    };
+
+    // 虚拟渲染（list + slot + OptionGroup 扁平化为虚拟行）
+    const renderVirtualList = () => {
+      const rows = this.buildVirtualRows?.() ?? [];
+
+      return (
         <VirtualRender
           ref='virtualRenderRef'
+          className={this.resolveClassName('select-dropdown')}
+          wrapperStyle={{ width: '100%', display: 'block' }}
           height={this.virtualHeight}
+          minHeight={this.minHeight || 30}
           lineHeight={this.virtualLineHeight}
-          list={this.filterList}
+          list={rows}
           preloadItemCount={this.preloadItemCount}
+          onContentScroll={this.handleVirtualContentScroll}
         >
           {{
-            default: ({ data }) => {
-              // 兼容以前slots
-              const optionRender = this.$slots?.optionRender || this.$slots?.virtualScrollRender;
-              return data.map(item => (
-                <Option
-                  id={item[this.idKey]}
-                  key={item[this.idKey]}
-                  v-slots={typeof optionRender === 'function' ? { default: () => optionRender({ item }) } : null}
-                  disabled={!!item.disabled}
-                  name={item[this.displayKey]}
-                />
-              ));
-            },
+            default: ({ data }) => (
+              <ul class={this.resolveClassName('select-options')}>
+                {data.map(row => {
+                  if (row.rowType === 'groupHeader') {
+                    const labelIconClass = classes({
+                      'default-group-label-icon': true,
+                      collapse: row.collapsed,
+                    });
+                    return (
+                      <li
+                        key={row.key as any}
+                        class={classes({
+                          [this.resolveClassName('option-group-label')]: true,
+                          collapsible: row.collapsible,
+                          disabled: row.disabled,
+                        })}
+                        onClick={() => this.handleToggleGroupCollapseVirtual(row.groupKey, row.groupProps)}
+                      >
+                        {row.labelSlot ? (
+                          row.labelSlot()
+                        ) : (
+                          <span class='default-group-label'>
+                            {row.collapsible && <AngleUpFill class={labelIconClass}></AngleUpFill>}
+                            <span class='default-group-label-title'>
+                              {row.label} ({row.count})
+                            </span>
+                          </span>
+                        )}
+                      </li>
+                    );
+                  }
+                  if (row.rowType === 'option') return row.vnode;
+                  if (row.rowType === 'loading') {
+                    return (
+                      <li key={row.key as any} class={this.resolveClassName('select-options-loading')}>
+                        <Loading
+                          class='spinner mr5'
+                          loading={true}
+                          mode='spin'
+                          size='mini'
+                          theme='primary'
+                        />
+                        <span>{this.localLoadingText}</span>
+                      </li>
+                    );
+                  }
+                  return row.vnode;
+                })}
+              </ul>
+            ),
           }}
         </VirtualRender>
-      ) : (
-        this.filterList.map(item => {
-          // 兼容以前slots
-          const optionRender = this.$slots?.optionRender || this.$slots?.virtualScrollRender;
-          return (
-            <Option
-              id={item[this.idKey]}
-              key={item[this.idKey]}
-              v-slots={typeof optionRender === 'function' ? { default: () => optionRender({ item }) } : null}
-              disabled={!!item.disabled}
-              name={item[this.displayKey]}
-            />
-          );
-        })
       );
     };
     // 渲染内容
@@ -1146,31 +1596,39 @@ export default defineComponent({
           </div>
         )}
         <div class={this.resolveClassName('select-content')}>
-          <div
-            ref='scrollContainerRef'
-            style={{ maxHeight: `${this.scrollHeight}px`, minHeight: `${this.minHeight}px` }}
-            class={this.isEnableVirtualRender ? '' : this.resolveClassName('select-dropdown')}
-            v-show={this.isShowSelectContent}
-            onScroll={this.handleScroll}
-          >
-            <ul class={this.resolveClassName('select-options')}>
-              {renderSelectAll()}
-              {renderList()}
-              {this.$slots?.default?.()}
-              {this.scrollLoading && (
-                <li class={this.resolveClassName('select-options-loading')}>
-                  <Loading
-                    class='spinner mr5'
-                    loading={true}
-                    mode='spin'
-                    size='mini'
-                    theme='primary'
-                  />
-                  <span>{this.localLoadingText}</span>
-                </li>
-              )}
-            </ul>
-          </div>
+          {this.isEnableVirtualRender ? (
+            <div v-show={this.isShowSelectContent}>
+              {/* 全选行保持在虚拟滚动容器外，避免影响虚拟高度计算 */}
+              {this.isShowSelectAll && <ul class={this.resolveClassName('select-options')}>{renderSelectAll()}</ul>}
+              {renderVirtualList()}
+            </div>
+          ) : (
+            <div
+              ref='scrollContainerRef'
+              style={{ maxHeight: `${this.scrollHeight}px`, minHeight: `${this.minHeight}px` }}
+              class={this.resolveClassName('select-dropdown')}
+              v-show={this.isShowSelectContent}
+              onScroll={this.handleScroll}
+            >
+              <ul class={this.resolveClassName('select-options')}>
+                {renderSelectAll()}
+                {renderList()}
+                {this.$slots?.default?.()}
+                {this.scrollLoading && (
+                  <li class={this.resolveClassName('select-options-loading')}>
+                    <Loading
+                      class='spinner mr5'
+                      loading={true}
+                      mode='spin'
+                      size='mini'
+                      theme='primary'
+                    />
+                    <span>{this.localLoadingText}</span>
+                  </li>
+                )}
+              </ul>
+            </div>
+          )}
           {this.$slots?.extension && (
             <div
               class={this.resolveClassName('select-extension')}

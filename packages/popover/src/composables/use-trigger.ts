@@ -123,16 +123,16 @@ export function useTrigger(
     // hover 模式：鼠标移入内容区时停止隐藏，移出时隐藏
     if (props.value.trigger === 'hover') {
       return {
-        onMouseenter: (e: MouseEvent) => {
+        onMouseenter: (e: Event) => {
           stopHide();
-          emitContentMouseenter?.(e);
+          emitContentMouseenter?.(e as MouseEvent);
         },
-        onMouseleave: (e: MouseEvent) => {
+        onMouseleave: (e: Event) => {
           // always 模式下不隐藏
           if (!props.value.always) {
             hide();
           }
-          emitContentMouseleave?.(e);
+          emitContentMouseleave?.(e as MouseEvent);
         },
       };
     }
@@ -140,22 +140,22 @@ export function useTrigger(
     // manual 模式：仅触发事件，不控制显示/隐藏
     if (props.value.trigger === 'manual') {
       return {
-        onMouseenter: (e: MouseEvent) => {
-          emitContentMouseenter?.(e);
+        onMouseenter: (e: Event) => {
+          emitContentMouseenter?.(e as MouseEvent);
         },
-        onMouseleave: (e: MouseEvent) => {
-          emitContentMouseleave?.(e);
+        onMouseleave: (e: Event) => {
+          emitContentMouseleave?.(e as MouseEvent);
         },
       };
     }
 
     // click 模式：触发事件
     return {
-      onMouseenter: (e: MouseEvent) => {
-        emitContentMouseenter?.(e);
+      onMouseenter: (e: Event) => {
+        emitContentMouseenter?.(e as MouseEvent);
       },
-      onMouseleave: (e: MouseEvent) => {
-        emitContentMouseleave?.(e);
+      onMouseleave: (e: Event) => {
+        emitContentMouseleave?.(e as MouseEvent);
       },
     };
   });
