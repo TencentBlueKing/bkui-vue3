@@ -85,7 +85,8 @@
       left: 0;
       width: 1px;
       background-color: #3785ff;
-      transform: translate(var(--drag-offset-x), var(--translate-y));
+      // 辅助线不应随纵向滚动位移，否则滚动一定距离后会被移出可视区域导致“看不到”
+      transform: translate3d(var(--drag-offset-x), 0, 0);
       z-index: 8;
       pointer-events: none;
     }

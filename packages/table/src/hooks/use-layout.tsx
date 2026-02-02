@@ -99,8 +99,10 @@ export default (props: TablePropTypes, ctx) => {
 
   const setRootStyleVars = throttle(() => {
     refRoot.value?.style?.setProperty('--drag-offset-x', `${dragOffsetX.value + translateX.value}px`);
-    // header 与 body 在同一滚动容器内时，不应叠加 scrollLeft 偏移
-    refRoot.value?.style?.setProperty('--drag-offset-h-x', `${dragOffsetX.value - 2}px`);
+    // header 的辅助线（.col-resize-drag）在可横向滚动的表头内，
+    // 而 dragOffsetX 存的是 “相对 root 的 x - translateX”（见 use-column-resize.resolveDragOffsetX）。
+    // 因此这里需要补偿滚动偏移：+ 2 * translateX，避免横向滚动后辅助线向左漂移。
+    refRoot.value?.style?.setProperty('--drag-offset-h-x', `${dragOffsetX.value + translateX.value * 2 - 2}px`);
     refRoot.value?.style?.setProperty('--translate-y', `${translateY.value}px`);
     refRoot.value?.style?.setProperty('--translate-x', `${translateX.value}px`);
     setFixedColumnShawdow();
