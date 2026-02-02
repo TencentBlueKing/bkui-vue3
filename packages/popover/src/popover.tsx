@@ -44,6 +44,64 @@ import { useDelay, usePopoverFloating, useTrigger } from './composables';
 import { PopoverProps } from './props';
 import type { TriggerType, PopoverPlacement, IAxesOffsets, VirtualElement } from './types';
 
+/**
+ * 全局 Popover 注册表（用于处理“弹层里再弹弹层”的 clickoutside / hover-leave 场景）
+ *
+ * 典型问题：父 Popover 的内容区里包含一个会 Teleport 到 body 的子 Popover（如 Select 下拉）。
+ * 此时点击/移入子 Popover，会被父 Popover 当作“外部”交互从而收起。
+ *
+ * 解决思路：当事件命中某个子 Popover 的 floating 节点时，如果该子 Popover 的 reference 节点位于父 Popover 的 floating 内，
+ * 则认为这是父内容区的延伸交互，不触发父 popover 的 hide。
+ */
+type PopoverRegistryEntry = {
+  id: string;
+  floatingEl: HTMLElement | null;
+  referenceEl: HTMLElement | null;
+  referenceWrapperEl: HTMLElement | null;
+};
+
+let __bkPopoverIdSeed = 0;
+const __bkPopoverRegistry = new Map<string, PopoverRegistryEntry>();
+
+const findPopoverIdInEventPath = (event: Event): string | null => {
+  const anyEvent = event as any;
+  const path = (typeof anyEvent.composedPath === 'function' ? anyEvent.composedPath() : []) as unknown[];
+  for (const node of path) {
+    if (!(node instanceof HTMLElement)) continue;
+    const id = (node as HTMLElement).dataset?.bkPopoverId;
+    if (id) return id;
+  }
+  return null;
+};
+
+const findPopoverIdFromElement = (target: EventTarget | null): string | null => {
+  if (!(target instanceof HTMLElement)) return null;
+  let el: HTMLElement | null = target;
+  while (el) {
+    const id = el.dataset?.bkPopoverId;
+    if (id) return id;
+    el = el.parentElement;
+  }
+  return null;
+};
+
+const isChildPopoverInteractionFor = (parentId: string, event: Event): boolean => {
+  const childId = findPopoverIdInEventPath(event);
+  if (!childId || childId === parentId) return false;
+
+  const parent = __bkPopoverRegistry.get(parentId);
+  const child = __bkPopoverRegistry.get(childId);
+  if (!parent?.floatingEl || !child) return false;
+
+  const childRef = child.referenceEl;
+  const childWrapper = child.referenceWrapperEl;
+  // 只在“子 popover 的 reference 在父 popover 内容里”时才认为是关联交互
+  return (
+    (!!childRef && parent.floatingEl.contains(childRef)) ||
+    (!!childWrapper && parent.floatingEl.contains(childWrapper))
+  );
+};
+
 // 事件类型定义
 const EMIT_EVENTS = {
   AFTER_SHOW: 'afterShow',
@@ -68,6 +126,9 @@ export default defineComponent({
 
   setup(props, { slots, emit, expose }) {
     const { resolveClassName } = usePrefix();
+
+    // 当前实例 id（用于注册表与事件路径识别）
+    const popoverId = `bk-popover-${++__bkPopoverIdSeed}`;
 
     // 元素引用
     // 默认 slot 的包裹元素（仅用于渲染与事件冒泡承载）
@@ -307,6 +368,86 @@ export default defineComponent({
       emitContentMouseleave: (e: MouseEvent) => emit(EMIT_EVENTS.CONTENT_MOUSELEAVE, e),
     });
 
+    // hover 模式：把“子弹层”视为内容区的延伸（避免 PopConfirm 内 Select 下拉导致父弹层收起）
+    let hoverTrackMoveHandler: ((e: MouseEvent) => void) | null = null;
+    const stopHoverTrack = () => {
+      if (!hoverTrackMoveHandler) return;
+      document.removeEventListener('mousemove', hoverTrackMoveHandler, true);
+      hoverTrackMoveHandler = null;
+    };
+
+    const isTargetInSelfOrChildren = (targetEl: HTMLElement): boolean => {
+      const actualRef = floatingReferenceRef.value;
+      if ((actualRef instanceof HTMLElement && actualRef.contains(targetEl)) || referenceWrapperRef.value?.contains(targetEl)) {
+        return true;
+      }
+      if (floatingRef.value?.contains(targetEl)) {
+        return true;
+      }
+      const childId = findPopoverIdFromElement(targetEl);
+      if (!childId || childId === popoverId) return false;
+      const parent = __bkPopoverRegistry.get(popoverId);
+      const child = __bkPopoverRegistry.get(childId);
+      if (!parent?.floatingEl || !child) return false;
+      const childRef = child.referenceEl;
+      const childWrapper = child.referenceWrapperEl;
+      return (
+        (!!childRef && parent.floatingEl.contains(childRef)) ||
+        (!!childWrapper && parent.floatingEl.contains(childWrapper))
+      );
+    };
+
+    const startHoverTrack = () => {
+      if (hoverTrackMoveHandler) return;
+      hoverTrackMoveHandler = (e: MouseEvent) => {
+        if (disabled.value || always.value) return;
+        const t = e.target;
+        if (!(t instanceof HTMLElement)) return;
+        if (isTargetInSelfOrChildren(t)) return;
+        stopHoverTrack();
+        if (isOpen.value) {
+          hide();
+        }
+      };
+      document.addEventListener('mousemove', hoverTrackMoveHandler, true);
+    };
+
+    const isMouseleaveToChildPopover = (e: MouseEvent): boolean => {
+      const rt = e.relatedTarget;
+      const childId = findPopoverIdFromElement(rt);
+      if (!childId || childId === popoverId) return false;
+      const parent = __bkPopoverRegistry.get(popoverId);
+      const child = __bkPopoverRegistry.get(childId);
+      if (!parent?.floatingEl || !child) return false;
+      const childRef = child.referenceEl;
+      const childWrapper = child.referenceWrapperEl;
+      return (
+        (!!childRef && parent.floatingEl.contains(childRef)) ||
+        (!!childWrapper && parent.floatingEl.contains(childWrapper))
+      );
+    };
+
+    const guardedFloatingListeners = computed(() => {
+      const base = floatingListeners.value;
+      if (trigger.value !== 'hover') return base;
+      return {
+        ...base,
+        onMouseenter: (e: Event) => {
+          stopHoverTrack();
+          base.onMouseenter?.(e);
+        },
+        onMouseleave: (e: Event) => {
+          const me = e as MouseEvent;
+          if (isMouseleaveToChildPopover(me)) {
+            // 进入子弹层时保持显示，并开始跟踪鼠标离开“父 + 子”的整体区域
+            startHoverTrack();
+            return;
+          }
+          base.onMouseleave?.(e);
+        },
+      };
+    });
+
     // 计算样式
     const resolvePixelValue = (val: string | number): string => {
       if (typeof val === 'number' || /^\d+$/.test(String(val))) {
@@ -394,6 +535,11 @@ export default defineComponent({
     // 处理 clickoutside
     const handleClickOutside = (event: MouseEvent) => {
       if (disabled.value || always.value) {
+        return;
+      }
+
+      // 命中“子弹层”且其 reference 位于本 popover 内容区内：不视为外部点击
+      if (isChildPopoverInteractionFor(popoverId, event)) {
         return;
       }
 
@@ -544,7 +690,27 @@ export default defineComponent({
       if (eventDelayTimer) {
         clearTimeout(eventDelayTimer);
       }
+      __bkPopoverRegistry.delete(popoverId);
+      stopHoverTrack();
     });
+
+    // 注册到全局表（用于父子弹层交互判定）
+    const updateRegistry = () => {
+      const referenceEl =
+        // 自定义 reference（仅 HTMLElement 可用）
+        getActualReferenceElement() ||
+        // 默认 reference（wrapper 尺寸为 0 时会解析到真实触发器）
+        resolveDefaultReferenceElement();
+
+      __bkPopoverRegistry.set(popoverId, {
+        id: popoverId,
+        floatingEl: floatingRef.value,
+        referenceEl,
+        referenceWrapperEl: referenceWrapperRef.value,
+      });
+    };
+
+    watch([floatingRef, floatingReferenceRef, referenceWrapperRef], () => updateRegistry(), { immediate: true });
 
     // 暴露公共方法
     // updatePopover 保持与旧 API 兼容，接受可选参数但实际上使用 @floating-ui/vue 自动更新
@@ -607,11 +773,12 @@ export default defineComponent({
             ...contentStyles.value,
             pointerEvents: contentPointerEvents.value,
           }}
+          data-bk-popover-id={popoverId}
           data-theme={dataTheme.value}
           {...extraThemeDataAttrs.value}
           data-arrow={arrowSide.value}
           onClick={handleClickContent}
-          {...floatingListeners.value}
+          {...guardedFloatingListeners.value}
         >
           {/* 箭头 */}
           {arrow.value && (
