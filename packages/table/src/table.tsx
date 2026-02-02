@@ -65,7 +65,6 @@ export default defineComponent({
       renderContainer,
       renderFixedBottom,
       renderBody,
-      renderHeader,
       renderFooter,
       setBodyHeight,
       setFootHeight,
@@ -193,10 +192,8 @@ export default defineComponent({
     // 依赖：rows.tableRowList, columns.filterColumns, columns.sortColumns, filterVersion, sortVersion
     const filteredAndSortedList = computed(() => {
       // 引用版本号以确保依赖追踪正确
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const _filterVer = columns.filterVersion.value;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const _sortVer = columns.sortVersion.value;
+      void columns.filterVersion.value;
+      void columns.sortVersion.value;
 
       let renderList = rows.tableRowList.value.slice();
 
@@ -264,7 +261,7 @@ export default defineComponent({
           scrollTo00.value = false;
         }
       });
-    }, 64);
+    }, 64, { leading: true, trailing: true });
 
     const observerResizing = ref(false);
     let observerResizingTimer = null;
@@ -426,8 +423,15 @@ export default defineComponent({
 
     return () =>
       renderContainer([
-        renderHeader(renderColumns, settings.renderSettings, renderFixedRows),
-        renderBody(rows.pageRowList, renderTBody, renderFixedRows),
+        renderBody(
+          rows.pageRowList,
+          {
+            header: renderColumns,
+            body: renderTBody,
+            settings: settings.renderSettings,
+          },
+          renderFixedRows,
+        ),
         renderFixedBottom(),
         renderFooter(renderTFoot()),
       ]);

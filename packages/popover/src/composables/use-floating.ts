@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, type CSSProperties, type Ref, type ComputedRef } from 'vue';
+import { computed, unref, type CSSProperties, type Ref, type ComputedRef } from 'vue';
 import {
   useFloating as useFloatingUI,
   offset,
@@ -173,6 +173,34 @@ export function usePopoverFloating(
 
     // 处理 hide 中间件的隐藏逻辑
     if (props.value.autoVisibility && middlewareData.value.hide?.referenceHidden) {
+      const reference = unref(referenceRef);
+      // floating-ui 的 referenceHidden 在复杂布局（scroll 容器 + 绝对定位触发器 + teleport）下可能出现误判。
+      // 这里增加一次“实际可见性”兜底：当 reference 在视口内且命中 elementFromPoint 时，不隐藏。
+      try {
+        const rect = reference?.getBoundingClientRect?.();
+        if (rect) {
+          const vw = window.innerWidth || document.documentElement.clientWidth;
+          const vh = window.innerHeight || document.documentElement.clientHeight;
+          const inViewport = rect.bottom > 0 && rect.right > 0 && rect.top < vh && rect.left < vw;
+
+          if (inViewport && reference instanceof HTMLElement) {
+            const cx = Math.min(Math.max(rect.left + rect.width / 2, 0), vw - 1);
+            const cy = Math.min(Math.max(rect.top + rect.height / 2, 0), vh - 1);
+            const hit = document.elementFromPoint(cx, cy);
+            if (hit && reference.contains(hit)) {
+              return styles;
+            }
+          }
+
+          // 虚拟元素无法做 DOM 命中校验，视口内则不隐藏
+          if (inViewport && reference && !(reference instanceof HTMLElement)) {
+            return styles;
+          }
+        }
+      } catch {
+        // ignore
+      }
+
       styles.visibility = 'hidden';
     }
 

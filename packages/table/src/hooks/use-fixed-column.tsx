@@ -24,7 +24,7 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, CSSProperties, reactive, Ref, ref } from 'vue';
+import { computed, CSSProperties, reactive, Ref } from 'vue';
 
 import { Column, TablePropTypes } from '../props';
 import { UseColumns } from './use-columns';
@@ -124,7 +124,7 @@ export interface UseFixedColumnReturn {
  * @param columns useColumns 返回值
  */
 export default function useFixedColumn(
-  props: TablePropTypes,
+  _props: TablePropTypes,
   columns: UseColumns,
 ): UseFixedColumnReturn {
   /**

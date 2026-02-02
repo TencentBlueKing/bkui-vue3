@@ -53,11 +53,12 @@ export function getMatchedIndex(maxCount: number, maxHeight: number, callback: (
   return { startIndex, height, diffHeight };
 }
 
-export function computedVirtualIndex(lineHeight, callback, pagination, wrapper, event) {
+export function computedVirtualIndex(lineHeight, callback, pagination, wrapper, event, scrollOffsetTop = 0) {
   if (!wrapper || !event.offset) {
     return;
   }
-  const elScrollTop = event.offset.y >= 0 ? event.offset.y : 0;
+  const rawScrollTop = event.offset.y >= 0 ? event.offset.y : 0;
+  const elScrollTop = Math.max(0, rawScrollTop - (scrollOffsetTop ?? 0));
   const elScrollLeft = event.offset.x >= 0 ? event.offset.x : 0;
   const elScrollHeight = wrapper.scrollHeight;
   const elOffsetHeight = wrapper.offsetHeight;
@@ -82,7 +83,8 @@ export function computedVirtualIndex(lineHeight, callback, pagination, wrapper, 
     targetEndIndex = endValue.startIndex + targetStartIndex + 1;
   }
 
-  const bottom = elScrollHeight - elOffsetHeight - elScrollTop;
+  // bottom 计算应使用真实 scrollTop（包含顶部偏移），确保触底判定准确
+  const bottom = elScrollHeight - elOffsetHeight - rawScrollTop;
   typeof callback === 'function' &&
     callback(event, targetStartIndex, targetEndIndex, elScrollTop, translateY, elScrollLeft, {
       bottom: bottom >= 0 ? bottom : 0,
@@ -130,7 +132,7 @@ export class VisibleRender {
   }
 
   public render(e: { offset: { x: number; y: number } }) {
-    const { lineHeight = 30, handleScrollCallback, pagination = {}, onlyScroll } = this.binding.value;
+    const { lineHeight = 30, handleScrollCallback, pagination = {}, onlyScroll, scrollOffsetTop = 0 } = this.binding.value;
     if (onlyScroll) {
       const elScrollTop = e.offset?.y;
       const elScrollLeft = e.offset?.x ?? 0;
@@ -148,6 +150,7 @@ export class VisibleRender {
       { scrollTop, startIndex, endIndex, groupItemCount, count, scrollLeft },
       this.delegateWrapper ?? this.wrapper,
       e,
+      scrollOffsetTop,
     );
   }
 

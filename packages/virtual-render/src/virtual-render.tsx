@@ -127,6 +127,7 @@ export default defineComponent({
       handleScrollCallback,
       pagination,
       throttleDelay: props.throttleDelay,
+      scrollOffsetTop: props.scrollOffsetTop,
     }));
 
     const { init, scrollTo } = useScrollbar();
@@ -254,7 +255,7 @@ export default defineComponent({
       // 传递正确的 offset 参数
       computedVirtualIndex(getLineHeight(), handleScrollCallback, pagination, container, {
         offset: { x: el?.scrollLeft ?? 0, y: el?.scrollTop ?? 0 },
-      });
+      }, props.scrollOffsetTop);
     };
 
     /** 映射传入的数组为新的数组，增加 $index属性，用来处理唯一Index */
@@ -327,7 +328,7 @@ export default defineComponent({
         typeof props.height === 'number' ? { scrollHeight: innerHeight.value, offsetHeight: props.height } : refRoot.value;
       computedVirtualIndex(getLineHeight(), handleScrollCallback, pagination, container, {
         offset: { x: 0, y: 0 },
-      });
+      }, props.scrollOffsetTop);
 
       // 触发渲染更新
       nextTick(() => {

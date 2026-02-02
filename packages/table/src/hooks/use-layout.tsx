@@ -31,7 +31,7 @@ import VirtualRender from '@bkui-vue/virtual-render';
 import debounce from 'lodash/debounce';
 
 import GhostBody from '../components/ghost-body';
-import { DEF_COLOR, IHeadColor, LINE_HEIGHT, SCROLLY_WIDTH } from '../const';
+import { DEF_COLOR, IHeadColor, LINE_HEIGHT } from '../const';
 import { EMIT_EVENTS } from '../events';
 import { Column, TablePropTypes } from '../props';
 import { resolveHeadConfig, resolveNumberOrStringToPix, resolvePropBorderToClassStr, resolvePropVal } from '../utils';
@@ -99,11 +99,10 @@ export default (props: TablePropTypes, ctx) => {
 
   const setRootStyleVars = throttle(() => {
     refRoot.value?.style?.setProperty('--drag-offset-x', `${dragOffsetX.value + translateX.value}px`);
-    // header 的拖拽线不受 thead translate 影响，需要与 body overlay 使用同一套坐标系
-    refRoot.value?.style?.setProperty('--drag-offset-h-x', `${dragOffsetX.value + translateX.value - 2}px`);
+    // header 与 body 在同一滚动容器内时，不应叠加 scrollLeft 偏移
+    refRoot.value?.style?.setProperty('--drag-offset-h-x', `${dragOffsetX.value - 2}px`);
     refRoot.value?.style?.setProperty('--translate-y', `${translateY.value}px`);
     refRoot.value?.style?.setProperty('--translate-x', `${translateX.value}px`);
-    refRoot.value?.style?.setProperty('--translate-x-1', `-${translateX.value}px`);
     setFixedColumnShawdow();
   });
 
@@ -126,7 +125,6 @@ export default (props: TablePropTypes, ctx) => {
     refRoot.value?.style?.setProperty('--drag-offset-h-x', '-1000px');
     refRoot.value?.style?.setProperty('--translate-y', '0px');
     refRoot.value?.style?.setProperty('--translate-x', '0px');
-    refRoot.value?.style?.setProperty('--translate-x-1', '0px');
   };
 
   const setDragOffsetX = (val: number) => {
@@ -140,7 +138,6 @@ export default (props: TablePropTypes, ctx) => {
   const headStyle = computed(() => ({
     '--row-height': `${headHeight.value}px`,
     '--background-color': DEF_COLOR[props.thead?.color ?? IHeadColor.DEF1],
-    paddingRight: props.scrollbar ? null : `${SCROLLY_WIDTH}px`,
   }));
 
   const bodyClass = {
@@ -168,6 +165,8 @@ export default (props: TablePropTypes, ctx) => {
     );
   };
   const renderHeader = (childrend?, settings?, fixedRows?) => {
+    void settings;
+    void fixedRows;
     return (
       <div
         ref={refHead}
@@ -176,15 +175,13 @@ export default (props: TablePropTypes, ctx) => {
       >
         {childrend?.()}
         <div class='col-resize-drag'></div>
-        <div class={fixedWrapperClass}>{fixedRows?.()}</div>
-        {settings?.()}
       </div>
     );
   };
 
   const prependStyle = computed(() => ({
     position: 'sticky' as const,
-    top: 0,
+    top: props.showHead ? headHeight.value : 0,
     zIndex: 2,
     ...(props.prependStyle || {}),
   }));
@@ -209,8 +206,7 @@ export default (props: TablePropTypes, ctx) => {
 
   const bodyMaxHeight = computed(() => {
     if (/^\d+\.?\d*(px|%)$/.test(`${tableStyle.value.maxHeight}`)) {
-      const headerHeight = props.showHead ? headHeight.value : 0;
-      const delHeight = footHeight.value + headerHeight + fixedBottomHeight.value;
+      const delHeight = footHeight.value + fixedBottomHeight.value;
 
       return `calc(${tableStyle.value.maxHeight} - ${delHeight}px)`;
     }
@@ -219,7 +215,7 @@ export default (props: TablePropTypes, ctx) => {
   });
 
   const getBodyHeight = height => {
-    return height - headHeight.value - fixedBottomHeight.value - footHeight.value;
+    return height - fixedBottomHeight.value - footHeight.value;
   };
 
   const setBodyHeight = (height: number, withHeadFoot = true) => {
@@ -253,8 +249,8 @@ export default (props: TablePropTypes, ctx) => {
    */
   const setOffsetRight = () => {
     const scrollWidth = refBody.value?.refRoot?.scrollWidth ?? 0;
-    const offsetWidth = refBody.value?.refRoot?.offsetWidth ?? 0;
-    offsetRight.value = scrollWidth - offsetWidth - translateX?.value ?? 0;
+    const clientWidth = refBody.value?.refRoot?.clientWidth ?? 0;
+    offsetRight.value = (scrollWidth - clientWidth - translateX.value) || 0;
   };
 
   const setLineHeight = (val: ((...args) => number) | number) => {
@@ -349,13 +345,30 @@ export default (props: TablePropTypes, ctx) => {
           rowKey={props.rowKey}
           scrollEvent={true}
           throttleDelay={120}
+          scrollOffsetTop={props.showHead ? headHeight.value : 0}
           onContentScroll={handleScrollChanged}
         >
           {{
-            beforeContent: () => renderPrepend(),
-            default: (scope: Record<string, object>) => childrend?.(scope?.data ?? []),
+            beforeContent: () => (
+              <>
+                {props.showHead ? renderHeader(childrend?.header) : null}
+                {renderPrepend()}
+              </>
+            ),
+            default: (scope: Record<string, object>) => childrend?.body?.(scope?.data ?? []),
           }}
         </VirtualRender>
+        {/* header settings：固定在可视区域右侧，不跟随横向滚动 */}
+        {props.showHead ? (
+          <div
+            class='bk-table-head-settings-wrapper'
+            style={{
+              '--row-height': `${headHeight.value}px`,
+            }}
+          >
+            {childrend?.settings?.()}
+          </div>
+        ) : null}
         {/* overlay：不参与原生滚动，避免 .bk-table-fixed 跟随 scrollLeft 偏移 */}
         <div class={resizeColumnClass}></div>
         <div class={fixedWrapperClass.value}>{fixedRows?.()}</div>

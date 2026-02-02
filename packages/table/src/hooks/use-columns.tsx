@@ -37,6 +37,7 @@ import {
   resolveColumnFilterProp,
   resolveColumnSortProp,
   resolveColumnSpan,
+  resolveActiveColumns,
   resolvePropVal,
 } from '../utils';
 
@@ -521,7 +522,7 @@ const useColumns = (props: TablePropTypes) => {
   /**
    * 防抖更新列配置
    * 延迟时间设为 16ms（约一帧），确保多次快速调用只执行一次
-   * leading: false 确保首次调用也延迟执行，避免闪烁
+   * leading: true 确保首次调用立即执行，避免首帧空白
    * trailing: true 确保最后一次调用会执行
    */
   const debounceUpdateColumns = debounce(
@@ -542,7 +543,7 @@ const useColumns = (props: TablePropTypes) => {
       onComplete?.();
     },
     16,
-    { leading: false, trailing: true },
+    { leading: true, trailing: true },
   );
 
   const setColumnIsHidden = (column: Column, value = false) => {
@@ -704,11 +705,19 @@ const useColumns = (props: TablePropTypes) => {
     return tableColumnSchema.get(col)?.[attributeName];
   };
 
+  const activeColumns = computed(() => resolveActiveColumns(props));
+  const isActiveColumn = (column: Column, colIndex?: number) => {
+    const idx = visibleColumns.indexOf(column);
+    const realIndex = idx >= 0 ? idx : (colIndex ?? -1);
+    return realIndex >= 0 && activeColumns.value.includes(realIndex);
+  };
+
   const getColumnClass = (column: Column, colIndex: number) => ({
     [`${uuid}-column-${colIndex}`]: false,
     column_fixed: !!column.fixed,
     column_fixed_left: !!column.fixed && column.fixed !== 'right',
     column_fixed_right: column.fixed === 'right',
+    active: isActiveColumn(column, colIndex),
   });
 
   const getHeadColumnClass = (column: Column, colIndex: number) => ({
