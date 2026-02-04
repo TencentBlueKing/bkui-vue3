@@ -96,7 +96,7 @@ export default defineComponent({
       placement: this.placement,
       popoverDelay: [200, 0],
       disabled: this.type === 'title' || !this.isShowTips,
-      referenceCls: 'overflow-popover-reference'
+      referenceCls: 'overflow-popover-reference',
     };
     const popoverOptions: Partial<PopoverPropTypes> = merge(basePopoverOptions, this.popoverOptions);
     return (

@@ -173,6 +173,7 @@ export default defineComponent({
       componentEventDelay,
       reference,
       target,
+      floatingReference,
     } = toRefs(props);
 
     // 判断是否为虚拟元素
@@ -321,6 +322,15 @@ export default defineComponent({
 
     // 更新 floating-ui 定位 reference（避免 computed 缓存导致 DOM 布局变化时 reference 解析不生效）
     const updateFloatingReference = () => {
+      // 优先使用 floatingReference（仅定位，不影响 slot 渲染）
+      if (floatingReference.value) {
+        const resolved = resolveReferenceElement(floatingReference.value);
+        if (resolved) {
+          floatingReferenceRef.value = resolved;
+          return;
+        }
+      }
+      // 其次使用 reference/target（会影响 slot 渲染）
       if (useCustomReference.value) {
         floatingReferenceRef.value = getFloatingReference();
         return;
@@ -336,7 +346,7 @@ export default defineComponent({
       },
       { immediate: true },
     );
-    watch([() => reference.value, () => target.value], () => nextTick(updateFloatingReference));
+    watch([() => reference.value, () => target.value, () => floatingReference.value], () => nextTick(updateFloatingReference));
     watch(isOpen, (val) => {
       if (val) {
         nextTick(updateFloatingReference);
