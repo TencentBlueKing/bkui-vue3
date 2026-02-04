@@ -136,6 +136,12 @@ export const PopoverProps = {
   reference: PropTypes.any,
 
   /**
+   * 自定义浮动定位参考元素（仅用于定位，不影响 default slot 渲染）
+   * 与 reference 的区别：reference 会导致 default slot 不渲染
+   */
+  floatingReference: PropTypes.any,
+
+  /**
    * 兼容v1版本遗留配置
    * 不建议使用
    */

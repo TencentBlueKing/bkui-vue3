@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /*
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -24,7 +25,21 @@
  * IN THE SOFTWARE.
  */
 
-import { cloneVNode, computed, defineComponent, isVNode, nextTick, onMounted, PropType, provide, reactive, ref, toRefs, watch, type VNode } from 'vue';
+import {
+  cloneVNode,
+  computed,
+  defineComponent,
+  isVNode,
+  nextTick,
+  onMounted,
+  PropType,
+  provide,
+  reactive,
+  ref,
+  toRefs,
+  watch,
+  type VNode,
+} from 'vue';
 
 import Checkbox from '@bkui-vue/checkbox';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
@@ -238,7 +253,7 @@ export default defineComponent({
         },
       ),
     );
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     const activeOptionValue = ref<any>(); // 当前悬浮的option
     const listMap = computed(() =>
       list.value.reduce((pre, item) => {
@@ -248,7 +263,7 @@ export default defineComponent({
     );
 
     type SlotOptionMeta = {
-      label: string | number;
+      label: number | string;
       disabled: boolean;
       raw: Record<string, any>;
     };
@@ -288,7 +303,7 @@ export default defineComponent({
             const { value, label, disabled, rawProps } = parseOptionValueLabel(vnode);
             if (value !== undefined) {
               map.set(value, {
-                label: (label ?? value) as string | number,
+                label: (label ?? value) as number | string,
                 disabled,
                 raw: rawProps,
               });
@@ -398,7 +413,7 @@ export default defineComponent({
       // slot/options 模式：优先使用已注册的 options；否则使用解析出来的 slotOptionMetaMap（虚拟模式）
       if (options.value.length > 0) {
         options.value.forEach(option => {
-          if (!option.disabled) valueSet.add(option.optionID);
+          if (!option.isDisabled) valueSet.add(option.optionID);
         });
       } else {
         slotOptionMetaMap.value.forEach((meta, value) => {
@@ -515,6 +530,8 @@ export default defineComponent({
           popoverDelay: 0,
           renderType: RenderType.AUTO,
           referenceCls: resolveClassName('select-popover-reference'),
+          // 当 autoHeight + collapseTags 模式时，使用 selectTagInputRef 作为定位参考
+          floatingReference: autoHeight.value && collapseTags.value ? selectTagInputRef.value?.$el : undefined,
         },
         popoverOptions.value,
       ),
@@ -581,9 +598,7 @@ export default defineComponent({
       if (disableScrollToSelectedOption.value) return;
       if (isEnableVirtualRender.value) {
         const rows = buildVirtualRows();
-        const idx = rows.findIndex(
-          row => row?.rowType === 'option' && isEqual(row?.value, activeOptionValue.value),
-        );
+        const idx = rows.findIndex(row => row?.rowType === 'option' && isEqual(row?.value, activeOptionValue.value));
         if (idx >= 0) {
           virtualRenderRef.value?.scrollTo?.(0, idx * virtualLineHeight.value);
         }
@@ -599,9 +614,7 @@ export default defineComponent({
     const initActiveOptionValue = () => {
       if (isEnableVirtualRender.value) {
         const rows = buildVirtualRows();
-        const selectableValues = rows
-          .filter(row => row?.rowType === 'option' && !row?.disabled)
-          .map(row => row.value);
+        const selectableValues = rows.filter(row => row?.rowType === 'option' && !row?.disabled).map(row => row.value);
         if (!selectableValues.length) {
           activeOptionValue.value = '';
           return;
@@ -616,14 +629,14 @@ export default defineComponent({
       }
       const firstSelected = selected.value[0];
       const option = optionsMap.value.get(firstSelected?.value);
-      if (option && !option.disabled && option.visible) {
+      if (option && !option.isDisabled && option.visible) {
         activeOptionValue.value = firstSelected?.value;
       } else {
-        activeOptionValue.value = options.value.find(option => !option.disabled && option.visible)?.optionID;
+        activeOptionValue.value = options.value.find(option => !option.isDisabled && option.visible)?.optionID;
       }
     };
     // 默认搜索方法
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     const defaultSearchMethod = (searchValue: string, optionName: string, filterData: Record<string, any> = {}) => {
       if (hasFilterOptionFunc.value) {
         // 是否配置了单个options过滤
@@ -836,7 +849,7 @@ export default defineComponent({
       } else {
         const tmpSelectedMap = new Map();
         options.value.forEach(option => {
-          if (option.disabled || tmpSelectedMap.has(option.optionID)) return;
+          if (option.isDisabled || tmpSelectedMap.has(option.optionID)) return;
 
           tmpSelectedMap.set(option.optionID, option.optionName || option.optionID);
         });
@@ -1083,9 +1096,7 @@ export default defineComponent({
 
       if (isEnableVirtualRender.value) {
         const rows = buildVirtualRows();
-        const selectableValues = rows
-          .filter(row => row?.rowType === 'option' && !row?.disabled)
-          .map(row => row.value);
+        const selectableValues = rows.filter(row => row?.rowType === 'option' && !row?.disabled).map(row => row.value);
         if (!selectableValues.length) return;
 
         const curIndex = selectableValues.findIndex(v => isEqual(v, activeOptionValue.value));
@@ -1142,7 +1153,7 @@ export default defineComponent({
         return;
       }
 
-      const availableOptions = options.value.filter(option => !option.disabled && option.visible);
+      const availableOptions = options.value.filter(option => !option.isDisabled && option.visible);
       const index = availableOptions.findIndex(option => option.optionID === activeOptionValue.value);
 
       // todo v-for循环时组件创建属性不固定
@@ -1495,13 +1506,13 @@ export default defineComponent({
       return (
         <VirtualRender
           ref='virtualRenderRef'
-          className={this.resolveClassName('select-dropdown')}
-          wrapperStyle={{ width: '100%', display: 'block' }}
           height={this.virtualHeight}
-          minHeight={this.minHeight || 30}
+          className={this.resolveClassName('select-dropdown')}
           lineHeight={this.virtualLineHeight}
           list={rows}
+          minHeight={this.minHeight || 30}
           preloadItemCount={this.preloadItemCount}
+          wrapperStyle={{ width: '100%', display: 'block' }}
           onContentScroll={this.handleVirtualContentScroll}
         >
           {{
@@ -1539,7 +1550,10 @@ export default defineComponent({
                   if (row.rowType === 'option') return row.vnode;
                   if (row.rowType === 'loading') {
                     return (
-                      <li key={row.key as any} class={this.resolveClassName('select-options-loading')}>
+                      <li
+                        key={row.key as any}
+                        class={this.resolveClassName('select-options-loading')}
+                      >
                         <Loading
                           class='spinner mr5'
                           loading={true}
