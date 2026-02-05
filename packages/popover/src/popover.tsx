@@ -42,6 +42,7 @@ import { bkZIndexManager, RenderType } from '@bkui-vue/shared';
 
 import { useDelay, usePopoverFloating, useTrigger } from './composables';
 import { PopoverProps } from './props';
+
 import type { TriggerType, PopoverPlacement, IAxesOffsets, VirtualElement } from './types';
 
 /**
@@ -63,7 +64,7 @@ type PopoverRegistryEntry = {
 let __bkPopoverIdSeed = 0;
 const __bkPopoverRegistry = new Map<string, PopoverRegistryEntry>();
 
-const findPopoverIdInEventPath = (event: Event): string | null => {
+const findPopoverIdInEventPath = (event: Event): null | string => {
   const anyEvent = event as any;
   const path = (typeof anyEvent.composedPath === 'function' ? anyEvent.composedPath() : []) as unknown[];
   for (const node of path) {
@@ -74,7 +75,7 @@ const findPopoverIdInEventPath = (event: Event): string | null => {
   return null;
 };
 
-const findPopoverIdFromElement = (target: EventTarget | null): string | null => {
+const findPopoverIdFromElement = (target: EventTarget | null): null | string => {
   if (!(target instanceof HTMLElement)) return null;
   let el: HTMLElement | null = target;
   while (el) {
@@ -97,8 +98,7 @@ const isChildPopoverInteractionFor = (parentId: string, event: Event): boolean =
   const childWrapper = child.referenceWrapperEl;
   // 只在“子 popover 的 reference 在父 popover 内容里”时才认为是关联交互
   return (
-    (!!childRef && parent.floatingEl.contains(childRef)) ||
-    (!!childWrapper && parent.floatingEl.contains(childWrapper))
+    (!!childRef && parent.floatingEl.contains(childRef)) || (!!childWrapper && parent.floatingEl.contains(childWrapper))
   );
 };
 
@@ -178,7 +178,12 @@ export default defineComponent({
 
     // 判断是否为虚拟元素
     const isVirtualElement = (el: unknown): el is VirtualElement => {
-      return el !== null && typeof el === 'object' && 'getBoundingClientRect' in el && typeof (el as any).getBoundingClientRect === 'function';
+      return (
+        el !== null &&
+        typeof el === 'object' &&
+        'getBoundingClientRect' in el &&
+        typeof (el as any).getBoundingClientRect === 'function'
+      );
     };
 
     // 解析自定义 reference 元素
@@ -227,7 +232,7 @@ export default defineComponent({
           // 对于 PointerEvent，使用事件目标元素
           return target.value.target as HTMLElement;
         }
-        return resolveReferenceElement(target.value as string | HTMLElement) as HTMLElement | null;
+        return resolveReferenceElement(target.value as HTMLElement | string) as HTMLElement | null;
       }
       return null;
     };
@@ -311,7 +316,7 @@ export default defineComponent({
     // 浮动定位
     const floatingProps = computed(() => ({
       placement: placement.value as PopoverPlacement,
-      offset: offset.value as number | IAxesOffsets,
+      offset: offset.value as IAxesOffsets | number,
       padding: padding.value,
       arrow: arrow.value,
       autoPlacement: autoPlacement.value,
@@ -346,19 +351,21 @@ export default defineComponent({
       },
       { immediate: true },
     );
-    watch([() => reference.value, () => target.value, () => floatingReference.value], () => nextTick(updateFloatingReference));
-    watch(isOpen, (val) => {
+    watch([() => reference.value, () => target.value, () => floatingReference.value], () =>
+      nextTick(updateFloatingReference),
+    );
+    watch(isOpen, val => {
       if (val) {
         nextTick(updateFloatingReference);
       }
     });
 
-    const {
-      floatingStyles,
-      arrowStyles,
-      update,
-      arrowSide,
-    } = usePopoverFloating(floatingProps, floatingReferenceRef, floatingRef, arrowRef);
+    const { floatingStyles, arrowStyles, update, arrowSide } = usePopoverFloating(
+      floatingProps,
+      floatingReferenceRef,
+      floatingRef,
+      arrowRef,
+    );
 
     // 触发事件管理
     const triggerProps = computed(() => ({
@@ -388,7 +395,10 @@ export default defineComponent({
 
     const isTargetInSelfOrChildren = (targetEl: HTMLElement): boolean => {
       const actualRef = floatingReferenceRef.value;
-      if ((actualRef instanceof HTMLElement && actualRef.contains(targetEl)) || referenceWrapperRef.value?.contains(targetEl)) {
+      if (
+        (actualRef instanceof HTMLElement && actualRef.contains(targetEl)) ||
+        referenceWrapperRef.value?.contains(targetEl)
+      ) {
         return true;
       }
       if (floatingRef.value?.contains(targetEl)) {
@@ -459,7 +469,7 @@ export default defineComponent({
     });
 
     // 计算样式
-    const resolvePixelValue = (val: string | number): string => {
+    const resolvePixelValue = (val: number | string): string => {
       if (typeof val === 'number' || /^\d+$/.test(String(val))) {
         return `${val}px`;
       }
@@ -532,7 +542,9 @@ export default defineComponent({
       const { extraClasses } = parseTheme(theme.value);
       const attrs: Record<string, string> = {};
       extraClasses.forEach(cls => {
-        const normalized = String(cls || '').trim().toLowerCase();
+        const normalized = String(cls || '')
+          .trim()
+          .toLowerCase();
         // data-* 属性名只允许字母/数字/连字符/下划线
         if (!normalized || !/^[a-z0-9_-]+$/.test(normalized)) {
           return;
@@ -557,10 +569,8 @@ export default defineComponent({
 
       // 点击在 reference 内（包括自定义 reference 和默认 reference）
       const actualRef = floatingReferenceRef.value;
-      const isInReference = (
-        (actualRef instanceof HTMLElement && actualRef.contains(target)) ||
-        referenceWrapperRef.value?.contains(target)
-      );
+      const isInReference =
+        (actualRef instanceof HTMLElement && actualRef.contains(target)) || referenceWrapperRef.value?.contains(target);
       if (isInReference) {
         // 对于 click 和 hover 模式，点击 reference 的行为由 referenceListeners 处理
         if (trigger.value === 'click' || trigger.value === 'hover') {
@@ -608,7 +618,7 @@ export default defineComponent({
     const contentPointerEvents = ref<'auto' | 'none'>('auto');
     let eventDelayTimer: ReturnType<typeof setTimeout> | undefined;
 
-    watch(isOpen, (newVal) => {
+    watch(isOpen, newVal => {
       if (newVal && componentEventDelay.value > 0) {
         contentPointerEvents.value = 'none';
         eventDelayTimer = setTimeout(() => {
@@ -667,15 +677,12 @@ export default defineComponent({
     };
 
     // 监听自定义 reference 变化
-    watch(
-      [() => reference.value, () => target.value],
-      () => {
-        unbindCustomReferenceEvents();
-        nextTick(() => {
-          bindCustomReferenceEvents();
-        });
-      },
-    );
+    watch([() => reference.value, () => target.value], () => {
+      unbindCustomReferenceEvents();
+      nextTick(() => {
+        bindCustomReferenceEvents();
+      });
+    });
 
     // 挂载时添加 clickoutside 监听
     onMounted(() => {
@@ -778,11 +785,11 @@ export default defineComponent({
       const floatingNode = shouldRenderContent.value ? (
         <div
           ref={floatingRef}
-          class={contentClass.value}
           style={{
             ...contentStyles.value,
             pointerEvents: contentPointerEvents.value,
           }}
+          class={contentClass.value}
           data-bk-popover-id={popoverId}
           data-theme={dataTheme.value}
           {...extraThemeDataAttrs.value}
@@ -794,8 +801,8 @@ export default defineComponent({
           {arrow.value && (
             <div
               ref={arrowRef}
-              class={resolveClassName('pop2-arrow')}
               style={arrowStyles.value}
+              class={resolveClassName('pop2-arrow')}
               data-arrow={arrowSide.value}
             >
               {slots.arrow?.()}
@@ -809,7 +816,10 @@ export default defineComponent({
       // 如果使用自定义 reference（虚拟元素或外部 HTMLElement），只渲染 Teleport 内容
       if (useCustomReference.value) {
         return (
-          <Teleport to={teleportTo.value} disabled={disableTeleport.value}>
+          <Teleport
+            disabled={disableTeleport.value}
+            to={teleportTo.value}
+          >
             {floatingNode}
           </Teleport>
         );
@@ -820,13 +830,16 @@ export default defineComponent({
         <>
           <span
             ref={referenceWrapperRef}
-            class={referenceCls.value}
             style={{ display: 'inline-block' }}
+            class={referenceCls.value}
             {...referenceListeners.value}
           >
             {slots.default?.()}
           </span>
-          <Teleport to={teleportTo.value} disabled={disableTeleport.value}>
+          <Teleport
+            disabled={disableTeleport.value}
+            to={teleportTo.value}
+          >
             {floatingNode}
           </Teleport>
         </>

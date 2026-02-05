@@ -23,12 +23,22 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { defineComponent, ExtractPropTypes, inject, onMounted, onBeforeUnmount, watch, toRaw, h, getCurrentInstance } from 'vue';
+import {
+  defineComponent,
+  ExtractPropTypes,
+  inject,
+  onMounted,
+  onBeforeUnmount,
+  watch,
+  toRaw,
+  h,
+  getCurrentInstance,
+} from 'vue';
 
 import { PropTypes } from '@bkui-vue/shared';
 
 import { COL_MIN_WIDTH, PROVIDE_KEY_INIT_COL, PROVIDE_KEY_COLUMN_REGISTRY } from '../const';
-import { generateColumnId, ColumnRegistry } from '../hooks/use-column-registry';
+import { generateColumnId, ColumnRegistry, ColumnConfig } from '../hooks/use-column-registry';
 import {
   columnType,
   fixedType,
@@ -102,9 +112,10 @@ export default defineComponent({
 
     // 获取父 TableColumn 的 ID（用于嵌套列）
     const instance = getCurrentInstance();
-    const parentColumnId = (instance?.parent?.type as { name?: string })?.name === 'TableColumn'
-      ? (instance?.parent as unknown as { columnId?: string })?.columnId
-      : undefined;
+    const parentColumnId =
+      (instance?.parent?.type as { name?: string })?.name === 'TableColumn'
+        ? (instance?.parent as unknown as { columnId?: string })?.columnId
+        : undefined;
 
     // 生成列 ID
     const columnId = generateColumnId();
@@ -121,7 +132,7 @@ export default defineComponent({
 
       // mounted 时注册列
       onMounted(() => {
-        columnRegistry.registerColumn(columnId, buildColumnConfig(props, slots), parentColumnId);
+        columnRegistry.registerColumn(columnId, buildColumnConfig(props, slots) as ColumnConfig, parentColumnId);
       });
 
       // 监听关键 props 变化（不使用 deep: true，提升性能）
@@ -144,7 +155,7 @@ export default defineComponent({
           props.showOverflowTooltip,
         ],
         () => {
-          columnRegistry.updateColumn(columnId, buildColumnConfig(props, slots));
+          columnRegistry.updateColumn(columnId, buildColumnConfig(props, slots) as ColumnConfig);
         },
       );
 
