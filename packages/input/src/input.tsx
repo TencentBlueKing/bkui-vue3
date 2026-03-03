@@ -95,8 +95,8 @@ export const enum EVENTS {
   KEYPRESS = 'keypress',
   KEYUP = 'keyup',
   PASTE = 'paste',
-  UPDATE = 'update:modelValue',
   SEARCH = 'search',
+  UPDATE = 'update:modelValue',
 }
 // TODO: 泛型
 /* eslint-disable-next-line */
@@ -109,7 +109,6 @@ function EventFunction(_value: any, _evt: Event) {
 function PastEventFunction(_value: any, _e: ClipboardEvent) {
   return true;
 }
-
 
 function CompositionEventFunction(evt: CompositionEvent) {
   return evt;
@@ -184,7 +183,7 @@ export default defineComponent({
     const suffixCls = getCls('suffix-icon');
 
     const suffixIconMap = {
-      search: () => <Search onClick={handleSearch}/>,
+      search: () => <Search onClick={handleSearch} />,
       password: () => (
         <Unvisible
           class={suffixCls}
@@ -429,7 +428,16 @@ export default defineComponent({
                   if (val === '' || val === null || val === undefined) {
                     return '';
                   }
-                  return (+val).toFixed(precision);
+                  // 输入过程中只截断超出 precision 的多余小数位，不用 toFixed 补零
+                  // 完整的精度格式化在 CHANGE（失焦）时由 handleNumber 处理
+                  const dotIndex = val.indexOf('.');
+                  if (precision === 0) {
+                    return dotIndex > -1 ? val.slice(0, dotIndex) : val;
+                  }
+                  if (dotIndex > -1 && val.length - dotIndex - 1 > precision) {
+                    return val.slice(0, dotIndex + precision + 1);
+                  }
+                  return val;
                 })()
               : e.target.value,
             e,
