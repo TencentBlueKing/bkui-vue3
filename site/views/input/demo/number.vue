@@ -5,7 +5,7 @@
       v-model="val"
       :max="100"
       :min="1"
-      :precision="1"
+      :precision="2"
       :step="0.5"
       size="small"
       type="number"
