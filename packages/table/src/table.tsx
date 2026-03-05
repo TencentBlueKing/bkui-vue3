@@ -30,7 +30,7 @@ import { bkTooltips } from '@bkui-vue/directives';
 import debounce from 'lodash/debounce';
 import isElement from 'lodash/isElement';
 
-import { COLUMN_ATTRIBUTE, PROVIDE_KEY_INIT_COL, PROVIDE_KEY_COLUMN_REGISTRY, SCROLLY_WIDTH, TABLE_ROW_ATTRIBUTE } from './const';
+import { COLUMN_ATTRIBUTE, PROVIDE_KEY_INIT_COL, PROVIDE_KEY_COLUMN_REGISTRY, TABLE_ROW_ATTRIBUTE } from './const';
 import { EMIT_EVENT_TYPES } from './events';
 import useColumnResize from './hooks/use-column-resize';
 import useColumnRegistry from './hooks/use-column-registry';
@@ -160,7 +160,8 @@ export default defineComponent({
      * 计算每一列的实际宽度
      */
     const computedColumnRect = () => {
-      const width = refRoot.value?.offsetWidth - (props.scrollbar ? 1 : SCROLLY_WIDTH) || 0;
+      const scrollContainer = refBody.value?.refRoot as HTMLElement;
+      const width = scrollContainer?.clientWidth ?? refRoot.value?.clientWidth ?? 0;
       columns.resolveColsCalcWidth(width);
       resolveFixedColumnStyle();
     };
@@ -230,10 +231,18 @@ export default defineComponent({
       return pagination.isShowPagination.value ? props.paginationHeight : 0;
     });
 
+    const hasNonPxHeight = () =>
+      props.height != null && props.height !== 'auto' && !/^\d+\.?\d*(px)?$/.test(`${props.height}`);
+
+    const needsDynamicBodyHeight = () =>
+      props.virtualEnabled || hasNonPxHeight() || (props.height === 'auto' && props.maxHeight != null && props.maxHeight !== 'auto');
+
     const setTableFootHeight = () => {
       setFootHeight(footHeight.value);
       if (/^\d+\.?\d*(px)?$/.test(`${props.height}`)) {
         setBodyHeight(Number(`${props.height}`.replace('px', '')));
+      } else if (needsDynamicBodyHeight() && isElement(refRoot.value) && refRoot.value.offsetHeight > 0) {
+        setBodyHeight(refRoot.value.offsetHeight);
       }
     };
 
@@ -269,7 +278,7 @@ export default defineComponent({
     useObserverResize(refRoot, () => {
       if (!observerResizing.value) {
         observerResizing.value = true;
-        if (props.virtualEnabled && isElement(refRoot.value)) {
+        if (needsDynamicBodyHeight() && isElement(refRoot.value)) {
           if (isResizeBodyHeight.value) {
             setTimeout(() => {
               isResizeBodyHeight.value = false;
@@ -293,20 +302,29 @@ export default defineComponent({
       });
     });
 
-    const setRowsBodyHeight = () => {
-      if (props.virtualEnabled) {
-        // 虚拟滚动下，VirtualRender 的 height 应表达“可视窗口高度”，不应被内容总高度覆盖
-        // - 当显式设置了 props.height（px/number）时，bodyHeight 已由 setTableFootHeight / resize 逻辑维护
-        // - 当显式设置了 props.maxHeight（px/number）时，可按内容高度与 maxHeight 取最小值（短列表不出现滚动条）
-        // - 其他情况保持现有 bodyHeight（通常来自 resize observer 或 '100%'）
-        if (/^\d+\.?\d*(px)?$/.test(`${props.height}`)) {
-          return;
-        }
+    const isNumericPx = (val: unknown) => /^\d+\.?\d*(px)?$/.test(`${val}`);
 
-        if (/^\d+\.?\d*(px)?$/.test(`${props.maxHeight}`)) {
-          const rowsHeight = rows.getCurrentPageRowsHeight();
-          const maxHeight = getBodyHeight(Number(`${props.maxHeight}`.replace('px', '')));
-          setBodyHeight(Math.min(rowsHeight, maxHeight), false);
+    const hasMaxHeightConstraint = () =>
+      props.maxHeight != null && props.maxHeight !== 'auto';
+
+    const setRowsBodyHeight = () => {
+      if (isNumericPx(props.height)) {
+        return;
+      }
+
+      if (isNumericPx(props.maxHeight)) {
+        const rowsHeight = rows.getCurrentPageRowsHeight();
+        const maxHeight = getBodyHeight(Number(`${props.maxHeight}`.replace('px', '')));
+        setBodyHeight(Math.min(rowsHeight, maxHeight), false);
+      } else if (
+        hasMaxHeightConstraint() &&
+        isElement(refRoot.value) &&
+        refRoot.value.offsetHeight > 0
+      ) {
+        const rowsHeight = rows.getCurrentPageRowsHeight();
+        const resolvedMax = getBodyHeight(refRoot.value.offsetHeight);
+        if (resolvedMax > 0) {
+          setBodyHeight(Math.min(rowsHeight, resolvedMax), false);
         }
       }
     };

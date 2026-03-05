@@ -298,8 +298,13 @@ export default (columns: UseColumns, { afterResize, onDragOffsetXChange, getRoot
           return;
         }
 
-        const { offsetWidth } = target;
-        const mouseOffsetX = e.offsetX;
+        const th = target.closest('th') as HTMLElement;
+        if (!th) {
+          return;
+        }
+        const thRect = th.getBoundingClientRect();
+        const offsetWidth = thRect.width;
+        const mouseOffsetX = e.clientX - thRect.left;
 
         if (offsetWidth > 12 && (offsetWidth - mouseOffsetX < 8 || (mouseOffsetX < 8 && index > 0))) {
           isInDragSection = true;

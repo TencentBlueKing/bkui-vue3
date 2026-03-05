@@ -57,6 +57,7 @@ import ScrollLoading from './scroll-loading.vue';
 import ScrollLoadingSlot from './scroll-loading-slot.vue';
 import Selection from './selection.vue';
 import virtualRender from './virtual-render.vue';
+import HeightTest from './height-test.vue';
 
 export default defineComponent({
   components: {
@@ -86,9 +87,20 @@ export default defineComponent({
     basicSortBehavior,
     ScrollHorizontal,
     MultiHeader,
+    HeightTest,
   },
   render() {
     const configs = [
+      {
+        attrs: {
+          title: 'Height/Scroll Test',
+          subtitle: 'Automated height/scroll test cases',
+          desc: 'Tests for various height/maxHeight/scroll configurations',
+          componentName: 'table',
+          demoName: 'height-test',
+        },
+        component: () => <HeightTest></HeightTest>,
+      },
       {
         attrs: {
           title: '基础用法',

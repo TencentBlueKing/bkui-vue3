@@ -42,5 +42,8 @@
     "packages/locale/lang",
     "packages/locale/src/lang"
   ],
-  "bk-code-ai.enable": false
+  "bk-code-ai.enable": false,
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  }
 }

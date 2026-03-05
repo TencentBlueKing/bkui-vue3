@@ -1,12 +1,11 @@
 {
   "name": "bkui-vue",
-  "version": "2.0.2-beta.97",
+  "version": "2.0.2-beta.102",
   "workspaces": [
     "packages/**",
     "scripts/cli",
     "site"
   ],
-  "private": true,
   "files": [
     "lib",
     "dist"
@@ -122,10 +121,10 @@
     "parse-path": ">=5.0.0",
     "shelljs": "^0.8.5",
     "semver": ">=7.5.2",
-    "@vue/compiler-dom": "~3.3.4",
+    "@vue/compiler-dom": "~3.5.27",
     "@vue/compiler-sfc": "~3.5.27",
-    "@vue/runtime-dom": "~3.3.4",
-    "@vue/shared": "~3.3.4",
+    "@vue/runtime-dom": "~3.5.27",
+    "@vue/shared": "~3.5.27",
     "@vue/babel-plugin-jsx": "~2.0.1"
   },
   "dependencies": {

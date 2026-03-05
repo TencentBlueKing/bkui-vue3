@@ -130,8 +130,24 @@ const useColumns = (props: TablePropTypes) => {
     const minWidthList = resolveColWidth(visibleColumns);
     const autoWidthList = resolveColWidth(minWidthList, 'minWidth');
 
+    visibleColumns.forEach(col => {
+      if (autoWidthList.includes(col)) return;
+      const calcWidth = (getColumnAttribute(col, COLUMN_ATTRIBUTE.CALC_WIDTH) as number) || 0;
+      const resolvedMinWidth = (getColumnAttribute(col, COLUMN_ATTRIBUTE.COL_MIN_WIDTH) as number) || COL_MIN_WIDTH;
+      if (calcWidth > 0 && calcWidth < resolvedMinWidth) {
+        setColumnAttribute(col, COLUMN_ATTRIBUTE.CALC_WIDTH, resolvedMinWidth);
+        setColumnRect(col, { width: resolvedMinWidth, left: null, right: null });
+        diffWidth -= resolvedMinWidth - calcWidth;
+      }
+    });
+
+    if (autoWidthList.length > 0) {
+      minColWidth = diffWidth > 0 ? diffWidth / autoWidthList.length : COL_MIN_WIDTH;
+    }
+
     autoWidthList.forEach(col => {
-      const calcWidth = minColWidth > COL_MIN_WIDTH ? minColWidth : COL_MIN_WIDTH;
+      const colMinWidth = (getColumnAttribute(col, COLUMN_ATTRIBUTE.COL_MIN_WIDTH) as number) || COL_MIN_WIDTH;
+      const calcWidth = minColWidth > colMinWidth ? minColWidth : colMinWidth;
       setColumnAttribute(col, COLUMN_ATTRIBUTE.CALC_WIDTH, calcWidth);
       setColumnRect(col, {
         width: calcWidth,

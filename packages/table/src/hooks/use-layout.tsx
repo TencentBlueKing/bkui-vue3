@@ -61,6 +61,11 @@ export default (props: TablePropTypes, ctx) => {
     return 0;
   });
 
+  const wrapperBorderHeight = computed(() => {
+    const borders = Array.isArray(props.border) ? props.border : typeof props.border === 'string' ? [props.border] : [];
+    return borders.includes('outer') || borders.includes('horizontal') ? 2 : 0;
+  });
+
   const { resolveClassName } = usePrefix();
   const { renderScrollLoading } = useScrollLoading(props, ctx);
 
@@ -73,11 +78,14 @@ export default (props: TablePropTypes, ctx) => {
     ),
   );
 
-  const tableStyle = computed(() => ({
-    height: resolveNumberOrStringToPix(props.height),
-    maxHeight: resolveNumberOrStringToPix(props.maxHeight),
-    minHeight: resolveNumberOrStringToPix(props.minHeight),
-  }));
+  const tableStyle = computed(() => {
+    const maxH = resolveNumberOrStringToPix(props.maxHeight);
+    return {
+      height: resolveNumberOrStringToPix(props.height),
+      maxHeight: maxH === 'auto' ? undefined : maxH,
+      minHeight: resolveNumberOrStringToPix(props.minHeight),
+    };
+  });
 
   const headClass = computed(() =>
     classes({
@@ -183,7 +191,7 @@ export default (props: TablePropTypes, ctx) => {
 
   const prependStyle = computed(() => ({
     position: 'sticky' as const,
-    top: props.showHead ? headHeight.value : 0,
+    top: `${props.showHead ? headHeight.value : 0}px`,
     zIndex: 2,
     ...(props.prependStyle || {}),
   }));
@@ -203,21 +211,22 @@ export default (props: TablePropTypes, ctx) => {
     return null;
   };
 
-  // 虚拟滚动需要可计算的 viewport 高度（否则 height 会随内容撑开，无法产生滚动条）
-  const bodyHeight: Ref<number | string> = ref(props.virtualEnabled ? '100%' : 'auto');
+  const hasMaxConstraint = props.maxHeight != null && props.maxHeight !== 'auto';
+  const isMaxHeightNumericPx = /^\d+\.?\d*(px)?$/.test(`${props.maxHeight}`);
+  const needsFixedViewport = props.virtualEnabled || (props.height === 'auto' && hasMaxConstraint && isMaxHeightNumericPx);
+  const bodyHeight: Ref<number | string> = ref(needsFixedViewport ? '100%' : 'auto');
 
   const bodyMaxHeight = computed(() => {
-    if (/^\d+\.?\d*(px|%)$/.test(`${tableStyle.value.maxHeight}`)) {
-      const delHeight = footHeight.value + fixedBottomHeight.value;
-
-      return `calc(${tableStyle.value.maxHeight} - ${delHeight}px)`;
+    const maxH = tableStyle.value.maxHeight;
+    if (!maxH || maxH === 'auto' || maxH === undefined) {
+      return null;
     }
 
-    return null;
+    return '100%';
   });
 
   const getBodyHeight = height => {
-    return height - fixedBottomHeight.value - footHeight.value;
+    return height - fixedBottomHeight.value - footHeight.value - wrapperBorderHeight.value;
   };
 
   const setBodyHeight = (height: number, withHeadFoot = true) => {

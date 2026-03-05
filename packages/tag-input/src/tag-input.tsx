@@ -212,8 +212,11 @@ export default defineComponent({
     });
 
     const changePopoverOffset = () => {
-      // 修改popover offset
-      popoverProps.offset.crossAxis = isSingleSelect.value ? 0 : tagInputItemRef.value?.offsetLeft;
+      // 修改popover offset（offset 可能被 props.popoverProps 覆盖为 number，需判断为对象再赋值）
+      const offset = popoverProps.offset;
+      if (typeof offset === 'object' && offset !== null && 'crossAxis' in offset) {
+        offset.crossAxis = isSingleSelect.value ? 0 : tagInputItemRef.value?.offsetLeft ?? 0;
+      }
     };
     const scrollHandler = () => {
       if (pageState.isPageLoading || selectorListRef.value.scrollTop === 0) {

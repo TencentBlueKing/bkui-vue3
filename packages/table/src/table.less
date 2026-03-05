@@ -13,12 +13,10 @@
 .@{bk-prefix}-table {
   position: relative;
   width: 100%;
-  height: 100%;
   overflow: hidden;
   border-spacing: 0;
   display: flex;
   flex-direction: column;
-  max-height: fit-content;
 
   .@{bk-prefix}-table-body {
     position: relative;
@@ -45,7 +43,10 @@
   .bk-table-body-wrapper {
     position: relative;
     width: 100%;
-    height: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    font-size: 0;
 
     // 表头右侧设置按钮：固定在可视区域右侧（不随横向滚动移动）
     .bk-table-head-settings-wrapper {
@@ -128,7 +129,7 @@
   }
 
   .@{bk-prefix}-table-head,
-  .@{bk-prefix}-table-body {
+  .@{bk-prefix}-table-body {    
     &.__is-empty {
       display: flex;
       height: 100%;
@@ -371,6 +372,12 @@
             }
           }
 
+          &:last-child {
+            td {
+              border-bottom: none;
+            }
+          }
+
           td {
             background-color: #fff;
             border-top: 1px solid @table-bg-color;
@@ -502,25 +509,52 @@
   }
 
   &.bordered-outer {
-    border-top: 1px solid @table-border-color;
-    border-right: 1px solid @table-border-color;
-    border-left: 1px solid @table-border-color;
+    .bk-table-body-wrapper {
+      border: 1px solid @table-border-color;
+      border-radius: 2px;
+      box-sizing: border-box;
+    }
 
-    .@{bk-prefix}-table-footer {
+    .@{bk-prefix}-table-footer:not(.is-hidden) {
+      border-left: 1px solid @table-border-color;
+      border-right: 1px solid @table-border-color;
       border-bottom: 1px solid @table-border-color;
+      border-radius: 0 0 2px 2px;
+      box-sizing: border-box;
+    }
+
+    .bk-table-body-wrapper:has(~ .@{bk-prefix}-table-footer:not(.is-hidden)) {
+      border-bottom: none;
+      border-radius: 2px 2px 0 0;
     }
   }
 
   &.bordered-horizontal {
-    border-top: 1px solid @table-border-color;
-    border-bottom: 1px solid @table-border-color;
+    .bk-table-body-wrapper {
+      border-top: 1px solid @table-border-color;
+      border-bottom: 1px solid @table-border-color;
+      box-sizing: border-box;
+    }
+
+    .@{bk-prefix}-table-footer:not(.is-hidden) {
+      border-bottom: 1px solid @table-border-color;
+      box-sizing: border-box;
+    }
+
+    .bk-table-body-wrapper:has(~ .@{bk-prefix}-table-footer:not(.is-hidden)) {
+      border-bottom: none;
+    }
   }
 
   &.bordered-outer,
   &.bordered-horizontal {
-    .__is-empty {
-      .@{bk-prefix}-table-body-content {
-        border-bottom: 1px solid @table-border-color;
+    .@{bk-prefix}-table-body {
+      tbody {
+        tr:last-child {
+          td {
+            border-bottom-color: @table-bg-color;
+          }
+        }
       }
     }
   }
@@ -562,6 +596,15 @@
             }
           }
         }
+      }
+    }
+
+    &.bordered-outer {
+      .@{bk-prefix}-table-head {
+        border-right: none;
+      }
+      .@{bk-prefix}-table-body {
+        border-right: none;
       }
     }
   }
