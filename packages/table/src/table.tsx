@@ -325,6 +325,8 @@ export default defineComponent({
         const resolvedMax = getBodyHeight(refRoot.value.offsetHeight);
         if (resolvedMax > 0) {
           setBodyHeight(Math.min(rowsHeight, resolvedMax), false);
+        } else if (rowsHeight > 0) {
+          setBodyHeight(rowsHeight, false);
         }
       }
     };
