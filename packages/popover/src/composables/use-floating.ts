@@ -35,6 +35,7 @@ import {
   autoPlacement,
   autoUpdate,
   type Placement,
+  type Strategy,
   type MiddlewareData,
 } from '@floating-ui/vue';
 
@@ -55,6 +56,8 @@ export interface UseFloatingProps {
   autoVisibility: boolean;
   /** 是否禁用 transform 定位 */
   disableTransform: boolean;
+  /** 定位策略：'fixed' 不会导致容器产生滚动溢出 */
+  strategy: Strategy;
   /** 当前是否显示 */
   isOpen: boolean;
 }
@@ -161,6 +164,7 @@ export function usePopoverFloating(
     isPositioned,
   } = useFloatingUI(referenceRef, floatingRef, {
     placement: computed(() => props.value.placement as Placement),
+    strategy: computed(() => props.value.strategy),
     middleware,
     whileElementsMounted: autoUpdate,
     transform: computed(() => !props.value.disableTransform),

@@ -313,6 +313,17 @@ export default defineComponent({
       }
     });
 
+    const floatingStrategy = computed<'absolute' | 'fixed'>(() => {
+      if (disableTeleport.value) return 'absolute';
+
+      const b = boundary.value;
+      if (typeof b === 'string') {
+        return (b === 'body' || b === 'parent') ? 'fixed' : 'absolute';
+      }
+      if (b === document.body) return 'fixed';
+      return 'absolute';
+    });
+
     // 浮动定位
     const floatingProps = computed(() => ({
       placement: placement.value as PopoverPlacement,
@@ -322,6 +333,7 @@ export default defineComponent({
       autoPlacement: autoPlacement.value,
       autoVisibility: autoVisibility.value,
       disableTransform: disableTransform.value,
+      strategy: floatingStrategy.value,
       isOpen: isOpen.value,
     }));
 
