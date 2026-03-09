@@ -372,6 +372,7 @@ export default defineComponent({
       () => [pagination.isShowPagination.value],
       () => {
         setTableFootHeight();
+        nextTick(() => scrollTo(0, 0));
       },
       { immediate: true },
     );

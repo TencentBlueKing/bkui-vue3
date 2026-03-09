@@ -1,229 +1,39 @@
 <template>
-  <bk-button @click="clearSelection">取消全选</bk-button>
-  <bk-button @click="handleScrollTo">ScrollToLast</bk-button>
-  <bk-button @click="handleAppendToLastRow">追加一行</bk-button>
-  <div style="display: grid">
-    <div style="height: 300px">
-      <bk-table
-        ref="refTable"
-        height="auto"
-        :data="projectTable"
-        :fixed-bottom="fixedBottom"
-        :pagination="pagination"
-        max-height="100%"
-        row-draggable
-        show-overflow-tooltip
-        stripe
-      >
-        <bk-table-column
-          width="30"
-          :min-width="30"
-          align="center"
-          type="selection"
-        />
-        <bk-table-column
-          :sort="true"
-          label="用户组"
-          prop="groupName"
-        />
-        <bk-table-column
-          label="用户描述"
-          prop="groupDesc"
-        />
-        <bk-table-column
-          :filter="filterOption"
-          label="有效期"
-          prop="validityPeriod"
-        />
-        <bk-table-column
-          label="加入时间"
-          prop="joinedTime"
-        />
-        <bk-table-column
-          label="加入方式/操作人"
-          prop="operateSource"
-        >
-          <template #default="{ row }"> {{ row.operateSource }}/{{ row.operator }} </template>
-        </bk-table-column>
-      </bk-table>
+  <div>
+    <div style="margin-bottom: 12px;">
+      <bk-checkbox v-model="stripe">斑马纹 (stripe)</bk-checkbox>
     </div>
+    <bk-table
+      :columns="columns"
+      :data="tableData"
+      :height="300"
+      :stripe="stripe"
+    />
   </div>
 </template>
 
 <script setup>
-  import { ref, reactive, onMounted, computed } from 'vue';
-  const refTable = ref(null);
+  import { ref, reactive } from 'vue';
 
-  const handleScrollTo = () => {
-    refTable?.value.scrollTo(0, 1000);
-  };
+  const stripe = ref(false);
 
-  const pagination = ref({ count: 11, limit: 10, current: 1 });
-  const clearSelection = () => {
-    refTable.value.clearSelection();
-  };
+  const columns = reactive([
+    { label: '名称', field: 'name' },
+    { label: '来源', field: 'source' },
+    { label: '状态', field: 'status' },
+    { label: '创建时间', field: 'createTime' },
+  ]);
 
-  const filterList = reactive([]);
-  const filterOption = computed(() => ({
-    list: filterList,
-    checked: [],
-  }));
-
-  const lastRowIndex = ref(10);
-
-  const handleAppendToLastRow = () => {
-    lastRowIndex.value = lastRowIndex.value + 1;
-    projectTable.value.push({
-      groupId: lastRowIndex.value,
-      groupName: `last-group-${lastRowIndex.value}`,
-      groupDesc: `last-des-${lastRowIndex.value}`,
-      validityPeriod: `last-period-${lastRowIndex.value}`,
-      joinedTime: '08-18',
-      operateSource: `last-source-${lastRowIndex.value}`,
-      operator: `last-operator-${lastRowIndex.value}`,
-      removeMemberButtonControl: true,
-    });
-  };
-
-  const fixedBottom = reactive({
-    position: 'relative',
-    height: 42,
-  });
-  const projectTable = ref([]);
-  onMounted(() => {
-    setTimeout(() => {
-      projectTable.value = [
-        {
-          groupId: 1,
-          groupName: '11',
-          groupDesc: 'kjkjkjk',
-          validityPeriod: '0506',
-          joinedTime: '08-18',
-          operateSource: '加入组',
-          operator: '张三',
-          removeMemberButtonControl: true,
-        },
-        {
-          groupId: 2,
-          groupName: '22',
-          groupDesc: 'kjkjkjk',
-          validityPeriod: '0505',
-          joinedTime: '08-18',
-          operateSource: '加入组',
-          operator: '张三',
-          removeMemberButtonControl: false,
-        },
-        {
-          groupId: 3,
-          groupName: '33',
-          groupDesc: 'kjkjkjk',
-          validityPeriod: '0605',
-          joinedTime: '08-18',
-          operateSource: '加入组',
-          operator: '张三',
-          removeMemberButtonControl: false,
-        },
-        {
-          groupId: 4,
-          groupName: '44',
-          groupDesc: 'kjkjkjk',
-          validityPeriod: '0506',
-          joinedTime: '08-18',
-          operateSource: '加入组',
-          operator: '张三',
-          removeMemberButtonControl: false,
-        },
-        {
-          groupId: 5,
-          groupName: '55',
-          groupDesc: 'kjkjkjk',
-          validityPeriod: '0605',
-          joinedTime: '08-18',
-          operateSource: '加入组',
-          operator: '张三',
-          removeMemberButtonControl: false,
-        },
-        {
-          groupId: 6,
-          groupName: '66',
-          groupDesc: 'kjkjkjk',
-          validityPeriod: '0506',
-          joinedTime: '08-18',
-          operateSource: '加入组',
-          operator: '张三',
-          removeMemberButtonControl: false,
-        },
-        {
-          groupId: 7,
-          groupName: '77',
-          groupDesc: 'kjkjkjk',
-          validityPeriod: '0605',
-          joinedTime: '08-18',
-          operateSource: '加入组',
-          operator: '张三',
-          removeMemberButtonControl: false,
-        },
-        {
-          groupId: 8,
-          groupName: '88',
-          groupDesc: 'kjkjkjk',
-          validityPeriod: '0605',
-          joinedTime: '08-18',
-          operateSource: '加入组',
-          operator: '张三',
-          removeMemberButtonControl: false,
-        },
-        {
-          groupId: 9,
-          groupName: '99',
-          groupDesc: 'kjkjkjk',
-          validityPeriod: '0605',
-          joinedTime: '08-18',
-          operateSource: '加入组',
-          operator: '张三',
-          removeMemberButtonControl: false,
-        },
-        {
-          groupId: 10,
-          groupName: '1010',
-          groupDesc: 'kjkjkjk',
-          validityPeriod: '0506',
-          joinedTime: '08-18',
-          operateSource: '加入组',
-          operator: '张三',
-          removeMemberButtonControl: false,
-        },
-        {
-          groupId: 11,
-          groupName: '1111',
-          groupDesc: 'kjkjkjk',
-          validityPeriod: '0505',
-          joinedTime: '08-18',
-          operateSource: '加入组',
-          operator: '张三',
-          removeMemberButtonControl: false,
-        },
-      ];
-    });
-
-    setTimeout(() => {
-      filterList.push(
-        ...[
-          { text: '0506', value: '0506' },
-          { text: '0605', value: '0605' },
-        ],
-      );
-    });
-  });
+  const tableData = ref([
+    { name: '服务器-01', source: '腾讯云', status: '运行中', createTime: '2025-01-15 10:30:00' },
+    { name: '服务器-02', source: '阿里云', status: '已停止', createTime: '2025-02-20 14:22:00' },
+    { name: '服务器-03', source: '腾讯云', status: '运行中', createTime: '2025-03-10 09:15:00' },
+    { name: '服务器-04', source: 'AWS', status: '运行中', createTime: '2025-04-05 16:48:00' },
+    { name: '服务器-05', source: '腾讯云', status: '维护中', createTime: '2025-05-18 11:30:00' },
+    { name: '服务器-06', source: '华为云', status: '运行中', createTime: '2025-06-01 08:00:00' },
+    { name: '服务器-07', source: '腾讯云', status: '已停止', createTime: '2025-06-12 17:35:00' },
+    { name: '服务器-08', source: 'AWS', status: '运行中', createTime: '2025-07-03 13:20:00' },
+    { name: '服务器-09', source: '阿里云', status: '维护中', createTime: '2025-07-20 09:45:00' },
+    { name: '服务器-10', source: '腾讯云', status: '运行中', createTime: '2025-08-08 15:10:00' },
+  ]);
 </script>
-<style scoped>
-  .row {
-    display: flex;
-    width: 100%;
-  }
-
-  .cell {
-    flex: 1;
-    margin: 0 5px 0 5px;
-  }
-</style>
