@@ -1,6 +1,12 @@
 ## 更新日志
 
 
+### 2.0.2-beta.103
+
+* **[feat]**:
+    - bugfix(input): 修复 Input设置precision后 按下任意数字会默认补充precision数量的小数位，失焦又回复 ([#2474](https://github.com/TencentBlueKing/bkui-vue3/issues/2474))
+
+
 ### 2.0.2-beta.92
 
 * **[feat]**:
