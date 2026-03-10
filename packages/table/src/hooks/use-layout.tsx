@@ -427,6 +427,9 @@ export default (props: TablePropTypes, ctx) => {
     initRootStyleVars,
     // expose for plugins that need scroll offset (e.g. column resize indicator)
     translateX,
+    headHeight,
+    fixedBottomHeight,
+    wrapperBorderHeight,
     refRoot,
     refHead,
     refBody,

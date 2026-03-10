@@ -73,6 +73,9 @@ export default defineComponent({
       setHeaderRowCount,
       setLineHeight,
       getBodyHeight,
+      headHeight,
+      fixedBottomHeight,
+      wrapperBorderHeight,
       refBody,
       refRoot,
       translateX,
@@ -227,22 +230,96 @@ export default defineComponent({
       return renderList;
     });
 
+    const isNumericPx = (val: unknown) => /^\d+\.?\d*(px)?$/.test(`${val}`);
+
+    const hasMaxHeightConstraint = () =>
+      props.maxHeight != null && props.maxHeight !== 'auto';
+
     const footHeight = computed(() => {
       return pagination.isShowPagination.value ? props.paginationHeight : 0;
     });
 
     const hasNonPxHeight = () =>
-      props.height != null && props.height !== 'auto' && !/^\d+\.?\d*(px)?$/.test(`${props.height}`);
+      props.height != null && props.height !== 'auto' && !isNumericPx(props.height);
 
     const needsDynamicBodyHeight = () =>
-      props.virtualEnabled || hasNonPxHeight() || (props.height === 'auto' && props.maxHeight != null && props.maxHeight !== 'auto');
+      props.virtualEnabled || hasNonPxHeight() || (props.height === 'auto' && hasMaxHeightConstraint());
+
+    /**
+     * 计算滚动容器内的实际内容总高度
+     * 滚动容器 (.bk-table-body) 内包含：
+     *   1. 表头 — 由 showHead 控制是否展示，高度 = headHeight(受 headHeight/thead props) × headerRowCount（多级表头）
+     *   2. 数据行 — 高度 = 各行行高之和（受 rowHeight prop 和行数据影响）
+     */
+    const getScrollContentHeight = () => {
+      const rowsHeight = rows.getCurrentPageRowsHeight();
+      const scrollHeaderHeight = props.showHead ? headHeight.value : 0;
+      return rowsHeight + scrollHeaderHeight;
+    };
+
+    /**
+     * 获取外层容器的最大可用高度
+     *
+     * 当 height="auto" + 非像素值 maxHeight（如 calc(100vh - 180px)）时，
+     * root 容器的 offsetHeight 会因 height:auto 随内容缩小，
+     * 导致异步加载数据后 offsetHeight 反映的是缩小后的高度而非实际可用空间。
+     *
+     * 此函数通过 getComputedStyle 获取浏览器解析后的 maxHeight 真实像素值，
+     * 作为计算可用空间的天花板，打破循环依赖。
+     *
+     * 对于像素值 maxHeight，直接使用该数值（无循环依赖问题）。
+     * 对于非 auto 的固定 height，使用 offsetHeight（不会缩小）。
+     */
+    const getMaxContainerHeight = (): number => {
+      if (!isElement(refRoot.value) || refRoot.value.offsetHeight <= 0) return 0;
+
+      if (isNumericPx(props.maxHeight)) {
+        return Number(`${props.maxHeight}`.replace('px', ''));
+      }
+
+      if (props.height === 'auto' && hasMaxHeightConstraint()) {
+        const resolved = parseFloat(getComputedStyle(refRoot.value).maxHeight);
+        if (!isNaN(resolved) && resolved > 0) return resolved;
+      }
+
+      return refRoot.value.offsetHeight;
+    };
+
+    /**
+     * 计算 height="auto" + maxHeight 模式下滚动容器的高度
+     *
+     * 可用空间 = getMaxContainerHeight() - 分页器(paginationHeight) - fixedBottom - 边框
+     *   由 getBodyHeight 统一计算，内部已根据各 props 动态得出
+     *
+     * 最终高度 = min(内容高度, 可用空间)
+     *   内容 < 可用空间 → 不出现滚动条
+     *   内容 > 可用空间 → 限制在可用空间内，出现滚动条
+     */
+    const resolveContentAwareBodyHeight = (): boolean => {
+      const containerHeight = getMaxContainerHeight();
+      if (containerHeight <= 0) return false;
+
+      const contentHeight = getScrollContentHeight();
+      const availableHeight = getBodyHeight(containerHeight);
+      if (availableHeight > 0 && contentHeight > 0) {
+        setBodyHeight(Math.min(contentHeight, availableHeight), false);
+        return true;
+      }
+      return false;
+    };
 
     const setTableFootHeight = () => {
       setFootHeight(footHeight.value);
-      if (/^\d+\.?\d*(px)?$/.test(`${props.height}`)) {
+      if (isNumericPx(props.height)) {
         setBodyHeight(Number(`${props.height}`.replace('px', '')));
       } else if (needsDynamicBodyHeight() && isElement(refRoot.value) && refRoot.value.offsetHeight > 0) {
-        setBodyHeight(refRoot.value.offsetHeight);
+        if (props.height === 'auto' && hasMaxHeightConstraint()) {
+          if (!resolveContentAwareBodyHeight()) {
+            setBodyHeight(refRoot.value.offsetHeight);
+          }
+        } else {
+          setBodyHeight(refRoot.value.offsetHeight);
+        }
       }
     };
 
@@ -285,9 +362,16 @@ export default defineComponent({
             });
             return;
           }
-          const tableHeight = refRoot.value.offsetHeight;
           isResizeBodyHeight.value = true;
-          setBodyHeight(tableHeight);
+
+          if (props.height === 'auto' && hasMaxHeightConstraint()) {
+            if (!resolveContentAwareBodyHeight()) {
+              setBodyHeight(refRoot.value.offsetHeight);
+            }
+          } else {
+            setBodyHeight(refRoot.value.offsetHeight);
+          }
+
           setOffsetRight();
         }
         computedColumnRect();
@@ -302,31 +386,17 @@ export default defineComponent({
       });
     });
 
-    const isNumericPx = (val: unknown) => /^\d+\.?\d*(px)?$/.test(`${val}`);
-
-    const hasMaxHeightConstraint = () =>
-      props.maxHeight != null && props.maxHeight !== 'auto';
-
     const setRowsBodyHeight = () => {
       if (isNumericPx(props.height)) {
         return;
       }
 
-      if (isNumericPx(props.maxHeight)) {
-        const rowsHeight = rows.getCurrentPageRowsHeight();
-        const maxHeight = getBodyHeight(Number(`${props.maxHeight}`.replace('px', '')));
-        setBodyHeight(Math.min(rowsHeight, maxHeight), false);
-      } else if (
-        hasMaxHeightConstraint() &&
-        isElement(refRoot.value) &&
-        refRoot.value.offsetHeight > 0
-      ) {
-        const rowsHeight = rows.getCurrentPageRowsHeight();
-        const resolvedMax = getBodyHeight(refRoot.value.offsetHeight);
-        if (resolvedMax > 0) {
-          setBodyHeight(Math.min(rowsHeight, resolvedMax), false);
-        } else if (rowsHeight > 0) {
-          setBodyHeight(rowsHeight, false);
+      if (hasMaxHeightConstraint()) {
+        if (!resolveContentAwareBodyHeight()) {
+          const contentHeight = getScrollContentHeight();
+          if (contentHeight > 0) {
+            setBodyHeight(contentHeight, false);
+          }
         }
       }
     };
