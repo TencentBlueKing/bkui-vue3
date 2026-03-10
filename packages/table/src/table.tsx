@@ -252,7 +252,16 @@ export default defineComponent({
     const getScrollContentHeight = () => {
       const rowsHeight = rows.getCurrentPageRowsHeight();
       const scrollHeaderHeight = props.showHead ? headHeight.value : 0;
-      return rowsHeight + scrollHeaderHeight;
+      const calculatedHeight = rowsHeight + scrollHeaderHeight;
+
+      if (rows.pageRowList.length === 0) {
+        const scrollEl = refBody.value?.refRoot as HTMLElement;
+        if (scrollEl && scrollEl.scrollHeight > calculatedHeight) {
+          return scrollEl.scrollHeight;
+        }
+      }
+
+      return calculatedHeight;
     };
 
     /**

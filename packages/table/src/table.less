@@ -490,6 +490,10 @@
     &.is-hidden {
       display: none;
     }
+
+    &:not(.is-hidden) {
+      border-top: 1px solid @table-border-color;
+    }
   }
 
   &.bordered-row {
