@@ -74,8 +74,6 @@ export default defineComponent({
       setLineHeight,
       getBodyHeight,
       headHeight,
-      fixedBottomHeight,
-      wrapperBorderHeight,
       refBody,
       refRoot,
       translateX,
