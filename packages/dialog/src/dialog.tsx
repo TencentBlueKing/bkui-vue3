@@ -24,7 +24,19 @@
  * IN THE SOFTWARE.
  */
 
-import { computed, defineComponent, getCurrentInstance, reactive, ref, useAttrs, useSlots } from 'vue';
+import {
+  Comment,
+  Fragment,
+  Text,
+  computed,
+  defineComponent,
+  getCurrentInstance,
+  isVNode,
+  reactive,
+  ref,
+  useAttrs,
+  useSlots,
+} from 'vue';
 
 import Button from '@bkui-vue/button';
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
@@ -154,29 +166,75 @@ export default defineComponent({
       };
     };
 
+    const hasRenderableSlotContent = (content: unknown): boolean => {
+      if (content === null || content === undefined || content === false) {
+        return false;
+      }
+      if (Array.isArray(content)) {
+        return content.some(item => hasRenderableSlotContent(item));
+      }
+      if (typeof content === 'string') {
+        return content.trim().length > 0;
+      }
+      if (typeof content === 'number') {
+        return true;
+      }
+      if (isVNode(content)) {
+        if (content.type === Comment) {
+          return false;
+        }
+        if (content.type === Text) {
+          return hasRenderableSlotContent(content.children);
+        }
+        if (content.type === Fragment) {
+          return hasRenderableSlotContent(content.children);
+        }
+        return true;
+      }
+      return true;
+    };
+
     return () => {
+      const headerSlotContent = slots.header?.();
+      const hasHeaderSlot = !!slots.header;
+      const shouldRenderHeader = hasHeaderSlot ? hasRenderableSlotContent(headerSlotContent) : Boolean(props.title);
+
       const dialogSlot = {
-        header: () => (
-          <>
-            {!props.fullscreen && props.draggable && (
-              <div
-                class={resolveClassName('dialog-tool')}
-                onMousedown={handleMousedown}
-              >
-                {slots.tools?.()}
+        header: () => {
+          if (!shouldRenderHeader) {
+            return null;
+          }
+          return (
+            <>
+              {!props.fullscreen && props.draggable && (
+                <div
+                  class={resolveClassName('dialog-tool')}
+                  onMousedown={handleMousedown}
+                >
+                  {slots.tools?.()}
+                </div>
+              )}
+              <div class={resolveClassName('dialog-header')}>
+                <span
+                  style={`text-align: ${props.headerAlign}`}
+                  class={resolveClassName('dialog-title')}
+                >
+                  {hasHeaderSlot ? headerSlotContent : props.title}
+                </span>
               </div>
-            )}
-            <div class={resolveClassName('dialog-header')}>
-              <span
-                style={`text-align: ${props.headerAlign}`}
-                class={resolveClassName('dialog-title')}
-              >
-                {slots.header?.() ?? props.title}
-              </span>
-            </div>
-          </>
-        ),
-        default: () => <div class={resolveClassName('dialog-content')}>{slots.default()}</div>,
+            </>
+          );
+        },
+        default: () => {
+          if (!slots.default) {
+            return null;
+          }
+          const defaultSlotContent = slots.default();
+          if (!props.showContentClass) {
+            return defaultSlotContent;
+          }
+          return <div class={resolveClassName('dialog-content')}>{defaultSlotContent}</div>;
+        },
         footer: () => {
           if (slots.footer) {
             return (
