@@ -27,7 +27,6 @@
 import {
   Comment,
   Fragment,
-  Text,
   computed,
   defineComponent,
   getCurrentInstance,
@@ -166,38 +165,19 @@ export default defineComponent({
       };
     };
 
-    const hasRenderableSlotContent = (content: unknown): boolean => {
-      if (content === null || content === undefined || content === false) {
-        return false;
-      }
-      if (Array.isArray(content)) {
-        return content.some(item => hasRenderableSlotContent(item));
-      }
-      if (typeof content === 'string') {
-        return content.trim().length > 0;
-      }
-      if (typeof content === 'number') {
-        return true;
-      }
-      if (isVNode(content)) {
-        if (content.type === Comment) {
-          return false;
-        }
-        if (content.type === Text) {
-          return hasRenderableSlotContent(content.children);
-        }
-        if (content.type === Fragment) {
-          return hasRenderableSlotContent(content.children);
-        }
-        return true;
-      }
-      return true;
+    const isSlotContentEmpty = (content: unknown): boolean => {
+      if (!content) return true;
+      if (Array.isArray(content)) return content.every(isSlotContentEmpty);
+      if (!isVNode(content)) return false;
+      if (content.type === Comment) return true;
+      if (content.type === Fragment) return isSlotContentEmpty(content.children);
+      return false;
     };
 
     return () => {
       const headerSlotContent = slots.header?.();
       const hasHeaderSlot = !!slots.header;
-      const shouldRenderHeader = hasHeaderSlot ? hasRenderableSlotContent(headerSlotContent) : Boolean(props.title);
+      const shouldRenderHeader = hasHeaderSlot ? !isSlotContentEmpty(headerSlotContent) : Boolean(props.title);
 
       const dialogSlot = {
         header: () => {
