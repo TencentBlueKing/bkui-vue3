@@ -1,6 +1,12 @@
 ## 更新日志
 
 
+### 2.0.2-beta.109
+
+* **[feat]**:
+    - feat(dialog): 增加showContentClass配置
+
+
 ### 2.0.2-beta.103
 
 * **[feat]**:
