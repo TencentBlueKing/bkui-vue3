@@ -383,7 +383,6 @@ export default defineComponent({
         }
         computedColumnRect();
         setOffsetRight();
-        scrollTo(0, 0);
         return;
       }
 
