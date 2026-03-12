@@ -144,6 +144,13 @@ const dialogPropsJson: IPropsTableItem[] = [
     optional: ['left', 'center', 'right'],
   },
   {
+    name: 'show-content-class',
+    type: 'Boolean',
+    default: 'true',
+    desc: '是否为默认内容区包裹 .bk-dialog-content 样式类',
+    optional: [],
+  },
+  {
     name: 'before-close',
     type: '() => Promise<boolean> | boolean>',
     default: '--',
@@ -199,7 +206,7 @@ const dialogSlotsJson: IPropsTableItem[] = [
     name: 'header',
     type: 'Function',
     default: '',
-    desc: '头部插槽',
+    desc: '头部插槽（显式传空内容时不渲染头部区域）',
     optional: [],
   },
   {

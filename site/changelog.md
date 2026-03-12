@@ -1,6 +1,18 @@
 ## 更新日志
 
 
+### 2.0.2-beta.110
+
+* **[feat]**:
+    - fix(tree): 修复异步加载时，点击node会自动加载和展开
+
+
+### 2.0.2-beta.109
+
+* **[feat]**:
+    - feat(dialog): 增加showContentClass配置
+
+
 ### 2.0.2-beta.103
 
 * **[feat]**:
