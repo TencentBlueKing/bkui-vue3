@@ -109,17 +109,62 @@
         />
       </div>
     </div>
+
+    <!-- Test Case 8: rowHeight=auto — 行高自适应内容 -->
+    <div style="margin-top: 20px; border: 2px solid #1768ef;">
+      <h3 style="padding: 8px 12px; margin: 0; background: #e8f0fe; font-size: 14px;">
+        T8: rowHeight="auto" — 行高根据内容自动撑起（最小 42px）
+      </h3>
+      <div style="display: flex; gap: 16px; padding: 12px;">
+        <!-- 左：固定行高（默认） -->
+        <div style="flex: 1;">
+          <p style="font-size: 12px; color: #666; margin: 0 0 6px;">固定行高（默认 42px）</p>
+          <bk-table
+            ref="table8Fixed"
+            :columns="columnsWithRemark"
+            :data="dataMultiLine"
+            data-testid="table-row-height-fixed"
+          />
+        </div>
+        <!-- 右：rowHeight=auto -->
+        <div style="flex: 1;">
+          <p style="font-size: 12px; color: #666; margin: 0 0 6px;">rowHeight="auto" — 自适应内容高度</p>
+          <bk-table
+            ref="table8Auto"
+            :columns="columnsWithRemark"
+            :data="dataMultiLine"
+            row-height="auto"
+            data-testid="table-row-height-auto"
+          />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, nextTick } from 'vue';
+import { ref, reactive, computed, onMounted, nextTick, h } from 'vue';
 
 const columns = [
   { label: 'IP', field: 'ip' },
   { label: 'Source', field: 'source' },
   { label: 'Status', field: 'status' },
   { label: 'Time', field: 'create_time' },
+];
+
+const columnsWithRemark = [
+  { label: 'IP', field: 'ip', width: 140 },
+  { label: 'Status', field: 'status', width: 90 },
+  {
+    label: '备注',
+    field: 'remark',
+    render: ({ row }) =>
+      h(
+        'div',
+        { style: { whiteSpace: 'pre-wrap', wordBreak: 'break-all', padding: '6px 0', lineHeight: '1.6' } },
+        row.remark,
+      ),
+  },
 ];
 
 function genData(count) {
@@ -130,6 +175,22 @@ function genData(count) {
     create_time: '2024-01-01 00:00:00',
   }));
 }
+
+const dataMultiLine = reactive([
+  { ip: '10.0.0.1', status: 'Running', remark: '单行备注' },
+  {
+    ip: '10.0.0.2',
+    status: 'Stopped',
+    remark: '这是一段较长的备注内容，\n包含换行，\n需要多行展示才能完整呈现所有信息。',
+  },
+  { ip: '10.0.0.3', status: 'Running', remark: '普通备注' },
+  {
+    ip: '10.0.0.4',
+    status: 'Stopped',
+    remark: '第一行\n第二行\n第三行\n第四行 — 内容较多时行高应自动撑开',
+  },
+  { ip: '10.0.0.5', status: 'Running', remark: '最后一行，单行' },
+]);
 
 const data5 = reactive(genData(5));
 const data20 = reactive(genData(20));
@@ -148,6 +209,8 @@ const table4 = ref(null);
 const table5 = ref(null);
 const table6 = ref(null);
 const table7 = ref(null);
+const table8Fixed = ref(null);
+const table8Auto = ref(null);
 
 const container1 = ref(null);
 const container2 = ref(null);
@@ -282,6 +345,46 @@ async function runAllTests() {
       'T7: virtualEnabled, height=300 — body is scrollable (100 rows)',
       isScrollable(body),
       `scrollHeight=${body?.scrollHeight}, clientHeight=${body?.clientHeight}`,
+    );
+  }
+
+  // Test 8: rowHeight=auto — tr 上有 row-height-auto class，多行内容的 td 高度 > 42px
+  {
+    const rootAuto = table8Auto.value?.$el;
+    const rootFixed = table8Fixed.value?.$el;
+
+    // 验证 row-height-auto class 已加到 tr 上
+    const autoTrs = rootAuto?.querySelectorAll('tbody tr.row-height-auto');
+    assert(
+      'T8: rowHeight=auto — tbody tr 上有 row-height-auto class',
+      autoTrs && autoTrs.length > 0,
+      `找到 ${autoTrs?.length ?? 0} 个 .row-height-auto tr`,
+    );
+
+    // 固定行高模式下 tr 上不应有 row-height-auto class
+    const fixedAutoTrs = rootFixed?.querySelectorAll('tbody tr.row-height-auto');
+    assert(
+      'T8: 固定行高模式 — tr 上无 row-height-auto class',
+      fixedAutoTrs != null && fixedAutoTrs.length === 0,
+      `存在 ${fixedAutoTrs?.length} 个 .row-height-auto tr`,
+    );
+
+    // auto 模式下，含多行内容的行高度应大于 42px
+    const autoTds = rootAuto?.querySelectorAll('tbody tr td:last-child');
+    const autoHeights = autoTds ? [...autoTds].map(td => td.offsetHeight) : [];
+    const hasExpandedRow = autoHeights.some(h => h > 50);
+    assert(
+      'T8: rowHeight=auto — 多行内容的行高度 > 42px（内容自动撑起）',
+      hasExpandedRow,
+      `td 高度列表: ${autoHeights.join(', ')}`,
+    );
+
+    // auto 模式下，单行内容的行高度应接近最小行高（>=38px，考虑 border/padding 细微差异）
+    const minAutoHeight = Math.min(...autoHeights);
+    assert(
+      'T8: rowHeight=auto — 所有行高度 >= 38px（最小高度保障）',
+      autoHeights.length > 0 && minAutoHeight >= 38,
+      `最小行高: ${minAutoHeight}px`,
     );
   }
 

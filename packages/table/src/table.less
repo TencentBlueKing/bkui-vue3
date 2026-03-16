@@ -403,6 +403,20 @@
             }
           }
 
+          &.row-height-auto {
+            td {
+              // 覆盖全局 th, td { height: var(--row-height) }，让内容撑起行高
+              height: auto !important;
+              min-height: var(--row-height);
+
+              .cell {
+                height: auto;
+                min-height: calc(var(--row-height) - 4px);
+                line-height: normal;
+              }
+            }
+          }
+
           &:hover {
             &.hover-highlight {
               td {

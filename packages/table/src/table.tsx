@@ -85,7 +85,7 @@ export default defineComponent({
       setLineHeight(args => {
         return rows.getRowHeight(args.rows[0], args.index);
       });
-    } else {
+    } else if (props.rowHeight !== 'auto') {
       setLineHeight(props.rowHeight);
     }
 
@@ -99,7 +99,7 @@ export default defineComponent({
         scrollTo(0, 0);
       }
 
-      if (typeof props.rowHeight !== 'function') {
+      if (typeof props.rowHeight !== 'function' && props.rowHeight !== 'auto') {
         rows.setRowHeight(height);
         setLineHeight(height);
       }

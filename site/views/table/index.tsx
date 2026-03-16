@@ -54,6 +54,7 @@ import ScrollLoading from './scroll-loading.vue';
 import ScrollLoadingSlot from './scroll-loading-slot.vue';
 import Selection from './selection.vue';
 import virtualRender from './virtual-render.vue';
+import heightTest from './height-test.vue';
 
 export default defineComponent({
   components: {
@@ -80,6 +81,7 @@ export default defineComponent({
     basicSortBehavior,
     ScrollHorizontal,
     MultiHeader,
+    heightTest,
   },
   render() {
     const configs = [
@@ -349,6 +351,16 @@ export default defineComponent({
         },
         component: () => <event></event>,
       },
+      // {
+      //   attrs: {
+      //     title: '高度测试',
+      //     subtitle: 'height-test',
+      //     desc: '测试表格高度相关的功能。',
+      //     componentName: 'table',
+      //     demoName: 'height-test',
+      //   },
+      //   component: () => <heightTest></heightTest>,
+      // },
     ];
 
     const eventColumnMap = {

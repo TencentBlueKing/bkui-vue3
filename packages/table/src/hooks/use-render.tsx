@@ -366,6 +366,7 @@ export default ({ props, ctx, columns, rows, pagination }: RenderType) => {
       ...formatPropAsArray(props.rowClass, [row, rowIndex]),
       `hover-${props.rowHover}`,
       rowIndex % 2 === 1 && props.stripe ? 'stripe-row' : '',
+      props.rowHeight === 'auto' ? 'row-height-auto' : '',
     ];
     const rowId = rows.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_UID);
 
