@@ -216,6 +216,14 @@ export default (props: TablePropTypes, ctx) => {
   const needsFixedViewport = props.virtualEnabled || (props.height === 'auto' && hasMaxConstraint && isMaxHeightNumericPx);
   const bodyHeight: Ref<number | string> = ref(needsFixedViewport ? '100%' : 'auto');
 
+  // 当 height=auto + 非像素 maxHeight（如 calc(100vh-180px)）时：
+  // Chrome 的 scrollHeight/clientHeight 整数截断会在子像素内容高度下产生虚假滚动条。
+  // 初始设为 false（overflow-y:hidden），JS 检测到内容超出 maxHeight 后再切换为 true（overflow-y:auto）。
+  const bodyScrollable = ref(!hasMaxConstraint || needsFixedViewport);
+  const setBodyScrollable = (scrollable: boolean) => {
+    bodyScrollable.value = scrollable;
+  };
+
   const bodyMaxHeight = computed(() => {
     const maxH = tableStyle.value.maxHeight;
     if (!maxH || maxH === 'auto' || maxH === undefined) {
@@ -229,7 +237,12 @@ export default (props: TablePropTypes, ctx) => {
     return height - fixedBottomHeight.value - footHeight.value - wrapperBorderHeight.value;
   };
 
-  const setBodyHeight = (height: number, withHeadFoot = true) => {
+  const setBodyHeight = (height: number | string, withHeadFoot = true) => {
+    if (typeof height === 'string') {
+      bodyHeight.value = height;
+      return;
+    }
+
     if (withHeadFoot) {
       bodyHeight.value = getBodyHeight(height);
       return;
@@ -347,7 +360,7 @@ export default (props: TablePropTypes, ctx) => {
         <VirtualRender
           ref={refBody}
           height={bodyHeight.value}
-          class={bodyClass}
+          class={{ ...bodyClass, 'is-overflow-hidden': !bodyScrollable.value }}
           contentClassName={scrollContentClass.value}
           enabled={props.virtualEnabled}
           lineHeight={lineHeight.value}
@@ -416,6 +429,7 @@ export default (props: TablePropTypes, ctx) => {
     renderFixedBottom,
     getBodyHeight,
     setBodyHeight,
+    setBodyScrollable,
     setVirtualBodyHeight,
     setFootHeight,
     setTranslateX,

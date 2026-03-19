@@ -67,6 +67,7 @@ export default defineComponent({
       renderBody,
       renderFooter,
       setBodyHeight,
+      setBodyScrollable,
       setFootHeight,
       setDragOffsetX,
       setOffsetRight,
@@ -312,9 +313,12 @@ export default defineComponent({
      * 可用空间 = getMaxContainerHeight() - 分页器(paginationHeight) - fixedBottom - 边框
      *   由 getBodyHeight 统一计算，内部已根据各 props 动态得出
      *
-     * 最终高度 = min(内容高度, 可用空间)
-     *   内容 < 可用空间 → 不出现滚动条
-     *   内容 > 可用空间 → 限制在可用空间内，出现滚动条
+     * 内容 < 可用空间 → bodyHeight 保持 'auto'，由 CSS 自然撑高，避免整数截断导致的伪滚动条
+     * 内容 ≥ 可用空间 → 设置固定 px 高度，触发真实滚动
+     *
+     * 之所以不用 Math.min(contentHeight, availableHeight)：
+     * 行高为 auto 时内容高度有小数（如 589.33px），JS scrollHeight 向上取整为 590，
+     * 若强制 bodyHeight = 589（整数），则 clientHeight(589) < scrollHeight(590) 产生假滚动条。
      */
     const resolveContentAwareBodyHeight = (): boolean => {
       const containerHeight = getMaxContainerHeight();
@@ -323,7 +327,16 @@ export default defineComponent({
       const contentHeight = getScrollContentHeight();
       const availableHeight = getBodyHeight(containerHeight);
       if (availableHeight > 0 && contentHeight > 0) {
-        setBodyHeight(Math.min(contentHeight, availableHeight), false);
+        if (contentHeight >= availableHeight) {
+          // 内容超出最大高度：固定 body 高度 + 开启 overflow-y:auto，触发真实滚动
+          setBodyScrollable(true);
+          setBodyHeight(availableHeight, false);
+        } else {
+          // 内容未超出：重置为 auto + 关闭 overflow-y（hidden），
+          // 阻止 Chrome scrollHeight/clientHeight 整数截断产生的 1px 虚假滚动条
+          setBodyScrollable(false);
+          setBodyHeight('auto', false);
+        }
         return true;
       }
       return false;

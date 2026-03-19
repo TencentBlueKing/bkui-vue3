@@ -37,6 +37,12 @@
       overflow: hidden;
     }
 
+    // height=auto + 非像素 maxHeight 时，内容未超出 maxHeight：
+    // 阻止 Chrome scrollHeight/clientHeight 整数截断产生的 1px 虚假垂直滚动条
+    &.is-overflow-hidden {
+      overflow-y: hidden !important;
+    }
+
   }
 
   // body overlay wrapper（让 overlay 不参与原生滚动）
