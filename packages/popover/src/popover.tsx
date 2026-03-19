@@ -537,34 +537,8 @@ export default defineComponent({
       return classes.filter(Boolean);
     });
 
-    // 计算 data-theme 属性（只取基础主题部分）
-    const dataTheme = computed(() => {
-      const { baseTheme } = parseTheme(theme.value);
-      return baseTheme;
-    });
-
-    /**
-     * 兼容旧样式约定：
-     * 一些组件（如 table settings）会在主题 class 上再依赖一个 data-xxx-theme 标记来开启样式。
-     * 例如：`.bk-table-settings[data-bk-table-settings-theme='true']`
-     *
-     * 这里根据 theme 里解析出的额外 class 自动补齐对应的 data 属性，确保旧用法不需要改调用方。
-     */
-    const extraThemeDataAttrs = computed<Record<string, string>>(() => {
-      const { extraClasses } = parseTheme(theme.value);
-      const attrs: Record<string, string> = {};
-      extraClasses.forEach(cls => {
-        const normalized = String(cls || '')
-          .trim()
-          .toLowerCase();
-        // data-* 属性名只允许字母/数字/连字符/下划线
-        if (!normalized || !/^[a-z0-9_-]+$/.test(normalized)) {
-          return;
-        }
-        attrs[`data-${normalized}-theme`] = 'true';
-      });
-      return attrs;
-    });
+    // 计算 data-theme 属性（与旧版保持一致，完整 theme 字符串写入 data-theme）
+    const dataTheme = computed(() => theme.value);
 
     // 处理 clickoutside
     const handleClickOutside = (event: MouseEvent) => {
@@ -804,7 +778,6 @@ export default defineComponent({
           class={contentClass.value}
           data-bk-popover-id={popoverId}
           data-theme={dataTheme.value}
-          {...extraThemeDataAttrs.value}
           data-arrow={arrowSide.value}
           onClick={handleClickContent}
           {...guardedFloatingListeners.value}

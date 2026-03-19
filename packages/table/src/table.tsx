@@ -81,6 +81,10 @@ export default defineComponent({
 
     const scrollTo = (...args) => refBody.value?.scrollTo(...args);
 
+    if (props.rowHeight === 'auto' && props.virtualEnabled) {
+      console.warn('[BkTable] rowHeight="auto" 与 virtualEnabled 不兼容：虚拟滚动依赖固定行高计算，auto 模式下行高由内容决定，滚动位置将不准确。请勿同时使用。');
+    }
+
     if (typeof props.rowHeight === 'function') {
       setLineHeight(args => {
         return rows.getRowHeight(args.rows[0], args.index);
@@ -248,14 +252,24 @@ export default defineComponent({
      * 滚动容器 (.bk-table-body) 内包含：
      *   1. 表头 — 由 showHead 控制是否展示，高度 = headHeight(受 headHeight/thead props) × headerRowCount（多级表头）
      *   2. 数据行 — 高度 = 各行行高之和（受 rowHeight prop 和行数据影响）
+     *
+     * rowHeight='auto' 时每行 schema 存储的是估算值(LINE_HEIGHT=42)，
+     * 不反映实际渲染高度，故改为从 DOM 读取 scrollHeight 获得真实内容高度。
      */
     const getScrollContentHeight = () => {
+      const scrollEl = refBody.value?.refRoot as HTMLElement;
+
+      if (props.rowHeight === 'auto') {
+        if (scrollEl && scrollEl.scrollHeight > 0) {
+          return scrollEl.scrollHeight;
+        }
+      }
+
       const rowsHeight = rows.getCurrentPageRowsHeight();
       const scrollHeaderHeight = props.showHead ? headHeight.value : 0;
       const calculatedHeight = rowsHeight + scrollHeaderHeight;
 
       if (rows.pageRowList.length === 0) {
-        const scrollEl = refBody.value?.refRoot as HTMLElement;
         if (scrollEl && scrollEl.scrollHeight > calculatedHeight) {
           return scrollEl.scrollHeight;
         }

@@ -406,12 +406,20 @@
           &.row-height-auto {
             td {
               // 覆盖全局 th, td { height: var(--row-height) }，让内容撑起行高
+              // auto 模式使用独立的 --row-min-height 变量，语义上明确表示最小高度而非固定高度
               height: auto !important;
-              min-height: var(--row-height);
+              min-height: var(--row-min-height, 42px);
 
               .cell {
+                display: flex;
+                align-items: center;
                 height: auto;
-                min-height: calc(var(--row-height) - 4px);
+                min-height: calc(var(--row-min-height, 42px) - 4px);
+                // 允许文字换行，覆盖全局 white-space: nowrap / overflow: hidden / text-overflow: ellipsis
+                white-space: normal;
+                overflow: visible;
+                text-overflow: unset;
+                word-break: break-word;
                 line-height: normal;
               }
             }

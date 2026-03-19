@@ -355,11 +355,12 @@ export default ({ props, ctx, columns, rows, pagination }: RenderType) => {
     isChild = false,
   ) => {
     const rowLength = rowList.length;
+    const rowHeightPx = `${getRowHeight(row, rowIndex)}px`;
     const rowStyle = [
       ...formatPropAsArray(props.rowStyle, [row, rowIndex]),
-      {
-        '--row-height': `${getRowHeight(row, rowIndex)}px`,
-      },
+      props.rowHeight === 'auto'
+        ? { '--row-min-height': rowHeightPx }
+        : { '--row-height': rowHeightPx },
     ];
 
     const rowClass = [
