@@ -678,9 +678,9 @@ function processComponent(name: string, meta: Record<string, any>): ComponentInf
 
 // ─── Output formatters ──────────────────────────────────────────────────────
 function formatPropsTable(props: PropInfo[]): string {
-  if (props.length === 0) return 'No props.\n';
+  if (props.length === 0) return '无属性。\n';
   const lines = [
-    '| Name | Type | Default | Description |',
+    '| 属性名 | 类型 | 默认值 | 说明 |',
     '| --- | --- | --- | --- |',
   ];
   for (const p of props) {
@@ -693,9 +693,9 @@ function formatPropsTable(props: PropInfo[]): string {
 }
 
 function formatEmitsTable(emits: string[]): string {
-  if (emits.length === 0) return 'No events.\n';
+  if (emits.length === 0) return '无事件。\n';
   const lines = [
-    '| Event Name | Description |',
+    '| 事件名 | 说明 |',
     '| --- | --- |',
   ];
   for (const e of emits) {
@@ -705,9 +705,9 @@ function formatEmitsTable(emits: string[]): string {
 }
 
 function formatSlotsTable(slots: string[], meta?: Record<string, string>): string {
-  if (slots.length === 0) return 'No slots.\n';
+  if (slots.length === 0) return '无插槽。\n';
   const lines = [
-    '| Slot Name | Description |',
+    '| 插槽名 | 说明 |',
     '| --- | --- |',
   ];
   for (const s of slots) {
@@ -748,44 +748,53 @@ function main() {
   }
 
   const categoryOrder = ['Base', 'Layout', 'Navigation', 'Form', 'Data', 'Feedback', 'Other'];
+  const categoryLabels: Record<string, string> = {
+    Base: '基础组件',
+    Layout: '布局',
+    Navigation: '导航',
+    Form: '表单',
+    Data: '数据展示',
+    Feedback: '反馈',
+    Other: '其他',
+  };
 
   // ─── Build output ───────────────────────────────────────────────────────
   const out: string[] = [];
 
-  out.push(`# bkui-vue Component Library — LLM Reference Documentation`);
+  out.push(`# bkui-vue 组件库 — LLM 参考文档`);
   out.push('');
-  out.push('This document provides a complete API reference for the bkui-vue component library (BlueKing UI Vue3).');
-  out.push('It is designed to be consumed by AI agents and LLMs for accurate code generation and assistance.');
+  out.push('本文档提供 bkui-vue 组件库（蓝鲸智云 Vue3 组件库）的完整 API 参考。');
+  out.push('专为 AI 代理和大语言模型设计，确保代码生成和辅助开发的准确性。');
   out.push('');
 
   // Overview section
-  out.push('## Overview');
+  out.push('## 概述');
   out.push('');
-  out.push('bkui-vue is an enterprise-grade Vue 3 component library developed by Tencent BlueKing.');
-  out.push('It provides 59+ UI components for building modern web applications.');
+  out.push('bkui-vue 是腾讯蓝鲸智云开发的企业级 Vue 3 组件库，');
+  out.push('提供 59+ 个 UI 组件，用于构建现代 Web 应用。');
   out.push('');
-  out.push('- **Package name**: `bkui-vue`');
-  out.push('- **Vue compatibility**: Vue 3.2+');
-  out.push('- **License**: MIT');
+  out.push('- **包名**: `bkui-vue`');
+  out.push('- **Vue 兼容性**: Vue 3.2+');
+  out.push('- **开源协议**: MIT');
   out.push('');
 
   // Installation
-  out.push('## Installation');
+  out.push('## 安装');
   out.push('');
   out.push('```bash');
   out.push('npm install bkui-vue');
   out.push('```');
   out.push('');
-  out.push('### Peer Dependencies');
+  out.push('### 对等依赖');
   out.push('');
   out.push('- `vue` ^3.2.0');
-  out.push('- `highlight.js` ~11.5.0 (optional, for code highlighting)');
+  out.push('- `highlight.js` ~11.5.0（可选，用于代码高亮）');
   out.push('');
 
   // Global usage
-  out.push('## Usage');
+  out.push('## 使用方式');
   out.push('');
-  out.push('### Full Import');
+  out.push('### 全量引入');
   out.push('');
   out.push('```typescript');
   out.push("import BkuiVue from 'bkui-vue';");
@@ -795,42 +804,42 @@ function main() {
   out.push('app.use(BkuiVue);');
   out.push('```');
   out.push('');
-  out.push('### On-Demand Import');
+  out.push('### 按需引入');
   out.push('');
   out.push('```typescript');
   out.push("import { Button, Select, Table } from 'bkui-vue';");
   out.push('```');
   out.push('');
-  out.push('### Component Naming Convention');
+  out.push('### 组件命名规范');
   out.push('');
-  out.push('All components are registered with a `Bk` prefix when using global registration.');
-  out.push('For example, `Button` becomes `<bk-button>`, `Select` becomes `<bk-select>`, etc.');
-  out.push('When importing on-demand, use the PascalCase name directly: `<Button>`, `<Select>`, etc.');
+  out.push('全量注册时，所有组件自动添加 `Bk` 前缀。');
+  out.push('例如 `Button` 对应 `<bk-button>`，`Select` 对应 `<bk-select>`。');
+  out.push('按需引入时可直接使用 PascalCase 名称：`<Button>`、`<Select>` 等。');
   out.push('');
 
   // Hooks
   out.push('## Hooks');
   out.push('');
-  out.push('bkui-vue exports the following hooks:');
+  out.push('bkui-vue 导出以下 Hooks：');
   out.push('');
-  out.push('- `useGlobalConfig` — Access global configuration');
-  out.push('- `provideGlobalConfig` — Provide global configuration');
-  out.push('- `useLocale` — Access locale/i18n');
-  out.push('- `usePrefix` — Access CSS class name prefix (for theming)');
-  out.push('- `defaultRootConfig` — Default root configuration object');
-  out.push('- `rootProviderKey` — Injection key for root config');
+  out.push('- `useGlobalConfig` — 获取全局配置');
+  out.push('- `provideGlobalConfig` — 提供全局配置');
+  out.push('- `useLocale` — 获取国际化/多语言');
+  out.push('- `usePrefix` — 获取 CSS 类名前缀（用于主题定制）');
+  out.push('- `defaultRootConfig` — 默认根配置对象');
+  out.push('- `rootProviderKey` — 根配置注入 key');
   out.push('');
 
   // Component catalog
-  out.push('## Component Catalog');
+  out.push('## 组件总览');
   out.push('');
 
   for (const cat of categoryOrder) {
     const list = categories.get(cat);
     if (!list || list.length === 0) continue;
-    out.push(`### ${cat}`);
+    out.push(`### ${categoryLabels[cat] || cat}`);
     out.push('');
-    out.push('| Component | Tag Name | Description |');
+    out.push('| 组件 | 标签名 | 说明 |');
     out.push('| --- | --- | --- |');
     for (const c of list) {
       const tag = `<bk-${kebabCase(c.name)}>`;
@@ -842,7 +851,7 @@ function main() {
   // Per-component documentation
   out.push('---');
   out.push('');
-  out.push('## Component API Reference');
+  out.push('## 组件 API 参考');
   out.push('');
 
   for (const cat of categoryOrder) {
@@ -858,18 +867,18 @@ function main() {
         out.push(c.description);
         out.push('');
       }
-      out.push(`- **Tag**: \`<${tag}>\``);
-      out.push(`- **Import**: \`import { ${c.name} } from 'bkui-vue'\``);
-      out.push(`- **Package**: \`@bkui-vue/${c.pkgName}\``);
-      out.push(`- **Category**: ${c.category}`);
+      out.push(`- **标签名**: \`<${tag}>\``);
+      out.push(`- **引入方式**: \`import { ${c.name} } from 'bkui-vue'\``);
+      out.push(`- **包名**: \`@bkui-vue/${c.pkgName}\``);
+      out.push(`- **分类**: ${categoryLabels[c.category] || c.category}`);
       if (c.subComponents.length > 0) {
-        out.push(`- **Sub-components**: ${c.subComponents.join(', ')}`);
+        out.push(`- **子组件**: ${c.subComponents.join(', ')}`);
       }
       out.push('');
 
       // Usage example
       if (c.usage) {
-        out.push('#### Usage');
+        out.push('#### 使用示例');
         out.push('');
         out.push('```vue');
         out.push(c.usage);
@@ -878,18 +887,18 @@ function main() {
       }
 
       // Props
-      out.push('#### Props');
+      out.push('#### 属性 (Props)');
       out.push('');
       out.push(formatPropsTable(c.props));
 
       // Events
-      out.push('#### Events');
+      out.push('#### 事件 (Events)');
       out.push('');
       out.push(formatEmitsTable(c.emits));
 
       // Slots
       const slotMeta = (meta[c.name]?.slots as Record<string, string>) || {};
-      out.push('#### Slots');
+      out.push('#### 插槽 (Slots)');
       out.push('');
       out.push(formatSlotsTable(c.slots, slotMeta));
 
@@ -899,14 +908,14 @@ function main() {
   }
 
   // Directives
-  out.push('## Directives');
+  out.push('## 指令 (Directives)');
   out.push('');
-  out.push('bkui-vue provides the following directives:');
+  out.push('bkui-vue 提供以下指令：');
   out.push('');
-  out.push('- `v-bk-clickoutside` — Detect clicks outside an element');
-  out.push('- `v-bk-tooltips` — Attach tooltip to an element');
-  out.push('- `v-bk-loading` — Show loading state on an element');
-  out.push('- `v-bk-overflow-title` — Show tooltip when text overflows');
+  out.push('- `v-bk-clickoutside` — 检测元素外部点击');
+  out.push('- `v-bk-tooltips` — 为元素添加工具提示');
+  out.push('- `v-bk-loading` — 在元素上显示加载状态');
+  out.push('- `v-bk-overflow-title` — 文本溢出时显示提示');
   out.push('');
 
   // Write output

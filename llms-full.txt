@@ -1,31 +1,31 @@
-# bkui-vue Component Library — LLM Reference Documentation
+# bkui-vue 组件库 — LLM 参考文档
 
-This document provides a complete API reference for the bkui-vue component library (BlueKing UI Vue3).
-It is designed to be consumed by AI agents and LLMs for accurate code generation and assistance.
+本文档提供 bkui-vue 组件库（蓝鲸智云 Vue3 组件库）的完整 API 参考。
+专为 AI 代理和大语言模型设计，确保代码生成和辅助开发的准确性。
 
-## Overview
+## 概述
 
-bkui-vue is an enterprise-grade Vue 3 component library developed by Tencent BlueKing.
-It provides 59+ UI components for building modern web applications.
+bkui-vue 是腾讯蓝鲸智云开发的企业级 Vue 3 组件库，
+提供 59+ 个 UI 组件，用于构建现代 Web 应用。
 
-- **Package name**: `bkui-vue`
-- **Vue compatibility**: Vue 3.2+
-- **License**: MIT
+- **包名**: `bkui-vue`
+- **Vue 兼容性**: Vue 3.2+
+- **开源协议**: MIT
 
-## Installation
+## 安装
 
 ```bash
 npm install bkui-vue
 ```
 
-### Peer Dependencies
+### 对等依赖
 
 - `vue` ^3.2.0
-- `highlight.js` ~11.5.0 (optional, for code highlighting)
+- `highlight.js` ~11.5.0（可选，用于代码高亮）
 
-## Usage
+## 使用方式
 
-### Full Import
+### 全量引入
 
 ```typescript
 import BkuiVue from 'bkui-vue';
@@ -35,149 +35,149 @@ const app = createApp(App);
 app.use(BkuiVue);
 ```
 
-### On-Demand Import
+### 按需引入
 
 ```typescript
 import { Button, Select, Table } from 'bkui-vue';
 ```
 
-### Component Naming Convention
+### 组件命名规范
 
-All components are registered with a `Bk` prefix when using global registration.
-For example, `Button` becomes `<bk-button>`, `Select` becomes `<bk-select>`, etc.
-When importing on-demand, use the PascalCase name directly: `<Button>`, `<Select>`, etc.
+全量注册时，所有组件自动添加 `Bk` 前缀。
+例如 `Button` 对应 `<bk-button>`，`Select` 对应 `<bk-select>`。
+按需引入时可直接使用 PascalCase 名称：`<Button>`、`<Select>` 等。
 
 ## Hooks
 
-bkui-vue exports the following hooks:
+bkui-vue 导出以下 Hooks：
 
-- `useGlobalConfig` — Access global configuration
-- `provideGlobalConfig` — Provide global configuration
-- `useLocale` — Access locale/i18n
-- `usePrefix` — Access CSS class name prefix (for theming)
-- `defaultRootConfig` — Default root configuration object
-- `rootProviderKey` — Injection key for root config
+- `useGlobalConfig` — 获取全局配置
+- `provideGlobalConfig` — 提供全局配置
+- `useLocale` — 获取国际化/多语言
+- `usePrefix` — 获取 CSS 类名前缀（用于主题定制）
+- `defaultRootConfig` — 默认根配置对象
+- `rootProviderKey` — 根配置注入 key
 
-## Component Catalog
+## 组件总览
 
-### Base
+### 基础组件
 
-| Component | Tag Name | Description |
+| 组件 | 标签名 | 说明 |
 | --- | --- | --- |
-| Button | `<bk-button>` | Basic button component supporting multiple themes (default, primary, success, warning, danger), sizes, loading state, outline and text variants. |
-| ConfigProvider | `<bk-config-provider>` | Global configuration provider for setting locale, prefix, and other global settings for all child bkui-vue components. |
-| Scrollbar | `<bk-scrollbar>` | Custom scrollbar component providing consistent cross-browser scrollbar styling. |
+| Button | `<bk-button>` | 基础按钮组件，支持多种主题（default、primary、success、warning、danger）、尺寸、加载状态、描边和文字按钮等变体。 |
+| ConfigProvider | `<bk-config-provider>` | 全局配置提供者组件，用于设置国际化语言、样式前缀等全局配置，作用于所有子 bkui-vue 组件。 |
+| Scrollbar | `<bk-scrollbar>` | 自定义滚动条组件，提供跨浏览器一致的滚动条样式。 |
 
-### Layout
+### 布局
 
-| Component | Tag Name | Description |
+| 组件 | 标签名 | 说明 |
 | --- | --- | --- |
-| Container | `<bk-container>` | Grid layout system based on 24-column grid. Includes Row and Col sub-components for responsive layouts. |
-| ResizeLayout | `<bk-resize-layout>` | Draggable split-pane layout component. Allows users to resize two adjacent panels by dragging a divider. |
+| Container | `<bk-container>` | 栅格布局系统，基于 24 列栅格。包含 Row 和 Col 子组件，用于响应式布局。 |
+| ResizeLayout | `<bk-resize-layout>` | 可拖拽分栏布局组件，用户可通过拖拽分隔线调整两个相邻面板的大小。 |
 
-### Navigation
+### 导航
 
-| Component | Tag Name | Description |
+| 组件 | 标签名 | 说明 |
 | --- | --- | --- |
-| Affix | `<bk-affix>` | Pin an element to a fixed position on the page when scrolling. Useful for navigation bars, sidebars, or action buttons that should stay visible. |
-| Backtop | `<bk-backtop>` | A button that appears when the user scrolls down, allowing them to quickly scroll back to the top of the page. |
-| Breadcrumb | `<bk-breadcrumb>` | Navigation breadcrumb trail showing the current page's location within a hierarchical structure. |
-| ColorPicker | `<bk-color-picker>` | Color selection component with visual color picker interface. Returns color values in various formats. |
-| DatePicker | `<bk-date-picker>` | Date and date-range picker component. Supports date, daterange, datetime, datetimerange, month, and year modes. |
-| Divider | `<bk-divider>` | Visual separator line between content sections. Supports horizontal and vertical orientation with optional text label. |
-| FixedNavbar | `<bk-fixed-navbar>` | Fixed navigation bar that stays at a fixed position on the page, typically used for quick action shortcuts. |
-| Link | `<bk-link>` | Inline text link component with theme support and disabled state. |
-| Menu | `<bk-menu>` | Navigation menu component supporting vertical and horizontal modes, sub-menus, groups, and collapse behavior. |
-| Navigation | `<bk-navigation>` | Application-level navigation component with sidebar and header layout, typically for backend admin pages. |
-| Process | `<bk-process>` | Process/step indicator showing workflow progress. Similar to Steps but with a different visual style. |
-| Steps | `<bk-steps>` | Step indicator for multi-step workflows. Shows the current step and progress through a sequence. |
-| Tab | `<bk-tab>` | Tab navigation component for switching between different content panels. Supports add/close, drag sorting, and card/border-card styles. |
-| TimePicker | `<bk-time-picker>` | Time selection component for picking hours, minutes, and seconds. Supports time range selection. |
-| Timeline | `<bk-timeline>` | Vertical timeline component for displaying a sequence of events in chronological order. |
+| Affix | `<bk-affix>` | 图钉组件，将元素固定在页面可视范围内的指定位置。适用于导航栏、侧边栏或操作按钮等需要始终可见的场景。 |
+| Backtop | `<bk-backtop>` | 返回顶部按钮，当用户向下滚动页面时出现，点击后快速回到页面顶部。 |
+| Breadcrumb | `<bk-breadcrumb>` | 面包屑导航，显示当前页面在层级结构中的位置路径。 |
+| ColorPicker | `<bk-color-picker>` | 颜色选择器组件，提供可视化的颜色选取界面，支持多种颜色格式输出。 |
+| DatePicker | `<bk-date-picker>` | 日期/日期范围选择器组件，支持 date、daterange、datetime、datetimerange、month、year 等模式。 |
+| Divider | `<bk-divider>` | 分割线组件，用于分隔内容区域。支持水平和垂直方向，可带文字标签。 |
+| FixedNavbar | `<bk-fixed-navbar>` | 悬浮导航组件，固定在页面特定位置，通常用于快捷操作入口。 |
+| Link | `<bk-link>` | 文字链接组件，支持主题样式和禁用状态。 |
+| Menu | `<bk-menu>` | 导航菜单组件，支持垂直和水平两种模式，支持子菜单、分组和折叠行为。 |
+| Navigation | `<bk-navigation>` | 应用级导航组件，包含侧边栏和头部布局，通常用于后台管理页面。 |
+| Process | `<bk-process>` | 流程/步骤指示器，展示工作流进度。与 Steps 类似但视觉样式不同。 |
+| Steps | `<bk-steps>` | 步骤指示器组件，用于多步骤工作流。显示当前步骤和完成进度。 |
+| Tab | `<bk-tab>` | 选项卡导航组件，用于在不同内容面板之间切换。支持新增/关闭标签、拖拽排序和 card/border-card 样式。 |
+| TimePicker | `<bk-time-picker>` | 时间选择器组件，用于选取时、分、秒。支持时间范围选择。 |
+| Timeline | `<bk-timeline>` | 时间轴组件，用于按时间顺序展示一系列事件。 |
 
-### Form
+### 表单
 
-| Component | Tag Name | Description |
+| 组件 | 标签名 | 说明 |
 | --- | --- | --- |
-| Cascader | `<bk-cascader>` | Cascading selection component for selecting from a hierarchical data structure (e.g., province/city/district). |
-| Checkbox | `<bk-checkbox>` | Checkbox form control for multiple selections. Includes CheckboxGroup for managing a group of checkboxes. |
-| Form | `<bk-form>` | Form container component with built-in validation support. Works with FormItem for field-level validation, labels, and layout. |
-| Input | `<bk-input>` | Text input component with support for types (text, password, number, textarea, url, email), prefix/suffix icons, clearable, and character count. |
-| Radio | `<bk-radio>` | Radio form control for single selection. Includes RadioGroup and RadioButton sub-components. |
-| SearchSelect | `<bk-search-select>` | Advanced search input with structured query builder. Supports multiple search conditions with key-value pairs and tags. |
-| Select | `<bk-select>` | Dropdown select component with single/multiple selection, search/filter, remote data, virtual scrolling, and custom options. |
-| Switcher | `<bk-switcher>` | Toggle switch component for boolean on/off states. |
-| TagInput | `<bk-tag-input>` | Input component that manages multiple tags/tokens. Supports autocomplete suggestions, custom tag rendering, and paste handling. |
-| Upload | `<bk-upload>` | File upload component supporting drag-and-drop, multiple files, file list display, and custom upload logic. |
+| Cascader | `<bk-cascader>` | 级联选择组件，用于从层级数据结构中进行选择（如省/市/区）。 |
+| Checkbox | `<bk-checkbox>` | 多选框组件，支持多项选择。包含 CheckboxGroup 子组件用于管理一组多选框。 |
+| Form | `<bk-form>` | 表单容器组件，内置表单验证功能。配合 FormItem 子组件实现字段级验证、标签和布局控制。 |
+| Input | `<bk-input>` | 输入框组件，支持多种类型（text、password、number、textarea、url、email），前缀/后缀图标、可清除、字数统计等功能。 |
+| Radio | `<bk-radio>` | 单选框组件，用于单项选择。包含 RadioGroup 和 RadioButton 子组件。 |
+| SearchSelect | `<bk-search-select>` | 高级搜索输入组件，支持结构化查询构建。可创建多个键值对搜索条件并以标签形式展示。 |
+| Select | `<bk-select>` | 下拉选择框组件，支持单选/多选、搜索过滤、远程数据、虚拟滚动和自定义选项渲染。 |
+| Switcher | `<bk-switcher>` | 开关组件，用于布尔值的开/关状态切换。 |
+| TagInput | `<bk-tag-input>` | 标签输入组件，管理多个标签/令牌。支持自动补全建议、自定义标签渲染和粘贴处理。 |
+| Upload | `<bk-upload>` | 文件上传组件，支持拖拽上传、多文件上传、文件列表展示和自定义上传逻辑。 |
 
-### Data
+### 数据展示
 
-| Component | Tag Name | Description |
+| 组件 | 标签名 | 说明 |
 | --- | --- | --- |
-| AnimateNumber | `<bk-animate-number>` | Animate a number from one value to another with a smooth transition effect. Useful for dashboards and statistics displays. |
-| Badge | `<bk-badge>` | Display a badge indicator (number or dot) on the top-right corner of another element. Commonly used for notification counts. |
-| CodeDiff | `<bk-code-diff>` | Display code differences between two text blocks, similar to a git diff viewer. Supports side-by-side and unified views. |
-| Collapse | `<bk-collapse>` | Expandable/collapsible content panels. Multiple panels can be used together with accordion mode support. |
-| Dropdown | `<bk-dropdown>` | Dropdown menu component showing a list of actions or options triggered by clicking or hovering on an element. |
-| Pagination | `<bk-pagination>` | Pagination control for navigating through paged data. Supports page size selection, quick jumper, and total count display. |
-| Progress | `<bk-progress>` | Progress bar component showing completion percentage. Supports linear and circular (dashboard) modes with custom colors. |
-| Rate | `<bk-rate>` | Star rating input component. Supports half-star ratings and custom icons. |
-| Swiper | `<bk-swiper>` | Image/content carousel component with auto-play, indicators, and navigation arrows. |
-| Table | `<bk-table>` | Data table with sorting, filtering, pagination, row selection, column resizing, virtual scrolling, and custom cell rendering. Supports both column-config and slot-based column definitions. |
-| Tag | `<bk-tag>` | Tag/chip component for displaying labels, categories, or status indicators. Supports closable, checkable, and themed variants. |
-| Tree | `<bk-tree>` | Tree view component for displaying hierarchical data. Supports expand/collapse, checkbox selection, drag-and-drop, filtering, and lazy loading. |
-| VirtualRender | `<bk-virtual-render>` | Virtual scrolling container for efficiently rendering large lists by only rendering visible items in the viewport. |
+| AnimateNumber | `<bk-animate-number>` | 动画数字组件，数值变化时带有平滑过渡动画效果。适用于仪表盘、统计数据展示等场景。 |
+| Badge | `<bk-badge>` | 标记组件，在另一个元素的右上角显示徽章指示（数字或圆点），常用于消息通知数量展示。 |
+| CodeDiff | `<bk-code-diff>` | 代码差异对比组件，展示两段文本之间的差异，类似 git diff 视图。支持并排和统一视图。 |
+| Collapse | `<bk-collapse>` | 折叠面板组件，可展开/收起内容区域。多个面板可配合使用，支持手风琴模式。 |
+| Dropdown | `<bk-dropdown>` | 下拉菜单组件，通过点击或悬浮触发元素显示操作列表或选项。 |
+| Pagination | `<bk-pagination>` | 分页控件，用于在分页数据中进行导航。支持每页条数选择、快速跳转和总数显示。 |
+| Progress | `<bk-progress>` | 进度条组件，显示完成百分比。支持线性和环形（仪表盘）模式，可自定义颜色。 |
+| Rate | `<bk-rate>` | 评分组件，基于星级进行评分输入。支持半星评分和自定义图标。 |
+| Swiper | `<bk-swiper>` | 轮播图组件，支持自动播放、指示器和导航箭头。 |
+| Table | `<bk-table>` | 数据表格组件，支持排序、筛选、分页、行选择、列宽拖拽、虚拟滚动和自定义单元格渲染。同时支持列配置和插槽两种列定义方式。 |
+| Tag | `<bk-tag>` | 标签组件，用于展示标签、分类或状态指示。支持可关闭、可选中和多种主题变体。 |
+| Tree | `<bk-tree>` | 树形视图组件，用于展示层级数据。支持展开/折叠、复选框选择、拖拽排序、搜索过滤和懒加载。 |
+| VirtualRender | `<bk-virtual-render>` | 虚拟滚动容器，通过只渲染可视区域内的元素来高效展示大数据量列表。 |
 
-### Feedback
+### 反馈
 
-| Component | Tag Name | Description |
+| 组件 | 标签名 | 说明 |
 | --- | --- | --- |
-| Alert | `<bk-alert>` | Display important alert messages with different severity levels (info, success, warning, danger). Supports closable behavior and custom icons. |
-| Card | `<bk-card>` | A container component for displaying grouped content with optional header and footer. Supports collapsible mode. |
-| Dialog | `<bk-dialog>` | Modal dialog component for confirmations, forms, and important user interactions. Supports dragging, multi-step, and custom footer. |
-| Exception | `<bk-exception>` | Display exception/error pages with predefined types (403, 404, 500, building, empty, login). Used for error states. |
-| InfoBox | `<bk-info-box>` | Imperative info/confirmation dialog. Called via function: InfoBox({ title, subTitle, confirmText, onConfirm }). Not a template component. |
-| Loading | `<bk-loading>` | Loading spinner overlay for indicating loading state. Can be used as a component or directive (v-bk-loading). |
-| Message | `<bk-message>` | Imperative global message notification. Called via function: Message({ theme, message }). Appears at the top of the page. |
-| Modal | `<bk-modal>` | Base modal/overlay component used internally by Dialog and Sideslider. Provides the backdrop, animation, and z-index management. |
-| Notify | `<bk-notify>` | Imperative notification message. Called via function: Notify({ theme, title, message, position }). Appears at a corner of the page. |
-| OverflowTitle | `<bk-overflow-title>` | Automatically show a tooltip when text content overflows its container. Useful for truncated table cells and labels. |
-| PopConfirm | `<bk-pop-confirm>` | Popover-based confirm dialog. Shows a small confirmation popup anchored to a trigger element. |
-| Popover | `<bk-popover>` | General-purpose popover/tooltip component. Supports click, hover, and manual triggers. Based on @floating-ui for positioning. |
-| Popover2 | `<bk-popover2>` | Alternative popover implementation with additional features. Similar API to Popover. |
-| Sideslider | `<bk-sideslider>` | Side panel drawer that slides in from the edge of the screen. Useful for detail views, forms, or secondary navigation. |
-| Slider | `<bk-slider>` | Slider/range input for selecting a value or range within a defined interval. |
-| Transfer | `<bk-transfer>` | Transfer (shuttle) component for moving items between two lists. Supports search filtering and custom rendering. |
+| Alert | `<bk-alert>` | 警告提示组件，支持 info、success、warning、danger 四种主题，可关闭，支持自定义图标。 |
+| Card | `<bk-card>` | 卡片容器组件，用于展示分组内容，支持可选的标题和底部区域，可折叠。 |
+| Dialog | `<bk-dialog>` | 对话框组件，用于确认操作、表单填写等重要用户交互。支持拖拽、多步骤、自定义底部按钮。 |
+| Exception | `<bk-exception>` | 异常提示页面组件，预定义类型包括 403、404、500、building、empty、login，用于错误状态展示。 |
+| InfoBox | `<bk-info-box>` | 信息确认提示框，通过函数式调用：InfoBox({ title, subTitle, confirmText, onConfirm })。非模板组件，直接通过 JS 调用。 |
+| Loading | `<bk-loading>` | 加载中遮罩组件，用于表示内容正在加载。可作为组件使用，也可通过指令 v-bk-loading 使用。 |
+| Message | `<bk-message>` | 全局消息提示，通过函数式调用：Message({ theme, message })。显示在页面顶部，非模板组件。 |
+| Modal | `<bk-modal>` | 基础模态框/遮罩组件，Dialog 和 Sideslider 的底层组件。提供遮罩层、动画和 z-index 管理。 |
+| Notify | `<bk-notify>` | 通知提示组件，通过函数式调用：Notify({ theme, title, message, position })。显示在页面角落，非模板组件。 |
+| OverflowTitle | `<bk-overflow-title>` | 文本溢出提示组件，当文本内容超出容器时自动显示 tooltip。适用于表格单元格和标签的文本截断场景。 |
+| PopConfirm | `<bk-pop-confirm>` | 气泡确认框组件，基于 Popover 的确认对话框，锚定在触发元素上显示小型确认弹窗。 |
+| Popover | `<bk-popover>` | 通用弹出框/提示组件，支持 click、hover 和 manual 三种触发方式。基于 @floating-ui 实现定位。 |
+| Popover2 | `<bk-popover2>` | 替代弹出框实现，提供额外功能。API 与 Popover 类似。 |
+| Sideslider | `<bk-sideslider>` | 侧边栏抽屉组件，从屏幕边缘滑入。适用于详情查看、表单填写或辅助导航。 |
+| Slider | `<bk-slider>` | 滑动选择器，用于在定义的区间内选择一个值或范围。 |
+| Transfer | `<bk-transfer>` | 穿梭框组件，在两个列表之间移动项目。支持搜索过滤和自定义渲染。 |
 
 ---
 
-## Component API Reference
+## 组件 API 参考
 
 ### Button
 
-Basic button component supporting multiple themes (default, primary, success, warning, danger), sizes, loading state, outline and text variants.
+基础按钮组件，支持多种主题（default、primary、success、warning、danger）、尺寸、加载状态、描边和文字按钮等变体。
 
-- **Tag**: `<bk-button>`
-- **Import**: `import { Button } from 'bkui-vue'`
-- **Package**: `@bkui-vue/button`
-- **Category**: Base
-- **Sub-components**: ButtonGroup
+- **标签名**: `<bk-button>`
+- **引入方式**: `import { Button } from 'bkui-vue'`
+- **包名**: `@bkui-vue/button`
+- **分类**: 基础组件
+- **子组件**: ButtonGroup
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
-  <bk-button theme="primary">Primary</bk-button>
-  <bk-button theme="success" :loading="true">Loading</bk-button>
-  <bk-button theme="danger" outline>Outline</bk-button>
-  <bk-button text>Text Button</bk-button>
-  <bk-button disabled>Disabled</bk-button>
+  <bk-button theme="primary">主要按钮</bk-button>
+  <bk-button theme="success" :loading="true">加载中</bk-button>
+  <bk-button theme="danger" outline>描边按钮</bk-button>
+  <bk-button text>文字按钮</bk-button>
+  <bk-button disabled>禁用按钮</bk-button>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | theme | theme | - |  |
 | hoverTheme | theme | - |  |
@@ -193,31 +193,31 @@ Basic button component supporting multiple themes (default, primary, success, wa
 | selected | Boolean | - |  |
 | nativeType | string | 'button' | circle: PropTypes.bool, |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | click | - |
 | mouseover | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| default | Button label content |
+| default | 按钮文本内容 |
 
 ---
 
 ### ConfigProvider
 
-Global configuration provider for setting locale, prefix, and other global settings for all child bkui-vue components.
+全局配置提供者组件，用于设置国际化语言、样式前缀等全局配置，作用于所有子 bkui-vue 组件。
 
-- **Tag**: `<bk-config-provider>`
-- **Import**: `import { ConfigProvider } from 'bkui-vue'`
-- **Package**: `@bkui-vue/config-provider`
-- **Category**: Base
+- **标签名**: `<bk-config-provider>`
+- **引入方式**: `import { ConfigProvider } from 'bkui-vue'`
+- **包名**: `@bkui-vue/config-provider`
+- **分类**: 基础组件
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
@@ -227,86 +227,86 @@ Global configuration provider for setting locale, prefix, and other global setti
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | locale | Language | - |  |
 | prefix | string | 'bk' |  |
 
-#### Events
+#### 事件 (Events)
 
-No events.
+无事件。
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| default | Application content |
+| default | 应用内容 |
 
 ---
 
 ### Scrollbar
 
-Custom scrollbar component providing consistent cross-browser scrollbar styling.
+自定义滚动条组件，提供跨浏览器一致的滚动条样式。
 
-- **Tag**: `<bk-scrollbar>`
-- **Import**: `import { Scrollbar } from 'bkui-vue'`
-- **Package**: `@bkui-vue/scrollbar`
-- **Category**: Base
+- **标签名**: `<bk-scrollbar>`
+- **引入方式**: `import { Scrollbar } from 'bkui-vue'`
+- **包名**: `@bkui-vue/scrollbar`
+- **分类**: 基础组件
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
   <bk-scrollbar style="height: 300px">
-    <div>Scrollable content</div>
+    <div>可滚动内容</div>
   </bk-scrollbar>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-No props.
+无属性。
 
-#### Events
+#### 事件 (Events)
 
-No events.
+无事件。
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| default | Scrollable content |
+| default | 可滚动内容 |
 
 ---
 
 ### Container
 
-Grid layout system based on 24-column grid. Includes Row and Col sub-components for responsive layouts.
+栅格布局系统，基于 24 列栅格。包含 Row 和 Col 子组件，用于响应式布局。
 
-- **Tag**: `<bk-container>`
-- **Import**: `import { Container } from 'bkui-vue'`
-- **Package**: `@bkui-vue/container`
-- **Category**: Layout
-- **Sub-components**: Row, Col
+- **标签名**: `<bk-container>`
+- **引入方式**: `import { Container } from 'bkui-vue'`
+- **包名**: `@bkui-vue/container`
+- **分类**: 布局
+- **子组件**: Row, Col
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
   <bk-container>
     <bk-row>
-      <bk-col :span="12">Left</bk-col>
-      <bk-col :span="12">Right</bk-col>
+      <bk-col :span="12">左侧</bk-col>
+      <bk-col :span="12">右侧</bk-col>
     </bk-row>
   </bk-container>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | col | Number | 24 | 栅格数，默认 24 |
 | gutter | Number | 20 | 栅格间距，单位 px，左右平分 |
@@ -314,45 +314,45 @@ Grid layout system based on 24-column grid. Includes Row and Col sub-components 
 | flex | Boolean | false | 控制 row 是否使用 flex 布局 |
 | extCls | String | - | 外部设置的 class name |
 
-#### Events
+#### 事件 (Events)
 
-No events.
+无事件。
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| default | Row/Col components |
+| default | Row/Col 子组件 |
 
 ---
 
 ### ResizeLayout
 
-Draggable split-pane layout component. Allows users to resize two adjacent panels by dragging a divider.
+可拖拽分栏布局组件，用户可通过拖拽分隔线调整两个相邻面板的大小。
 
-- **Tag**: `<bk-resize-layout>`
-- **Import**: `import { ResizeLayout } from 'bkui-vue'`
-- **Package**: `@bkui-vue/resize-layout`
-- **Category**: Layout
+- **标签名**: `<bk-resize-layout>`
+- **引入方式**: `import { ResizeLayout } from 'bkui-vue'`
+- **包名**: `@bkui-vue/resize-layout`
+- **分类**: 布局
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
   <bk-resize-layout :initial-divide="300">
     <template #aside>
-      Sidebar content
+      侧边栏内容
     </template>
     <template #main>
-      Main content
+      主内容
     </template>
   </bk-resize-layout>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | placement | placement | - |  |
 | min | Number | 3 |  |
@@ -367,76 +367,76 @@ Draggable split-pane layout component. Allows users to resize two adjacent panel
 | autoMinimize | oneOfType | - |  |
 | border | Boolean | true |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | before-resize | - |
 | resizing | - |
 | after-resize | - |
 | collapse-change | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| aside | Left/top panel content |
-| main | Right/bottom panel content |
+| aside | 左侧/上方面板内容 |
+| main | 右侧/下方面板内容 |
 
 ---
 
 ### Affix
 
-Pin an element to a fixed position on the page when scrolling. Useful for navigation bars, sidebars, or action buttons that should stay visible.
+图钉组件，将元素固定在页面可视范围内的指定位置。适用于导航栏、侧边栏或操作按钮等需要始终可见的场景。
 
-- **Tag**: `<bk-affix>`
-- **Import**: `import { Affix } from 'bkui-vue'`
-- **Package**: `@bkui-vue/affix`
-- **Category**: Navigation
+- **标签名**: `<bk-affix>`
+- **引入方式**: `import { Affix } from 'bkui-vue'`
+- **包名**: `@bkui-vue/affix`
+- **分类**: 导航
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
   <bk-affix :offset-top="100">
-    <bk-button>Affix Button</bk-button>
+    <bk-button>固定按钮</bk-button>
   </bk-affix>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | offsetTop | Number | 0 |  |
 | offsetBottom | Number | - |  |
 | target | String | '' |  |
 | zIndex | Number | 1000 |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | change | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| default | Content to be pinned |
+| default | 需要固定的内容 |
 
 ---
 
 ### Backtop
 
-A button that appears when the user scrolls down, allowing them to quickly scroll back to the top of the page.
+返回顶部按钮，当用户向下滚动页面时出现，点击后快速回到页面顶部。
 
-- **Tag**: `<bk-backtop>`
-- **Import**: `import { Backtop } from 'bkui-vue'`
-- **Package**: `@bkui-vue/backtop`
-- **Category**: Navigation
+- **标签名**: `<bk-backtop>`
+- **引入方式**: `import { Backtop } from 'bkui-vue'`
+- **包名**: `@bkui-vue/backtop`
+- **分类**: 导航
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
@@ -444,9 +444,9 @@ A button that appears when the user scrolls down, allowing them to quickly scrol
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | visibilityHeight | Number | 200 |  |
 | target | String | '' |  |
@@ -454,42 +454,42 @@ A button that appears when the user scrolls down, allowing them to quickly scrol
 | bottom | Number | 40 |  |
 | extCls | String | '' |  |
 
-#### Events
+#### 事件 (Events)
 
-No events.
+无事件。
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| default | Custom button content |
+| default | 自定义按钮内容 |
 
 ---
 
 ### Breadcrumb
 
-Navigation breadcrumb trail showing the current page's location within a hierarchical structure.
+面包屑导航，显示当前页面在层级结构中的位置路径。
 
-- **Tag**: `<bk-breadcrumb>`
-- **Import**: `import { Breadcrumb } from 'bkui-vue'`
-- **Package**: `@bkui-vue/breadcrumb`
-- **Category**: Navigation
-- **Sub-components**: Item, BreadcrumbItem
+- **标签名**: `<bk-breadcrumb>`
+- **引入方式**: `import { Breadcrumb } from 'bkui-vue'`
+- **包名**: `@bkui-vue/breadcrumb`
+- **分类**: 导航
+- **子组件**: Item, BreadcrumbItem
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
   <bk-breadcrumb>
-    <bk-breadcrumb-item to="/">Home</bk-breadcrumb-item>
-    <bk-breadcrumb-item>Current Page</bk-breadcrumb-item>
+    <bk-breadcrumb-item to="/">首页</bk-breadcrumb-item>
+    <bk-breadcrumb-item>当前页面</bk-breadcrumb-item>
   </bk-breadcrumb>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | extCls | String | - |  |
 | separator | String | '/' |  |
@@ -497,28 +497,28 @@ Navigation breadcrumb trail showing the current page's location within a hierarc
 | replace | Boolean | - |  |
 | backRouter | oneOfType | - |  |
 
-#### Events
+#### 事件 (Events)
 
-No events.
+无事件。
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| default | BreadcrumbItem components |
+| default | BreadcrumbItem 子组件 |
 
 ---
 
 ### ColorPicker
 
-Color selection component with visual color picker interface. Returns color values in various formats.
+颜色选择器组件，提供可视化的颜色选取界面，支持多种颜色格式输出。
 
-- **Tag**: `<bk-color-picker>`
-- **Import**: `import { ColorPicker } from 'bkui-vue'`
-- **Package**: `@bkui-vue/color-picker`
-- **Category**: Navigation
+- **标签名**: `<bk-color-picker>`
+- **引入方式**: `import { ColorPicker } from 'bkui-vue'`
+- **包名**: `@bkui-vue/color-picker`
+- **分类**: 导航
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
@@ -526,9 +526,9 @@ Color selection component with visual color picker interface. Returns color valu
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | modelValue | String | '' |  |
 | disabled | Boolean | false |  |
@@ -542,47 +542,47 @@ Color selection component with visual color picker interface. Returns color valu
 | recommendEmpty | Boolean | true |  |
 | showOnInit | Boolean | false | 初始化默认展开 |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | update:modelValue | - |
 | change | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-No slots.
+无插槽。
 
 ---
 
 ### DatePicker
 
-Date and date-range picker component. Supports date, daterange, datetime, datetimerange, month, and year modes.
+日期/日期范围选择器组件，支持 date、daterange、datetime、datetimerange、month、year 等模式。
 
-- **Tag**: `<bk-date-picker>`
-- **Import**: `import { DatePicker } from 'bkui-vue'`
-- **Package**: `@bkui-vue/date-picker`
-- **Category**: Navigation
+- **标签名**: `<bk-date-picker>`
+- **引入方式**: `import { DatePicker } from 'bkui-vue'`
+- **包名**: `@bkui-vue/date-picker`
+- **分类**: 导航
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
-  <bk-date-picker v-model="date" type="date" placeholder="Select date" />
+  <bk-date-picker v-model="date" type="date" placeholder="选择日期" />
   <bk-date-picker v-model="dateRange" type="daterange" />
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | type | PickerTypeType | 'time' | type: [Boolean, null], |
 | allowCrossDay | boolean | false |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | open-change | - |
 | input | - |
@@ -596,9 +596,9 @@ Date and date-range picker component. Supports date, daterange, datetime, dateti
 | focus | - |
 | selection-mode-change | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
 | shortcuts | - |
 | confirm | - |
@@ -610,25 +610,25 @@ Date and date-range picker component. Supports date, daterange, datetime, dateti
 
 ### Divider
 
-Visual separator line between content sections. Supports horizontal and vertical orientation with optional text label.
+分割线组件，用于分隔内容区域。支持水平和垂直方向，可带文字标签。
 
-- **Tag**: `<bk-divider>`
-- **Import**: `import { Divider } from 'bkui-vue'`
-- **Package**: `@bkui-vue/divider`
-- **Category**: Navigation
+- **标签名**: `<bk-divider>`
+- **引入方式**: `import { Divider } from 'bkui-vue'`
+- **包名**: `@bkui-vue/divider`
+- **分类**: 导航
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
-  <bk-divider>Section Title</bk-divider>
+  <bk-divider>分区标题</bk-divider>
   <bk-divider direction="vertical" />
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | direction | directionType | - |  |
 | align | alignType | AlignEnum.CENTER |  |
@@ -636,28 +636,28 @@ Visual separator line between content sections. Supports horizontal and vertical
 | width | Number | 1 |  |
 | type | lineStyleType | - |  |
 
-#### Events
+#### 事件 (Events)
 
-No events.
+无事件。
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| default | Divider label text |
+| default | 分割线文字标签 |
 
 ---
 
 ### FixedNavbar
 
-Fixed navigation bar that stays at a fixed position on the page, typically used for quick action shortcuts.
+悬浮导航组件，固定在页面特定位置，通常用于快捷操作入口。
 
-- **Tag**: `<bk-fixed-navbar>`
-- **Import**: `import { FixedNavbar } from 'bkui-vue'`
-- **Package**: `@bkui-vue/fixed-navbar`
-- **Category**: Navigation
+- **标签名**: `<bk-fixed-navbar>`
+- **引入方式**: `import { FixedNavbar } from 'bkui-vue'`
+- **包名**: `@bkui-vue/fixed-navbar`
+- **分类**: 导航
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
@@ -665,48 +665,48 @@ Fixed navigation bar that stays at a fixed position on the page, typically used 
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | navItems | Array | [] |  |
 | extCls | String | '' |  |
 | position | oneOf | - |  |
 | modelValue | Boolean | true |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | update:modelValue | - |
 | click | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-No slots.
+无插槽。
 
 ---
 
 ### Link
 
-Inline text link component with theme support and disabled state.
+文字链接组件，支持主题样式和禁用状态。
 
-- **Tag**: `<bk-link>`
-- **Import**: `import { Link } from 'bkui-vue'`
-- **Package**: `@bkui-vue/link`
-- **Category**: Navigation
+- **标签名**: `<bk-link>`
+- **引入方式**: `import { Link } from 'bkui-vue'`
+- **包名**: `@bkui-vue/link`
+- **分类**: 导航
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
-  <bk-link theme="primary" href="https://example.com">Link Text</bk-link>
+  <bk-link theme="primary" href="https://example.com">链接文字</bk-link>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | theme | toType<`${LinkThemeEnum}`>('linkTheme', {}).def(LinkThemeEnu | - |  |
 | href | String | '' |  |
@@ -714,46 +714,46 @@ Inline text link component with theme support and disabled state.
 | underline | Boolean | false |  |
 | target | String | '_self' |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | click | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| default | Link text content |
+| default | 链接文字内容 |
 
 ---
 
 ### Menu
 
-Navigation menu component supporting vertical and horizontal modes, sub-menus, groups, and collapse behavior.
+导航菜单组件，支持垂直和水平两种模式，支持子菜单、分组和折叠行为。
 
-- **Tag**: `<bk-menu>`
-- **Import**: `import { Menu } from 'bkui-vue'`
-- **Package**: `@bkui-vue/menu`
-- **Category**: Navigation
-- **Sub-components**: Item, Submenu
+- **标签名**: `<bk-menu>`
+- **引入方式**: `import { Menu } from 'bkui-vue'`
+- **包名**: `@bkui-vue/menu`
+- **分类**: 导航
+- **子组件**: Item, Submenu
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
   <bk-menu :active-key="activeKey">
-    <bk-menu-item key="home">Home</bk-menu-item>
-    <bk-submenu key="settings" title="Settings">
-      <bk-menu-item key="profile">Profile</bk-menu-item>
+    <bk-menu-item key="home">首页</bk-menu-item>
+    <bk-submenu key="settings" title="设置">
+      <bk-menu-item key="profile">个人资料</bk-menu-item>
     </bk-submenu>
   </bk-menu>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | activeKey | String | - |  |
 | collapse | Boolean | - |  |
@@ -761,9 +761,9 @@ Navigation menu component supporting vertical and horizontal modes, sub-menus, g
 | mode | MenuMode | 'vertical' |  |
 | uniqueOpen | boolean | true |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | click | - |
 | update:activeKey | - |
@@ -771,11 +771,11 @@ Navigation menu component supporting vertical and horizontal modes, sub-menus, g
 | openChange | - |
 | collapse | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| default | MenuItem and Submenu components |
+| default | MenuItem 和 Submenu 子组件 |
 | icon | - |
 | title | - |
 
@@ -783,14 +783,14 @@ Navigation menu component supporting vertical and horizontal modes, sub-menus, g
 
 ### Navigation
 
-Application-level navigation component with sidebar and header layout, typically for backend admin pages.
+应用级导航组件，包含侧边栏和头部布局，通常用于后台管理页面。
 
-- **Tag**: `<bk-navigation>`
-- **Import**: `import { Navigation } from 'bkui-vue'`
-- **Package**: `@bkui-vue/navigation`
-- **Category**: Navigation
+- **标签名**: `<bk-navigation>`
+- **引入方式**: `import { Navigation } from 'bkui-vue'`
+- **包名**: `@bkui-vue/navigation`
+- **分类**: 导航
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
@@ -799,15 +799,15 @@ Application-level navigation component with sidebar and header layout, typically
       <bk-menu />
     </template>
     <template #default>
-      Page content
+      页面内容
     </template>
   </bk-navigation>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | navWidth | {
     type: [Number, String],
@@ -830,37 +830,37 @@ Application-level navigation component with sidebar and header layout, typically
 | navigationType | BkNavigationType | 'left-right' |  |
 | needMenu | boolean | true |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | leave | - |
 | toggle | - |
 | hover | - |
 | toggle-click | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| default | Main page content area |
-| header | Header content |
+| default | 主内容区域 |
+| header | 头部内容 |
 | menu | - |
 | footer | - |
-| side-content | Sidebar navigation content |
+| side-content | 侧边栏导航内容 |
 
 ---
 
 ### Process
 
-Process/step indicator showing workflow progress. Similar to Steps but with a different visual style.
+流程/步骤指示器，展示工作流进度。与 Steps 类似但视觉样式不同。
 
-- **Tag**: `<bk-process>`
-- **Import**: `import { Process } from 'bkui-vue'`
-- **Package**: `@bkui-vue/process`
-- **Category**: Navigation
+- **标签名**: `<bk-process>`
+- **引入方式**: `import { Process } from 'bkui-vue'`
+- **包名**: `@bkui-vue/process`
+- **分类**: 导航
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
@@ -868,9 +868,9 @@ Process/step indicator showing workflow progress. Similar to Steps but with a di
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | list | Array | [] |  |
 | controllable | Boolean | false |  |
@@ -879,39 +879,39 @@ Process/step indicator showing workflow progress. Similar to Steps but with a di
 | displayKey | String | 'content' |  |
 | extCls | String | - |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | update:curProcess | - |
 | click | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-No slots.
+无插槽。
 
 ---
 
 ### Steps
 
-Step indicator for multi-step workflows. Shows the current step and progress through a sequence.
+步骤指示器组件，用于多步骤工作流。显示当前步骤和完成进度。
 
-- **Tag**: `<bk-steps>`
-- **Import**: `import { Steps } from 'bkui-vue'`
-- **Package**: `@bkui-vue/steps`
-- **Category**: Navigation
+- **标签名**: `<bk-steps>`
+- **引入方式**: `import { Steps } from 'bkui-vue'`
+- **包名**: `@bkui-vue/steps`
+- **分类**: 导航
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
-  <bk-steps :cur-step="currentStep" :steps="['Step 1', 'Step 2', 'Step 3']" />
+  <bk-steps :cur-step="currentStep" :steps="['步骤 1', '步骤 2', '步骤 3']" />
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | theme | theme | - |  |
 | size | size | - |  |
@@ -924,43 +924,43 @@ Step indicator for multi-step workflows. Shows the current step and progress thr
 | steps | Array | [] |  |
 | beforeChange | Function | - |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | update:curStep | - |
 | click | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-No slots.
+无插槽。
 
 ---
 
 ### Tab
 
-Tab navigation component for switching between different content panels. Supports add/close, drag sorting, and card/border-card styles.
+选项卡导航组件，用于在不同内容面板之间切换。支持新增/关闭标签、拖拽排序和 card/border-card 样式。
 
-- **Tag**: `<bk-tab>`
-- **Import**: `import { Tab } from 'bkui-vue'`
-- **Package**: `@bkui-vue/tab`
-- **Category**: Navigation
-- **Sub-components**: TabPanel
+- **标签名**: `<bk-tab>`
+- **引入方式**: `import { Tab } from 'bkui-vue'`
+- **包名**: `@bkui-vue/tab`
+- **分类**: 导航
+- **子组件**: TabPanel
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
   <bk-tab v-model:active="activeTab" type="card">
-    <bk-tab-panel name="tab1" label="Tab 1">Content 1</bk-tab-panel>
-    <bk-tab-panel name="tab2" label="Tab 2">Content 2</bk-tab-panel>
+    <bk-tab-panel name="tab1" label="标签 1">内容 1</bk-tab-panel>
+    <bk-tab-panel name="tab2" label="标签 2">内容 2</bk-tab-panel>
   </bk-tab>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | tabAdd | function | (): any => ({ |  |
 | tabChange | function | (name: string): string => name |  |
@@ -996,9 +996,9 @@ Tab navigation component for switching between different content panels. Support
 | beforeChange | function | - |  |
 | panels | VNode[] | () => [] |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | add-panel | - |
 | tab-change | - |
@@ -1012,58 +1012,58 @@ Tab navigation component for switching between different content panels. Support
 | sort | - |
 | drag | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
 | add | - |
 | setting | - |
-| default | TabPanel components |
+| default | TabPanel 子组件 |
 | panel | - |
 
 ---
 
 ### TimePicker
 
-Time selection component for picking hours, minutes, and seconds. Supports time range selection.
+时间选择器组件，用于选取时、分、秒。支持时间范围选择。
 
-- **Tag**: `<bk-time-picker>`
-- **Import**: `import { TimePicker } from 'bkui-vue'`
-- **Package**: `@bkui-vue/time-picker`
-- **Category**: Navigation
+- **标签名**: `<bk-time-picker>`
+- **引入方式**: `import { TimePicker } from 'bkui-vue'`
+- **包名**: `@bkui-vue/time-picker`
+- **分类**: 导航
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
-  <bk-time-picker v-model="time" placeholder="Select time" />
+  <bk-time-picker v-model="time" placeholder="选择时间" />
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-No props.
+无属性。
 
-#### Events
+#### 事件 (Events)
 
-No events.
+无事件。
 
-#### Slots
+#### 插槽 (Slots)
 
-No slots.
+无插槽。
 
 ---
 
 ### Timeline
 
-Vertical timeline component for displaying a sequence of events in chronological order.
+时间轴组件，用于按时间顺序展示一系列事件。
 
-- **Tag**: `<bk-timeline>`
-- **Import**: `import { Timeline } from 'bkui-vue'`
-- **Package**: `@bkui-vue/timeline`
-- **Category**: Navigation
+- **标签名**: `<bk-timeline>`
+- **引入方式**: `import { Timeline } from 'bkui-vue'`
+- **包名**: `@bkui-vue/timeline`
+- **分类**: 导航
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
@@ -1071,22 +1071,22 @@ Vertical timeline component for displaying a sequence of events in chronological
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | list | arrayOf | - |  |
 | titleAble | Boolean | false |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | select | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
 | content | - |
 
@@ -1094,15 +1094,15 @@ Vertical timeline component for displaying a sequence of events in chronological
 
 ### Cascader
 
-Cascading selection component for selecting from a hierarchical data structure (e.g., province/city/district).
+级联选择组件，用于从层级数据结构中进行选择（如省/市/区）。
 
-- **Tag**: `<bk-cascader>`
-- **Import**: `import { Cascader } from 'bkui-vue'`
-- **Package**: `@bkui-vue/cascader`
-- **Category**: Form
-- **Sub-components**: CascaderPanel
+- **标签名**: `<bk-cascader>`
+- **引入方式**: `import { Cascader } from 'bkui-vue'`
+- **包名**: `@bkui-vue/cascader`
+- **分类**: 表单
+- **子组件**: CascaderPanel
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
@@ -1110,9 +1110,9 @@ Cascading selection component for selecting from a hierarchical data structure (
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | modelValue | arrayOf | - |  |
 | list | Array | [] |  |
@@ -1143,9 +1143,9 @@ Cascading selection component for selecting from a hierarchical data structure (
 | collapseTags | boolean | true |  |
 | floatMode | boolean | false |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | update:modelValue | - |
 | change | - |
@@ -1153,12 +1153,12 @@ Cascading selection component for selecting from a hierarchical data structure (
 | toggle | - |
 | focus | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
 | panel | - |
-| default | Custom trigger content |
+| default | 自定义触发元素 |
 | trigger | - |
 | extension | - |
 
@@ -1166,28 +1166,28 @@ Cascading selection component for selecting from a hierarchical data structure (
 
 ### Checkbox
 
-Checkbox form control for multiple selections. Includes CheckboxGroup for managing a group of checkboxes.
+多选框组件，支持多项选择。包含 CheckboxGroup 子组件用于管理一组多选框。
 
-- **Tag**: `<bk-checkbox>`
-- **Import**: `import { Checkbox } from 'bkui-vue'`
-- **Package**: `@bkui-vue/checkbox`
-- **Category**: Form
-- **Sub-components**: CheckboxGroup
+- **标签名**: `<bk-checkbox>`
+- **引入方式**: `import { Checkbox } from 'bkui-vue'`
+- **包名**: `@bkui-vue/checkbox`
+- **分类**: 表单
+- **子组件**: CheckboxGroup
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
   <bk-checkbox-group v-model="checked">
-    <bk-checkbox label="A">Option A</bk-checkbox>
-    <bk-checkbox label="B">Option B</bk-checkbox>
+    <bk-checkbox label="A">选项 A</bk-checkbox>
+    <bk-checkbox label="B">选项 B</bk-checkbox>
   </bk-checkbox-group>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | modelValue | oneOfType | - |  |
 | label | oneOfType | - |  |
@@ -1202,50 +1202,50 @@ Checkbox form control for multiple selections. Includes CheckboxGroup for managi
 | readonly | Boolean | false |  |
 | outline | Boolean | false |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | update:modelValue | - |
 | change | - |
 | click | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| default | Checkbox label content |
+| default | 多选框标签内容 |
 
 ---
 
 ### Form
 
-Form container component with built-in validation support. Works with FormItem for field-level validation, labels, and layout.
+表单容器组件，内置表单验证功能。配合 FormItem 子组件实现字段级验证、标签和布局控制。
 
-- **Tag**: `<bk-form>`
-- **Import**: `import { Form } from 'bkui-vue'`
-- **Package**: `@bkui-vue/form`
-- **Category**: Form
-- **Sub-components**: FormItem, ComposeFormItem
+- **标签名**: `<bk-form>`
+- **引入方式**: `import { Form } from 'bkui-vue'`
+- **包名**: `@bkui-vue/form`
+- **分类**: 表单
+- **子组件**: FormItem, ComposeFormItem
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
   <bk-form :model="formData" :rules="rules" ref="formRef">
-    <bk-form-item label="Name" property="name" required>
+    <bk-form-item label="姓名" property="name" required>
       <bk-input v-model="formData.name" />
     </bk-form-item>
     <bk-form-item>
-      <bk-button theme="primary" @click="handleSubmit">Submit</bk-button>
+      <bk-button theme="primary" @click="handleSubmit">提交</bk-button>
     </bk-form-item>
   </bk-form>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | formType | oneOf | - |  |
 | labelWidth | oneOfType | - |  |
@@ -1253,15 +1253,15 @@ Form container component with built-in validation support. Works with FormItem f
 | model | Object | - |  |
 | rules | Object | - |  |
 
-#### Events
+#### 事件 (Events)
 
-No events.
+无事件。
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| default | FormItem components |
+| default | FormItem 子组件 |
 | label | - |
 | error | - |
 | labelAppend | - |
@@ -1270,26 +1270,26 @@ No events.
 
 ### Input
 
-Text input component with support for types (text, password, number, textarea, url, email), prefix/suffix icons, clearable, and character count.
+输入框组件，支持多种类型（text、password、number、textarea、url、email），前缀/后缀图标、可清除、字数统计等功能。
 
-- **Tag**: `<bk-input>`
-- **Import**: `import { Input } from 'bkui-vue'`
-- **Package**: `@bkui-vue/input`
-- **Category**: Form
+- **标签名**: `<bk-input>`
+- **引入方式**: `import { Input } from 'bkui-vue'`
+- **包名**: `@bkui-vue/input`
+- **分类**: 表单
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
-  <bk-input v-model="value" placeholder="Enter text" clearable />
+  <bk-input v-model="value" placeholder="请输入" clearable />
   <bk-input v-model="password" type="password" />
   <bk-input v-model="textarea" type="textarea" :rows="4" />
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | type | String | 'text' |  |
 | clearable | Boolean | - |  |
@@ -1322,45 +1322,45 @@ Text input component with support for types (text, password, number, textarea, u
 | autosize | oneOfType | - |  |
 | stopPropagation | Boolean | true |  |
 
-#### Events
+#### 事件 (Events)
 
-No events.
+无事件。
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| prefix | Input prefix content |
-| suffix | Input suffix content |
-| prepend | Input prepend addon |
-| append | Input append addon |
+| prefix | 输入框前缀内容 |
+| suffix | 输入框后缀内容 |
+| prepend | 输入框前置插件 |
+| append | 输入框后置插件 |
 
 ---
 
 ### Radio
 
-Radio form control for single selection. Includes RadioGroup and RadioButton sub-components.
+单选框组件，用于单项选择。包含 RadioGroup 和 RadioButton 子组件。
 
-- **Tag**: `<bk-radio>`
-- **Import**: `import { Radio } from 'bkui-vue'`
-- **Package**: `@bkui-vue/radio`
-- **Category**: Form
-- **Sub-components**: RadioGroup, Button, RadioButton
+- **标签名**: `<bk-radio>`
+- **引入方式**: `import { Radio } from 'bkui-vue'`
+- **包名**: `@bkui-vue/radio`
+- **分类**: 表单
+- **子组件**: RadioGroup, Button, RadioButton
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
   <bk-radio-group v-model="selected">
-    <bk-radio label="A">Option A</bk-radio>
-    <bk-radio label="B">Option B</bk-radio>
+    <bk-radio label="A">选项 A</bk-radio>
+    <bk-radio label="B">选项 B</bk-radio>
   </bk-radio-group>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | name | String | '' |  |
 | label | oneOfType | - |  |
@@ -1369,31 +1369,31 @@ Radio form control for single selection. Includes RadioGroup and RadioButton sub
 | disabled | Boolean | false |  |
 | beforeChange | Function | - |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | update:modelValue | - |
 | change | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| default | Radio label content |
+| default | 单选框标签内容 |
 
 ---
 
 ### SearchSelect
 
-Advanced search input with structured query builder. Supports multiple search conditions with key-value pairs and tags.
+高级搜索输入组件，支持结构化查询构建。可创建多个键值对搜索条件并以标签形式展示。
 
-- **Tag**: `<bk-search-select>`
-- **Import**: `import { SearchSelect } from 'bkui-vue'`
-- **Package**: `@bkui-vue/search-select`
-- **Category**: Form
+- **标签名**: `<bk-search-select>`
+- **引入方式**: `import { SearchSelect } from 'bkui-vue'`
+- **包名**: `@bkui-vue/search-select`
+- **分类**: 表单
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
@@ -1405,9 +1405,9 @@ Advanced search input with structured query builder. Supports multiple search co
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | data | Omit<ISearchItem, 'isSelected' \| 'value' | () => [] |  |
 | modelValue | ISearchValue[] | () => [] |  |
@@ -1420,9 +1420,9 @@ Advanced search input with structured query builder. Supports multiple search co
 | uniqueSelect | boolean | false |  |
 | valueBehavior | `${ValueBehavior}` | ValueBehavior.ALL |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | focus | - |
 | add | - |
@@ -1436,9 +1436,9 @@ Advanced search input with structured query builder. Supports multiple search co
 | search | - |
 | copy | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
 | menu | - |
 | prepend | - |
@@ -1449,29 +1449,29 @@ Advanced search input with structured query builder. Supports multiple search co
 
 ### Select
 
-Dropdown select component with single/multiple selection, search/filter, remote data, virtual scrolling, and custom options.
+下拉选择框组件，支持单选/多选、搜索过滤、远程数据、虚拟滚动和自定义选项渲染。
 
-- **Tag**: `<bk-select>`
-- **Import**: `import { Select } from 'bkui-vue'`
-- **Package**: `@bkui-vue/select`
-- **Category**: Form
-- **Sub-components**: Option, OptionGroup
+- **标签名**: `<bk-select>`
+- **引入方式**: `import { Select } from 'bkui-vue'`
+- **包名**: `@bkui-vue/select`
+- **分类**: 表单
+- **子组件**: Option, OptionGroup
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
   <bk-select v-model="value" filterable clearable>
     <bk-option v-for="item in options" :key="item.id" :value="item.id" :label="item.name" />
   </bk-select>
-  <!-- Or use list prop -->
+  <!-- 或使用 list 属性 -->
   <bk-select v-model="value" :list="options" id-key="id" display-key="name" />
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | modelValue | Any | - |  |
 | multiple | Boolean | false |  |
@@ -1524,9 +1524,9 @@ Dropdown select component with single/multiple selection, search/filter, remote 
 | disableScrollToSelectedOption | Boolean | false |  |
 | inputTooltipsOptions | Partial<IOptions | () => ({ |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | update:modelValue | - |
 | change | - |
@@ -1543,18 +1543,18 @@ Dropdown select component with single/multiple selection, search/filter, remote 
 | enter | - |
 | keydown | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| default | Option components |
+| default | Option 子组件 |
 | label | - |
 | suffix | - |
-| prefix | Select prefix content |
+| prefix | 选择框前缀内容 |
 | allOptionIcon | - |
 | tag | - |
 | tagRender | - |
-| trigger | Custom trigger element |
+| trigger | 自定义触发元素 |
 | optionRender | - |
 | virtualScrollRender | - |
 | extension | - |
@@ -1563,14 +1563,14 @@ Dropdown select component with single/multiple selection, search/filter, remote 
 
 ### Switcher
 
-Toggle switch component for boolean on/off states.
+开关组件，用于布尔值的开/关状态切换。
 
-- **Tag**: `<bk-switcher>`
-- **Import**: `import { Switcher } from 'bkui-vue'`
-- **Package**: `@bkui-vue/switcher`
-- **Category**: Form
+- **标签名**: `<bk-switcher>`
+- **引入方式**: `import { Switcher } from 'bkui-vue'`
+- **包名**: `@bkui-vue/switcher`
+- **分类**: 表单
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
@@ -1578,9 +1578,9 @@ Toggle switch component for boolean on/off states.
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | theme | SwitcherThemeType | - |  |
 | size | size | - |  |
@@ -1598,36 +1598,36 @@ Toggle switch component for boolean on/off states.
 | modelValue | oneOfType | - |  |
 | withValidate | Boolean | true |  |
 
-#### Events
+#### 事件 (Events)
 
-No events.
+无事件。
 
-#### Slots
+#### 插槽 (Slots)
 
-No slots.
+无插槽。
 
 ---
 
 ### TagInput
 
-Input component that manages multiple tags/tokens. Supports autocomplete suggestions, custom tag rendering, and paste handling.
+标签输入组件，管理多个标签/令牌。支持自动补全建议、自定义标签渲染和粘贴处理。
 
-- **Tag**: `<bk-tag-input>`
-- **Import**: `import { TagInput } from 'bkui-vue'`
-- **Package**: `@bkui-vue/tag-input`
-- **Category**: Form
+- **标签名**: `<bk-tag-input>`
+- **引入方式**: `import { TagInput } from 'bkui-vue'`
+- **包名**: `@bkui-vue/tag-input`
+- **分类**: 表单
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
-  <bk-tag-input v-model="tags" :list="suggestions" placeholder="Enter tags" />
+  <bk-tag-input v-model="tags" :list="suggestions" placeholder="请输入标签" />
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | modelValue | arrayOf | - |  |
 | placeholder | String | '' |  |
@@ -1665,9 +1665,9 @@ Input component that manages multiple tags/tokens. Supports autocomplete suggest
 | copyable | Boolean | true |  |
 | copySeparator | String | '\n' |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | update:modelValue | - |
 | change | - |
@@ -1680,9 +1680,9 @@ Input component that manages multiple tags/tokens. Supports autocomplete suggest
 | copy-success | - |
 | dblclick | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
 | suffix | - |
 
@@ -1690,14 +1690,14 @@ Input component that manages multiple tags/tokens. Supports autocomplete suggest
 
 ### Upload
 
-File upload component supporting drag-and-drop, multiple files, file list display, and custom upload logic.
+文件上传组件，支持拖拽上传、多文件上传、文件列表展示和自定义上传逻辑。
 
-- **Tag**: `<bk-upload>`
-- **Import**: `import { Upload } from 'bkui-vue'`
-- **Package**: `@bkui-vue/upload`
-- **Category**: Form
+- **标签名**: `<bk-upload>`
+- **引入方式**: `import { Upload } from 'bkui-vue'`
+- **包名**: `@bkui-vue/upload`
+- **分类**: 表单
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
@@ -1710,9 +1710,9 @@ File upload component supporting drag-and-drop, multiple files, file list displa
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | type | Type | 'formdata' as Type |  |
 | theme | Theme | 'draggable' as Theme |  |
@@ -1746,9 +1746,9 @@ File upload component supporting drag-and-drop, multiple files, file list displa
 | chunkSize | number | 10 |  |
 | isShowPreview | boolean | true | 是否显示预览按钮 |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | remove | - |
 | preview | - |
@@ -1761,27 +1761,27 @@ File upload component supporting drag-and-drop, multiple files, file list displa
 | delete | - |
 | done | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
 | file | - |
 | innerTrigger | - |
-| default | Custom upload trigger |
-| tip | Upload tip text |
+| default | 自定义上传触发区域 |
+| tip | 上传提示文字 |
 
 ---
 
 ### AnimateNumber
 
-Animate a number from one value to another with a smooth transition effect. Useful for dashboards and statistics displays.
+动画数字组件，数值变化时带有平滑过渡动画效果。适用于仪表盘、统计数据展示等场景。
 
-- **Tag**: `<bk-animate-number>`
-- **Import**: `import { AnimateNumber } from 'bkui-vue'`
-- **Package**: `@bkui-vue/animate-number`
-- **Category**: Data
+- **标签名**: `<bk-animate-number>`
+- **引入方式**: `import { AnimateNumber } from 'bkui-vue'`
+- **包名**: `@bkui-vue/animate-number`
+- **分类**: 数据展示
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
@@ -1789,45 +1789,45 @@ Animate a number from one value to another with a smooth transition effect. Usef
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | value | Number | 0 |  |
 | digits | Number | 0 |  |
 
-#### Events
+#### 事件 (Events)
 
-No events.
+无事件。
 
-#### Slots
+#### 插槽 (Slots)
 
-No slots.
+无插槽。
 
 ---
 
 ### Badge
 
-Display a badge indicator (number or dot) on the top-right corner of another element. Commonly used for notification counts.
+标记组件，在另一个元素的右上角显示徽章指示（数字或圆点），常用于消息通知数量展示。
 
-- **Tag**: `<bk-badge>`
-- **Import**: `import { Badge } from 'bkui-vue'`
-- **Package**: `@bkui-vue/badge`
-- **Category**: Data
+- **标签名**: `<bk-badge>`
+- **引入方式**: `import { Badge } from 'bkui-vue'`
+- **包名**: `@bkui-vue/badge`
+- **分类**: 数据展示
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
   <bk-badge :count="5" theme="danger">
-    <bk-button>Messages</bk-button>
+    <bk-button>消息</bk-button>
   </bk-badge>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | theme | String | 'primary' | badge theme |
 | count | oneOfType | - | Number to show in badge |
@@ -1839,32 +1839,32 @@ Display a badge indicator (number or dot) on the top-right corner of another ele
 | visible | Boolean | false |  |
 | extCls | String | - | 外部设置的 class name |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | hover | - |
 | leave | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| default | The element to attach the badge to |
+| default | 需要附加徽章的元素 |
 | icon | - |
 
 ---
 
 ### CodeDiff
 
-Display code differences between two text blocks, similar to a git diff viewer. Supports side-by-side and unified views.
+代码差异对比组件，展示两段文本之间的差异，类似 git diff 视图。支持并排和统一视图。
 
-- **Tag**: `<bk-code-diff>`
-- **Import**: `import { CodeDiff } from 'bkui-vue'`
-- **Package**: `@bkui-vue/code-diff`
-- **Category**: Data
+- **标签名**: `<bk-code-diff>`
+- **引入方式**: `import { CodeDiff } from 'bkui-vue'`
+- **包名**: `@bkui-vue/code-diff`
+- **分类**: 数据展示
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
@@ -1872,9 +1872,9 @@ Display code differences between two text blocks, similar to a git diff viewer. 
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | oldContent | string().def('') | - |  |
 | newContent | string().def('') | - |  |
@@ -1884,41 +1884,41 @@ Display code differences between two text blocks, similar to a git diff viewer. 
 | language | string<LanguagesUnion>().def('javascript') | - |  |
 | hljs | Any | - |  |
 
-#### Events
+#### 事件 (Events)
 
-No events.
+无事件。
 
-#### Slots
+#### 插槽 (Slots)
 
-No slots.
+无插槽。
 
 ---
 
 ### Collapse
 
-Expandable/collapsible content panels. Multiple panels can be used together with accordion mode support.
+折叠面板组件，可展开/收起内容区域。多个面板可配合使用，支持手风琴模式。
 
-- **Tag**: `<bk-collapse>`
-- **Import**: `import { Collapse } from 'bkui-vue'`
-- **Package**: `@bkui-vue/collapse`
-- **Category**: Data
-- **Sub-components**: CollapsePanel
+- **标签名**: `<bk-collapse>`
+- **引入方式**: `import { Collapse } from 'bkui-vue'`
+- **包名**: `@bkui-vue/collapse`
+- **分类**: 数据展示
+- **子组件**: CollapsePanel
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
   <bk-collapse v-model="activeNames">
-    <bk-collapse-panel name="1" title="Panel 1">
-      Panel content
+    <bk-collapse-panel name="1" title="面板 1">
+      面板内容
     </bk-collapse-panel>
   </bk-collapse>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | list | arrayOf | - | 渲染列表 对象数组或者字符串数组，字符串数组默认会增加 name 字段，值为传入的字符串值 |
 | idFiled | String | '$index' | ID字段 |
@@ -1942,9 +1942,9 @@ Expandable/collapsible content panels. Multiple panels can be used together with
 | alone | Boolean | false |  |
 | icon | String | 'angle-right' |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | change | - |
 | update:modelValue | - |
@@ -1952,44 +1952,44 @@ Expandable/collapsible content panels. Multiple panels can be used together with
 | before-enter | - |
 | item-click | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| default | CollapsePanel components |
+| default | CollapsePanel 子组件 |
 | content | - |
 
 ---
 
 ### Dropdown
 
-Dropdown menu component showing a list of actions or options triggered by clicking or hovering on an element.
+下拉菜单组件，通过点击或悬浮触发元素显示操作列表或选项。
 
-- **Tag**: `<bk-dropdown>`
-- **Import**: `import { Dropdown } from 'bkui-vue'`
-- **Package**: `@bkui-vue/dropdown`
-- **Category**: Data
-- **Sub-components**: DropdownMenu, DropdownItem
+- **标签名**: `<bk-dropdown>`
+- **引入方式**: `import { Dropdown } from 'bkui-vue'`
+- **包名**: `@bkui-vue/dropdown`
+- **分类**: 数据展示
+- **子组件**: DropdownMenu, DropdownItem
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
   <bk-dropdown>
-    <bk-button>Dropdown <bk-icon name="angle-down" /></bk-button>
+    <bk-button>下拉菜单</bk-button>
     <template #content>
       <bk-dropdown-menu>
-        <bk-dropdown-item>Action 1</bk-dropdown-item>
-        <bk-dropdown-item>Action 2</bk-dropdown-item>
+        <bk-dropdown-item>操作 1</bk-dropdown-item>
+        <bk-dropdown-item>操作 2</bk-dropdown-item>
       </bk-dropdown-menu>
     </template>
   </bk-dropdown>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | isShow | Boolean | false | trigger = manual时候控制显隐藏 |
 | placement | placementType | - | 弹层出现位置 |
@@ -1998,34 +1998,34 @@ Dropdown menu component showing a list of actions or options triggered by clicki
 | popoverOptions | Object | {} | popover属性 |
 | extCls | String | - | 外部设置的 class name |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | click | - |
 | showChange | - |
 | show | - |
 | hide | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| default | Trigger element |
-| content | Dropdown menu content |
+| default | 触发元素 |
+| content | 下拉菜单内容 |
 
 ---
 
 ### Pagination
 
-Pagination control for navigating through paged data. Supports page size selection, quick jumper, and total count display.
+分页控件，用于在分页数据中进行导航。支持每页条数选择、快速跳转和总数显示。
 
-- **Tag**: `<bk-pagination>`
-- **Import**: `import { Pagination } from 'bkui-vue'`
-- **Package**: `@bkui-vue/pagination`
-- **Category**: Data
+- **标签名**: `<bk-pagination>`
+- **引入方式**: `import { Pagination } from 'bkui-vue'`
+- **包名**: `@bkui-vue/pagination`
+- **分类**: 数据展示
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
@@ -2039,9 +2039,9 @@ Pagination control for navigating through paged data. Supports page size selecti
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | modelValue | Number | 1 |  |
 | count | Number | 0 |  |
@@ -2058,18 +2058,18 @@ Pagination control for navigating through paged data. Supports page size selecti
 | disabled | Boolean | false |  |
 | layout | custom | - |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | update:modelValue | - |
 | change | - |
 | update:limit | - |
 | limitChange | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
 | limitAppend | - |
 | listAppend | - |
@@ -2080,14 +2080,14 @@ Pagination control for navigating through paged data. Supports page size selecti
 
 ### Progress
 
-Progress bar component showing completion percentage. Supports linear and circular (dashboard) modes with custom colors.
+进度条组件，显示完成百分比。支持线性和环形（仪表盘）模式，可自定义颜色。
 
-- **Tag**: `<bk-progress>`
-- **Import**: `import { Progress } from 'bkui-vue'`
-- **Package**: `@bkui-vue/progress`
-- **Category**: Data
+- **标签名**: `<bk-progress>`
+- **引入方式**: `import { Progress } from 'bkui-vue'`
+- **包名**: `@bkui-vue/progress`
+- **分类**: 数据展示
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
@@ -2096,9 +2096,9 @@ Progress bar component showing completion percentage. Supports linear and circul
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | extCls | String | - |  |
 | type | ProgressType | - |  |
@@ -2119,28 +2119,28 @@ Progress bar component showing completion percentage. Supports linear and circul
     verticalAlign: 'middle',
   } |  |
 
-#### Events
+#### 事件 (Events)
 
-No events.
+无事件。
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| default | Custom progress text |
+| default | 自定义进度文字 |
 
 ---
 
 ### Rate
 
-Star rating input component. Supports half-star ratings and custom icons.
+评分组件，基于星级进行评分输入。支持半星评分和自定义图标。
 
-- **Tag**: `<bk-rate>`
-- **Import**: `import { Rate } from 'bkui-vue'`
-- **Package**: `@bkui-vue/rate`
-- **Category**: Data
+- **标签名**: `<bk-rate>`
+- **引入方式**: `import { Rate } from 'bkui-vue'`
+- **包名**: `@bkui-vue/rate`
+- **分类**: 数据展示
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
@@ -2148,18 +2148,18 @@ Star rating input component. Supports half-star ratings and custom icons.
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | modelValue | Number | 0 |  |
 | size | size | - |  |
 | editable | Boolean | true |  |
 | withValidate | Boolean | true |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | change | - |
 | hover-change | - |
@@ -2167,22 +2167,22 @@ Star rating input component. Supports half-star ratings and custom icons.
 | chooseRate | - |
 | changeHover | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-No slots.
+无插槽。
 
 ---
 
 ### Swiper
 
-Image/content carousel component with auto-play, indicators, and navigation arrows.
+轮播图组件，支持自动播放、指示器和导航箭头。
 
-- **Tag**: `<bk-swiper>`
-- **Import**: `import { Swiper } from 'bkui-vue'`
-- **Package**: `@bkui-vue/swiper`
-- **Category**: Data
+- **标签名**: `<bk-swiper>`
+- **引入方式**: `import { Swiper } from 'bkui-vue'`
+- **包名**: `@bkui-vue/swiper`
+- **分类**: 数据展示
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
@@ -2190,9 +2190,9 @@ Image/content carousel component with auto-play, indicators, and navigation arro
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | isLoop | Boolean | true |  |
 | loopTime | Number | 8000 |  |
@@ -2201,15 +2201,15 @@ Image/content carousel component with auto-play, indicators, and navigation arro
 | height | Number | - |  |
 | width | Number | - |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | index-change | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
 | default | - |
 
@@ -2217,37 +2217,37 @@ Image/content carousel component with auto-play, indicators, and navigation arro
 
 ### Table
 
-Data table with sorting, filtering, pagination, row selection, column resizing, virtual scrolling, and custom cell rendering. Supports both column-config and slot-based column definitions.
+数据表格组件，支持排序、筛选、分页、行选择、列宽拖拽、虚拟滚动和自定义单元格渲染。同时支持列配置和插槽两种列定义方式。
 
-- **Tag**: `<bk-table>`
-- **Import**: `import { Table } from 'bkui-vue'`
-- **Package**: `@bkui-vue/table`
-- **Category**: Data
-- **Sub-components**: Column
+- **标签名**: `<bk-table>`
+- **引入方式**: `import { Table } from 'bkui-vue'`
+- **包名**: `@bkui-vue/table`
+- **分类**: 数据展示
+- **子组件**: Column
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
-  <!-- Column config mode -->
+  <!-- 列配置模式 -->
   <bk-table :data="tableData" :columns="columns" />
   
-  <!-- Slot-based columns -->
+  <!-- 插槽定义列 -->
   <bk-table :data="tableData">
-    <bk-table-column label="Name" prop="name" />
-    <bk-table-column label="Age" prop="age" sortable />
-    <bk-table-column label="Actions">
+    <bk-table-column label="姓名" prop="name" />
+    <bk-table-column label="年龄" prop="age" sortable />
+    <bk-table-column label="操作">
       <template #default="{ row }">
-        <bk-button text @click="handleEdit(row)">Edit</bk-button>
+        <bk-button text @click="handleEdit(row)">编辑</bk-button>
       </template>
     </bk-table-column>
   </bk-table>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | data | arrayOf | - | 渲染列表 |
 | columns | arrayOf | - | Table 列渲染 |
@@ -2305,43 +2305,43 @@ Data table with sorting, filtering, pagination, row selection, column resizing, 
 | appendLastRow | toType<AppendLastRowOption>('AppendLastRowOption', {
     def | - | 表格尾部追加的行配置 |
 
-#### Events
+#### 事件 (Events)
 
-No events.
+无事件。
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| default | TableColumn components |
-| empty | Content shown when data is empty |
-| prepend | Content before the table |
-| append | Content after the table |
+| default | TableColumn 子组件 |
+| empty | 数据为空时的展示内容 |
+| prepend | 表格前置内容 |
+| append | 表格后置内容 |
 
 ---
 
 ### Tag
 
-Tag/chip component for displaying labels, categories, or status indicators. Supports closable, checkable, and themed variants.
+标签组件，用于展示标签、分类或状态指示。支持可关闭、可选中和多种主题变体。
 
-- **Tag**: `<bk-tag>`
-- **Import**: `import { Tag } from 'bkui-vue'`
-- **Package**: `@bkui-vue/tag`
-- **Category**: Data
+- **标签名**: `<bk-tag>`
+- **引入方式**: `import { Tag } from 'bkui-vue'`
+- **包名**: `@bkui-vue/tag`
+- **分类**: 数据展示
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
-  <bk-tag theme="info">Info</bk-tag>
-  <bk-tag theme="success" closable @close="handleClose">Success</bk-tag>
-  <bk-tag theme="danger">Danger</bk-tag>
+  <bk-tag theme="info">信息</bk-tag>
+  <bk-tag theme="success" closable @close="handleClose">成功</bk-tag>
+  <bk-tag theme="danger">危险</bk-tag>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | theme | TagThemeType | '' |  |
 | closable | Boolean | false |  |
@@ -2352,32 +2352,32 @@ Tag/chip component for displaying labels, categories, or status indicators. Supp
 | size | size | - |  |
 | stopPropagation | Boolean | true |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | change | - |
 | close | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| icon | Custom tag icon |
-| default | Tag content |
+| icon | 自定义标签图标 |
+| default | 标签内容 |
 
 ---
 
 ### Tree
 
-Tree view component for displaying hierarchical data. Supports expand/collapse, checkbox selection, drag-and-drop, filtering, and lazy loading.
+树形视图组件，用于展示层级数据。支持展开/折叠、复选框选择、拖拽排序、搜索过滤和懒加载。
 
-- **Tag**: `<bk-tree>`
-- **Import**: `import { Tree } from 'bkui-vue'`
-- **Package**: `@bkui-vue/tree`
-- **Category**: Data
+- **标签名**: `<bk-tree>`
+- **引入方式**: `import { Tree } from 'bkui-vue'`
+- **包名**: `@bkui-vue/tree`
+- **分类**: 数据展示
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
@@ -2385,9 +2385,9 @@ Tree view component for displaying hierarchical data. Supports expand/collapse, 
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | data | arrayOf | - | 渲染列表 |
 | label | Function | undefined | 指定节点标签为节点对象的某个属性值 |
@@ -2424,32 +2424,32 @@ Tree view component for displaying hierarchical data. Supports expand/collapse, 
 | checkStrictly | Boolean | true | 在显示复选框的情况下，是否严格的遵循父子互相关联的做法 |
 | intersectionObserver | Boolean | false | 是否开启监听Tree节点进入Tree容器可视区域 |
 
-#### Events
+#### 事件 (Events)
 
-No events.
+无事件。
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
 | empty | - |
 | nodeLoading | - |
 | node | - |
-| default | Custom node content |
+| default | 自定义节点内容 |
 | nodeAppend | - |
 
 ---
 
 ### VirtualRender
 
-Virtual scrolling container for efficiently rendering large lists by only rendering visible items in the viewport.
+虚拟滚动容器，通过只渲染可视区域内的元素来高效展示大数据量列表。
 
-- **Tag**: `<bk-virtual-render>`
-- **Import**: `import { VirtualRender } from 'bkui-vue'`
-- **Package**: `@bkui-vue/virtual-render`
-- **Category**: Data
+- **标签名**: `<bk-virtual-render>`
+- **引入方式**: `import { VirtualRender } from 'bkui-vue'`
+- **包名**: `@bkui-vue/virtual-render`
+- **分类**: 数据展示
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
@@ -2461,9 +2461,9 @@ Virtual scrolling container for efficiently rendering large lists by only render
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | onContentScroll | Function | - |  |
 | list | Array | [] | 传入原始数据源 |
@@ -2494,16 +2494,16 @@ Virtual scrolling container for efficiently rendering large lists by only render
 | wrapperStyle | Any | {} |  |
 | autoIndex | Boolean | true | 传入数据如果没有设置rowKey，是否自动生成$index作为唯一ID $index的值默认为index |
 
-#### Events
+#### 事件 (Events)
 
-No events.
+无事件。
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
 | beforeContent | - |
-| default | Template for each rendered item, receives { data, index } as slot props |
+| default | 每个渲染项的模板，接收 { data, index } 作为插槽参数 |
 | afterContent | - |
 | afterSection | - |
 
@@ -2511,28 +2511,28 @@ No events.
 
 ### Alert
 
-Display important alert messages with different severity levels (info, success, warning, danger). Supports closable behavior and custom icons.
+警告提示组件，支持 info、success、warning、danger 四种主题，可关闭，支持自定义图标。
 
-- **Tag**: `<bk-alert>`
-- **Import**: `import { Alert } from 'bkui-vue'`
-- **Package**: `@bkui-vue/alert`
-- **Category**: Feedback
+- **标签名**: `<bk-alert>`
+- **引入方式**: `import { Alert } from 'bkui-vue'`
+- **包名**: `@bkui-vue/alert`
+- **分类**: 反馈
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
-  <bk-alert theme="info" title="This is an info alert" closable />
+  <bk-alert theme="info" title="这是一条信息提示" closable />
   <bk-alert theme="warning">
-    <template #title>Custom Title</template>
-    Alert description content
+    <template #title>自定义标题</template>
+    提示描述内容
   </bk-alert>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | theme | TagThemeType | TagThemeEnum.INFO |  |
 | title | String | - |  |
@@ -2540,45 +2540,45 @@ Display important alert messages with different severity levels (info, success, 
 | closeText | String | - |  |
 | showIcon | Boolean | true |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | close | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| close | Custom close button |
-| icon | Custom icon |
-| title | Custom title content |
-| default | Alert description content |
+| close | 自定义关闭按钮 |
+| icon | 自定义图标 |
+| title | 自定义标题 |
+| default | 提示描述内容 |
 
 ---
 
 ### Card
 
-A container component for displaying grouped content with optional header and footer. Supports collapsible mode.
+卡片容器组件，用于展示分组内容，支持可选的标题和底部区域，可折叠。
 
-- **Tag**: `<bk-card>`
-- **Import**: `import { Card } from 'bkui-vue'`
-- **Package**: `@bkui-vue/card`
-- **Category**: Feedback
+- **标签名**: `<bk-card>`
+- **引入方式**: `import { Card } from 'bkui-vue'`
+- **包名**: `@bkui-vue/card`
+- **分类**: 反馈
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
-  <bk-card title="Card Title">
-    Card body content
+  <bk-card title="卡片标题">
+    卡片内容
   </bk-card>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | title | String | - |  |
 | showHeader | Boolean | true |  |
@@ -2590,49 +2590,49 @@ A container component for displaying grouped content with optional header and fo
 | isEdit | Boolean | false |  |
 | isCollapse | Boolean | false |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | update:collapseStatus | - |
 | edit | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
 | icon | - |
-| header | Custom header content |
-| default | Card body content |
-| footer | Custom footer content |
+| header | 自定义头部 |
+| default | 卡片主体内容 |
+| footer | 自定义底部 |
 
 ---
 
 ### Dialog
 
-Modal dialog component for confirmations, forms, and important user interactions. Supports dragging, multi-step, and custom footer.
+对话框组件，用于确认操作、表单填写等重要用户交互。支持拖拽、多步骤、自定义底部按钮。
 
-- **Tag**: `<bk-dialog>`
-- **Import**: `import { Dialog } from 'bkui-vue'`
-- **Package**: `@bkui-vue/dialog`
-- **Category**: Feedback
+- **标签名**: `<bk-dialog>`
+- **引入方式**: `import { Dialog } from 'bkui-vue'`
+- **包名**: `@bkui-vue/dialog`
+- **分类**: 反馈
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
-  <bk-dialog v-model:is-show="visible" title="Dialog Title">
-    Dialog content here
+  <bk-dialog v-model:is-show="visible" title="对话框标题">
+    对话框内容
     <template #footer>
-      <bk-button theme="primary" @click="visible = false">Confirm</bk-button>
+      <bk-button theme="primary" @click="visible = false">确定</bk-button>
     </template>
   </bk-dialog>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | draggable | Boolean | false | 是否可拖拽 |
 | confirmText | String | - | confirmText: PropTypes.string.def('确定'), |
@@ -2650,9 +2650,9 @@ Modal dialog component for confirmations, forms, and important user interactions
 | showContentClass | Boolean | true | 是否为默认内容区包裹 dialog-content 样式类 |
 | transfer | oneOfType | - | 是否显示在body内即与#app同级 |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | closed | - |
 | shown | - |
@@ -2662,67 +2662,67 @@ Modal dialog component for confirmations, forms, and important user interactions
 | prev | - |
 | next | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| header | Custom header |
+| header | 自定义头部 |
 | tools | - |
-| default | Dialog body content |
-| footer | Custom footer with action buttons |
-| close | Custom close button |
+| default | 对话框主体内容 |
+| footer | 自定义底部操作按钮 |
+| close | 自定义关闭按钮 |
 
 ---
 
 ### Exception
 
-Display exception/error pages with predefined types (403, 404, 500, building, empty, login). Used for error states.
+异常提示页面组件，预定义类型包括 403、404、500、building、empty、login，用于错误状态展示。
 
-- **Tag**: `<bk-exception>`
-- **Import**: `import { Exception } from 'bkui-vue'`
-- **Package**: `@bkui-vue/exception`
-- **Category**: Feedback
+- **标签名**: `<bk-exception>`
+- **引入方式**: `import { Exception } from 'bkui-vue'`
+- **包名**: `@bkui-vue/exception`
+- **分类**: 反馈
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
   <bk-exception type="404" />
-  <bk-exception type="empty" description="No data found" />
+  <bk-exception type="empty" description="暂无数据" />
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | type | toType<`${ExceptionEnum}`>('type', {}).def(ExceptionEnum.COD | - | 类型 |
 | scene | toType<`${SceneEnum}`>('scene', {}).def(SceneEnum.PAGE) | - | 场景 |
 | title | String | - |  |
 | description | String | - |  |
 
-#### Events
+#### 事件 (Events)
 
-No events.
+无事件。
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| default | Custom description content |
+| default | 自定义描述内容 |
 
 ---
 
 ### InfoBox
 
-Imperative info/confirmation dialog. Called via function: InfoBox({ title, subTitle, confirmText, onConfirm }). Not a template component.
+信息确认提示框，通过函数式调用：InfoBox({ title, subTitle, confirmText, onConfirm })。非模板组件，直接通过 JS 调用。
 
-- **Tag**: `<bk-info-box>`
-- **Import**: `import { InfoBox } from 'bkui-vue'`
-- **Package**: `@bkui-vue/info-box`
-- **Category**: Feedback
+- **标签名**: `<bk-info-box>`
+- **引入方式**: `import { InfoBox } from 'bkui-vue'`
+- **包名**: `@bkui-vue/info-box`
+- **分类**: 反馈
 
-#### Usage
+#### 使用示例
 
 ```vue
 <script setup>
@@ -2730,53 +2730,53 @@ import { InfoBox } from 'bkui-vue';
 
 function showConfirm() {
   InfoBox({
-    title: 'Confirm Delete?',
-    subTitle: 'This action cannot be undone.',
-    confirmText: 'Delete',
+    title: '确认删除？',
+    subTitle: '此操作不可撤销。',
+    confirmText: '删除',
     onConfirm() {
-      // handle confirm
+      // 处理确认逻辑
     }
   });
 }
 </script>
 ```
 
-#### Props
+#### 属性 (Props)
 
-No props.
+无属性。
 
-#### Events
+#### 事件 (Events)
 
-No events.
+无事件。
 
-#### Slots
+#### 插槽 (Slots)
 
-No slots.
+无插槽。
 
 ---
 
 ### Loading
 
-Loading spinner overlay for indicating loading state. Can be used as a component or directive (v-bk-loading).
+加载中遮罩组件，用于表示内容正在加载。可作为组件使用，也可通过指令 v-bk-loading 使用。
 
-- **Tag**: `<bk-loading>`
-- **Import**: `import { Loading } from 'bkui-vue'`
-- **Package**: `@bkui-vue/loading`
-- **Category**: Feedback
+- **标签名**: `<bk-loading>`
+- **引入方式**: `import { Loading } from 'bkui-vue'`
+- **包名**: `@bkui-vue/loading`
+- **分类**: 反馈
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
   <bk-loading :loading="isLoading">
-    <div>Content that is loading</div>
+    <div>正在加载的内容</div>
   </bk-loading>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | indicator | function | - |  |
 | loading | Boolean | true |  |
@@ -2790,52 +2790,52 @@ Loading spinner overlay for indicating loading state. Can be used as a component
 | zIndex | Number | 1 |  |
 | isDirective | Boolean | false |  |
 
-#### Events
+#### 事件 (Events)
 
-No events.
+无事件。
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| default | Content to show the loading overlay on |
+| default | 需要显示加载遮罩的内容 |
 
 ---
 
 ### Message
 
-Imperative global message notification. Called via function: Message({ theme, message }). Appears at the top of the page.
+全局消息提示，通过函数式调用：Message({ theme, message })。显示在页面顶部，非模板组件。
 
-- **Tag**: `<bk-message>`
-- **Import**: `import { Message } from 'bkui-vue'`
-- **Package**: `@bkui-vue/message`
-- **Category**: Feedback
+- **标签名**: `<bk-message>`
+- **引入方式**: `import { Message } from 'bkui-vue'`
+- **包名**: `@bkui-vue/message`
+- **分类**: 反馈
 
-#### Usage
+#### 使用示例
 
 ```vue
 <script setup>
 import { Message } from 'bkui-vue';
 
-Message({ theme: 'success', message: 'Operation successful!' });
-Message({ theme: 'error', message: 'Something went wrong.', delay: 5000 });
+Message({ theme: 'success', message: '操作成功！' });
+Message({ theme: 'error', message: '操作失败。', delay: 5000 });
 </script>
 ```
 
-#### Props
+#### 属性 (Props)
 
-No props.
+无属性。
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | destroy | - |
 | detail | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
 | title | - |
 | action | - |
@@ -2844,27 +2844,27 @@ No props.
 
 ### Modal
 
-Base modal/overlay component used internally by Dialog and Sideslider. Provides the backdrop, animation, and z-index management.
+基础模态框/遮罩组件，Dialog 和 Sideslider 的底层组件。提供遮罩层、动画和 z-index 管理。
 
-- **Tag**: `<bk-modal>`
-- **Import**: `import { Modal } from 'bkui-vue'`
-- **Package**: `@bkui-vue/modal`
-- **Category**: Feedback
-- **Sub-components**: propsMixin
+- **标签名**: `<bk-modal>`
+- **引入方式**: `import { Modal } from 'bkui-vue'`
+- **包名**: `@bkui-vue/modal`
+- **分类**: 反馈
+- **子组件**: propsMixin
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
   <bk-modal :is-show="visible" @close="visible = false">
-    Modal content
+    模态框内容
   </bk-modal>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | isShow | Boolean | false | 是否显示弹框 |
 | width | oneOfType | - |  |
@@ -2883,21 +2883,21 @@ Base modal/overlay component used internally by Dialog and Sideslider. Provides 
 | extCls | String | - |  |
 | backgroundColor | String | '' |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | quick-close | - |
 | hidden | - |
 | shown | - |
 | close | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
 | header | - |
-| default | Modal content |
+| default | 模态框内容 |
 | footer | - |
 | close | - |
 
@@ -2905,59 +2905,59 @@ Base modal/overlay component used internally by Dialog and Sideslider. Provides 
 
 ### Notify
 
-Imperative notification message. Called via function: Notify({ theme, title, message, position }). Appears at a corner of the page.
+通知提示组件，通过函数式调用：Notify({ theme, title, message, position })。显示在页面角落，非模板组件。
 
-- **Tag**: `<bk-notify>`
-- **Import**: `import { Notify } from 'bkui-vue'`
-- **Package**: `@bkui-vue/notify`
-- **Category**: Feedback
+- **标签名**: `<bk-notify>`
+- **引入方式**: `import { Notify } from 'bkui-vue'`
+- **包名**: `@bkui-vue/notify`
+- **分类**: 反馈
 
-#### Usage
+#### 使用示例
 
 ```vue
 <script setup>
 import { Notify } from 'bkui-vue';
 
-Notify({ theme: 'success', title: 'Success', message: 'Data saved.' });
+Notify({ theme: 'success', title: '成功', message: '数据已保存。' });
 </script>
 ```
 
-#### Props
+#### 属性 (Props)
 
-No props.
+无属性。
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | destroy | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-No slots.
+无插槽。
 
 ---
 
 ### OverflowTitle
 
-Automatically show a tooltip when text content overflows its container. Useful for truncated table cells and labels.
+文本溢出提示组件，当文本内容超出容器时自动显示 tooltip。适用于表格单元格和标签的文本截断场景。
 
-- **Tag**: `<bk-overflow-title>`
-- **Import**: `import { OverflowTitle } from 'bkui-vue'`
-- **Package**: `@bkui-vue/overflow-title`
-- **Category**: Feedback
+- **标签名**: `<bk-overflow-title>`
+- **引入方式**: `import { OverflowTitle } from 'bkui-vue'`
+- **包名**: `@bkui-vue/overflow-title`
+- **分类**: 反馈
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
-  <bk-overflow-title>This is a very long text that may overflow its container</bk-overflow-title>
+  <bk-overflow-title>这是一段可能会超出容器宽度的很长的文本内容</bk-overflow-title>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | content | String | - |  |
 | type | oneOf | - |  |
@@ -2966,40 +2966,40 @@ Automatically show a tooltip when text content overflows its container. Useful f
 | resizeable | Boolean | - |  |
 | popoverOptions | Partial<PopoverPropTypes | - |  |
 
-#### Events
+#### 事件 (Events)
 
-No events.
+无事件。
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| default | Text content that may overflow |
+| default | 可能溢出的文本内容 |
 
 ---
 
 ### PopConfirm
 
-Popover-based confirm dialog. Shows a small confirmation popup anchored to a trigger element.
+气泡确认框组件，基于 Popover 的确认对话框，锚定在触发元素上显示小型确认弹窗。
 
-- **Tag**: `<bk-pop-confirm>`
-- **Import**: `import { PopConfirm } from 'bkui-vue'`
-- **Package**: `@bkui-vue/pop-confirm`
-- **Category**: Feedback
+- **标签名**: `<bk-pop-confirm>`
+- **引入方式**: `import { PopConfirm } from 'bkui-vue'`
+- **包名**: `@bkui-vue/pop-confirm`
+- **分类**: 反馈
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
-  <bk-pop-confirm title="Are you sure?" @confirm="handleConfirm">
-    <bk-button>Delete</bk-button>
+  <bk-pop-confirm title="确定要删除吗？" @confirm="handleConfirm">
+    <bk-button>删除</bk-button>
   </bk-pop-confirm>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | trigger | triggerType | - | 触发方式 支持 click hover |
 | title | String | '' |  |
@@ -3016,47 +3016,47 @@ Popover-based confirm dialog. Shows a small confirmation popup anchored to a tri
 | popoverOptions | toType<PopoverPropTypes>('PopoverPropTypes', {
     default:  | - |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | confirm | - |
 | cancel | - |
 | after-show | - |
 | after-hidden | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
 | icon | - |
-| default | Trigger element |
-| content | Custom popover content |
+| default | 触发元素 |
+| content | 自定义弹出内容 |
 
 ---
 
 ### Popover
 
-General-purpose popover/tooltip component. Supports click, hover, and manual triggers. Based on @floating-ui for positioning.
+通用弹出框/提示组件，支持 click、hover 和 manual 三种触发方式。基于 @floating-ui 实现定位。
 
-- **Tag**: `<bk-popover>`
-- **Import**: `import { Popover } from 'bkui-vue'`
-- **Package**: `@bkui-vue/popover`
-- **Category**: Feedback
+- **标签名**: `<bk-popover>`
+- **引入方式**: `import { Popover } from 'bkui-vue'`
+- **包名**: `@bkui-vue/popover`
+- **分类**: 反馈
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
-  <bk-popover content="Popover content" trigger="hover">
-    <bk-button>Hover me</bk-button>
+  <bk-popover content="弹出内容" trigger="hover">
+    <bk-button>悬停查看</bk-button>
   </bk-popover>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | onAfterHidden | () => {} | - |  |
 | onAfterShow | () => {} | - |  |
@@ -3095,80 +3095,80 @@ General-purpose popover/tooltip component. Supports click, hover, and manual tri
 | componentEventDelay | Number | 0 | 自定义Content组件渲染，point-event延迟渲染时间 避免子组件point-event渲染时触发popover鼠标事件 如果设置为0，则不启用此设置 |
 | forceClickoutside | Boolean | false | 或略其他判定条件，强制监听clickoutside & 执行hide |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | click | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| default | Trigger element |
+| default | 触发元素 |
 | arrow | - |
-| content | Popover body content |
+| content | 弹出框内容 |
 
 ---
 
 ### Popover2
 
-Alternative popover implementation with additional features. Similar API to Popover.
+替代弹出框实现，提供额外功能。API 与 Popover 类似。
 
-- **Tag**: `<bk-popover2>`
-- **Import**: `import { Popover2 } from 'bkui-vue'`
-- **Package**: `@bkui-vue/popover2`
-- **Category**: Feedback
+- **标签名**: `<bk-popover2>`
+- **引入方式**: `import { Popover2 } from 'bkui-vue'`
+- **包名**: `@bkui-vue/popover2`
+- **分类**: 反馈
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
-  <bk-popover2 content="Popover content">
-    <bk-button>Click me</bk-button>
+  <bk-popover2 content="弹出内容">
+    <bk-button>点击查看</bk-button>
   </bk-popover2>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-No props.
+无属性。
 
-#### Events
+#### 事件 (Events)
 
-No events.
+无事件。
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| default | Trigger element |
-| content | Popover body content |
+| default | 触发元素 |
+| content | 弹出框内容 |
 
 ---
 
 ### Sideslider
 
-Side panel drawer that slides in from the edge of the screen. Useful for detail views, forms, or secondary navigation.
+侧边栏抽屉组件，从屏幕边缘滑入。适用于详情查看、表单填写或辅助导航。
 
-- **Tag**: `<bk-sideslider>`
-- **Import**: `import { Sideslider } from 'bkui-vue'`
-- **Package**: `@bkui-vue/sideslider`
-- **Category**: Feedback
+- **标签名**: `<bk-sideslider>`
+- **引入方式**: `import { Sideslider } from 'bkui-vue'`
+- **包名**: `@bkui-vue/sideslider`
+- **分类**: 反馈
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
-  <bk-sideslider v-model:isShow="visible" title="Side Panel" width="400">
-    Panel content
+  <bk-sideslider v-model:isShow="visible" title="侧边面板" width="400">
+    面板内容
   </bk-sideslider>
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | title | String | '' |  |
 | direction | string | 'right' |  |
@@ -3178,9 +3178,9 @@ Side panel drawer that slides in from the edge of the screen. Useful for detail 
 | triggerWidth | Number | 5 |  |
 | immediate | Boolean | false |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | closed | - |
 | update:isShow | - |
@@ -3191,26 +3191,26 @@ Side panel drawer that slides in from the edge of the screen. Useful for detail 
 | resizing | - |
 | after-resize | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
-| header | Custom header content |
-| default | Panel body content |
-| footer | Custom footer content |
+| header | 自定义头部 |
+| default | 面板主体内容 |
+| footer | 自定义底部 |
 
 ---
 
 ### Slider
 
-Slider/range input for selecting a value or range within a defined interval.
+滑动选择器，用于在定义的区间内选择一个值或范围。
 
-- **Tag**: `<bk-slider>`
-- **Import**: `import { Slider } from 'bkui-vue'`
-- **Package**: `@bkui-vue/slider`
-- **Category**: Feedback
+- **标签名**: `<bk-slider>`
+- **引入方式**: `import { Slider } from 'bkui-vue'`
+- **包名**: `@bkui-vue/slider`
+- **分类**: 反馈
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
@@ -3219,9 +3219,9 @@ Slider/range input for selecting a value or range within a defined interval.
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | modelValue | oneOfType | - |  |
 | extCls | string | '' |  |
@@ -3247,18 +3247,18 @@ Slider/range input for selecting a value or range within a defined interval.
       default: false,
     | - |  |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | emitChange | - |
 | resetSize | - |
 | update:modelValue | - |
 | change | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-| Slot Name | Description |
+| 插槽名 | 说明 |
 | --- | --- |
 | start | - |
 | end | - |
@@ -3267,28 +3267,28 @@ Slider/range input for selecting a value or range within a defined interval.
 
 ### Transfer
 
-Transfer (shuttle) component for moving items between two lists. Supports search filtering and custom rendering.
+穿梭框组件，在两个列表之间移动项目。支持搜索过滤和自定义渲染。
 
-- **Tag**: `<bk-transfer>`
-- **Import**: `import { Transfer } from 'bkui-vue'`
-- **Package**: `@bkui-vue/transfer`
-- **Category**: Feedback
+- **标签名**: `<bk-transfer>`
+- **引入方式**: `import { Transfer } from 'bkui-vue'`
+- **包名**: `@bkui-vue/transfer`
+- **分类**: 反馈
 
-#### Usage
+#### 使用示例
 
 ```vue
 <template>
   <bk-transfer
     :source-list="allItems"
     :target-list="selectedItems"
-    :title="['Available', 'Selected']"
+    :title="['可选', '已选']"
   />
 </template>
 ```
 
-#### Props
+#### 属性 (Props)
 
-| Name | Type | Default | Description |
+| 属性名 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | title | arrayOf | - | 顶部title(title[0]: 左侧title,title[1]: 右侧title,) |
 | extCls | String | '' | 自定义class |
@@ -3303,24 +3303,24 @@ Transfer (shuttle) component for moving items between two lists. Supports search
 | emptyContent | arrayOf | - | 穿梭框无数据时提示文案 |
 | multiple | Boolean | false | 支持checkbox多选模式 |
 
-#### Events
+#### 事件 (Events)
 
-| Event Name | Description |
+| 事件名 | 说明 |
 | --- | --- |
 | change | - |
 | update:targetList | - |
 
-#### Slots
+#### 插槽 (Slots)
 
-No slots.
+无插槽。
 
 ---
 
-## Directives
+## 指令 (Directives)
 
-bkui-vue provides the following directives:
+bkui-vue 提供以下指令：
 
-- `v-bk-clickoutside` — Detect clicks outside an element
-- `v-bk-tooltips` — Attach tooltip to an element
-- `v-bk-loading` — Show loading state on an element
-- `v-bk-overflow-title` — Show tooltip when text overflows
+- `v-bk-clickoutside` — 检测元素外部点击
+- `v-bk-tooltips` — 为元素添加工具提示
+- `v-bk-loading` — 在元素上显示加载状态
+- `v-bk-overflow-title` — 文本溢出时显示提示
