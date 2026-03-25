@@ -43,7 +43,8 @@
     "stylelint": "stylelint --fix ./{packages,site}/**/*.{vue,less} --custom-syntax",
     "test:unit": "jest --passWithNoTests --config=./jest.config.js",
     "test:alert": "lerna run --scope @bkui-vue/alert test",
-    "cz": "git-cz"
+    "cz": "git-cz",
+    "generate:llm-docs": "ts-node --skip-project scripts/generate-llm-docs.ts"
   },
   "devDependencies": {
     "@babel/core": "~7.22.9",

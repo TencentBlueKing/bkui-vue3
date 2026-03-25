@@ -1,0 +1,382 @@
+{
+  "Affix": {
+    "description": "Pin an element to a fixed position on the page when scrolling. Useful for navigation bars, sidebars, or action buttons that should stay visible.",
+    "usage": "<template>\n  <bk-affix :offset-top=\"100\">\n    <bk-button>Affix Button</bk-button>\n  </bk-affix>\n</template>",
+    "slots": {
+      "default": "Content to be pinned"
+    }
+  },
+  "Alert": {
+    "description": "Display important alert messages with different severity levels (info, success, warning, danger). Supports closable behavior and custom icons.",
+    "usage": "<template>\n  <bk-alert theme=\"info\" title=\"This is an info alert\" closable />\n  <bk-alert theme=\"warning\">\n    <template #title>Custom Title</template>\n    Alert description content\n  </bk-alert>\n</template>",
+    "slots": {
+      "default": "Alert description content",
+      "title": "Custom title content",
+      "icon": "Custom icon",
+      "close": "Custom close button"
+    }
+  },
+  "AnimateNumber": {
+    "description": "Animate a number from one value to another with a smooth transition effect. Useful for dashboards and statistics displays.",
+    "usage": "<template>\n  <bk-animate-number :value=\"1000\" />\n</template>"
+  },
+  "Backtop": {
+    "description": "A button that appears when the user scrolls down, allowing them to quickly scroll back to the top of the page.",
+    "usage": "<template>\n  <bk-backtop :visibility-height=\"200\" />\n</template>",
+    "slots": {
+      "default": "Custom button content"
+    }
+  },
+  "Badge": {
+    "description": "Display a badge indicator (number or dot) on the top-right corner of another element. Commonly used for notification counts.",
+    "usage": "<template>\n  <bk-badge :count=\"5\" theme=\"danger\">\n    <bk-button>Messages</bk-button>\n  </bk-badge>\n</template>",
+    "slots": {
+      "default": "The element to attach the badge to"
+    }
+  },
+  "Breadcrumb": {
+    "description": "Navigation breadcrumb trail showing the current page's location within a hierarchical structure.",
+    "usage": "<template>\n  <bk-breadcrumb>\n    <bk-breadcrumb-item to=\"/\">Home</bk-breadcrumb-item>\n    <bk-breadcrumb-item>Current Page</bk-breadcrumb-item>\n  </bk-breadcrumb>\n</template>",
+    "slots": {
+      "default": "BreadcrumbItem components"
+    }
+  },
+  "Button": {
+    "description": "Basic button component supporting multiple themes (default, primary, success, warning, danger), sizes, loading state, outline and text variants.",
+    "usage": "<template>\n  <bk-button theme=\"primary\">Primary</bk-button>\n  <bk-button theme=\"success\" :loading=\"true\">Loading</bk-button>\n  <bk-button theme=\"danger\" outline>Outline</bk-button>\n  <bk-button text>Text Button</bk-button>\n  <bk-button disabled>Disabled</bk-button>\n</template>",
+    "slots": {
+      "default": "Button label content"
+    }
+  },
+  "Card": {
+    "description": "A container component for displaying grouped content with optional header and footer. Supports collapsible mode.",
+    "usage": "<template>\n  <bk-card title=\"Card Title\">\n    Card body content\n  </bk-card>\n</template>",
+    "slots": {
+      "default": "Card body content",
+      "header": "Custom header content",
+      "footer": "Custom footer content"
+    }
+  },
+  "Cascader": {
+    "description": "Cascading selection component for selecting from a hierarchical data structure (e.g., province/city/district).",
+    "usage": "<template>\n  <bk-cascader v-model=\"value\" :list=\"options\" />\n</template>",
+    "slots": {
+      "default": "Custom trigger content"
+    }
+  },
+  "Checkbox": {
+    "description": "Checkbox form control for multiple selections. Includes CheckboxGroup for managing a group of checkboxes.",
+    "usage": "<template>\n  <bk-checkbox-group v-model=\"checked\">\n    <bk-checkbox label=\"A\">Option A</bk-checkbox>\n    <bk-checkbox label=\"B\">Option B</bk-checkbox>\n  </bk-checkbox-group>\n</template>",
+    "slots": {
+      "default": "Checkbox label content"
+    }
+  },
+  "CodeDiff": {
+    "description": "Display code differences between two text blocks, similar to a git diff viewer. Supports side-by-side and unified views.",
+    "usage": "<template>\n  <bk-code-diff :old-content=\"oldCode\" :new-content=\"newCode\" language=\"javascript\" />\n</template>"
+  },
+  "Collapse": {
+    "description": "Expandable/collapsible content panels. Multiple panels can be used together with accordion mode support.",
+    "usage": "<template>\n  <bk-collapse v-model=\"activeNames\">\n    <bk-collapse-panel name=\"1\" title=\"Panel 1\">\n      Panel content\n    </bk-collapse-panel>\n  </bk-collapse>\n</template>",
+    "slots": {
+      "default": "CollapsePanel components"
+    }
+  },
+  "ColorPicker": {
+    "description": "Color selection component with visual color picker interface. Returns color values in various formats.",
+    "usage": "<template>\n  <bk-color-picker v-model=\"color\" />\n</template>"
+  },
+  "ConfigProvider": {
+    "description": "Global configuration provider for setting locale, prefix, and other global settings for all child bkui-vue components.",
+    "usage": "<template>\n  <bk-config-provider :locale=\"locale\">\n    <App />\n  </bk-config-provider>\n</template>",
+    "slots": {
+      "default": "Application content"
+    }
+  },
+  "Container": {
+    "description": "Grid layout system based on 24-column grid. Includes Row and Col sub-components for responsive layouts.",
+    "usage": "<template>\n  <bk-container>\n    <bk-row>\n      <bk-col :span=\"12\">Left</bk-col>\n      <bk-col :span=\"12\">Right</bk-col>\n    </bk-row>\n  </bk-container>\n</template>",
+    "slots": {
+      "default": "Row/Col components"
+    }
+  },
+  "DatePicker": {
+    "description": "Date and date-range picker component. Supports date, daterange, datetime, datetimerange, month, and year modes.",
+    "usage": "<template>\n  <bk-date-picker v-model=\"date\" type=\"date\" placeholder=\"Select date\" />\n  <bk-date-picker v-model=\"dateRange\" type=\"daterange\" />\n</template>"
+  },
+  "Dialog": {
+    "description": "Modal dialog component for confirmations, forms, and important user interactions. Supports dragging, multi-step, and custom footer.",
+    "usage": "<template>\n  <bk-dialog v-model:is-show=\"visible\" title=\"Dialog Title\">\n    Dialog content here\n    <template #footer>\n      <bk-button theme=\"primary\" @click=\"visible = false\">Confirm</bk-button>\n    </template>\n  </bk-dialog>\n</template>",
+    "slots": {
+      "default": "Dialog body content",
+      "header": "Custom header",
+      "footer": "Custom footer with action buttons",
+      "close": "Custom close button"
+    }
+  },
+  "Divider": {
+    "description": "Visual separator line between content sections. Supports horizontal and vertical orientation with optional text label.",
+    "usage": "<template>\n  <bk-divider>Section Title</bk-divider>\n  <bk-divider direction=\"vertical\" />\n</template>",
+    "slots": {
+      "default": "Divider label text"
+    }
+  },
+  "Dropdown": {
+    "description": "Dropdown menu component showing a list of actions or options triggered by clicking or hovering on an element.",
+    "usage": "<template>\n  <bk-dropdown>\n    <bk-button>Dropdown <bk-icon name=\"angle-down\" /></bk-button>\n    <template #content>\n      <bk-dropdown-menu>\n        <bk-dropdown-item>Action 1</bk-dropdown-item>\n        <bk-dropdown-item>Action 2</bk-dropdown-item>\n      </bk-dropdown-menu>\n    </template>\n  </bk-dropdown>\n</template>",
+    "slots": {
+      "default": "Trigger element",
+      "content": "Dropdown menu content"
+    }
+  },
+  "Exception": {
+    "description": "Display exception/error pages with predefined types (403, 404, 500, building, empty, login). Used for error states.",
+    "usage": "<template>\n  <bk-exception type=\"404\" />\n  <bk-exception type=\"empty\" description=\"No data found\" />\n</template>",
+    "slots": {
+      "default": "Custom description content"
+    }
+  },
+  "FixedNavbar": {
+    "description": "Fixed navigation bar that stays at a fixed position on the page, typically used for quick action shortcuts.",
+    "usage": "<template>\n  <bk-fixed-navbar :nav-items=\"items\" />\n</template>"
+  },
+  "Form": {
+    "description": "Form container component with built-in validation support. Works with FormItem for field-level validation, labels, and layout.",
+    "usage": "<template>\n  <bk-form :model=\"formData\" :rules=\"rules\" ref=\"formRef\">\n    <bk-form-item label=\"Name\" property=\"name\" required>\n      <bk-input v-model=\"formData.name\" />\n    </bk-form-item>\n    <bk-form-item>\n      <bk-button theme=\"primary\" @click=\"handleSubmit\">Submit</bk-button>\n    </bk-form-item>\n  </bk-form>\n</template>",
+    "slots": {
+      "default": "FormItem components"
+    }
+  },
+  "InfoBox": {
+    "description": "Imperative info/confirmation dialog. Called via function: InfoBox({ title, subTitle, confirmText, onConfirm }). Not a template component.",
+    "usage": "<script setup>\nimport { InfoBox } from 'bkui-vue';\n\nfunction showConfirm() {\n  InfoBox({\n    title: 'Confirm Delete?',\n    subTitle: 'This action cannot be undone.',\n    confirmText: 'Delete',\n    onConfirm() {\n      // handle confirm\n    }\n  });\n}\n</script>"
+  },
+  "Input": {
+    "description": "Text input component with support for types (text, password, number, textarea, url, email), prefix/suffix icons, clearable, and character count.",
+    "usage": "<template>\n  <bk-input v-model=\"value\" placeholder=\"Enter text\" clearable />\n  <bk-input v-model=\"password\" type=\"password\" />\n  <bk-input v-model=\"textarea\" type=\"textarea\" :rows=\"4\" />\n</template>",
+    "slots": {
+      "prefix": "Input prefix content",
+      "suffix": "Input suffix content",
+      "prepend": "Input prepend addon",
+      "append": "Input append addon"
+    }
+  },
+  "Link": {
+    "description": "Inline text link component with theme support and disabled state.",
+    "usage": "<template>\n  <bk-link theme=\"primary\" href=\"https://example.com\">Link Text</bk-link>\n</template>",
+    "slots": {
+      "default": "Link text content"
+    }
+  },
+  "Loading": {
+    "description": "Loading spinner overlay for indicating loading state. Can be used as a component or directive (v-bk-loading).",
+    "usage": "<template>\n  <bk-loading :loading=\"isLoading\">\n    <div>Content that is loading</div>\n  </bk-loading>\n</template>",
+    "slots": {
+      "default": "Content to show the loading overlay on"
+    }
+  },
+  "Menu": {
+    "description": "Navigation menu component supporting vertical and horizontal modes, sub-menus, groups, and collapse behavior.",
+    "usage": "<template>\n  <bk-menu :active-key=\"activeKey\">\n    <bk-menu-item key=\"home\">Home</bk-menu-item>\n    <bk-submenu key=\"settings\" title=\"Settings\">\n      <bk-menu-item key=\"profile\">Profile</bk-menu-item>\n    </bk-submenu>\n  </bk-menu>\n</template>",
+    "slots": {
+      "default": "MenuItem and Submenu components"
+    }
+  },
+  "Message": {
+    "description": "Imperative global message notification. Called via function: Message({ theme, message }). Appears at the top of the page.",
+    "usage": "<script setup>\nimport { Message } from 'bkui-vue';\n\nMessage({ theme: 'success', message: 'Operation successful!' });\nMessage({ theme: 'error', message: 'Something went wrong.', delay: 5000 });\n</script>"
+  },
+  "Modal": {
+    "description": "Base modal/overlay component used internally by Dialog and Sideslider. Provides the backdrop, animation, and z-index management.",
+    "usage": "<template>\n  <bk-modal :is-show=\"visible\" @close=\"visible = false\">\n    Modal content\n  </bk-modal>\n</template>",
+    "slots": {
+      "default": "Modal content"
+    }
+  },
+  "Navigation": {
+    "description": "Application-level navigation component with sidebar and header layout, typically for backend admin pages.",
+    "usage": "<template>\n  <bk-navigation>\n    <template #side-content>\n      <bk-menu />\n    </template>\n    <template #default>\n      Page content\n    </template>\n  </bk-navigation>\n</template>",
+    "slots": {
+      "default": "Main page content area",
+      "side-content": "Sidebar navigation content",
+      "header": "Header content"
+    }
+  },
+  "Notify": {
+    "description": "Imperative notification message. Called via function: Notify({ theme, title, message, position }). Appears at a corner of the page.",
+    "usage": "<script setup>\nimport { Notify } from 'bkui-vue';\n\nNotify({ theme: 'success', title: 'Success', message: 'Data saved.' });\n</script>"
+  },
+  "OverflowTitle": {
+    "description": "Automatically show a tooltip when text content overflows its container. Useful for truncated table cells and labels.",
+    "usage": "<template>\n  <bk-overflow-title>This is a very long text that may overflow its container</bk-overflow-title>\n</template>",
+    "slots": {
+      "default": "Text content that may overflow"
+    }
+  },
+  "Pagination": {
+    "description": "Pagination control for navigating through paged data. Supports page size selection, quick jumper, and total count display.",
+    "usage": "<template>\n  <bk-pagination\n    v-model=\"currentPage\"\n    :count=\"total\"\n    :limit=\"pageSize\"\n    @change=\"handlePageChange\"\n    @limit-change=\"handleSizeChange\"\n  />\n</template>"
+  },
+  "PopConfirm": {
+    "description": "Popover-based confirm dialog. Shows a small confirmation popup anchored to a trigger element.",
+    "usage": "<template>\n  <bk-pop-confirm title=\"Are you sure?\" @confirm=\"handleConfirm\">\n    <bk-button>Delete</bk-button>\n  </bk-pop-confirm>\n</template>",
+    "slots": {
+      "default": "Trigger element",
+      "content": "Custom popover content"
+    }
+  },
+  "Popover": {
+    "description": "General-purpose popover/tooltip component. Supports click, hover, and manual triggers. Based on @floating-ui for positioning.",
+    "usage": "<template>\n  <bk-popover content=\"Popover content\" trigger=\"hover\">\n    <bk-button>Hover me</bk-button>\n  </bk-popover>\n</template>",
+    "slots": {
+      "default": "Trigger element",
+      "content": "Popover body content"
+    }
+  },
+  "Popover2": {
+    "description": "Alternative popover implementation with additional features. Similar API to Popover.",
+    "usage": "<template>\n  <bk-popover2 content=\"Popover content\">\n    <bk-button>Click me</bk-button>\n  </bk-popover2>\n</template>",
+    "slots": {
+      "default": "Trigger element",
+      "content": "Popover body content"
+    }
+  },
+  "Process": {
+    "description": "Process/step indicator showing workflow progress. Similar to Steps but with a different visual style.",
+    "usage": "<template>\n  <bk-process :list=\"steps\" :cur-process=\"currentStep\" />\n</template>"
+  },
+  "Progress": {
+    "description": "Progress bar component showing completion percentage. Supports linear and circular (dashboard) modes with custom colors.",
+    "usage": "<template>\n  <bk-progress :percent=\"60\" />\n  <bk-progress :percent=\"80\" theme=\"success\" />\n</template>",
+    "slots": {
+      "default": "Custom progress text"
+    }
+  },
+  "Radio": {
+    "description": "Radio form control for single selection. Includes RadioGroup and RadioButton sub-components.",
+    "usage": "<template>\n  <bk-radio-group v-model=\"selected\">\n    <bk-radio label=\"A\">Option A</bk-radio>\n    <bk-radio label=\"B\">Option B</bk-radio>\n  </bk-radio-group>\n</template>",
+    "slots": {
+      "default": "Radio label content"
+    }
+  },
+  "Rate": {
+    "description": "Star rating input component. Supports half-star ratings and custom icons.",
+    "usage": "<template>\n  <bk-rate v-model=\"rating\" :max=\"5\" />\n</template>"
+  },
+  "ResizeLayout": {
+    "description": "Draggable split-pane layout component. Allows users to resize two adjacent panels by dragging a divider.",
+    "usage": "<template>\n  <bk-resize-layout :initial-divide=\"300\">\n    <template #aside>\n      Sidebar content\n    </template>\n    <template #main>\n      Main content\n    </template>\n  </bk-resize-layout>\n</template>",
+    "slots": {
+      "aside": "Left/top panel content",
+      "main": "Right/bottom panel content"
+    }
+  },
+  "Scrollbar": {
+    "description": "Custom scrollbar component providing consistent cross-browser scrollbar styling.",
+    "usage": "<template>\n  <bk-scrollbar style=\"height: 300px\">\n    <div>Scrollable content</div>\n  </bk-scrollbar>\n</template>",
+    "slots": {
+      "default": "Scrollable content"
+    }
+  },
+  "SearchSelect": {
+    "description": "Advanced search input with structured query builder. Supports multiple search conditions with key-value pairs and tags.",
+    "usage": "<template>\n  <bk-search-select\n    v-model=\"searchValue\"\n    :data=\"searchConditions\"\n    @change=\"handleSearch\"\n  />\n</template>"
+  },
+  "Select": {
+    "description": "Dropdown select component with single/multiple selection, search/filter, remote data, virtual scrolling, and custom options.",
+    "usage": "<template>\n  <bk-select v-model=\"value\" filterable clearable>\n    <bk-option v-for=\"item in options\" :key=\"item.id\" :value=\"item.id\" :label=\"item.name\" />\n  </bk-select>\n  <!-- Or use list prop -->\n  <bk-select v-model=\"value\" :list=\"options\" id-key=\"id\" display-key=\"name\" />\n</template>",
+    "slots": {
+      "default": "Option components",
+      "prefix": "Select prefix content",
+      "trigger": "Custom trigger element"
+    }
+  },
+  "Sideslider": {
+    "description": "Side panel drawer that slides in from the edge of the screen. Useful for detail views, forms, or secondary navigation.",
+    "usage": "<template>\n  <bk-sideslider v-model:isShow=\"visible\" title=\"Side Panel\" width=\"400\">\n    Panel content\n  </bk-sideslider>\n</template>",
+    "slots": {
+      "default": "Panel body content",
+      "header": "Custom header content",
+      "footer": "Custom footer content"
+    }
+  },
+  "Slider": {
+    "description": "Slider/range input for selecting a value or range within a defined interval.",
+    "usage": "<template>\n  <bk-slider v-model=\"value\" :min=\"0\" :max=\"100\" />\n  <bk-slider v-model=\"range\" range :min=\"0\" :max=\"100\" />\n</template>"
+  },
+  "Steps": {
+    "description": "Step indicator for multi-step workflows. Shows the current step and progress through a sequence.",
+    "usage": "<template>\n  <bk-steps :cur-step=\"currentStep\" :steps=\"['Step 1', 'Step 2', 'Step 3']\" />\n</template>"
+  },
+  "Swiper": {
+    "description": "Image/content carousel component with auto-play, indicators, and navigation arrows.",
+    "usage": "<template>\n  <bk-swiper :pics=\"imageList\" />\n</template>"
+  },
+  "Switcher": {
+    "description": "Toggle switch component for boolean on/off states.",
+    "usage": "<template>\n  <bk-switcher v-model=\"isEnabled\" theme=\"primary\" />\n</template>"
+  },
+  "Tab": {
+    "description": "Tab navigation component for switching between different content panels. Supports add/close, drag sorting, and card/border-card styles.",
+    "usage": "<template>\n  <bk-tab v-model:active=\"activeTab\" type=\"card\">\n    <bk-tab-panel name=\"tab1\" label=\"Tab 1\">Content 1</bk-tab-panel>\n    <bk-tab-panel name=\"tab2\" label=\"Tab 2\">Content 2</bk-tab-panel>\n  </bk-tab>\n</template>",
+    "slots": {
+      "default": "TabPanel components"
+    }
+  },
+  "Table": {
+    "description": "Data table with sorting, filtering, pagination, row selection, column resizing, virtual scrolling, and custom cell rendering. Supports both column-config and slot-based column definitions.",
+    "usage": "<template>\n  <!-- Column config mode -->\n  <bk-table :data=\"tableData\" :columns=\"columns\" />\n  \n  <!-- Slot-based columns -->\n  <bk-table :data=\"tableData\">\n    <bk-table-column label=\"Name\" prop=\"name\" />\n    <bk-table-column label=\"Age\" prop=\"age\" sortable />\n    <bk-table-column label=\"Actions\">\n      <template #default=\"{ row }\">\n        <bk-button text @click=\"handleEdit(row)\">Edit</bk-button>\n      </template>\n    </bk-table-column>\n  </bk-table>\n</template>",
+    "slots": {
+      "default": "TableColumn components",
+      "empty": "Content shown when data is empty",
+      "prepend": "Content before the table",
+      "append": "Content after the table"
+    }
+  },
+  "Tag": {
+    "description": "Tag/chip component for displaying labels, categories, or status indicators. Supports closable, checkable, and themed variants.",
+    "usage": "<template>\n  <bk-tag theme=\"info\">Info</bk-tag>\n  <bk-tag theme=\"success\" closable @close=\"handleClose\">Success</bk-tag>\n  <bk-tag theme=\"danger\">Danger</bk-tag>\n</template>",
+    "slots": {
+      "default": "Tag content",
+      "icon": "Custom tag icon"
+    }
+  },
+  "TagInput": {
+    "description": "Input component that manages multiple tags/tokens. Supports autocomplete suggestions, custom tag rendering, and paste handling.",
+    "usage": "<template>\n  <bk-tag-input v-model=\"tags\" :list=\"suggestions\" placeholder=\"Enter tags\" />\n</template>"
+  },
+  "TimePicker": {
+    "description": "Time selection component for picking hours, minutes, and seconds. Supports time range selection.",
+    "usage": "<template>\n  <bk-time-picker v-model=\"time\" placeholder=\"Select time\" />\n</template>"
+  },
+  "Timeline": {
+    "description": "Vertical timeline component for displaying a sequence of events in chronological order.",
+    "usage": "<template>\n  <bk-timeline :list=\"events\" />\n</template>"
+  },
+  "Transfer": {
+    "description": "Transfer (shuttle) component for moving items between two lists. Supports search filtering and custom rendering.",
+    "usage": "<template>\n  <bk-transfer\n    :source-list=\"allItems\"\n    :target-list=\"selectedItems\"\n    :title=\"['Available', 'Selected']\"\n  />\n</template>"
+  },
+  "Tree": {
+    "description": "Tree view component for displaying hierarchical data. Supports expand/collapse, checkbox selection, drag-and-drop, filtering, and lazy loading.",
+    "usage": "<template>\n  <bk-tree :data=\"treeData\" :show-checkbox=\"true\" @node-click=\"handleClick\" />\n</template>",
+    "slots": {
+      "default": "Custom node content"
+    }
+  },
+  "Upload": {
+    "description": "File upload component supporting drag-and-drop, multiple files, file list display, and custom upload logic.",
+    "usage": "<template>\n  <bk-upload\n    :url=\"uploadUrl\"\n    :multiple=\"true\"\n    :accept=\"'.jpg,.png,.pdf'\"\n    @success=\"handleSuccess\"\n  />\n</template>",
+    "slots": {
+      "default": "Custom upload trigger",
+      "tip": "Upload tip text"
+    }
+  },
+  "VirtualRender": {
+    "description": "Virtual scrolling container for efficiently rendering large lists by only rendering visible items in the viewport.",
+    "usage": "<template>\n  <bk-virtual-render :list=\"largeList\" :height=\"400\" :item-height=\"36\">\n    <template #default=\"{ data }\">\n      <div>{{ data.name }}</div>\n    </template>\n  </bk-virtual-render>\n</template>",
+    "slots": {
+      "default": "Template for each rendered item, receives { data, index } as slot props"
+    }
+  }
+}
