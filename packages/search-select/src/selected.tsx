@@ -26,6 +26,7 @@
 import { defineComponent, PropType, ref } from 'vue';
 
 import { Error } from '@bkui-vue/icon';
+import Popover from '@bkui-vue/popover';
 
 import SearchSelectInput from './input';
 import {
@@ -149,6 +150,7 @@ export default defineComponent({
         >
           <span
             class='selected-name'
+            title={item.inputInnerText}
             onClick={e => this.handleEditSelected(e, item, index)}
           >
             {item.inputInnerText}
@@ -163,9 +165,32 @@ export default defineComponent({
       <>
         {this.selectedList.map((item, index) => [
           this.overflowIndex >= 0 && index === this.overflowIndex && (
-            <div class='search-container-selected overflow-selected'>
-              +{this.selectedList.length - this.overflowIndex}
-            </div>
+            <Popover
+              placement='bottom-start'
+              theme='light'
+              popoverDelay={[200, 0]}
+              referenceCls='overflow-popover-ref'
+            >
+              {{
+                default: () => (
+                  <div class='search-container-selected overflow-selected'>
+                    +{this.selectedList.length - this.overflowIndex}
+                  </div>
+                ),
+                content: () => (
+                  <div class='overflow-tips-content'>
+                    {this.selectedList.slice(this.overflowIndex).map((overflowItem, idx) => (
+                      <div
+                        key={idx}
+                        class='overflow-tips-item'
+                      >
+                        {overflowItem.inputInnerText}
+                      </div>
+                    ))}
+                  </div>
+                ),
+              }}
+            </Popover>
           ),
           contentComponent(item, index),
         ])}
