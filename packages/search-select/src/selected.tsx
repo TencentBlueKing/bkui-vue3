@@ -25,8 +25,8 @@
  */
 import { defineComponent, PropType, ref } from 'vue';
 
+import { bkTooltips } from '@bkui-vue/directives';
 import { Error } from '@bkui-vue/icon';
-import Popover from '@bkui-vue/popover';
 
 import SearchSelectInput from './input';
 import {
@@ -42,6 +42,9 @@ import {
 } from './utils';
 export default defineComponent({
   name: 'SearchSelected',
+  directives: {
+    bkTooltips,
+  },
   props: {
     data: {
       type: Array as PropType<ISearchItem[]>,
@@ -165,32 +168,19 @@ export default defineComponent({
       <>
         {this.selectedList.map((item, index) => [
           this.overflowIndex >= 0 && index === this.overflowIndex && (
-            <Popover
-              placement='bottom-start'
-              theme='light'
-              popoverDelay={[200, 0]}
-              referenceCls='overflow-popover-ref'
-            >
-              {{
-                default: () => (
-                  <div class='search-container-selected overflow-selected'>
-                    +{this.selectedList.length - this.overflowIndex}
-                  </div>
-                ),
-                content: () => (
-                  <div class='overflow-tips-content'>
-                    {this.selectedList.slice(this.overflowIndex).map((overflowItem, idx) => (
-                      <div
-                        key={idx}
-                        class='overflow-tips-item'
-                      >
-                        {overflowItem.inputInnerText}
-                      </div>
-                    ))}
-                  </div>
-                ),
+            <div
+              class='search-container-selected overflow-selected'
+              v-bk-tooltips={{
+                content: this.selectedList
+                  .slice(this.overflowIndex)
+                  .map(item => item.inputInnerText)
+                  .join('\n'),
+                placement: 'bottom-start',
+                theme: 'light',
               }}
-            </Popover>
+            >
+              +{this.selectedList.length - this.overflowIndex}
+            </div>
           ),
           contentComponent(item, index),
         ])}
