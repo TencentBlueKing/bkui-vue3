@@ -49,6 +49,12 @@ export type TreeNode = {
   children?: TreeNode[];
 };
 
+/**
+ * 拖拽放置类型
+ * - child: 作为目标节点的子节点
+ * - move: 作为目标节点的同级节点（非排序模式）
+ * - sort: 同父节点下排序（排序模式）
+ */
 export type DropType = 'child' | 'move' | 'sort';
 
 export type DisableDropHandler = (data: TreeNode, type: DropType, target: TreeNode) => boolean;
@@ -291,6 +297,12 @@ export const treeProps = {
    * 节点内容点击行为
    * 此处配置每个节点除了展开\收起箭头之外的内容块时的行为
    * 默认为 ['selected', 'expand', 'click']，点击内容块为选中当前节点
+   * 可选值：
+   * - 'selected': 选中节点
+   * - 'expand': 展开节点
+   * - 'collapse': 收起节点
+   * - 'click': 触发 nodeClick 事件
+   * - 'checked': 切换复选框选中状态（需要 showCheckbox 为 true）
    */
   nodeContentAction: PropTypes.oneOfType([
     PropTypes.arrayOf(toType<`${NodeContentActionEnum}`>('nodeContentActionType', {}).def(NodeContentActionEnum.CLICK)),

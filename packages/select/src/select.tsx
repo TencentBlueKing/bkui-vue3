@@ -516,6 +516,10 @@ export default defineComponent({
     const handleInputChange = value => {
       if (!filterable.value) return;
       customOptionName.value = value;
+
+      if (!value?.length) {
+        emitChange(multiple.value ? [] : '');
+      }
     };
     // allow create(创建自定义选项)
     const handleCreateCustomOption = (val: number | string, e: KeyboardEvent) => {
@@ -827,14 +831,10 @@ export default defineComponent({
       });
     });
 
-    const handlePopoverShown = () => {
-      virtualRenderRef.value?.scrollTo(0, 1);
-    };
-
     // 处理扩展区域点击事件
     const handleExtensionClick = (e: MouseEvent) => {
       e.stopPropagation();
-    }
+    };
 
     return {
       t,
@@ -895,7 +895,6 @@ export default defineComponent({
       localSelectAllText,
       resolveClassName,
       handleCreateCustomOption,
-      handlePopoverShown,
       virtualLineHeight,
       isEnableVirtualRender,
       preloadItemCount,
@@ -1146,9 +1145,9 @@ export default defineComponent({
         <div class={this.resolveClassName('select-content')}>
           <div
             ref='scrollContainerRef'
-            v-show={this.isShowSelectContent}
             style={{ maxHeight: `${this.scrollHeight}px`, minHeight: `${this.minHeight}px` }}
             class={this.isEnableVirtualRender ? '' : this.resolveClassName('select-dropdown')}
+            v-show={this.isShowSelectContent}
             onScroll={this.handleScroll}
           >
             <ul class={this.resolveClassName('select-options')}>
@@ -1170,7 +1169,12 @@ export default defineComponent({
             </ul>
           </div>
           {this.$slots?.extension && (
-            <div class={this.resolveClassName('select-extension')} onClick={this.handleExtensionClick}>{this.$slots?.extension()}</div>
+            <div
+              class={this.resolveClassName('select-extension')}
+              onClick={this.handleExtensionClick}
+            >
+              {this.$slots?.extension()}
+            </div>
           )}
         </div>
       </div>
@@ -1185,7 +1189,6 @@ export default defineComponent({
             default: () => renderSelectTrigger(),
             content: () => renderSelectContent(),
           }}
-          onAfterShow={this.handlePopoverShown}
           onClickoutside={this.handleClickOutside}
         />
       </div>

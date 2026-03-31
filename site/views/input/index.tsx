@@ -267,6 +267,13 @@ const inputEvents: IPropsTableItem[] = [
     desc: '粘贴内容时触发事件',
     optional: [],
   },
+  {
+    name: 'search',
+    type: 'String',
+    default: null,
+    desc: 'type="search"时，点击搜索图标时触发事件',
+    optional: [],
+  },
 ];
 // 输入框插槽
 const inputSlots = [

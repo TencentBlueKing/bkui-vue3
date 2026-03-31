@@ -4,25 +4,25 @@
     v-model="state.tags"
     :list="state.list"
     placeholder="请选择城市"
+    separator=";"
+    trigger="focus"
     allow-auto-match
     allow-create
     has-delete-icon
     @change="handleChange"
-    trigger="focus"
-    separator=";"
-    is-show-copy
     @copy-success="val => copySuccess(val)"
   />
 </template>
 
 <script setup>
   import { reactive } from 'vue';
+
   import BkMessage from '@bkui-vue/message';
 
   const copySuccess = val => {
     BkMessage({
       message: `复制成功，内容为：${val}`,
-      width: 'auto'
+      width: 'auto',
     });
   };
 

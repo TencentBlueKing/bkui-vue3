@@ -218,7 +218,10 @@ export default defineComponent({
      */
     const handleItemChecked = dirct => {
       const target = dirct === 'source' ? selectList : selectedList;
-      multipleSelectAllValue.value[dirct] = multipleSelectList.value[dirct].length === target.value.length;
+      // 计算非 disabled 项的数量
+      const enabledItems = target.value.filter(item => !item.disabled);
+      multipleSelectAllValue.value[dirct] =
+        enabledItems.length > 0 && multipleSelectList.value[dirct].length === enabledItems.length;
     };
     /**
      * @desc checkbox 全选
@@ -227,7 +230,10 @@ export default defineComponent({
      */
     const handleAllChecked = (value, dirct) => {
       const target = dirct === 'source' ? selectList : selectedList;
-      multipleSelectList.value[dirct] = value ? target.value.map(item => item[settingCode.value]) : [];
+      // 全选时只选择非 disabled 的项
+      multipleSelectList.value[dirct] = value
+        ? target.value.filter(item => !item.disabled).map(item => item[settingCode.value])
+        : [];
     };
     /**
      * @desc 多选后点击穿梭事件
@@ -238,8 +244,10 @@ export default defineComponent({
       const from = isLeft ? selectList : selectedList;
       const to = isLeft ? selectedList : selectList;
       const checkeds = multipleSelectList.value[isLeft ? 'source' : 'target'];
-      const items = from.value.filter(val => checkeds.includes(val[settingCode.value]));
-      from.value = from.value.filter(val => !checkeds.includes(val[settingCode.value]));
+      // 过滤掉 disabled 的项，只穿梭非 disabled 的项
+      const items = from.value.filter(val => checkeds.includes(val[settingCode.value]) && !val.disabled);
+      // 从源列表中移除已选中的非 disabled 项，保留 disabled 项
+      from.value = from.value.filter(val => !checkeds.includes(val[settingCode.value]) || val.disabled);
       to.value.push(...items);
       multipleSelectList.value[isLeft ? 'source' : 'target'] = [];
       handleEmitUpdateTargetList();
@@ -278,8 +286,14 @@ export default defineComponent({
       const titleText = isLeft ? `${this.title[0] ?? this.t.sourceList}` : `${this.title[1] ?? this.t.targetList}`;
       const isDisabled = isLeft ? !leftList.length : !rightList.length;
 
-      const isIndeterminate =
-        !!this.multipleSelectList[selectField].length && !this.multipleSelectAllValue[selectField];
+      // 计算非 disabled 项的数量，用于全选状态判断
+      const enabledItems = (isLeft ? leftList : rightList).filter(item => !item.disabled);
+      const enabledCount = enabledItems.length;
+      const selectedEnabledCount = this.multipleSelectList[selectField].filter(key => {
+        const currentItem = (isLeft ? leftList : rightList).find(item => item[this.settingCode] === key);
+        return currentItem && !currentItem.disabled;
+      }).length;
+      const isIndeterminate = selectedEnabledCount > 0 && selectedEnabledCount < enabledCount;
       const selectCount = this.multipleSelectList[selectField].length;
       const headerClick = () => {
         if (isDisabled) return;
@@ -294,6 +308,7 @@ export default defineComponent({
             <Checkbox
               class='header-checkbox'
               v-model={this.multipleSelectAllValue[selectField]}
+              disabled={enabledCount === 0}
               indeterminate={isIndeterminate}
               label={titleText}
               onChange={val => this.handleAllChecked(val, selectField)}
@@ -357,10 +372,11 @@ export default defineComponent({
           v-model={this.multipleSelectList[selectField]}
           onChange={() => this.handleItemChecked(selectField)}
         >
-          {list.map((item: any) => (
+          {list.map(item => (
             <Checkbox
               key={item[this.settingCode]}
               class='checkbox-item'
+              disabled={item.disabled}
               label={item[this.settingCode]}
             >
               {this.$slots[slotName]?.(item) ?? getDefaultListHtml(item, isLeft)}

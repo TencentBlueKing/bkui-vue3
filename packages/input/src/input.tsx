@@ -95,6 +95,7 @@ export const enum EVENTS {
   KEYPRESS = 'keypress',
   KEYUP = 'keyup',
   PASTE = 'paste',
+  SEARCH = 'search',
   UPDATE = 'update:modelValue',
 }
 // TODO: 泛型
@@ -128,6 +129,7 @@ export const inputEmitEventsType = {
   [EVENTS.COMPOSITIONSTART]: CompositionEventFunction,
   [EVENTS.COMPOSITIONUPDATE]: CompositionEventFunction,
   [EVENTS.COMPOSITIONEND]: CompositionEventFunction,
+  [EVENTS.SEARCH]: (evt: Event) => evt,
 };
 
 // type InputEventUnion = `${EVENTS}`;
@@ -179,8 +181,9 @@ export default defineComponent({
     const textareaCalcStyle = ref<StyleValue>();
 
     const suffixCls = getCls('suffix-icon');
+
     const suffixIconMap = {
-      search: () => <Search />,
+      search: () => <Search onClick={handleSearch} />,
       password: () => (
         <Unvisible
           class={suffixCls}
@@ -378,6 +381,10 @@ export default defineComponent({
         formItem?.validate?.('blur');
       }
     }
+    // type = search suffix icon click event
+    function handleSearch(e: Event) {
+      ctx.emit(EVENTS.SEARCH, e);
+    }
 
     // 事件句柄生成器
     function eventHandler(eventName) {
@@ -421,7 +428,16 @@ export default defineComponent({
                   if (val === '' || val === null || val === undefined) {
                     return '';
                   }
-                  return (+val).toFixed(precision);
+                  // 输入过程中只截断超出 precision 的多余小数位，不用 toFixed 补零
+                  // 完整的精度格式化在 CHANGE（失焦）时由 handleNumber 处理
+                  const dotIndex = val.indexOf('.');
+                  if (precision === 0) {
+                    return dotIndex > -1 ? val.slice(0, dotIndex) : val;
+                  }
+                  if (dotIndex > -1 && val.length - dotIndex - 1 > precision) {
+                    return val.slice(0, dotIndex + precision + 1);
+                  }
+                  return val;
                 })()
               : e.target.value,
             e,

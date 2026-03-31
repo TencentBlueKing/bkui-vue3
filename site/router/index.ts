@@ -794,6 +794,15 @@ const routes: RouteRecordRaw[] = [
     },
     component: () => import('../views/blueking/status-tag/index'),
   },
+  {
+    path: '/bk/login-userinfo',
+    name: 'LoginUserinfo',
+    meta: {
+      group: NavGroupMeta.Business,
+      navName: 'Login Userinfo 登录用户信息',
+    },
+    component: () => import('../views/blueking/login-userinfo/index'),
+  },
 ];
 
 const router = createRouter({

@@ -88,6 +88,13 @@ const tagProps: IPropsTableItem[] = [
     desc: 'Tag 的尺寸大小',
     optional: ['small', 'medium', 'large'],
   },
+  {
+    name: 'stopPropagation',
+    type: 'Boolean',
+    default: 'true',
+    desc: '是否阻止事件冒泡',
+    optional: [],
+  },
 ];
 
 const tagEvents: IPropsTableItem[] = [

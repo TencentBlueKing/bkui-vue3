@@ -1,6 +1,82 @@
 ## 更新日志
 
 
+### 2.1.0-beta.4
+
+* **[feat]**:
+    - fix(code-diff): 将 diff2html 样式从 JS import 迁移至 less 文件引入
+    - bugfix(tag-input): 增补 tag-input 与复制相关的文档说明 & 去除示例中的错误属性
+    - feat(login-userinfo): 登录用户信息
+
+
+### 2.0.2-beta.110
+
+* **[feat]**:
+    - fix(tree): 修复异步加载时，点击node会自动加载和展开
+
+
+### 2.0.2-beta.109
+
+* **[feat]**:
+    - feat(dialog): 增加showContentClass配置
+
+
+### 2.0.2-beta.103
+
+* **[feat]**:
+    - bugfix(input): 修复 Input设置precision后 按下任意数字会默认补充precision数量的小数位，失焦又回复 ([#2474](https://github.com/TencentBlueKing/bkui-vue3/issues/2474))
+
+
+### 2.0.2-beta.92
+
+* **[feat]**:
+    - 修复表格设置列无法checkbox无法选中的问题
+
+
+### 2.0.2-beta.91
+
+* **[feat]**:
+    - bugfix(select): 修复 开启虚拟滚动在list有值时下拉为空问题
+
+
+### 2.0.2-beta.89
+
+* **[feat]**:
+    - feature(sideslider): 新增拖动宽度配置
+    - bugfix(input): search模式下search icon没有回调事件抛出
+    - bugfix(select): 修复 select 单选自定义创建时无法清空输入框问题
+
+
+### 2.0.2-beta.88
+
+* **[feat]**:
+    - bugfix(select): 点击Mask不关闭下拉面板
+
+
+### 2.0.2-beta.87
+
+* **[feat]**:
+    - bugfix(tag): tag作为select下拉选项使用时无法被选中
+
+
+### 2.0.2-beta.86
+
+* **[feat]**:
+    - bugfix(select): 点击遮罩关闭dialog，dialog内的select下拉面板销毁不干净
+
+
+### 2.0.2-beta.85
+
+* **[feat]**:
+    - bugfix(tree): 设置show-checkbox后，selected值变化不会动态更新
+
+
+### 2.0.2-beta.84
+
+* **[feat]**:
+    - bugfix(tag-input): 删除 tag 不符合预期
+
+
 ### 2.0.2-beta.83
 
 * **[feat]**:

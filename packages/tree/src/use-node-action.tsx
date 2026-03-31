@@ -470,8 +470,9 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
 
     /**
      * 处理异步节点多层级展开选中
+     * 仅在 autoOpen 为 true 时才触发异步加载和展开
      */
-    if (getNodeAttr(resolvedItem, NODE_ATTRIBUTES.IS_ASYNC)) {
+    if (autoOpen && getNodeAttr(resolvedItem, NODE_ATTRIBUTES.IS_ASYNC)) {
       if (isRemoteFnExec(event)) {
         asyncNodeClick(resolvedItem).then(() => {
           nextTick(() => {
@@ -515,11 +516,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
 
     // 1. 处理 selected 行为：选中节点
     if (nodeActions.includes('selected')) {
-      // 如果配置了 expand 或 collapse，selected 不应该自动展开节点
-      // 让展开/收起逻辑由 expand/collapse 单独处理
-      const hasExpandOrCollapse = nodeActions.includes('expand') || nodeActions.includes('collapse');
-      const autoOpen = !hasExpandOrCollapse;
-      setSelect(item, true, autoOpen, true, event);
+      setSelect(item, true, false, true, event);
     }
 
     // 2. 处理 expand 行为：仅当节点是收起状态时展开
@@ -536,6 +533,14 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     if (nodeActions.includes('click') && !isCheckboxEvent) {
       const eventName: string = EVENTS.NODE_CLICK;
       ctx.emit(eventName, item, resolveScopedSlotParam(item), getSchemaVal(item), e);
+    }
+
+    // 处理 checked 操作：当 showCheckbox 为 true 时，点击节点内容切换复选框状态
+    if (nodeActions.includes('checked') && event !== 'checked') {
+      if (showCheckbox(props, extendNodeScopedData(item)) && !props.disableCheck) {
+        const currentChecked = isNodeChecked(item);
+        handleNodeItemCheckboxChange(item, !currentChecked, e);
+      }
     }
   };
 
@@ -669,5 +674,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     setOpen,
     setNodeAttribute,
     isIndeterminate,
+    deepUpdateChildNode,
+    updateParentChecked,
   };
 };

@@ -24,48 +24,59 @@
  * IN THE SOFTWARE.
  */
 
-import { propsMixin } from '@bkui-vue/modal';
-import { AlignEnum, alignType, dialogTypeUnion, PropTypes, ThemeEnum } from '@bkui-vue/shared';
-import cloneDeep from 'lodash/cloneDeep';
+import { defineComponent } from 'vue';
 
-const dialogProps = cloneDeep(propsMixin);
-dialogProps.width.default = '480';
-
-const props = {
-  ...dialogProps,
-
-  // 是否可拖拽
-  draggable: PropTypes.bool.def(false),
-  // 确认按钮文字
-  // confirmText: PropTypes.string.def('确定'),
-  confirmText: PropTypes.string,
-  // 取消按钮文字
-  // cancelText: PropTypes.string.def('取消'),
-  cancelText: PropTypes.string,
-  // 步骤按钮文字
-  // prevText: PropTypes.string.def('上一步'),
-  prevText: PropTypes.string,
-  // nextText: PropTypes.string.def('下一步'),
-  nextText: PropTypes.string,
-  // 当前步骤
-  current: PropTypes.number.def(1),
-  // 总步数
-  totalStep: PropTypes.number,
-  // 弹框的标题
-  title: PropTypes.string.def(''),
-  // 显示 header 的位置
-  headerAlign: alignType().def(AlignEnum.LEFT),
-  // 显示 footer 的位置
-  footerAlign: alignType().def(AlignEnum.RIGHT),
-  // 颜色 按钮类型
-  confirmButtonTheme: PropTypes.theme().def(ThemeEnum.PRIMARY),
-  // 对话框类型
-  dialogType: dialogTypeUnion(),
-  // 按钮loading
-  isLoading: PropTypes.bool.def(false),
-  // 是否为默认内容区包裹 dialog-content 样式类
-  showContentClass: PropTypes.bool.def(true),
-  // 是否显示在body内即与#app同级
-  transfer: PropTypes.oneOfType([Boolean, String, HTMLElement]).def(true),
-};
-export default props;
+import DemoBox from '../../../components/demo-box';
+import DemoTitle from '../../../components/demo-title';
+import PropsBox from '../../../components/props-box';
+import { IPropsTableItem } from '../../../typings';
+import BaseDemo from './demo/base.vue';
+const menuPropsJson: IPropsTableItem[] = [
+  {
+    name: 'userinfo',
+    type: 'object',
+    default: '',
+    desc: '用户信息',
+    optional: [],
+  },
+  {
+    name: 'offset',
+    type: 'Array|Number',
+    default: '10',
+    desc: '偏移量',
+    optional: [],
+  },
+  {
+    name: 'actionList',
+    type: '{text: string, icon: string, onClick: () => void; href: string; target: string; theme: string;}[]',
+    default: '',
+    desc: '操作项列表，每个操作项的类型为 ActionItem',
+    optional: [],
+  },
+];
+export default defineComponent({
+  render() {
+    return (
+      <div>
+        <DemoTitle
+          desc='登录用户信息'
+          name='LoginUserinfo'
+          npmLink='https://www.npmjs.com/package/@blueking/login-userinfo'
+        />
+        <DemoBox
+          componentName='blueking/login-userinfo'
+          demoName='demo/base'
+          desc='modelValue 设置值'
+          subtitle='组件的基础用法'
+          title='基础用法'
+        >
+          <BaseDemo />
+        </DemoBox>
+        <PropsBox
+          propsData={menuPropsJson}
+          title='组件属性'
+        />
+      </div>
+    );
+  },
+});
