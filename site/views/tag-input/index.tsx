@@ -256,6 +256,19 @@ const propsJson: IPropsTableItem[] = [
     desc: '定义 tag 超出内容的 v-bk-tooltips 配置',
     optional: [],
   },
+  {
+    name: 'copyable',
+    type: 'Boolean',
+    default: 'true',
+    desc: '是否展示复制按钮',
+    optional: ['true', 'false'],
+  },
+  {
+    name: 'copySeparator',
+    type: 'String',
+    default: '\\n',
+    desc: '复制后，Tag 内容之间用什么做分隔符，默认为换行符\\n',
+  },
 ];
 
 const eventJson: IPropsTableItem[] = [
