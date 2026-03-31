@@ -32,7 +32,7 @@ import { classes, ElementType, PropTypes, stringEnum } from '@bkui-vue/shared';
 import { createPatch } from 'diff';
 import * as Diff2Html from 'diff2html';
 
-import 'diff2html/bundles/css/diff2html.min.css';
+// import 'diff2html/bundles/css/diff2html.min.css';
 
 const diffFormats = ['side-by-side', 'line-by-line'] as const;
 const CodeDiffFormat = stringEnum([...diffFormats]);
