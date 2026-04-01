@@ -53,6 +53,7 @@ export default defineComponent({
         return true;
       },
     },
+    showFooter: PropTypes.bool.def(true),
     resizable: PropTypes.bool.def(false), // 是否可以拖拽调整大小
     minWidth: PropTypes.number.def(400), // 最小宽度
     maxWidth: PropTypes.number.def(Infinity), // 最大宽度
@@ -265,7 +266,7 @@ export default defineComponent({
         ),
       };
 
-      if (slots.footer) {
+      if (props.showFooter && slots.footer) {
         Object.assign(modelSlot, {
           footer: () => {
             return <div class={`${resolveClassName('sideslider-footer')}`}>{slots.footer()}</div>;
