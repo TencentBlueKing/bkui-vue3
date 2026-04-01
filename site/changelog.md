@@ -1,6 +1,14 @@
 ## 更新日志
 
 
+### 2.1.0-beta.4
+
+* **[feat]**:
+    - fix(code-diff): 将 diff2html 样式从 JS import 迁移至 less 文件引入
+    - bugfix(tag-input): 增补 tag-input 与复制相关的文档说明 & 去除示例中的错误属性
+    - feat(login-userinfo): 登录用户信息
+
+
 ### 2.0.2-beta.110
 
 * **[feat]**:

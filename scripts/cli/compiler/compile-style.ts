@@ -24,25 +24,48 @@
  * IN THE SOFTWARE.
  */
 
+import { existsSync } from 'fs';
 import { readFile } from 'fs/promises';
 import { render } from 'less';
+import { resolve } from 'path';
 import postcss from 'postcss';
 import postcssLess from 'postcss-less';
 
 import LessResolvePathPlugin from '../utils/less-plugin';
 import { transformCssImport } from '../utils/postcss-plugin';
+import { BKUI_DIR } from './helpers';
+
+const nodeModulesPath = resolve(BKUI_DIR, 'node_modules');
+
+async function inlineNodeModulesCss(source: string): Promise<string> {
+  const importRegex = /@import\s+(?:\(inline\)\s+)?['"]([^@.][^'"]*\.css)['"]\s*;/g;
+  let result = source;
+  let match;
+  while ((match = importRegex.exec(source)) !== null) {
+    const fullPath = resolve(nodeModulesPath, match[1]);
+    if (existsSync(fullPath)) {
+      const content = await readFile(fullPath, 'utf-8');
+      result = result.replace(match[0], content);
+    }
+  }
+  return result;
+}
+
 export const compileStyle = async (url: string) => {
   const resource = await readFile(url, 'utf-8');
   const varResource = resource.replace(/\/themes\/themes\.less/gim, '/themes/themes.variable.less');
   const { css } = await render(resource, {
     filename: url,
+    paths: [nodeModulesPath],
     plugins: [new LessResolvePathPlugin()],
   });
   const { css: varCss } = await render(varResource, {
     filename: url,
+    paths: [nodeModulesPath],
     plugins: [new LessResolvePathPlugin()],
   });
-  const ret = await postcss([transformCssImport(url)]).process(resource, { syntax: postcssLess });
+  const inlinedResource = await inlineNodeModulesCss(resource);
+  const ret = await postcss([transformCssImport(url)]).process(inlinedResource, { syntax: postcssLess });
   return { css, varCss, resource: ret.css };
 };
 
