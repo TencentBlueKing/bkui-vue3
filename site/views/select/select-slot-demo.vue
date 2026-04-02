@@ -39,8 +39,8 @@
             <div class="custom-extension">
               <div v-if="showEdit" style="display: flex; align-items: center">
                 <bk-input ref="inputRef" v-model="optionName" size="small" @enter="addOption" />
-                <done style="font-size: 22px; color: #2dcb56; cursor: pointer; margin-left: 6px" @click="addOption" />
-                <error style="font-size: 16px; color: #c4c6cc; cursor: pointer; margin-left: 2px"
+                <done style=" margin-left: 6px;font-size: 22px; color: #2dcb56; cursor: pointer" @click="addOption" />
+                <error style=" margin-left: 2px;font-size: 16px; color: #c4c6cc; cursor: pointer"
                   @click="showEdit = false" />
               </div>
               <div v-else style="display: flex; align-items: center; justify-content: center">
@@ -48,7 +48,7 @@
                   <plus style="font-size: 20px" />
                   新增
                 </span>
-                <span style="display: flex; align-items: center; position: absolute; right: 12px">
+                <span style=" position: absolute; right: 12px;display: flex; align-items: center">
                   <bk-divider direction="vertical" type="solid" />
                   <spinner v-if="isLoading" style="font-size: 14px; color: #3a84ff" />
                   <right-turn-line v-else style="font-size: 14px; cursor: pointer" @click="refresh" />
@@ -124,6 +124,22 @@
           display-key="label" id-key="value" filterable :clearable="false">
           <template #suffix>
             <Done />
+          </template>
+        </bk-select>
+      </div>
+      <div>
+        <h4>empty content</h4>
+        <bk-select
+          class="bk-select"
+          :input-search="false"
+          display-key="label"
+          id-key="value"
+          filterable
+          :clearable="false">
+          <template #empty>
+            <div>
+              <span>自定义空数据场景</span>
+            </div>
           </template>
         </bk-select>
       </div>
@@ -220,7 +236,7 @@ const addOptions = value => {
 
 .custom-extension {
   width: 100%;
-  color: #63656e;
   padding: 0 12px;
+  color: #63656e;
 }
 </style>
