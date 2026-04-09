@@ -276,6 +276,13 @@ export default defineComponent({
         }
       }
 
+      // 当行高不是 auto 时，schema 中存储的是估算行高（如 LINE_HEIGHT=42），
+      // 但实际 DOM 渲染可能因自定义 render 中包含更高元素而超出估算值。
+      // 此时需从 DOM 读取真实 scrollHeight，避免因估算偏低导致滚动条不出现。
+      if (scrollEl && scrollEl.scrollHeight > calculatedHeight) {
+        return scrollEl.scrollHeight;
+      }
+
       return calculatedHeight;
     };
 
