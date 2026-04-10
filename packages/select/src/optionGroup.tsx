@@ -38,6 +38,7 @@ import {
 } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
+import BkDivider from '@bkui-vue/divider';
 import { AngleUpFill } from '@bkui-vue/icon';
 import { classes, PropTypes } from '@bkui-vue/shared';
 
@@ -52,6 +53,7 @@ export default defineComponent({
     collapsible: PropTypes.bool.def(false), // 是否开启折叠
     collapse: PropTypes.bool.def(false), // 是否折叠初始状态
     visible: PropTypes.bool.def(true),
+    groupStyle: PropTypes.oneOf(['default', 'divider']).def('default'),
   },
   setup(props, { emit }) {
     const instance = getCurrentInstance();
@@ -109,25 +111,38 @@ export default defineComponent({
     };
   },
   render() {
+    const isDivider = this.groupStyle === 'divider';
+
     const groupClass = classes({
       [this.resolveClassName('option-group')]: true,
+      [this.resolveClassName('option-group-divider')]: isDivider,
       collapsible: this.collapsible,
       disabled: this.disabled,
     });
-    const groupLabelClass = classes({
-      [this.resolveClassName('option-group-label')]: true,
-      collapsible: this.collapsible,
-    });
-    const groupLabelIconClass = classes({
-      'default-group-label-icon': true,
-      collapse: this.groupCollapse,
-    });
 
-    return (
-      <ul
-        class={groupClass}
-        v-show={this.isVisible}
-      >
+    const renderGroupHeader = () => {
+      if (isDivider) {
+        return (
+          <div class={this.resolveClassName('option-group-divider-container')}>
+            <BkDivider
+              style={{ margin: 0 }}
+              color='#EAEBF0'
+              type='solid'
+            />
+          </div>
+        );
+      }
+
+      const groupLabelClass = classes({
+        [this.resolveClassName('option-group-label')]: true,
+        collapsible: this.collapsible,
+      });
+      const groupLabelIconClass = classes({
+        'default-group-label-icon': true,
+        collapse: this.groupCollapse,
+      });
+
+      return (
         <li
           class={groupLabelClass}
           onClick={this.handleToggleCollapse}
@@ -141,6 +156,15 @@ export default defineComponent({
             </span>
           )}
         </li>
+      );
+    };
+
+    return (
+      <ul
+        class={groupClass}
+        v-show={this.isVisible}
+      >
+        {renderGroupHeader()}
         <ul
           class={this.resolveClassName('option-group-content')}
           v-show={!this.groupCollapse}

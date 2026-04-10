@@ -19,6 +19,7 @@
 }
 
 .input() {
+  box-sizing: border-box;
   width: 100%;
   height: 32px;
   padding: 0 28px 0 10px;
@@ -27,13 +28,12 @@
   text-align: left;
   vertical-align: middle;
   cursor: pointer;
+  resize: none;
   background-color: @white-color;
   border: 1px solid @light-gray;
   border-radius: 2px;
   outline: none;
-  box-sizing: border-box;
   transition: all .1s;
-  resize: none;
   .ellipsis();
 
   &::placeholder {
@@ -56,9 +56,9 @@
     position: absolute;
     top: 0;
     display: inline-flex;
-    height: 100%;
     align-items: center;
     justify-content: center;
+    height: 100%;
   }
 
   .mr(@marginRight) {
@@ -103,6 +103,7 @@
         box-shadow: 0px 0px 3px 0px #a3c5fd;
       }
     }
+
     &.simplicity {
       .@{bk-prefix}-select-trigger .@{bk-prefix}-select-tag {
         border-bottom-color: @primary-color;
@@ -168,8 +169,8 @@
     .@{bk-prefix}-select-tag {
       .input();
       display: flex;
-      width: auto;
       align-items: center;
+      width: auto;
 
       &.is-simplicity {
         background-color: transparent;
@@ -190,11 +191,11 @@
 
       &-wrapper {
         display: flex;
-        align-items: center;
         flex-wrap: wrap;
-        overflow: hidden;
         gap: 4px;
+        align-items: center;
         padding: 4px 0;
+        overflow: hidden;
       }
 
       &.collapse-tag .@{bk-prefix}-select-tag-wrapper {
@@ -204,9 +205,9 @@
       &:not(.collapse-tag) {
         position: relative;
         z-index: 1;
+        flex-wrap: wrap;
         height: auto;
         min-height: 32px;
-        flex-wrap: wrap;
       }
 
       &:not(.is-disabled,.is-simplicity):hover {
@@ -242,13 +243,13 @@
       &-input {
         .input();
         .ellipsis();
+        flex-grow: 1;
         width: 1%;
         height: 22px;
         padding: 0;
         margin: 0px 5px 0px 0;
         background-color: transparent;
         border: none;
-        flex-grow: 1;
       }
 
       .@{bk-prefix}-tag {
@@ -284,13 +285,13 @@
 
   &--prefix-area {
     display: flex;
+    align-items: center;
     height: 100%;
     padding: 0 10px;
     margin-right: 10px;
     color: #63656e;
     background-color: @select-hover-color;
     border-right: 1px solid #c4c6cc;
-    align-items: center;
   }
 }
 
@@ -310,13 +311,13 @@
 
           .spinner {
             display: flex;
+            align-items: center;
+            justify-content: center;
             width: 14px;
             height: 14px;
             margin-right: 4px;
             font-size: 14px;
             color: #c4c6cc;
-            align-items: center;
-            justify-content: center;
           }
 
           span {
@@ -341,9 +342,9 @@
 
         .@{bk-prefix}-select-extension {
           display: flex;
+          align-items: center;
           height: 40px;
           background-color: #fafbfd;
-          align-items: center;
           border-top: 1px solid #dcdee5;
           border-radius: 0 0 2px 2px;
         }
@@ -355,20 +356,24 @@
         .@{bk-prefix}-select-all {
           padding: 4px 0;
           border-bottom: 1px solid @border-color;
+
           .wrapper {
             display: flex;
             align-items: center;
             height: 32px;
             padding: 0 12px;
-            cursor: pointer;
             color: @default-color;
+            cursor: pointer;
+
             &:hover {
               background-color: @select-hover-color;
             }
+
             &.active {
-              background-color: @select-active-color;
               color: @primary-color;
+              background-color: @select-active-color;
             }
+
             .select-all-icon {
               margin-right: 4px;
               font-size: 16px;
@@ -379,13 +384,13 @@
         .@{bk-prefix}-select-option {
           position: relative;
           display: flex;
+          align-items: center;
           min-height: 32px;
           padding: 0 12px;
           color: #63656e;
           text-align: left;
           cursor: pointer;
           user-select: none;
-          align-items: center;
 
           .ellipsis();
 
@@ -404,6 +409,7 @@
 
           &-item {
             .ellipsis();
+
             .is-keyword {
               display: inline-flex;
               color: @primary-color;
@@ -456,6 +462,20 @@
         }
 
         .@{bk-prefix}-option-group {
+          &-divider-container {
+            padding: 4px 11px;
+          }
+
+          &-divider {
+            &:first-child .@{bk-prefix}-divider {
+              display: none;
+            }
+
+            .@{bk-prefix}-select-option {
+              padding-left: 12px !important;
+            }
+          }
+
           &-label {
             height: 32px;
             padding: 0 8px;
@@ -483,17 +503,17 @@
 
           .default-group-label {
             display: flex;
-            user-select: none;
             align-items: center;
+            user-select: none;
 
             &-icon {
               display: flex;
+              align-items: center;
+              justify-content: center;
               width: 12px;
               height: 12px;
               margin-right: 8px;
               transition: all .1s;
-              align-items: center;
-              justify-content: center;
 
               &.collapse {
                 transform: rotate(-90deg);
@@ -508,9 +528,9 @@
 
         .@{bk-prefix}-select-search-wrapper {
           display: flex;
+          align-items: center;
           margin: 4px 8px 0 8px;
           border-bottom: 1px solid @input-block-hover-color;
-          align-items: center;
 
           .icon-search {
             margin-left: 2px;
@@ -522,6 +542,22 @@
             padding: 0 8px;
             cursor: text;
             border: none;
+          }
+
+          .@{bk-prefix}-select-search-clear {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 14px;
+            height: 14px;
+            margin-right: 2px;
+            font-size: 14px;
+            color: #c4c6cc;
+            cursor: pointer;
+
+            &:hover {
+              color: #979ba5;
+            }
           }
         }
       }
