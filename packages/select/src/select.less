@@ -462,6 +462,20 @@
         }
 
         .@{bk-prefix}-option-group {
+          &-divider-container {
+            padding: 4px 11px;
+          }
+
+          &-divider {
+            &:first-child .@{bk-prefix}-divider {
+              display: none;
+            }
+
+            .@{bk-prefix}-select-option {
+              padding-left: 12px !important;
+            }
+          }
+
           &-label {
             height: 32px;
             padding: 0 8px;
@@ -548,6 +562,22 @@
             padding: 0 8px;
             cursor: text;
             border: none;
+          }
+
+          .@{bk-prefix}-select-search-clear {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 14px;
+            height: 14px;
+            margin-right: 2px;
+            font-size: 14px;
+            color: #c4c6cc;
+            cursor: pointer;
+
+            &:hover {
+              color: #979ba5;
+            }
           }
         }
       }

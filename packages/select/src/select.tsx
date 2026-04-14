@@ -1593,20 +1593,36 @@ export default defineComponent({
               v-model={this.searchValue}
               placeholder={this.localSearchPlaceholder}
             />
+            {this.searchValue && (
+              <span
+                class={this.resolveClassName('select-search-clear')}
+                onClick={e => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  this.searchValue = '';
+                }}
+              >
+                <Close />
+              </span>
+            )}
           </div>
         )}
         {!this.isShowSelectContent && (
           <div class={this.resolveClassName('select-empty')}>
-            {this.searchLoading && (
-              <Loading
-                class='mr5'
-                loading={true}
-                mode='spin'
-                size='mini'
-                theme='primary'
-              />
+            {this.$slots?.empty?.({ searchLoading: this.searchLoading, text: this.curContentText }) ?? (
+              <>
+                {this.searchLoading && (
+                  <Loading
+                    class='mr5'
+                    loading={true}
+                    mode='spin'
+                    size='mini'
+                    theme='primary'
+                  />
+                )}
+                <span>{this.curContentText}</span>
+              </>
             )}
-            <span>{this.curContentText}</span>
           </div>
         )}
         <div class={this.resolveClassName('select-content')}>

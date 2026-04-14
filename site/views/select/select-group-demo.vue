@@ -36,6 +36,41 @@
         />
       </bk-option-group>
     </bk-select>
+    <bk-select
+      class="bk-select"
+      v-model="selectedValue"
+      filterable
+      multiple
+    >
+      <bk-option-group
+        label="分组1"
+        group-style="divider"
+      >
+        <bk-option
+          v-for="(item, index) in datasource"
+          :id="item.value"
+          :key="index"
+          :name="item.label"
+        />
+      </bk-option-group>
+      <bk-option-group
+        label="分组2"
+        group-style="divider"
+      >
+        <bk-option
+          label="运动-1"
+          value="1001"
+        />
+        <bk-option
+          label="运动-2"
+          value="1002"
+        />
+        <bk-option
+          label="运动-3"
+          value="1003"
+        />
+      </bk-option-group>
+    </bk-select>
   </div>
 </template>
 <script setup>
@@ -79,6 +114,7 @@
 <style scoped>
   .demo {
     display: flex;
+    gap: 10px;
   }
 
   .bk-select {
