@@ -104,7 +104,7 @@ export const PopoverProps = {
   /**
    * 弹出内容绑定元素
    */
-  boundary: PropTypes.oneOfType([PropTypes.string.def('parent'), PropTypes.instanceOf(HTMLElement)]).def('body'),
+  boundary: PropTypes.oneOfType([PropTypes.string.def('parent'), PropTypes.instanceOf(HTMLElement), PropTypes.func]).def('body'),
 
   zIndex: PropTypes.number.def(undefined),
 

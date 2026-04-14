@@ -313,10 +313,15 @@ export default defineComponent({
       }
     });
 
+    const resolveBoundary = () => {
+      const b = boundary.value;
+      return typeof b === 'function' ? b() : b;
+    };
+
     const floatingStrategy = computed<'absolute' | 'fixed'>(() => {
       if (disableTeleport.value) return 'absolute';
 
-      const b = boundary.value;
+      const b = resolveBoundary();
       if (typeof b === 'string') {
         return (b === 'body' || b === 'parent') ? 'fixed' : 'absolute';
       }
@@ -743,27 +748,23 @@ export default defineComponent({
       localIsShow: isOpen, // 兼容旧 API
     });
 
-    // 计算 boundary（移到 render 函数外）
     const teleportTo = computed(() => {
-      if (typeof boundary.value === 'string') {
-        // 特殊值直接返回
-        if (boundary.value === 'body' || boundary.value === 'parent') {
+      const boundaryVal = resolveBoundary();
+      if (typeof boundaryVal === 'string') {
+        if (boundaryVal === 'body' || boundaryVal === 'parent') {
           return 'body';
         }
-        // 检查选择器对应的元素是否存在
         try {
-          const target = document.querySelector(boundary.value);
+          const target = document.querySelector(boundaryVal);
           if (target) {
-            return boundary.value;
+            return boundaryVal;
           }
         } catch {
           // 无效选择器
         }
-        // 元素不存在，回退到 body
         return 'body';
       }
-      // HTMLElement 直接返回，如果无效则回退到 body
-      return boundary.value || 'body';
+      return boundaryVal instanceof HTMLElement ? boundaryVal : 'body';
     });
 
     return () => {

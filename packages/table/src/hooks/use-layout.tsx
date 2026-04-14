@@ -55,7 +55,7 @@ export default (props: TablePropTypes, ctx) => {
 
   const fixedBottomHeight = computed(() => {
     if (ctx.slots?.fixedBottom) {
-      return props.fixedBottom?.position === 'relative' ? props.fixedBottom?.height ?? LINE_HEIGHT : 0;
+      return props.fixedBottom?.position === 'relative' ? (props.fixedBottom?.height ?? LINE_HEIGHT) : 0;
     }
 
     return 0;
@@ -213,7 +213,8 @@ export default (props: TablePropTypes, ctx) => {
 
   const hasMaxConstraint = props.maxHeight != null && props.maxHeight !== 'auto';
   const isMaxHeightNumericPx = /^\d+\.?\d*(px)?$/.test(`${props.maxHeight}`);
-  const needsFixedViewport = props.virtualEnabled || (props.height === 'auto' && hasMaxConstraint && isMaxHeightNumericPx);
+  const needsFixedViewport =
+    props.virtualEnabled || (props.height === 'auto' && hasMaxConstraint && isMaxHeightNumericPx);
   const bodyHeight: Ref<number | string> = ref(needsFixedViewport ? '100%' : 'auto');
 
   // 当 height=auto + 非像素 maxHeight（如 calc(100vh-180px)）时：
@@ -274,7 +275,7 @@ export default (props: TablePropTypes, ctx) => {
   const setOffsetRight = () => {
     const scrollWidth = refBody.value?.refRoot?.scrollWidth ?? 0;
     const clientWidth = refBody.value?.refRoot?.clientWidth ?? 0;
-    offsetRight.value = (scrollWidth - clientWidth - translateX.value) || 0;
+    offsetRight.value = scrollWidth - clientWidth - translateX.value || 0;
   };
 
   const setLineHeight = (val: ((...args) => number) | number) => {
@@ -368,8 +369,8 @@ export default (props: TablePropTypes, ctx) => {
           maxHeight={bodyMaxHeight.value}
           rowKey={props.rowKey}
           scrollEvent={true}
-          throttleDelay={120}
           scrollOffsetTop={props.showHead ? headHeight.value : 0}
+          throttleDelay={120}
           onContentScroll={handleScrollChanged}
         >
           {{
@@ -385,10 +386,10 @@ export default (props: TablePropTypes, ctx) => {
         {/* header settings：固定在可视区域右侧，不跟随横向滚动 */}
         {props.showHead ? (
           <div
-            class='bk-table-head-settings-wrapper'
             style={{
               '--row-height': `${headHeight.value}px`,
             }}
+            class='bk-table-head-settings-wrapper'
           >
             {childrend?.settings?.()}
           </div>
