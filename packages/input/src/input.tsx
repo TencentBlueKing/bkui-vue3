@@ -45,6 +45,7 @@ import { calcTextareaHeight } from './util';
 import trim from 'lodash/trim';
 import isNumber from 'lodash/isNumber';
 
+
 export type InputAutoSize = { minRows?: number; maxRows?: number };
 
 export const inputType = {
@@ -422,7 +423,7 @@ export default defineComponent({
               inputValue = props.min !== -Infinity ? props.min : 0;
             }
           } else {
-            inputValue = Number(inputValue).toFixed(props.precision);
+            inputValue = Number(Number(inputValue).toFixed(props.precision));
           }
         }
 
@@ -462,7 +463,7 @@ export default defineComponent({
       if (props.disabled) {
         return;
       }
-      const newValue = Math.min(Number(props.modelValue) + props.step, props.max).toFixed(props.precision);
+      const newValue = Number(Math.min(Number(props.modelValue) + props.step, props.max).toFixed(props.precision));
       ctx.emit(EVENTS.UPDATE, newValue, e);
       ctx.emit(EVENTS.CHANGE, newValue, e);
     }
@@ -471,7 +472,7 @@ export default defineComponent({
       if (props.disabled) {
         return;
       }
-      const newValue = Math.max(Number(props.modelValue) - props.step, props.min).toFixed(props.precision);
+      const newValue = Number(Math.max(Number(props.modelValue) - props.step, props.min).toFixed(props.precision));
       ctx.emit(EVENTS.UPDATE, newValue, e);
       ctx.emit(EVENTS.CHANGE, newValue, e);
     }
