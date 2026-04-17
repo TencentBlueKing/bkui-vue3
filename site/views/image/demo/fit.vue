@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-  const src = '/pexels-cafer-sevi-nc.jpg';
+  const src = '/pexels-thatguycraig000.jpg';
   const fits = ['fill', 'contain', 'cover', 'none', 'scale-down'];
 </script>
 
@@ -31,8 +31,8 @@
   .image-demo-fit {
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 4px;
+    align-items: center;
     font-size: 12px;
     color: #63656e;
   }
