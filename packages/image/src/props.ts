@@ -23,37 +23,74 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { PropType } from 'vue';
-import { toType } from 'vue-types';
-
 import { PropTypes } from '@bkui-vue/shared';
-enum FitEnum {
-  CONTAIN = 'contain',
-  COVER = 'cover',
-  FILL = 'fill',
-  NONE = 'none',
-  SCALE_DOWN = 'scale-down',
-}
 
-export const propsImage = {
+import type { ImageItem, ImagePreviewMeta } from './types';
+import type { PropType } from 'vue';
+
+export const imageProps = {
+  /** 图片地址 */
   src: PropTypes.string.def(''),
-  fallback: PropTypes.string.def(''),
-  placeholder: PropTypes.any,
-  fit: toType<`${FitEnum}`>('fit', {}).def(FitEnum.FILL),
-  lazy: PropTypes.bool,
-  urlList: PropTypes.array.def([]),
-  isShowPreviewTitle: PropTypes.bool.def(true),
-  maskClose: PropTypes.bool.def(true),
-  zIndex: PropTypes.number.def(2000),
+  /** 替代文字 */
+  alt: PropTypes.string.def(''),
+  /** 容器宽度 */
+  width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  /** 容器高度 */
+  height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  /** 图片填充方式（同 CSS object-fit） */
+  fit: {
+    type: String as PropType<'contain' | 'cover' | 'fill' | 'none' | 'scale-down'>,
+    default: 'cover',
+  },
+  /** 是否懒加载（基于 IntersectionObserver） */
+  lazy: PropTypes.bool.def(false),
+  /** 是否启用点击大图预览 */
+  preview: PropTypes.bool.def(true),
+  /** 大图模式下是否显示图片信息（宽度/分辨率） */
+  showInfo: PropTypes.bool.def(false),
+  /** 自定义下载逻辑，传入则禁用默认下载行为 */
+  onDownload: {
+    type: Function as PropType<(url: string, item: ImageItem) => void>,
+    default: undefined,
+  },
+  /** 单图预览时透传给 ImagePreview 的额外信息 */
+  previewProps: {
+    type: Object as PropType<ImagePreviewMeta>,
+    default: undefined,
+  },
+  /** 自定义类名 */
+  extCls: PropTypes.string.def(''),
 };
-export const propsImageViever = {
-  urlList: {
-    type: Array as PropType<string[]>,
+
+export const imagePreviewProps = {
+  /** 是否可见 */
+  modelValue: PropTypes.bool.def(false),
+  /** 当前预览索引 */
+  current: PropTypes.number.def(0),
+  /** 待预览的图片列表，元素支持 string、File、ImageItem */
+  images: {
+    type: Array as PropType<(File | ImageItem | string)[]>,
     default: () => [],
   },
-  zIndex: PropTypes.number.def(2000),
-  initialIndex: PropTypes.number.def(0),
-  isShowTitle: PropTypes.bool.def(true),
-  loops: PropTypes.bool.def(true),
-  maskClose: PropTypes.bool.def(true),
+  /** 是否点击遮罩关闭 */
+  maskClosable: PropTypes.bool.def(true),
+  /** 是否显示图片信息（宽度/分辨率） */
+  showInfo: PropTypes.bool.def(false),
+  /** 自定义下载逻辑 */
+  onDownload: {
+    type: Function as PropType<(url: string, item: ImageItem) => void>,
+    default: undefined,
+  },
+};
+
+export const imagePreviewGroupProps = {
+  /** 是否点击遮罩关闭 */
+  maskClosable: PropTypes.bool.def(true),
+  /** 是否显示图片信息（宽度/分辨率） */
+  showInfo: PropTypes.bool.def(false),
+  /** 自定义下载逻辑 */
+  onDownload: {
+    type: Function as PropType<(url: string, item: ImageItem) => void>,
+    default: undefined,
+  },
 };

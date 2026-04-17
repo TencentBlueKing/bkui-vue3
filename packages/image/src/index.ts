@@ -23,10 +23,18 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { withInstall } from '@bkui-vue/shared';
+import { withInstallProps } from '@bkui-vue/shared';
 
 import Image from './image';
-import ImageViewer from './image-viewer';
-export { Image, ImageViewer };
-const BkImage = withInstall(Image);
+import ImagePreview from './image-preview';
+import ImagePreviewGroup from './image-preview-group';
+
+export type { ImageItem, ImagePreviewMeta, ImageLoadingStatus } from './types';
+
+const BkImage = withInstallProps(Image, {
+  ImagePreview,
+  ImagePreviewGroup,
+});
+
 export default BkImage;
+export { BkImage, ImagePreview as BkImagePreview, ImagePreviewGroup as BkImagePreviewGroup };

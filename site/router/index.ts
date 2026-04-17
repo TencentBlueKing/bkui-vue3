@@ -696,6 +696,15 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
+    path: '/image',
+    name: 'image',
+    component: () => import('../views/image/index'),
+    meta: {
+      group: NavGroupMeta.Data,
+      navName: 'Image 图片',
+    },
+  },
+  {
     path: '/cascader',
     name: 'cascader',
     meta: {

@@ -21,6 +21,7 @@
     "@bkui-vue/exception": "0.0.0",
     "@bkui-vue/fixed-navbar": "0.0.0",
     "@bkui-vue/icon": "0.0.0",
+    "@bkui-vue/image": "0.0.0",
     "@bkui-vue/input": "^0.0.0",
     "@bkui-vue/link": "0.0.0",
     "@bkui-vue/loading": "0.0.0",
