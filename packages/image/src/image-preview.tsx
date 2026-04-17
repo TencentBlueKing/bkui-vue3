@@ -26,7 +26,7 @@
 import { computed, defineComponent, onBeforeUnmount, shallowRef, Teleport, toRef, Transition, watch } from 'vue';
 
 import { useLocale, usePrefix } from '@bkui-vue/config-provider';
-import { AngleLeft, AngleRight, Close } from '@bkui-vue/icon';
+import { AngleLeft, AngleRight, Error } from '@bkui-vue/icon';
 
 import { ImageBrokenIcon } from './icons';
 import PreviewToolbar from './preview-toolbar';
@@ -257,7 +257,7 @@ export default defineComponent({
                 class={resolveClassName('image-preview-close')}
                 onClick={handleClose}
               >
-                <Close class={resolveClassName('image-preview-close-icon')} />
+                <Error class={resolveClassName('image-preview-close-icon')} />
               </div>
 
               {isMultiple.value && [
