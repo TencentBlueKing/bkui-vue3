@@ -45,3 +45,4 @@ pre-*-bkcodeai
 /preset
 .aider*
 .env
+.cursor/*
