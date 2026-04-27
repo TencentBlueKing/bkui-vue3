@@ -175,13 +175,11 @@ export function useDelay(
   watch(
     () => options.value.isShow,
     (newVal) => {
-      if (options.value.trigger === 'manual' || options.value.always) {
-        // 避免循环更新：只有当状态不一致时才更新
-        if (newVal && !isOpen.value) {
-          show();
-        } else if (!newVal && isOpen.value) {
-          hide();
-        }
+      // 避免循环更新：只有当状态不一致时才更新
+      if (newVal && !isOpen.value) {
+        show();
+      } else if (!newVal && isOpen.value) {
+        hide();
       }
     },
     { immediate: true },

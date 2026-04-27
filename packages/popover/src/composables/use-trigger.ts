@@ -93,8 +93,7 @@ export function useTrigger(
         };
       case 'click':
         return {
-          onClick: (e: Event) => {
-            e.stopPropagation();
+          onClickCapture: () => {
             // 如果 always 为 true，不执行任何操作
             if (props.value.always) {
               return;
