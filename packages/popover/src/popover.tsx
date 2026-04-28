@@ -34,6 +34,7 @@ import {
   ref,
   Teleport,
   toRefs,
+  useAttrs,
   watch,
 } from 'vue';
 
@@ -114,6 +115,7 @@ const EMIT_EVENTS = {
 
 export default defineComponent({
   name: 'Popover',
+  inheritAttrs: false,
   props: PopoverProps,
   emits: [
     EMIT_EVENTS.AFTER_SHOW,
@@ -125,6 +127,7 @@ export default defineComponent({
   ],
 
   setup(props, { slots, emit, expose }) {
+    const attrs = useAttrs();
     const { resolveClassName } = usePrefix();
 
     // 当前实例 id（用于注册表与事件路径识别）
@@ -254,22 +257,16 @@ export default defineComponent({
     /**
      * 解析默认 slot reference 元素
      *
-     * 兼容一些历史用法：default slot 内部元素可能是 `position: absolute`，
-     * 这会导致外层包裹的 referenceWrapperRef（inline-block）尺寸为 0，
-     * 从而让 floating-ui 使用错误的 reference 位置，并触发 hide middleware 的 referenceHidden。
+     * referenceWrapperRef 使用 display: contents，自身无布局尺寸，
+     * 因此需要从子元素中找到实际的 reference 元素。
      *
-     * 策略：当 referenceWrapperRef 自身尺寸为 0 时，优先使用第一个元素子节点作为 reference；否则向下寻找第一个具有可见尺寸的 HTMLElement。
+     * 策略：优先使用第一个元素子节点作为 reference；否则向下寻找第一个具有可见尺寸的 HTMLElement。
      */
     const resolveDefaultReferenceElement = (): HTMLElement | null => {
       const wrapper = referenceWrapperRef.value;
       if (!wrapper) return null;
 
-      const wrapperRect = wrapper.getBoundingClientRect();
-      if (wrapperRect.width > 0 || wrapperRect.height > 0) {
-        return wrapper;
-      }
-
-      // 常见场景：slot 内元素为 absolute，wrapper 自身尺寸为 0，但第一个元素子节点就是实际触发器
+      // display: contents 的元素自身尺寸为 0，直接查找子元素
       const firstChild = wrapper.firstElementChild;
       if (firstChild instanceof HTMLElement) {
         return firstChild;
@@ -812,12 +809,13 @@ export default defineComponent({
       }
 
       // 默认情况：渲染 reference 和 floating content
+      // 使用 display: contents 避免影响内部元素布局
       return (
         <>
           <span
             ref={referenceWrapperRef}
-            style={{ display: 'inline-block' }}
-            class={referenceCls.value}
+            style={{ display: 'contents', width: '100%', height: '100%' }}
+            class={[referenceCls.value, attrs.class as string]}
             {...referenceListeners.value}
           >
             {slots.default?.()}

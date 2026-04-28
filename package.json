@@ -1,6 +1,7 @@
 {
   "name": "bkui-vue",
-  "version": "2.1.0-dev-beta.8",
+  "version": "2.1.0-dev-beta.9",
+  "private": true,
   "workspaces": [
     "packages/**",
     "scripts/cli",
@@ -135,6 +136,7 @@
     "js-calendar": "~1.2.3",
     "json-formatter-js": "~2.3.4",
     "lodash": "~4.17.21",
+    "sortablejs": "~1.15.7",
     "tinycolor2": "~1.6.0",
     "vue-types": "~4.1.1"
   }
