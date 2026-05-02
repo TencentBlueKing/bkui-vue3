@@ -29,8 +29,7 @@ import { mount } from '@vue/test-utils';
 import Cascader from '../src';
 describe('Cascader.tsx', () => {
   it('test', async () => {
-    const wrapper = await mount(Cascader);
+    await mount(Cascader);
     // todo
-    console.log(wrapper);
   });
 });
