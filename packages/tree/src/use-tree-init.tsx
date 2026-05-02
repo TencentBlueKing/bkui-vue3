@@ -49,6 +49,9 @@ export default (props: TreePropTypes) => {
     const outputData = [];
     let order = 0;
     const treeSchema = new WeakMap();
+    const nodeMap = new Map<string, TreeNode>();
+    const childMap = new WeakMap<TreeNode, TreeNode[]>();
+    const rootNodes: TreeNode[] = [];
 
     /**
      * 递归更新节点属性
@@ -198,6 +201,12 @@ export default (props: TreePropTypes) => {
             const currentPath = path !== null ? `${path}-${i}` : `${i}`;
             const uuid = `${getUid(item)}`;
             const hasChildren = !!((item[children] || []) as TreeNode[]).length;
+            if (!props.nodeKey) {
+              item[NODE_ATTRIBUTES.UUID] = uuid;
+            }
+            if (nodeMap.has(uuid)) {
+              console.warn(`[bk-tree] duplicate node key "${uuid}" found, please check nodeKey.`);
+            }
             /**
              * 当前节点设置是否为展开状态
              */
@@ -243,6 +252,14 @@ export default (props: TreePropTypes) => {
             }
 
             treeSchema.set(item, attributes);
+            nodeMap.set(uuid, item);
+            if (parent === null) {
+              rootNodes.push(item);
+            } else {
+              const siblings = childMap.get(parent) || [];
+              siblings.push(item);
+              childMap.set(parent, siblings);
+            }
             outputData.push(item);
             order += 1;
 
@@ -259,7 +276,7 @@ export default (props: TreePropTypes) => {
         loopUpdateNodeAttr(value, NODE_ATTRIBUTES.IS_CHECKED, true, loopUpdateCheckedEvent);
       });
     }
-    return [outputData, treeSchema];
+    return [outputData, treeSchema, nodeMap, childMap, rootNodes];
   };
 
   const formatData = getFlatdata();
@@ -275,6 +292,9 @@ export default (props: TreePropTypes) => {
   const flatData = reactive({
     data: formatData[0] as Array<TreeNode>,
     schema: formatData[1] as WeakMap<TreeNode, Record<string, unknown>>,
+    nodeMap: formatData[2] as Map<string, TreeNode>,
+    childMap: formatData[3] as WeakMap<TreeNode, TreeNode[]>,
+    rootNodes: formatData[4] as TreeNode[],
     levelLineSchema: {},
   });
 
@@ -352,12 +372,19 @@ export default (props: TreePropTypes) => {
   /**
    * 监听组件配置Data改变
    */
+  const rebuildData = (treeData: TreeNode[], cachedSchema = flatData.schema) => {
+    const formatData = getFlatdata(treeData, cachedSchema);
+    flatData.data = formatData[0] as Array<TreeNode>;
+    flatData.schema = formatData[1] as WeakMap<TreeNode, Record<string, unknown>>;
+    flatData.nodeMap = formatData[2] as Map<string, TreeNode>;
+    flatData.childMap = formatData[3] as WeakMap<TreeNode, TreeNode[]>;
+    flatData.rootNodes = formatData[4] as TreeNode[];
+  };
+
   watch(
     () => [props.data],
     newData => {
-      const formatData = getFlatdata(newData[0], flatData.schema);
-      flatData.data = formatData[0] as Array<TreeNode>;
-      flatData.schema = formatData[1] as WeakMap<TreeNode, Record<string, unknown>>;
+      rebuildData(newData[0], flatData.schema);
       if (props.async?.callback && props.async?.deepAutoOpen === 'every') {
         deepAutoOpen();
       }
@@ -411,6 +438,7 @@ export default (props: TreePropTypes) => {
     deepAutoOpen,
     afterDataUpdate,
     registerNextLoop,
+    rebuildData,
     onSelected,
   };
 };

@@ -22,6 +22,35 @@
         background-color: #e1ecff;
       }
     }
+
+    &.drop-before {
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background-color: #2196F3;
+      }
+    }
+    &.drop-after {
+      &::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background-color: #2196F3;
+      }
+    }
+
+    &.drop-inner {
+      background-color: rgba(33, 150, 243, 0.1);
+      outline: 1px dashed #2196F3;
+      outline-offset: -1px;
+    }
   }
 
   &-node {
@@ -143,7 +172,6 @@
     }
   }
 
-  // SortableJS ghost/chosen/drag 样式
   &-ghost {
     opacity: 0.5;
     background: #c8ebfb;
@@ -165,17 +193,22 @@
       opacity: 0.5;
     }
   }
+
+  .insert-line {
+    position: absolute;
+    height: 2px;
+    background: #2196F3;
+    display: none;
+    pointer-events: none;
+    z-index: 999;
+  }
 }
 
-// 拖拽放置指示器（overlay 方式，挂载在 body 上）
-// sort/move 类型：水平线 + 两端圆点，指示同级插入位置
-// child 类型：高亮边框 + 浅色背景，指示嵌入为子节点
 .@{bk-prefix}-tree-drop-indicator {
   position: fixed;
   pointer-events: none;
   z-index: 9999;
 
-  // child 类型：嵌入为子节点的指示器
   &.@{bk-prefix}-tree-drop-inner {
     background: rgba(33, 150, 243, 0.06);
     outline: 2px dashed #3a84ff;
@@ -184,7 +217,6 @@
     box-shadow: inset 0 0 0 1px rgba(58, 132, 255, 0.1);
   }
 
-  // sort/move 类型：同级插入的水平线指示器
   &.@{bk-prefix}-tree-drop-line {
     background: #3a84ff;
     border-radius: 1px;

@@ -59,6 +59,56 @@ export type DropType = 'child' | 'move' | 'sort';
 
 export type DisableDropHandler = (data: TreeNode, type: DropType, target: TreeNode) => boolean;
 
+export type TreeDataChangeTrigger = 'async' | 'drag';
+
+export type TreeDataChangePayload = {
+  trigger: TreeDataChangeTrigger;
+  data: TreeNode[];
+  node: TreeNode;
+  targetNode?: TreeNode;
+  parentNode?: TreeNode | null;
+  oldParentNode?: TreeNode | null;
+  dropType?: DropType;
+  sourceIndex?: number;
+  targetIndex?: number;
+};
+
+export type TreeDataChangeHandler = (payload: TreeDataChangePayload) => void;
+
+export type TreeCheckedPayload = {
+  checkedNodes: TreeNode[];
+  indeterminateNodes: TreeNode[];
+};
+
+export type TreeSelectedPayload = {
+  selected: boolean;
+  node: TreeNode;
+};
+
+export type TreeDropPayload = {
+  event: unknown;
+  element: HTMLElement;
+  targetNode: TreeNode;
+  sourceNode: TreeNode;
+  data: TreeNode[];
+  parentNode?: TreeNode | null;
+  oldParentNode?: TreeNode | null;
+  dropType?: DropType;
+  sourceIndex?: number;
+  targetIndex?: number;
+};
+
+export type TreeDragSortPayload = {
+  sourceNode: TreeNode;
+  targetNode: TreeNode;
+  data: TreeNode[];
+  parentNode?: TreeNode | null;
+  oldParentNode?: TreeNode | null;
+  dropType?: DropType;
+  sourceIndex?: number;
+  targetIndex?: number;
+};
+
 /**
  * Tree Prop: prefixIcon function
  * @param {} isRoot 是否为分跟节点
@@ -134,6 +184,11 @@ export const treeProps = {
    * 默认 true
    */
   prefixIcon: PropTypes.oneOfType([PropTypes.func.def(() => {}), PropTypes.bool.def(false)]).def(true),
+
+  /**
+   * 当树数据需要由外部接管更新时的统一回调
+   */
+  onDataChange: Function as PropType<TreeDataChangeHandler>,
 
   /**
    * 异步加载节点数据配置
@@ -321,6 +376,11 @@ export const treeProps = {
    * 在显示复选框的情况下，是否严格的遵循父子互相关联的做法
    */
   checkStrictly: PropTypes.bool.def(true),
+
+  /**
+   * 是否开启父子勾选级联；未传时沿用 checkStrictly 历史语义
+   */
+  cascade: PropTypes.bool.def(undefined),
 
   /**
    * 是否开启监听Tree节点进入Tree容器可视区域

@@ -32,7 +32,10 @@ import { TreeNode, TreePropTypes } from './props';
 export default (
   flatData: {
     data: TreeNode[];
-    schema: WeakMap<TreeNode, unknown>;
+    schema: WeakMap<TreeNode, Record<string, unknown>>;
+    nodeMap?: Map<string, TreeNode>;
+    childMap?: WeakMap<TreeNode, TreeNode[]>;
+    rootNodes?: TreeNode[];
   },
   props?: TreePropTypes,
 ) => {
@@ -49,7 +52,7 @@ export default (
    * @param attr 节点属性
    * @returns
    */
-  const getNodeAttr = (node: TreeNode, attr: string) => getSchemaVal(node)?.[attr];
+  const getNodeAttr = (node: TreeNode, attr: string) => (node ? getSchemaVal(node)?.[attr] : undefined);
 
   /**
    * 设置节点属性
@@ -67,7 +70,8 @@ export default (
     flatData.schema.set(node, Object.assign({}, getSchemaVal(node), { [attr]: val }));
   };
 
-  const getNodeById = (id: string | unknown): TreeNode => flatData.data.find(item => getNodeId(item) === id);
+  const getNodeById = (id: string | unknown): TreeNode =>
+    flatData.nodeMap?.get(`${id}`) ?? flatData.data.find(item => `${getNodeId(item)}` === `${id}`);
 
   const setNodeAttrById = (id: unknown, attr: string, val: unknown) => {
     if (Array.isArray(id)) {
@@ -85,13 +89,13 @@ export default (
   const isNodeMatched = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.IS_MATCH);
   const isNodeChecked = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.IS_CHECKED);
   const getNodeParentId = (node: TreeNode) =>
-    getNodeAttr(getNodeAttr(node, NODE_ATTRIBUTES.PARENT), NODE_ATTRIBUTES.UUID);
+    getNodeAttr(getNodeAttr(node, NODE_ATTRIBUTES.PARENT) as TreeNode, NODE_ATTRIBUTES.UUID);
   const isNodeLoading = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.IS_LOADING);
   const getParentNode = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.PARENT);
   const isMatchedNode = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.IS_MATCH);
 
   const getNodeAttrById = (id: string, attr: string) => {
-    const target = flatData.data.find(item => getNodeId(item) === id);
+    const target = getNodeById(id);
     return getNodeAttr(target, attr);
   };
 
@@ -118,12 +122,12 @@ export default (
   };
 
   const getNodeParentIdById = (id: string) => {
-    const target = flatData.data.find(item => getNodeId(item) === id);
+    const target = getNodeById(id);
     return getNodeParentId(target);
   };
 
   const getNodePathById = (id: string) => {
-    const target = flatData.data.find(item => getNodeId(item) === id);
+    const target = getNodeById(id);
     return getNodePath(target);
   };
 
@@ -185,10 +189,10 @@ export default (
   };
 
   const getChildNodes = (node: TreeNode) => {
-    return flatData.data.filter(item => getParentNode(item) === node);
+    return flatData.childMap?.get(node) ?? flatData.data.filter(item => getParentNode(item) === node);
   };
 
-  const getSourceNodeByUID = (uid: string) => flatData.data.find(item => getNodeId(item) === uid);
+  const getSourceNodeByUID = (uid: string) => getNodeById(uid);
 
   const getParentNodeData = (node: TreeNode | string) => {
     let target = node;
@@ -254,7 +258,7 @@ export default (
     return { level, target, index, parent, node, isRoot };
   };
 
-  const getRootNodeList = () => flatData.data.filter(item => isRootNode(item));
+  const getRootNodeList = () => flatData.rootNodes ?? flatData.data.filter(item => isRootNode(item));
 
   return {
     getSchemaVal,

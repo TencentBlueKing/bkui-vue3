@@ -31,7 +31,7 @@ import VirtualRender from '@bkui-vue/virtual-render';
 import { cloneDeep } from 'lodash';
 
 import { EVENTS, NODE_ATTRIBUTES, TreeEmitEventsType } from './constant';
-import { treeProps, TreePropTypes as defineTypes, TreeNode } from './props';
+import { TreeDataChangePayload, treeProps, TreePropTypes as defineTypes, TreeNode } from './props';
 import useEmpty from './use-empty';
 import useIntersectionObserver from './use-intersection-observer';
 import useNodeAction from './use-node-action';
@@ -54,8 +54,9 @@ export default defineComponent({
   emits: TreeEmitEventsType,
   setup(props, ctx) {
     const root = ref();
+    const treeDataRef = ref<TreeNode[]>(props.data as TreeNode[]);
 
-    const { flatData, onSelected, registerNextLoop } = useTreeInit(props);
+    const { flatData, onSelected, rebuildData, registerNextLoop } = useTreeInit(props);
 
     const {
       checkNodeIsOpen,
@@ -105,6 +106,13 @@ export default defineComponent({
     const renderData = computed(() => flatData.data.filter(item => filterFn(item)));
     const { getLastVisibleElement, intersectionObserver } = useIntersectionObserver(props);
 
+    const onTreeDataChange = (payload: TreeDataChangePayload) => {
+      treeDataRef.value = payload.data ?? [];
+      rebuildData(treeDataRef.value);
+      ctx.emit(EVENTS.NODE_DATA_CHANGE, payload);
+      props.onDataChange?.(payload);
+    };
+
     const {
       renderTreeNode,
       handleTreeNodeClick,
@@ -116,7 +124,11 @@ export default defineComponent({
       isIndeterminate,
       deepUpdateChildNode,
       updateParentChecked,
-    } = useNodeAction(props, ctx, flatData, renderData, { registerNextLoop });
+    } = useNodeAction(props, ctx, flatData, renderData, {
+      getTreeData: () => treeDataRef.value,
+      onTreeDataChange,
+      registerNextLoop,
+    });
 
     const handleSearch = debounce(120, () => {
       matchedNodePath.length = 0;
@@ -211,6 +223,13 @@ export default defineComponent({
     onSelected((newData: TreeNode) => {
       setSelect(newData, true, props.autoOpenParentNode, true);
     });
+
+    watch(
+      () => props.data,
+      value => {
+        treeDataRef.value = value as TreeNode[];
+      },
+    );
 
     /**
      * 根据最新的schema生成最新的Tree结构数据
@@ -331,7 +350,10 @@ export default defineComponent({
     });
 
     const { renderEmpty } = useEmpty(props);
-    useNodeDrag(props, ctx, root, flatData);
+    useNodeDrag(props, ctx, root, flatData, {
+      getTreeData: () => treeDataRef.value,
+      onTreeDataChange,
+    });
     const renderTreeContent = (scopedData: TreeNode[]) => {
       if (scopedData.length) {
         return scopedData.map(d => renderTreeNode(d, !isSearchActive.value || isTreeUI.value));

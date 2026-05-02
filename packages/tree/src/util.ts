@@ -27,10 +27,17 @@
 import { usePrefix } from '@bkui-vue/config-provider';
 
 import { NODE_ATTRIBUTES } from './constant';
-import { TreeNode, TreePropTypes } from './props';
+import { TreeDataChangePayload, TreeNode, TreePropTypes } from './props';
 
 const DEFAULT_LEVLE_LINE = '1px dashed #c3cdd7';
-export type IFlatData = { data: TreeNode[]; schema: WeakMap<TreeNode, Record<string, unknown>> };
+export type TreeNodeKey = number | string;
+export type IFlatData = {
+  data: TreeNode[];
+  schema: WeakMap<TreeNode, Record<string, unknown>>;
+  nodeMap?: Map<TreeNodeKey, TreeNode>;
+  childMap?: WeakMap<TreeNode, TreeNode[]>;
+  rootNodes?: TreeNode[];
+};
 
 /**
  * 获取配置项可为Bool|String|Function类型，如果为Bool则配置默认值
@@ -165,10 +172,11 @@ export const getNodeItemClass = (
  */
 export const getNodeRowClass = (item: TreeNode, schema: WeakMap<TreeNode, Record<string, unknown>>) => {
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  const { __is_checked, __is_selected } = schema.get(item) || {};
+  const { __is_checked, __is_indeterminate, __is_selected } = schema.get(item) || {};
   const { resolveClassName } = usePrefix();
   return {
     'is-checked': __is_checked,
+    'is-indeterminate': __is_indeterminate,
     'is-selected': __is_selected,
     'node-folder': item.is_folder,
     'node-leaf': item.is_leaf,
@@ -192,6 +200,198 @@ export const updateTreeNode = (
   nodeValue: Record<string, unknown>[],
 ) => {
   assignTreeNode(path, treeData, childKey, { [nodekey]: nodeValue });
+};
+
+const cloneTreeNode = (node: TreeNode): TreeNode => {
+  if (Array.isArray(node)) {
+    return node.map(item => cloneTreeNode(item)) as unknown as TreeNode;
+  }
+
+  if (node && typeof node === 'object') {
+    return Object.keys(node).reduce<TreeNode>((acc, key) => {
+      const value = node[key];
+      acc[key] = Array.isArray(value) ? value.slice() : value;
+      return acc;
+    }, {});
+  }
+
+  return node;
+};
+
+export const cloneTreeData = (treeData: TreeNode[] = [], childKey = 'children'): TreeNode[] =>
+  (treeData || []).map(node => {
+    const clonedNode = cloneTreeNode(node);
+    if (Array.isArray(node?.[childKey])) {
+      clonedNode[childKey] = cloneTreeData(node[childKey] as TreeNode[], childKey);
+    }
+    return clonedNode;
+  });
+
+export const isSameNodeId = (left: unknown, right: unknown) => {
+  if (left === right) {
+    return true;
+  }
+
+  if (left === undefined || left === null || right === undefined || right === null) {
+    return false;
+  }
+
+  return `${left}` === `${right}`;
+};
+
+export const findNodeById = (
+  treeData: TreeNode[] = [],
+  nodeId: number | string,
+  nodeKey: string,
+  childKey: string,
+): TreeNode | null => {
+  for (const node of treeData) {
+    if (isSameNodeId(node?.[nodeKey], nodeId)) {
+      return node;
+    }
+
+    const children = node?.[childKey] as TreeNode[];
+    if (Array.isArray(children) && children.length) {
+      const target = findNodeById(children, nodeId, nodeKey, childKey);
+      if (target) {
+        return target;
+      }
+    }
+  }
+
+  return null;
+};
+
+export const mutateTreeById = (
+  treeData: TreeNode[] = [],
+  nodeId: number | string,
+  nodeKey: string,
+  childKey: string,
+  updater: (node: TreeNode) => void,
+) => {
+  const target = findNodeById(treeData, nodeId, nodeKey, childKey);
+  if (target) {
+    updater(target);
+  }
+  return treeData;
+};
+
+export const removeTreeNodeById = (
+  treeData: TreeNode[] = [],
+  nodeId: number | string,
+  nodeKey: string,
+  childKey: string,
+): { node: TreeNode | null; data: TreeNode[]; parentNode: TreeNode | null; index: number } => {
+  const loop = (
+    list: TreeNode[],
+    parentNode: TreeNode | null,
+  ): { node: TreeNode | null; parentNode: TreeNode | null; index: number } => {
+    for (let index = 0; index < list.length; index++) {
+      const current = list[index];
+      if (isSameNodeId(current?.[nodeKey], nodeId)) {
+        const [node] = list.splice(index, 1);
+        return { node, parentNode, index };
+      }
+
+      const children = current?.[childKey] as TreeNode[];
+      if (Array.isArray(children) && children.length) {
+        const result = loop(children, current);
+        if (result.node) {
+          return result;
+        }
+      }
+    }
+
+    return { node: null, parentNode: null, index: -1 };
+  };
+
+  const result = loop(treeData, null);
+  return { ...result, data: treeData };
+};
+
+export const insertTreeNodeById = (
+  treeData: TreeNode[] = [],
+  node: TreeNode,
+  targetNodeId: number | string,
+  nodeKey: string,
+  childKey: string,
+  options: { dropType: 'child' | 'move' | 'sort'; willInsertAfter?: boolean },
+): { data: TreeNode[]; parentNode: TreeNode | null; targetNode: TreeNode | null; index: number } => {
+  const { dropType, willInsertAfter = true } = options;
+
+  if (dropType === 'child') {
+    const targetNode = findNodeById(treeData, targetNodeId, nodeKey, childKey);
+    if (!targetNode) {
+      return { data: treeData, parentNode: null, targetNode: null, index: -1 };
+    }
+
+    if (!Array.isArray(targetNode[childKey])) {
+      targetNode[childKey] = [];
+    }
+
+    const targetChildren = targetNode[childKey] as TreeNode[];
+    targetChildren.push(node);
+    return { data: treeData, parentNode: targetNode, targetNode, index: targetChildren.length - 1 };
+  }
+
+  const loop = (
+    list: TreeNode[],
+    parentNode: TreeNode | null,
+  ): { parentNode: TreeNode | null; targetNode: TreeNode | null; index: number } => {
+    for (let index = 0; index < list.length; index++) {
+      const current = list[index];
+      if (isSameNodeId(current?.[nodeKey], targetNodeId)) {
+        const insertIndex = willInsertAfter ? index + 1 : index;
+        list.splice(insertIndex, 0, node);
+        return { parentNode, targetNode: current, index: insertIndex };
+      }
+
+      const children = current?.[childKey] as TreeNode[];
+      if (Array.isArray(children) && children.length) {
+        const result = loop(children, current);
+        if (result.targetNode) {
+          return result;
+        }
+      }
+    }
+
+    return { parentNode: null, targetNode: null, index: -1 };
+  };
+
+  const result = loop(treeData, null);
+  return { data: treeData, ...result };
+};
+
+export const moveTreeNodeById = (
+  treeData: TreeNode[] = [],
+  nodeId: number | string,
+  targetNodeId: number | string,
+  nodeKey: string,
+  childKey: string,
+  options: { dropType: 'child' | 'move' | 'sort'; willInsertAfter?: boolean },
+): TreeDataChangePayload | null => {
+  const nextTreeData = cloneTreeData(treeData, childKey);
+  const removeResult = removeTreeNodeById(nextTreeData, nodeId, nodeKey, childKey);
+  if (!removeResult.node) {
+    return null;
+  }
+
+  const insertResult = insertTreeNodeById(nextTreeData, removeResult.node, targetNodeId, nodeKey, childKey, options);
+  if (!insertResult.targetNode) {
+    return null;
+  }
+
+  return {
+    trigger: 'drag',
+    data: nextTreeData,
+    node: removeResult.node,
+    targetNode: insertResult.targetNode,
+    parentNode: insertResult.parentNode,
+    oldParentNode: removeResult.parentNode,
+    dropType: options.dropType,
+    sourceIndex: removeResult.index,
+    targetIndex: insertResult.index,
+  };
 };
 
 /**
@@ -231,7 +431,7 @@ export const resolvePropIsMatched = (node, prop, id) => {
   }
 
   if (typeof prop === 'string' || typeof prop === 'number') {
-    return prop === id;
+    return isSameNodeId(prop, id);
   }
 
   return node === prop;
@@ -243,4 +443,11 @@ export const showCheckbox = (props: TreePropTypes, node?: TreeNode) => {
   }
 
   return props.showCheckbox;
+};
+
+export const isCascadeEnabled = (props: TreePropTypes): boolean => {
+  if (typeof props.cascade === 'boolean') {
+    return props.cascade;
+  }
+  return !!props.checkStrictly;
 };
