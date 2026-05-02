@@ -7,16 +7,22 @@
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
  */
 import { EVENTS, NODE_ATTRIBUTES, NODE_SOURCE_ATTRS } from './constant';
-import { TreeDataChangePayload, TreeNode } from './props';
+import { TreeDataChangePayload, TreeNode, TreePropTypes } from './props';
 import useNodeAttribute from './use-node-attribute';
-import { cloneTreeData, mutateTreeById } from './util';
+import { cloneTreeData, IFlatData, mutateTreeById } from './util';
+
+type TreeContext = {
+  emit: (event: EVENTS, ...args: unknown[]) => void;
+};
+
+type AsyncLoadResponse = TreeNode | TreeNode[];
 
 export type UseNodeAsyncOptions = {
   getTreeData?: () => TreeNode[];
   onTreeDataChange?: (payload: TreeDataChangePayload) => void;
 };
 
-export default (props, flatData, ctx?, options: UseNodeAsyncOptions = {}) => {
+export default (props: TreePropTypes, flatData: IFlatData, ctx?: TreeContext, options: UseNodeAsyncOptions = {}) => {
   const { setNodeAttr, getNodeId, getNodePath, getNodeAttr, resolveScopedSlotParam, setTreeNodeLoading } =
     useNodeAttribute(flatData, props);
   const requestVersionMap = new Map<string, number>();
@@ -26,9 +32,9 @@ export default (props, flatData, ctx?, options: UseNodeAsyncOptions = {}) => {
     ctx?.emit(EVENTS.NODE_ASYNC_LOAD, payload);
   };
 
-  const setNodeRemoteLoad = (resp: Record<string, unknown>, item: TreeNode, requestVersion?: number) => {
+  const setNodeRemoteLoad = (resp: AsyncLoadResponse, item: TreeNode, requestVersion?: number) => {
     if (typeof resp === 'object' && resp !== null) {
-      const nodeId = getNodeId(item);
+      const nodeId = `${getNodeId(item)}`;
       if (requestVersion !== undefined && requestVersionMap.get(nodeId) !== requestVersion) {
         return Promise.resolve(resp);
       }
@@ -42,10 +48,10 @@ export default (props, flatData, ctx?, options: UseNodeAsyncOptions = {}) => {
         if (!props.nodeKey && getNodePath(item)) {
           // nodeKey 缺失时保留旧版按 path 写入的兜底行为。
           const paths = `${getNodePath(item)}`.split('-');
-          const targetNode = paths.reduce((pre: TreeNode | TreeNode[], nodeIndex: string) => {
+          const targetNode = paths.reduce<TreeNode | TreeNode[]>((pre: TreeNode | TreeNode[], nodeIndex: string) => {
             const index = Number(nodeIndex);
-            return Array.isArray(pre) ? pre[index] : pre[props.children][index];
-          }, props.data);
+            return Array.isArray(pre) ? pre[index] : (pre[props.children] as TreeNode[])[index];
+          }, props.data) as TreeNode;
           Object.assign(targetNode, { [props.children]: nodeValue });
         }
         return Promise.resolve(resp);
@@ -53,6 +59,7 @@ export default (props, flatData, ctx?, options: UseNodeAsyncOptions = {}) => {
 
       const nextTreeData = cloneTreeData(options.getTreeData?.() ?? props.data, props.children);
       mutateTreeById(nextTreeData, nodeId, props.nodeKey || NODE_ATTRIBUTES.UUID, props.children, targetNode => {
+        targetNode[NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.IS_OPEN]] = true;
         targetNode[props.children] = nodeValue;
       });
 
@@ -71,7 +78,7 @@ export default (props, flatData, ctx?, options: UseNodeAsyncOptions = {}) => {
   const asyncNodeClick = (item: TreeNode) => {
     const { callback = null, cache = true } = props.async || {};
     if (typeof callback === 'function' && getNodeAttr(item, NODE_ATTRIBUTES.IS_ASYNC)) {
-      const nodeId = getNodeId(item);
+      const nodeId = `${getNodeId(item)}`;
       const requestVersion = (requestVersionMap.get(nodeId) || 0) + 1;
       requestVersionMap.set(nodeId, requestVersion);
 
@@ -81,7 +88,7 @@ export default (props, flatData, ctx?, options: UseNodeAsyncOptions = {}) => {
         const dataAttr = resolveScopedSlotParam(item);
         const callbackResult = callback(
           item,
-          (resp: Record<string, unknown>) => setNodeRemoteLoad(resp, item, requestVersion),
+          (resp: AsyncLoadResponse) => setNodeRemoteLoad(resp, item, requestVersion),
           dataAttr,
         );
 
@@ -90,7 +97,7 @@ export default (props, flatData, ctx?, options: UseNodeAsyncOptions = {}) => {
           if (callbackResult instanceof Promise) {
             return Promise.resolve(
               callbackResult
-                .then((resp: Record<string, unknown>) => setNodeRemoteLoad(resp, item, requestVersion))
+                .then((resp: AsyncLoadResponse) => setNodeRemoteLoad(resp, item, requestVersion))
                 .catch((error: Record<string, unknown>) => {
                   if (requestVersionMap.get(nodeId) === requestVersion) {
                     ctx?.emit(EVENTS.NODE_ASYNC_LOAD_ERROR, { node: item, error, requestVersion });

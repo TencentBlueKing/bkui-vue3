@@ -30,7 +30,7 @@ import { mount } from '@vue/test-utils';
 
 import BKTree from '../src';
 import { NODE_ATTRIBUTES } from '../src/constant';
-import { TreeNode } from '../src/props';
+import { DropType, TreeNode } from '../src/props';
 
 type TreeTestVm = {
   asyncNodeClick: (node: TreeNode) => Promise<unknown>;
@@ -427,7 +427,7 @@ describe('tree.tsx', () => {
     const wrapper = await mount(BKTree, {
       props: {
         data,
-        disableDrop: (_node, _type, target) => target.disabled,
+        disableDrop: (_node: TreeNode, _type: DropType, target: TreeNode) => !!target.disabled,
         draggable: true,
         label: 'label',
         nodeKey: 'id',
@@ -481,5 +481,6 @@ describe('tree.tsx', () => {
     expect(wrapper.emitted('nodeAsyncLoad')).toBeTruthy();
     const eventPayload = wrapper.emitted('nodeDataChange')?.[0]?.[0] as TreeDataChangeEvent;
     expect(eventPayload.data[0].children).toEqual([{ id: 'child', label: 'Child', children: [] }]);
+    expect(wrapper.find('[data-tree-node="child"]').exists()).toBe(true);
   });
 });

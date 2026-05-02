@@ -33,7 +33,7 @@ export default (
   flatData: {
     data: TreeNode[];
     schema: WeakMap<TreeNode, Record<string, unknown>>;
-    nodeMap?: Map<string, TreeNode>;
+    nodeMap?: Map<number | string, TreeNode>;
     childMap?: WeakMap<TreeNode, TreeNode[]>;
     rootNodes?: TreeNode[];
   },

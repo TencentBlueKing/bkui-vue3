@@ -394,8 +394,14 @@ export const treeProps = {
   ]).def(false),
 };
 
+type AsyncLoadCallback = (
+  item: TreeNode,
+  cb: (data: TreeNode | TreeNode[]) => Promise<unknown> | unknown,
+  data?: unknown,
+) => Promise<TreeNode | TreeNode[]> | TreeNode | TreeNode[];
+
 type AsyncOption = {
-  callback: (item, cb) => Promise<VNode | string>;
+  callback: AsyncLoadCallback;
   cache: boolean;
   deepAutoOpen?: string;
   trigger?: string[];

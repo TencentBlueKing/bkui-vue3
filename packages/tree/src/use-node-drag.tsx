@@ -6,7 +6,7 @@
  *
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
  */
-import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, Ref, ref, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import Sortable from 'sortablejs';
@@ -21,21 +21,35 @@ import {
   TreePropTypes,
 } from './props';
 import useNodeAttribute from './use-node-attribute';
-import { moveTreeNodeById } from './util';
+import { IFlatData, moveTreeNodeById } from './util';
+
+type TreeContext = {
+  emit: (event: EVENTS, ...args: unknown[]) => void;
+};
+
+type TreeRoot = {
+  $el: HTMLElement;
+};
 
 type UseNodeDragOptions = {
   getTreeData?: () => TreeNode[];
   onTreeDataChange?: (payload: TreeDataChangePayload) => void;
 };
 
-export default (props: TreePropTypes, ctx, root?, flatData?, options: UseNodeDragOptions = {}) => {
+export default (
+  props: TreePropTypes,
+  ctx: TreeContext,
+  root: Ref<TreeRoot>,
+  flatData: IFlatData,
+  options: UseNodeDragOptions = {},
+) => {
   const { getSourceNodeByUID, getParentNode, extendNodeAttr, getNodeId } = useNodeAttribute(flatData, props);
   const { resolveClassName } = usePrefix();
   const isNeedCheckDraggable = computed(() => typeof props.disableDrag === 'function');
   const isNeedCheckDroppable = computed(() => typeof props.disableDrop === 'function');
   const dragThreshold = props.dragThreshold || 0.2;
 
-  let sortableInstance: Sortable | null = null;
+  let sortableInstance: Sortable.Instance | null = null;
   let dragNodeId = '';
   let currentDropType: DropType = 'move';
   let currentRelatedId = '';
@@ -119,10 +133,10 @@ export default (props: TreePropTypes, ctx, root?, flatData?, options: UseNodeDra
   };
 
   const isDescendantTarget = (draggedData: TreeNode, relatedData: TreeNode) => {
-    let parent = getParentNode(relatedData);
+    let parent = getParentNode(relatedData) as TreeNode | null;
     while (parent) {
       if (parent === draggedData) return true;
-      parent = getParentNode(parent);
+      parent = getParentNode(parent) as TreeNode | null;
     }
     return false;
   };
@@ -162,8 +176,8 @@ export default (props: TreePropTypes, ctx, root?, flatData?, options: UseNodeDra
     emitTreeDataChange(
       moveTreeNodeById(
         options.getTreeData?.() ?? props.data,
-        getNodeId(sourceNodeData),
-        getNodeId(targetNodeData),
+        `${getNodeId(sourceNodeData)}`,
+        `${getNodeId(targetNodeData)}`,
         props.nodeKey || NODE_ATTRIBUTES.UUID,
         props.children,
         { dropType, willInsertAfter },
