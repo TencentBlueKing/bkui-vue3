@@ -185,22 +185,24 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
 
   const updateParentChecked = (item: TreeNode, isChecked) => {
     const parent = getParentNode(item);
-    if (parent) {
-      const isNeedChecked = isChecked
-        ? isChecked
-        : (getChildNodes(parent) || []).some((node: TreeNode) => isNodeChecked(node));
+    if (!parent) {
+      return;
+    }
 
-      setNodeAttr(parent, NODE_ATTRIBUTES.IS_CHECKED, isNeedChecked);
+    const isNeedChecked = isChecked
+      ? isChecked
+      : (getChildNodes(parent) || []).some((node: TreeNode) => isNodeChecked(node));
 
-      setNodeAttr(
-        parent,
-        NODE_ATTRIBUTES.IS_INDETERMINATE,
-        (getChildNodes(parent) || []).some((node: TreeNode) => !isNodeChecked(node) || isIndeterminate(node)),
-      );
+    setNodeAttr(parent, NODE_ATTRIBUTES.IS_CHECKED, isNeedChecked);
 
-      if (!isRootNode(parent)) {
-        updateParentChecked(parent, isChecked);
-      }
+    setNodeAttr(
+      parent,
+      NODE_ATTRIBUTES.IS_INDETERMINATE,
+      (getChildNodes(parent) || []).some((node: TreeNode) => !isNodeChecked(node) || isIndeterminate(node)),
+    );
+
+    if (!isRootNode(parent)) {
+      updateParentChecked(parent, isChecked);
     }
   };
 
@@ -350,6 +352,10 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
 
       if (!isRootNode(resolvedItem)) {
         const parent = getParentNode(resolvedItem);
+        if (!parent) {
+          return;
+        }
+
         attrNames.forEach((name, index) => {
           const parentVal = getNodeAttr(parent, name);
           if (parentVal !== value) {
@@ -426,9 +432,10 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
       return;
     }
 
-    let resolvedItem = resolveNodeItem(nodeList[0]);
+    let resolvedItem = resolveNodeItem(nodeList[0]) as TreeNode | string | number | symbol;
     if (typeof resolvedItem === 'string' || typeof resolvedItem === 'number' || typeof resolvedItem === 'symbol') {
-      resolvedItem = flatData.data.find(item => getNodeId(item) === resolvedItem) ?? {
+      const nodeId = resolvedItem;
+      resolvedItem = flatData.data.find(item => getNodeId(item) === nodeId) ?? {
         [NODE_ATTRIBUTES.IS_NULL]: true,
       };
     }

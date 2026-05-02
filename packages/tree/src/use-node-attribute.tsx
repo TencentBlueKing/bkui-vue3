@@ -29,6 +29,28 @@ import isElement from 'lodash/isElement';
 import { NODE_ATTRIBUTES, NODE_SOURCE_ATTRS } from './constant';
 import { TreeNode, TreePropTypes } from './props';
 
+type TreeNodeAttributeMap = {
+  [NODE_ATTRIBUTES.DEPTH]: number;
+  [NODE_ATTRIBUTES.HAS_CHILD]: boolean;
+  [NODE_ATTRIBUTES.INDEX]: number;
+  [NODE_ATTRIBUTES.IS_ASYNC]: boolean;
+  [NODE_ATTRIBUTES.IS_ASYNC_INIT]: boolean;
+  [NODE_ATTRIBUTES.IS_CACHED]: boolean;
+  [NODE_ATTRIBUTES.IS_CHECKED]: boolean;
+  [NODE_ATTRIBUTES.IS_INDETERMINATE]: boolean;
+  [NODE_ATTRIBUTES.IS_LOADING]: boolean;
+  [NODE_ATTRIBUTES.IS_MATCH]: boolean;
+  [NODE_ATTRIBUTES.IS_NULL]: boolean;
+  [NODE_ATTRIBUTES.IS_OPEN]: boolean;
+  [NODE_ATTRIBUTES.IS_ROOT]: boolean;
+  [NODE_ATTRIBUTES.IS_SELECTED]: boolean;
+  [NODE_ATTRIBUTES.ORDER]: number;
+  [NODE_ATTRIBUTES.PARENT]: TreeNode;
+  [NODE_ATTRIBUTES.PATH]: string;
+  [NODE_ATTRIBUTES.TREE_NODE_ATTR]: Record<string, unknown>;
+  [NODE_ATTRIBUTES.UUID]: string | number;
+};
+
 export default (
   flatData: {
     data: TreeNode[];
@@ -52,7 +74,14 @@ export default (
    * @param attr 节点属性
    * @returns
    */
-  const getNodeAttr = (node: TreeNode, attr: string) => (node ? getSchemaVal(node)?.[attr] : undefined);
+  function getNodeAttr<T extends NODE_ATTRIBUTES>(
+    node: TreeNode | null | undefined,
+    attr: T,
+  ): TreeNodeAttributeMap[T] | undefined;
+  function getNodeAttr(node: TreeNode | null | undefined, attr: string): unknown;
+  function getNodeAttr(node: TreeNode | null | undefined, attr: string) {
+    return node ? getSchemaVal(node)?.[attr] : undefined;
+  }
 
   /**
    * 设置节点属性
@@ -83,16 +112,16 @@ export default (
   };
 
   const getNodePath = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.PATH);
-  const getNodeId = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.UUID);
-  const isNodeOpened = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.IS_OPEN);
-  const hasChildNode = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.HAS_CHILD);
-  const isNodeMatched = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.IS_MATCH);
-  const isNodeChecked = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.IS_CHECKED);
+  const getNodeId = (node: TreeNode | null | undefined) => getNodeAttr(node, NODE_ATTRIBUTES.UUID) as string | number;
+  const isNodeOpened = (node: TreeNode) => !!getNodeAttr(node, NODE_ATTRIBUTES.IS_OPEN);
+  const hasChildNode = (node: TreeNode) => !!getNodeAttr(node, NODE_ATTRIBUTES.HAS_CHILD);
+  const isNodeMatched = (node: TreeNode) => !!getNodeAttr(node, NODE_ATTRIBUTES.IS_MATCH);
+  const isNodeChecked = (node: TreeNode) => !!getNodeAttr(node, NODE_ATTRIBUTES.IS_CHECKED);
   const getNodeParentId = (node: TreeNode) =>
     getNodeAttr(getNodeAttr(node, NODE_ATTRIBUTES.PARENT) as TreeNode, NODE_ATTRIBUTES.UUID);
-  const isNodeLoading = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.IS_LOADING);
+  const isNodeLoading = (node: TreeNode) => !!getNodeAttr(node, NODE_ATTRIBUTES.IS_LOADING);
   const getParentNode = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.PARENT);
-  const isMatchedNode = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.IS_MATCH);
+  const isMatchedNode = (node: TreeNode) => !!getNodeAttr(node, NODE_ATTRIBUTES.IS_MATCH);
 
   const getNodeAttrById = (id: string, attr: string) => {
     const target = getNodeById(id);
@@ -104,21 +133,21 @@ export default (
    * @param id 节点 ID
    * @returns 节点索引
    */
-  const getNodeIndexById = (id: string): number => getNodeAttrById(id, NODE_ATTRIBUTES.INDEX);
+  const getNodeIndexById = (id: string): number => getNodeAttrById(id, NODE_ATTRIBUTES.INDEX) as number;
 
   /**
    * 获取节点索引
    * @param node 节点
    * @returns 节点索引
    */
-  const getNodeIndexByNode = (node: TreeNode): number => getNodeAttr(node, NODE_ATTRIBUTES.INDEX);
+  const getNodeIndexByNode = (node: TreeNode): number => getNodeAttr(node, NODE_ATTRIBUTES.INDEX) as number;
 
   const isRootNode = (node: TreeNode | string) => {
     if (typeof node === 'string') {
-      return getNodeAttrById(node, NODE_ATTRIBUTES.IS_ROOT);
+      return !!getNodeAttrById(node, NODE_ATTRIBUTES.IS_ROOT);
     }
 
-    return getNodeAttr(node, NODE_ATTRIBUTES.IS_ROOT);
+    return !!getNodeAttr(node, NODE_ATTRIBUTES.IS_ROOT);
   };
 
   const getNodeParentIdById = (id: string) => {
@@ -252,9 +281,10 @@ export default (
     const level = getNodeAttr(node as TreeNode, NODE_ATTRIBUTES.DEPTH);
     const isRoot = getNodeAttr(node as TreeNode, NODE_ATTRIBUTES.IS_ROOT);
     const parent = getNodeAttr(node as TreeNode, NODE_ATTRIBUTES.PARENT);
+    const children = parent?.[props.children] as TreeNode[] | undefined;
     const index = isRoot
       ? getNodeAttr(node as TreeNode, NODE_ATTRIBUTES.INDEX)
-      : parent?.[props.children]?.findIndex(child => child === node);
+      : children?.findIndex(child => child === node);
     return { level, target, index, parent, node, isRoot };
   };
 

@@ -6,12 +6,12 @@
  *
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
  */
-import { computed, nextTick, onMounted, onUnmounted, Ref, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, Ref, ref, SetupContext, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import Sortable from 'sortablejs';
 
-import { EVENTS, NODE_ATTRIBUTES } from './constant';
+import { EVENTS, NODE_ATTRIBUTES, TreeEmitEventsType } from './constant';
 import {
   DropType,
   TreeDataChangePayload,
@@ -24,7 +24,7 @@ import useNodeAttribute from './use-node-attribute';
 import { IFlatData, moveTreeNodeById } from './util';
 
 type TreeContext = {
-  emit: (event: EVENTS, ...args: unknown[]) => void;
+  emit: SetupContext<typeof TreeEmitEventsType>['emit'];
 };
 
 type TreeRoot = {
