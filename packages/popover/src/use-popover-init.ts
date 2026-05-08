@@ -65,6 +65,7 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
   };
 
   const initPopInstance = () => {
+    cleanup();
     createPopInstance();
     if (props.always) {
       showPopover();
@@ -255,6 +256,7 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
 
   const onUnmountedFn = () => {
     beforeInstanceUnmount();
+    cleanup();
     // 清理父节点上的 data-pnode-id 属性
     const { root } = resolvePopElements();
     clearParentNodeId(root);
@@ -266,6 +268,8 @@ export default (props, ctx, { refReference, refContent, refArrow, refRoot }) => 
       parentVisibilityObserver.disconnect();
       parentVisibilityObserver = null;
     }
+
+    delete ReferenceClickSharedState[uniqKey];
   };
 
   const isClickInside = (target: HTMLElement) => {

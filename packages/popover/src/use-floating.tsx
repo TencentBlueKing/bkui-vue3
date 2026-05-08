@@ -373,17 +373,17 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
   };
 
   const showPopover = () => {
+    if (popShowTimerId) {
+      clearTimeout(popShowTimerId);
+      popShowTimerId = undefined;
+    }
     const delay = resolvePopoverDelay()[0];
-    // 设置settimeout避免hidePopover导致显示问题
     popShowTimerId = setTimeout(() => {
-      // 检查组件是否仍然存在，避免在组件卸载后更新状态
+      popShowTimerId = undefined;
       if (!refContent.value) {
         return;
       }
 
-      // if (popHideTimerId) {
-      //   clearTimeout(popHideTimerId);
-      // }
       if (!props.disabled) {
         localIsShow.value = true;
       }
@@ -391,14 +391,21 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
   };
 
   const hidePopover = () => {
+    if (popHideTimerId) {
+      clearTimeout(popHideTimerId);
+      popHideTimerId = undefined;
+    }
     const delay = resolvePopoverDelay()[1];
     popHideTimerId = setTimeout(() => {
-      // 检查组件是否仍然存在，避免在组件卸载后更新状态
+      popHideTimerId = undefined;
       if (!refContent.value) {
         return;
       }
 
-      popShowTimerId && clearTimeout(popShowTimerId);
+      if (popShowTimerId) {
+        clearTimeout(popShowTimerId);
+        popShowTimerId = undefined;
+      }
       isMouseenter = false;
       localIsShow.value = false;
     }, delay);
@@ -451,13 +458,9 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
     if (!isMouseenter) {
       isMouseenter = true;
     }
-    // 设置setTimeout的延时为delay, 避免出现同时触发mouseenter mouseleave事件
-    const delay = resolvePopoverDelay()[1];
     if (popHideTimerId) {
       clearTimeout(popHideTimerId);
-      setTimeout(() => {
-        popHideTimerId = undefined;
-      }, delay);
+      popHideTimerId = undefined;
     }
     emitPopContentMouseEnter(e);
   };
@@ -524,13 +527,6 @@ export default (props: PopoverPropTypes, ctx, { refReference, refContent, refArr
   const updateFullscreenTarget = (val?: HTMLElement) => {
     fullScreenTarget.value = val;
   };
-
-  watch(
-    () => props.isShow,
-    val => {
-      localIsShow.value = val;
-    },
-  );
 
   watch(localIsShow, val => {
     if (val) {
