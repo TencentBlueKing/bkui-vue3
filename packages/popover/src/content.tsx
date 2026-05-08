@@ -111,7 +111,8 @@ export default defineComponent({
       return this.style;
     };
 
-    const style = resolveContentStyle(this.$slots.default?.());
+    const defaultSlot = this.$slots.default?.() ?? '';
+    const style = resolveContentStyle(defaultSlot);
     return (
       <div
         ref='refContent'
@@ -119,8 +120,7 @@ export default defineComponent({
         class={this.contentClassName}
         onClick={this.handleClick}
       >
-        {this.$slots.arrow?.() ?? ''}
-        {this.$slots.default?.() ?? ''}
+        {defaultSlot}
       </div>
     );
   },

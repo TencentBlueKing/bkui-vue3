@@ -144,12 +144,9 @@ export default defineComponent({
 
     return {
       boundary,
-      arrow: props.arrow,
       refDefaultReference,
       refContent,
       refArrow,
-      content: props.content,
-      theme: props.theme,
       isRenderModeShow,
       transBoundary,
       handleClickContent,
@@ -195,7 +192,6 @@ export default defineComponent({
             width={this.width}
             height={this.height}
             extCls={this.extCls}
-            v-slots={{ arrow: () => (this.arrow ? <Arrow ref='refArrow'>{this.$slots.arrow?.()}</Arrow> : '') }}
             data-theme={this.theme}
             eventDelay={this.componentEventDelay}
             maxHeight={this.maxHeight}
@@ -203,6 +199,7 @@ export default defineComponent({
             visible={this.localIsShow}
             onClick={this.handleClickContent}
           >
+            {this.arrow ? <Arrow ref='refArrow'>{this.$slots.arrow?.()}</Arrow> : ''}
             {this.isRenderModeShow || this.contentIsShow ? this.$slots.content?.() ?? this.renderContent() : ''}
           </Content>
         </Teleport>
