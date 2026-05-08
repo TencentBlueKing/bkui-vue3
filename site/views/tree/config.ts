@@ -174,6 +174,13 @@ export default [
         desc: '在显示复选框的情况下，是否严格的遵循父子互相关联的做法',
         optional: ['true', 'false'],
       },
+      {
+        name: 'drag-target-open-state',
+        type: 'String',
+        default: 'inherit',
+        desc: '拖拽添加为子节点后，目标节点的展开状态',
+        optional: ['expand', 'collapse', 'inherit'],
+      },
     ],
   },
   {

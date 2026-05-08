@@ -30,7 +30,7 @@ import { debounce } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 import { cloneDeep } from 'lodash';
 
-import { EVENTS, NODE_ATTRIBUTES, TreeEmitEventsType } from './constant';
+import { EVENTS, NODE_ATTRIBUTES, NODE_SOURCE_ATTRS, TreeEmitEventsType } from './constant';
 import { TreeDataChangePayload, treeProps, TreePropTypes as defineTypes, TreeNode } from './props';
 import useEmpty from './use-empty';
 import useIntersectionObserver from './use-intersection-observer';
@@ -106,7 +106,7 @@ export default defineComponent({
     const renderData = computed(() => flatData.data.filter(item => filterFn(item)));
     const { getLastVisibleElement, intersectionObserver } = useIntersectionObserver(props);
 
-    const collectOpenNodeIds = (_payload: TreeDataChangePayload) => {
+    const collectOpenNodeIds = () => {
       const openNodeIds = new Set<string>();
       flatData.data.forEach(node => {
         if (isNodeOpened(node)) {
@@ -117,17 +117,58 @@ export default defineComponent({
       return openNodeIds;
     };
 
-    const restoreOpenNodes = (openNodeIds: Set<string>) => {
-      flatData.data.forEach(node => {
-        setNodeAttribute(node, NODE_ATTRIBUTES.IS_OPEN, openNodeIds.has(`${getNodeId(node)}`));
+    const getSourceNodeId = (node: TreeNode) => `${node?.[props.nodeKey || NODE_ATTRIBUTES.UUID]}`;
+    const getSourceChildren = (node: TreeNode) => (node?.[props.children] as TreeNode[]) || [];
+    const sourceOpenAttr = NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.IS_OPEN];
+
+    const removeOpenState = (node: TreeNode, openNodeIds: Set<string>) => {
+      openNodeIds.delete(getSourceNodeId(node));
+      getSourceChildren(node).forEach(child => {
+        removeOpenState(child, openNodeIds);
       });
     };
 
+    const syncDragTargetOpenState = (openNodeIds: Set<string>, payload: TreeDataChangePayload) => {
+      if (payload.trigger !== 'drag' || payload.dropType !== 'child' || !payload.targetNode) {
+        return;
+      }
+
+      const targetOpenState = props.dragTargetOpenState || 'inherit';
+      if (targetOpenState === 'inherit') {
+        return;
+      }
+
+      const targetNodeId = getSourceNodeId(payload.targetNode);
+      if (targetOpenState === 'expand') {
+        openNodeIds.add(targetNodeId);
+      }
+      if (targetOpenState === 'collapse') {
+        removeOpenState(payload.targetNode, openNodeIds);
+      }
+    };
+
+    const syncSourceOpenState = (treeData: TreeNode[], openNodeIds: Set<string>, parentOpened = true) => {
+      treeData.forEach(node => {
+        const isOpen = parentOpened && openNodeIds.has(getSourceNodeId(node));
+        if (isOpen || !parentOpened || Object.prototype.hasOwnProperty.call(node, sourceOpenAttr)) {
+          node[sourceOpenAttr] = isOpen;
+        }
+        syncSourceOpenState(getSourceChildren(node), openNodeIds, isOpen);
+      });
+    };
+
+    const normalizeDragOpenState = (payload: TreeDataChangePayload) => {
+      const openNodeIds = collectOpenNodeIds();
+      syncDragTargetOpenState(openNodeIds, payload);
+      syncSourceOpenState(payload.data, openNodeIds);
+    };
+
     const onTreeDataChange = (payload: TreeDataChangePayload) => {
-      const openNodeIds = collectOpenNodeIds(payload);
+      if (payload.trigger === 'drag') {
+        normalizeDragOpenState(payload);
+      }
       treeDataRef.value = payload.data ?? [];
       rebuildData(treeDataRef.value);
-      restoreOpenNodes(openNodeIds);
       ctx.emit(EVENTS.NODE_DATA_CHANGE, payload);
       props.onDataChange?.(payload);
     };

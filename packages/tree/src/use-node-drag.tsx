@@ -88,10 +88,34 @@ export default (
     return 'after';
   };
 
-  const getDropInfo = (dropPosition: DragPosition): { dropType: DropType; willInsertAfter: boolean } => ({
-    dropType: dropPosition === 'inside' ? 'child' : props.dragSort ? 'sort' : 'move',
-    willInsertAfter: dropPosition === 'after',
-  });
+  const getDropInfo = (
+    draggedId: string,
+    relatedId: string,
+    dropPosition: DragPosition,
+  ): { dropType: DropType; willInsertAfter: boolean } => {
+    const draggedData = getSourceNodeByUID(draggedId);
+    const relatedData = getSourceNodeByUID(relatedId);
+    const isSameParent = !!draggedData && !!relatedData && getParentNode(draggedData) === getParentNode(relatedData);
+
+    if (props.dragSort && isSameParent && dropPosition !== 'inside') {
+      return {
+        dropType: 'sort',
+        willInsertAfter: dropPosition === 'after',
+      };
+    }
+
+    if (dropPosition === 'inside') {
+      return {
+        dropType: 'child',
+        willInsertAfter: false,
+      };
+    }
+
+    return {
+      dropType: 'move',
+      willInsertAfter: dropPosition === 'after',
+    };
+  };
 
   const getNodeIdByEl = (nodeEl: HTMLElement | null) => nodeEl?.getAttribute('data-tree-node') ?? '';
 
@@ -194,11 +218,11 @@ export default (
     if (!draggedData || !relatedData || draggedId === relatedId || isDescendantTarget(draggedData, relatedData)) {
       return false;
     }
-    if (
-      dropType === 'sort' &&
-      props.dragSortMode === 'next' &&
-      getParentNode(draggedData) !== getParentNode(relatedData)
-    ) {
+    const isSameParent = getParentNode(draggedData) === getParentNode(relatedData);
+    if (dropType === 'sort' && (!props.dragSort || !isSameParent)) {
+      return false;
+    }
+    if (props.dragSort && props.dragSortMode === 'next' && (dropType !== 'sort' || !isSameParent)) {
       return false;
     }
     return !isDropDisabled(draggedId, relatedId, dropType);
@@ -241,7 +265,7 @@ export default (
     if (!relatedEl || !relatedId) return;
 
     const dropPosition = getDropPosition(event, relatedEl);
-    const { dropType, willInsertAfter } = getDropInfo(dropPosition);
+    const { dropType, willInsertAfter } = getDropInfo(dragNodeId, relatedId, dropPosition);
     const droppable = canDrop(dragNodeId, relatedId, dropType);
 
     event.stopPropagation();
@@ -281,7 +305,7 @@ export default (
     event.preventDefault();
 
     const dropPosition = targetEl ? getDropPosition(event, targetEl) : 'inside';
-    const { dropType, willInsertAfter } = getDropInfo(dropPosition);
+    const { dropType, willInsertAfter } = getDropInfo(dragNodeId, targetId, dropPosition);
     const sourceNodeData = getSourceNodeByUID(dragNodeId);
     const targetNodeData = getSourceNodeByUID(targetId);
     if (!sourceNodeData || !targetNodeData || !targetEl || !canDrop(dragNodeId, targetId, dropType)) {

@@ -51,11 +51,20 @@ export type TreeNode = {
 
 /**
  * 拖拽放置类型
- * - child: 作为目标节点的子节点
- * - move: 作为目标节点的同级节点（非排序模式）
- * - sort: 同父节点下排序（排序模式）
+ * - 同父级节点，落在目标节点前/后：dropType = 'sort'
+ * - 同父级节点，落在目标节点中间作为直接子节点：dropType = 'child'
+ * - 非同父级等其他情况：dropType = 'move'
+ * 非同父级等其他情况：dropType = 'move'
  */
 export type DropType = 'child' | 'move' | 'sort';
+
+/**
+ * 拖拽添加为子节点后，目标节点的展开状态
+ * - expand: 展开目标节点
+ * - collapse: 收起目标节点
+ * - inherit: 保持目标节点当前展开收起状态
+ */
+export type DragTargetOpenState = 'collapse' | 'expand' | 'inherit';
 
 export type DisableDropHandler = (data: TreeNode, type: DropType, target: TreeNode) => boolean;
 
@@ -296,6 +305,14 @@ export const treeProps = {
    * 默认 any
    */
   dragSortMode: PropTypes.oneOf(['any', 'next']).def('any'),
+
+  /**
+   * 拖拽添加为子节点后，目标节点的展开状态
+   * - expand: 展开目标节点
+   * - collapse: 收起目标节点
+   * - inherit: 保持目标节点当前展开收起状态
+   */
+  dragTargetOpenState: PropTypes.oneOf(['expand', 'collapse', 'inherit']).def('inherit'),
 
   /**
    * 节点是否可以选中

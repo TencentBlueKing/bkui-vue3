@@ -9,6 +9,7 @@
             children="children"
             label="name"
             node-key="id"
+            drag-target-open-state="collapse"
             draggable
             @node-data-change="handleDataChange1"
           />
@@ -42,6 +43,7 @@
             drag-sort
             draggable
             drag-sort-mode="next"
+            drag-target-open-state="expand"
             @node-data-change="handleDataChange2"
             @drag-sort="onDragSort"
           />
