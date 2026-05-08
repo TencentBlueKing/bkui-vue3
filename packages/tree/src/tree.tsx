@@ -106,9 +106,28 @@ export default defineComponent({
     const renderData = computed(() => flatData.data.filter(item => filterFn(item)));
     const { getLastVisibleElement, intersectionObserver } = useIntersectionObserver(props);
 
+    const collectOpenNodeIds = (_payload: TreeDataChangePayload) => {
+      const openNodeIds = new Set<string>();
+      flatData.data.forEach(node => {
+        if (isNodeOpened(node)) {
+          openNodeIds.add(`${getNodeId(node)}`);
+        }
+      });
+
+      return openNodeIds;
+    };
+
+    const restoreOpenNodes = (openNodeIds: Set<string>) => {
+      flatData.data.forEach(node => {
+        setNodeAttribute(node, NODE_ATTRIBUTES.IS_OPEN, openNodeIds.has(`${getNodeId(node)}`));
+      });
+    };
+
     const onTreeDataChange = (payload: TreeDataChangePayload) => {
+      const openNodeIds = collectOpenNodeIds(payload);
       treeDataRef.value = payload.data ?? [];
       rebuildData(treeDataRef.value);
+      restoreOpenNodes(openNodeIds);
       ctx.emit(EVENTS.NODE_DATA_CHANGE, payload);
       props.onDataChange?.(payload);
     };

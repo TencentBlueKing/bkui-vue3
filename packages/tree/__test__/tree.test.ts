@@ -36,6 +36,7 @@ type TreeTestVm = {
   asyncNodeClick: (node: TreeNode) => Promise<unknown>;
   getNodeAttr: (node: TreeNode, attr: string) => unknown;
   isIndeterminate: (node: TreeNode) => boolean;
+  setOpen: (item: TreeNode, isOpen?: boolean, autoOpenParents?: boolean) => void;
   setChecked: (item: Array<number | string> | number | string, checked?: boolean) => void;
   setCheckedById: (id: Array<number | string> | number | string, checked?: boolean) => void;
 };
@@ -417,6 +418,140 @@ describe('tree.tsx', () => {
     const eventPayload = wrapper.emitted('nodeDataChange')?.[0]?.[0] as TreeDataChangeEvent;
     expect(eventPayload.data.map(node => node.id)).toEqual(['b']);
     expect(eventPayload.data[0].children?.map(node => node.id)).toEqual(['a']);
+  });
+
+  it('keeps an expanded target open after dropping a child into it', async () => {
+    const data = [
+      { id: 'a', label: 'A', children: [] },
+      { id: 'b', label: 'B', children: [{ id: 'b-1', label: 'B-1', children: [] }] },
+    ];
+    const wrapper = await mount(BKTree, {
+      props: {
+        data,
+        draggable: true,
+        label: 'label',
+        nodeKey: 'id',
+      },
+    });
+    const treeVm = wrapper.vm as unknown as TreeTestVm;
+    treeVm.setOpen(data[1], true);
+    await nextTick();
+
+    const options = sortableOptions as SortableOptions;
+    const sourceEl = wrapper.find('[data-tree-node="a"]').element as HTMLElement;
+    const targetEl = wrapper.find('[data-tree-node="b"]').element as HTMLElement;
+    targetEl.getBoundingClientRect = () => ({
+      bottom: 32,
+      height: 32,
+      left: 0,
+      right: 120,
+      top: 0,
+      width: 120,
+      x: 0,
+      y: 0,
+      toJSON: () => ({}),
+    });
+
+    options.onStart({ item: sourceEl });
+    options.onMove(
+      { dragged: sourceEl, related: targetEl, willInsertAfter: true },
+      new MouseEvent('mousemove', { clientY: 16 }),
+    );
+    options.onEnd({ item: sourceEl, related: targetEl });
+    await nextTick();
+
+    expect(wrapper.find('[data-tree-node="b-1"]').exists()).toBe(true);
+    expect(wrapper.find('[data-tree-node="a"]').exists()).toBe(true);
+  });
+
+  it('opens an empty target after dropping a child into it', async () => {
+    const data = [
+      { id: 'a', label: 'A', children: [] },
+      { id: 'b', label: 'B', children: [] },
+    ];
+    const wrapper = await mount(BKTree, {
+      props: {
+        data,
+        draggable: true,
+        label: 'label',
+        nodeKey: 'id',
+      },
+    });
+    await nextTick();
+
+    const options = sortableOptions as SortableOptions;
+    const sourceEl = wrapper.find('[data-tree-node="a"]').element as HTMLElement;
+    const targetEl = wrapper.find('[data-tree-node="b"]').element as HTMLElement;
+    targetEl.getBoundingClientRect = () => ({
+      bottom: 32,
+      height: 32,
+      left: 0,
+      right: 120,
+      top: 0,
+      width: 120,
+      x: 0,
+      y: 0,
+      toJSON: () => ({}),
+    });
+
+    options.onStart({ item: sourceEl });
+    options.onMove(
+      { dragged: sourceEl, related: targetEl, willInsertAfter: true },
+      new MouseEvent('mousemove', { clientY: 16 }),
+    );
+    options.onEnd({ item: sourceEl, related: targetEl });
+    await nextTick();
+
+    const eventPayload = wrapper.emitted('nodeDataChange')?.[0]?.[0] as TreeDataChangeEvent;
+    expect(eventPayload.data[0].children?.map(node => node.id)).toEqual(['a']);
+    expect(wrapper.find('[data-tree-node="a"]').exists()).toBe(true);
+  });
+
+  it('drops a node as child in the middle area when dragSort is enabled', async () => {
+    const data = [
+      { id: 'a', label: 'A', children: [] },
+      { id: 'b', label: 'B', children: [] },
+      { id: 'c', label: 'C', children: [] },
+    ];
+    const wrapper = await mount(BKTree, {
+      props: {
+        data,
+        dragSort: true,
+        draggable: true,
+        label: 'label',
+        nodeKey: 'id',
+      },
+    });
+    await nextTick();
+
+    const options = sortableOptions as SortableOptions;
+    const sourceEl = wrapper.find('[data-tree-node="a"]').element as HTMLElement;
+    const targetEl = wrapper.find('[data-tree-node="b"]').element as HTMLElement;
+    targetEl.getBoundingClientRect = () => ({
+      bottom: 32,
+      height: 32,
+      left: 0,
+      right: 120,
+      top: 0,
+      width: 120,
+      x: 0,
+      y: 0,
+      toJSON: () => ({}),
+    });
+
+    options.onStart({ item: sourceEl });
+    options.onMove(
+      { dragged: sourceEl, related: targetEl, willInsertAfter: true },
+      new MouseEvent('mousemove', { clientY: 16 }),
+    );
+    options.onEnd({ item: sourceEl, related: targetEl });
+    await nextTick();
+
+    const eventPayload = wrapper.emitted('nodeDataChange')?.[0]?.[0] as TreeDataChangeEvent;
+    expect(eventPayload.data.map(node => node.id)).toEqual(['b', 'c']);
+    expect(eventPayload.data[0].children?.map(node => node.id)).toEqual(['a']);
+    expect(wrapper.emitted('nodeDragSort')).toBeFalsy();
+    expect(wrapper.find('[data-tree-node="a"]').exists()).toBe(true);
   });
 
   it('respects disableDrop while dragging', async () => {

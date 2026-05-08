@@ -136,7 +136,6 @@
     "js-calendar": "~1.2.3",
     "json-formatter-js": "~2.3.4",
     "lodash": "~4.17.21",
-    "sortablejs": "~1.15.7",
     "tinycolor2": "~1.6.0",
     "vue-types": "~4.1.1"
   }

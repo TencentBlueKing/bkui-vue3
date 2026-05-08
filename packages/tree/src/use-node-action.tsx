@@ -432,8 +432,8 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
       return;
     }
 
-    let resolvedItem = resolveNodeItem(nodeList[0]) as TreeNode | string | number | symbol;
-    if (typeof resolvedItem === 'string' || typeof resolvedItem === 'number' || typeof resolvedItem === 'symbol') {
+    let resolvedItem = resolveNodeItem(nodeList[0]) as TreeNode | number | string | symbol;
+    if (typeof resolvedItem === 'number' || typeof resolvedItem === 'string' || typeof resolvedItem === 'symbol') {
       const nodeId = resolvedItem;
       resolvedItem = flatData.data.find(item => getNodeId(item) === nodeId) ?? {
         [NODE_ATTRIBUTES.IS_NULL]: true,
@@ -645,8 +645,12 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     return (
       <div
         key={getNodeId(item)}
-        class={getNodeRowClass(item, flatData.schema)}
+        class={[
+          getNodeRowClass(item, flatData.schema),
+          { [resolveClassName('tree-node-draggable')]: props.draggable || props.dragSort },
+        ]}
         data-tree-node={getNodeId(item)}
+        draggable={props.draggable || props.dragSort}
       >
         <div
           style={getNodeItemStyle(item, props, flatData, showTree)}

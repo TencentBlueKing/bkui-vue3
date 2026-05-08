@@ -23,34 +23,6 @@
       }
     }
 
-    &.drop-before {
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background-color: #2196F3;
-      }
-    }
-    &.drop-after {
-      &::before {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background-color: #2196F3;
-      }
-    }
-
-    &.drop-inner {
-      background-color: rgba(33, 150, 243, 0.1);
-      outline: 1px dashed #2196F3;
-      outline-offset: -1px;
-    }
   }
 
   &-node {
@@ -161,83 +133,61 @@
     }
   }
 
-  &-drop-active {
-    background: #f5f7fa;
-  }
+  &-node-draggable {
+    cursor: grab;
+    user-select: none;
 
-  &-drop-disabled {
-    background: #ffd5d5;
-    .@{bk-prefix}-tree-node {
-      cursor: no-drop;
+    &:hover {
+      background-color: #f5f7fa;
     }
   }
 
-  &-ghost {
+  &-drop-disabled {
+    cursor: no-drop;
     opacity: 0.5;
-    background: #c8ebfb;
-  }
-
-  &-chosen {
-    background: #e1ecff;
   }
 
   &-drag {
-    opacity: 0.8;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    opacity: 0.85;
     cursor: grabbing;
   }
 
   &-drag-disabled {
-    .@{bk-prefix}-node-row {
-      cursor: no-drop;
-      opacity: 0.5;
-    }
+    cursor: no-drop;
+    opacity: 0.5;
   }
 
-  .insert-line {
-    position: absolute;
-    height: 2px;
-    background: #2196F3;
-    display: none;
-    pointer-events: none;
-    z-index: 999;
-  }
-}
-
-.@{bk-prefix}-tree-drop-indicator {
-  position: fixed;
-  pointer-events: none;
-  z-index: 9999;
-
-  &.@{bk-prefix}-tree-drop-inner {
-    background: rgba(33, 150, 243, 0.06);
-    outline: 2px dashed #3a84ff;
-    outline-offset: -2px;
-    border-radius: 2px;
-    box-shadow: inset 0 0 0 1px rgba(58, 132, 255, 0.1);
+  &-drop-before,
+  &-drop-after,
+  &-drop-inner {
+    background-clip: content-box;
   }
 
-  &.@{bk-prefix}-tree-drop-line {
-    background: #3a84ff;
-    border-radius: 1px;
-
-    &::before,
+  &-drop-before,
+  &-drop-after {
     &::after {
-      content: '';
       position: absolute;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #3a84ff;
-      top: -2px;
-    }
-
-    &::before {
-      left: 0;
-    }
-
-    &::after {
       right: 0;
+      left: var(--drop-line-left, 0);
+      display: block;
+      height: 2px;
+      border-radius: 1px;
+      background-color: #3a84ff;
+      content: '';
+      pointer-events: none;
     }
+  }
+
+  &-drop-before::after {
+    top: -1px;
+  }
+
+  &-drop-after::after {
+    bottom: -1px;
+  }
+
+  &-drop-inner {
+    background-color: rgba(58, 132, 255, 0.08);
+    box-shadow: inset 0 0 0 1px rgba(58, 132, 255, 0.28);
   }
 }
