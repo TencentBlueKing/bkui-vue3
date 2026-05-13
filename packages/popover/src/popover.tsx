@@ -80,15 +80,18 @@ export default defineComponent({
       refRoot,
     });
 
-    if (!props.always && !props.disabled) {
-      watch(
-        () => props.isShow,
-        () => {
+
+    watch(
+      () => props.isShow,
+      () => {
+        if (!props.always && !props.disabled) {
           props.isShow ? showPopover() : hidePopover();
-        },
-        { immediate: true },
-      );
-    }
+        }
+      },
+      {
+        immediate: true
+      },
+    )
 
     watch(
       () => [props.disabled],
