@@ -1,6 +1,12 @@
 ## 更新日志
 
 
+### 2.1.0-beta.11
+
+* **[feat]**:
+    - bugfix(pop-confirm): popoverOptions.disabled 默认为 ture 时关闭不了
+
+
 ### 2.1.0-beta.10
 
 * **[feat]**:
