@@ -104,7 +104,11 @@ export const PopoverProps = {
   /**
    * 弹出内容绑定元素
    */
-  boundary: PropTypes.oneOfType([PropTypes.string.def('parent'), PropTypes.instanceOf(HTMLElement), PropTypes.func]).def('body'),
+  boundary: PropTypes.oneOfType([
+    PropTypes.string.def('parent'),
+    PropTypes.instanceOf(HTMLElement),
+    PropTypes.func,
+  ]).def('body'),
 
   zIndex: PropTypes.number.def(undefined),
 
@@ -159,6 +163,10 @@ export const PopoverProps = {
    * 配置自定义样式类名，传入的类会被加在 Reference 外部的 div 上
    */
   referenceCls: PropTypes.string.def(''),
+  /**
+   * 是否渲染默认插槽最外层 reference span；false 时不主动追加 span
+   */
+  renderReferenceWrapper: PropTypes.bool.def(undefined),
   /**
    * 点击 Reference 占位区是否忽略收起 popover
    */

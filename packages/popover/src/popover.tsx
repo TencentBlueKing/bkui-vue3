@@ -26,10 +26,12 @@
 
 import {
   Comment,
+  cloneVNode,
   computed,
   CSSProperties,
   defineComponent,
   Fragment,
+  isVNode,
   nextTick,
   onBeforeUnmount,
   onMounted,
@@ -39,16 +41,20 @@ import {
   toRefs,
   useAttrs,
   VNode,
+  VNodeRef,
   watch,
 } from 'vue';
 
-import { usePrefix } from '@bkui-vue/config-provider';
+import { useGlobalConfig, usePrefix } from '@bkui-vue/config-provider';
 import { bkZIndexManager, RenderType } from '@bkui-vue/shared';
 
 import { useDelay, usePopoverFloating, useTrigger } from './composables';
 import { PopoverProps } from './props';
 
 import type { TriggerType, PopoverPlacement, IAxesOffsets, VirtualElement } from './types';
+import type { ComponentPublicInstance } from 'vue';
+
+type ReferenceRefValue = ComponentPublicInstance | Element | null;
 
 /**
  * 全局 Popover 注册表（用于处理“弹层里再弹弹层”的 clickoutside / hover-leave 场景）
@@ -70,8 +76,7 @@ let __bkPopoverIdSeed = 0;
 const __bkPopoverRegistry = new Map<string, PopoverRegistryEntry>();
 
 const findPopoverIdInEventPath = (event: Event): null | string => {
-  const anyEvent = event as any;
-  const path = (typeof anyEvent.composedPath === 'function' ? anyEvent.composedPath() : []) as unknown[];
+  const path = typeof event.composedPath === 'function' ? event.composedPath() : [];
   for (const node of path) {
     if (!(node instanceof HTMLElement)) continue;
     const id = (node as HTMLElement).dataset?.bkPopoverId;
@@ -133,13 +138,14 @@ export default defineComponent({
   setup(props, { slots, emit, expose }) {
     const attrs = useAttrs();
     const { resolveClassName } = usePrefix();
+    const globalConfig = useGlobalConfig();
 
     // 当前实例 id（用于注册表与事件路径识别）
     const popoverId = `bk-popover-${++__bkPopoverIdSeed}`;
 
     // 元素引用
     // 默认 slot 的包裹元素（仅用于渲染与事件冒泡承载）
-    const referenceWrapperRef = ref<HTMLElement | null>(null);
+    const referenceWrapperRef = ref<ReferenceRefValue>(null);
     // 提供给 floating-ui 的实际定位 reference（可能是 wrapper，也可能是 slot 内部元素）
     const floatingReferenceRef = ref<HTMLElement | VirtualElement | null>(null);
     const floatingRef = ref<HTMLElement | null>(null);
@@ -181,7 +187,25 @@ export default defineComponent({
       reference,
       target,
       floatingReference,
+      renderReferenceWrapper,
     } = toRefs(props);
+
+    const isReferenceWrapperDisabled = computed(() => {
+      if (renderReferenceWrapper.value !== undefined) {
+        return renderReferenceWrapper.value === false;
+      }
+
+      const globalValue = globalConfig.value.popoverRenderReferenceWrapper;
+      if (globalValue !== undefined) {
+        return globalValue === false;
+      }
+
+      return false;
+    });
+
+    const setReferenceRef: VNodeRef = refValue => {
+      referenceWrapperRef.value = refValue as ReferenceRefValue;
+    };
 
     // 判断是否为虚拟元素
     const isVirtualElement = (el: unknown): el is VirtualElement => {
@@ -207,6 +231,38 @@ export default defineComponent({
         return ref;
       }
       return null;
+    };
+
+    const resolveElementFromVNode = (node?: VNode): HTMLElement | null => {
+      if (!node) return null;
+      if (node.el instanceof HTMLElement) return node.el;
+      const subTree = node.component?.subTree;
+      if (subTree) {
+        const element = resolveElementFromVNode(subTree as VNode);
+        if (element) return element;
+      }
+      if (Array.isArray(node.children)) {
+        for (const child of node.children) {
+          if (!isVNode(child)) continue;
+          const element = resolveElementFromVNode(child);
+          if (element) return element;
+        }
+      }
+      return null;
+    };
+
+    const resolveReferenceRefElement = (refValue: ReferenceRefValue): HTMLElement | null => {
+      if (refValue instanceof HTMLElement) {
+        return refValue;
+      }
+      if (!refValue || typeof refValue !== 'object') {
+        return null;
+      }
+      const instance = refValue as ComponentPublicInstance & { $?: { subTree?: VNode } };
+      if (instance.$el instanceof HTMLElement) {
+        return instance.$el;
+      }
+      return resolveElementFromVNode(instance.$?.subTree);
     };
 
     // 是否使用自定义 reference
@@ -267,8 +323,12 @@ export default defineComponent({
      * 策略：优先使用第一个元素子节点作为 reference；否则向下寻找第一个具有可见尺寸的 HTMLElement。
      */
     const resolveDefaultReferenceElement = (): HTMLElement | null => {
-      const wrapper = referenceWrapperRef.value;
+      const wrapper = resolveReferenceRefElement(referenceWrapperRef.value);
       if (!wrapper) return null;
+
+      if (isReferenceWrapperDisabled.value) {
+        return wrapper;
+      }
 
       // display: contents 的元素自身尺寸为 0，直接查找子元素
       const firstChild = wrapper.firstElementChild;
@@ -324,7 +384,7 @@ export default defineComponent({
 
       const b = resolveBoundary();
       if (typeof b === 'string') {
-        return (b === 'body' || b === 'parent') ? 'fixed' : 'absolute';
+        return b === 'body' || b === 'parent' ? 'fixed' : 'absolute';
       }
       if (b === document.body) return 'fixed';
       return 'absolute';
@@ -369,9 +429,9 @@ export default defineComponent({
       },
       { immediate: true },
     );
-    watch([() => reference.value, () => target.value, () => floatingReference.value], () =>
-      nextTick(updateFloatingReference),
-    );
+    watch([() => reference.value, () => target.value, () => floatingReference.value], () => {
+      nextTick(updateFloatingReference);
+    });
     watch(isOpen, val => {
       if (val) {
         nextTick(updateFloatingReference);
@@ -403,6 +463,48 @@ export default defineComponent({
       emitContentMouseleave: (e: MouseEvent) => emit(EMIT_EVENTS.CONTENT_MOUSELEAVE, e),
     });
 
+    let unbindNoWrapperReferenceEvents: Array<() => void> = [];
+
+    const clearNoWrapperReferenceEvents = () => {
+      unbindNoWrapperReferenceEvents.forEach(unbind => unbind());
+      unbindNoWrapperReferenceEvents = [];
+    };
+
+    const resolveEventBinding = (eventName: string) => {
+      const rawName = eventName.replace(/^on/, '');
+      const capture = rawName.endsWith('Capture');
+      return {
+        capture,
+        name: rawName.replace(/Capture$/, '').toLowerCase(),
+      };
+    };
+
+    const bindNoWrapperReferenceEvents = () => {
+      clearNoWrapperReferenceEvents();
+
+      if (!isReferenceWrapperDisabled.value) return;
+
+      const referenceEl = resolveReferenceRefElement(referenceWrapperRef.value);
+      if (!referenceEl) return;
+
+      Object.keys(referenceListeners.value).forEach(eventName => {
+        const listener = referenceListeners.value[eventName] as EventListener;
+        const eventBinding = resolveEventBinding(eventName);
+        referenceEl.addEventListener(eventBinding.name, listener, eventBinding.capture);
+        unbindNoWrapperReferenceEvents.push(() => {
+          referenceEl.removeEventListener(eventBinding.name, listener, eventBinding.capture);
+        });
+      });
+    };
+
+    watch(
+      [isReferenceWrapperDisabled, referenceWrapperRef, () => referenceListeners.value],
+      () => {
+        nextTick(bindNoWrapperReferenceEvents);
+      },
+      { immediate: true },
+    );
+
     // hover 模式：把“子弹层”视为内容区的延伸（避免 PopConfirm 内 Select 下拉导致父弹层收起）
     let hoverTrackMoveHandler: ((e: MouseEvent) => void) | null = null;
     const stopHoverTrack = () => {
@@ -413,9 +515,12 @@ export default defineComponent({
 
     const isTargetInSelfOrChildren = (targetEl: HTMLElement): boolean => {
       const actualRef = floatingReferenceRef.value;
+      const referenceWrapperEl = isReferenceWrapperDisabled.value
+        ? null
+        : resolveReferenceRefElement(referenceWrapperRef.value);
       if (
         (actualRef instanceof HTMLElement && actualRef.contains(targetEl)) ||
-        referenceWrapperRef.value?.contains(targetEl)
+        (referenceWrapperEl instanceof HTMLElement && referenceWrapperEl.contains(targetEl))
       ) {
         return true;
       }
@@ -549,11 +654,14 @@ export default defineComponent({
     const filterEmptyNodes = (children: VNode[] = []): VNode[] => {
       const nodes: VNode[] = [];
       children.forEach(child => {
+        if (!child) {
+          return;
+        }
         if (Array.isArray(child)) {
           nodes.push(...filterEmptyNodes(child));
           return;
         }
-        if (child.type === Fragment) {
+        if (child.type === Fragment && Array.isArray(child.children)) {
           nodes.push(...filterEmptyNodes(child.children as VNode[]));
           return;
         }
@@ -570,8 +678,7 @@ export default defineComponent({
       );
     };
 
-    const hasElementNode = (nodes: VNode[]) =>
-      nodes.some(node => node.type !== Text && node.type !== Comment);
+    const hasElementNode = (nodes: VNode[]) => nodes.some(node => node.type !== Text && node.type !== Comment);
 
     // 处理 clickoutside
     const handleClickOutside = (event: MouseEvent) => {
@@ -588,8 +695,12 @@ export default defineComponent({
 
       // 点击在 reference 内（包括自定义 reference 和默认 reference）
       const actualRef = floatingReferenceRef.value;
+      const referenceWrapperEl = isReferenceWrapperDisabled.value
+        ? null
+        : resolveReferenceRefElement(referenceWrapperRef.value);
       const isInReference =
-        (actualRef instanceof HTMLElement && actualRef.contains(target)) || referenceWrapperRef.value?.contains(target);
+        (actualRef instanceof HTMLElement && actualRef.contains(target)) ||
+        (referenceWrapperEl instanceof HTMLElement && referenceWrapperEl.contains(target));
       if (isInReference) {
         // 对于 click 和 hover 模式，点击 reference 的行为由 referenceListeners 处理
         if (trigger.value === 'click' || trigger.value === 'hover') {
@@ -667,40 +778,32 @@ export default defineComponent({
       return isOpen.value;
     });
 
-    // 为自定义 reference 元素添加事件监听（仅对 HTMLElement 有效，虚拟元素不绑定事件）
+    let unbindCustomReferenceEvents: Array<() => void> = [];
+
+    const clearCustomReferenceEvents = () => {
+      unbindCustomReferenceEvents.forEach(unbind => unbind());
+      unbindCustomReferenceEvents = [];
+    };
+
     const bindCustomReferenceEvents = () => {
+      clearCustomReferenceEvents();
       if (!useCustomReference.value || isVirtualReferenceMode.value) return;
 
       const customRef = getActualReferenceElement();
       if (!customRef) return;
 
-      const listeners = referenceListeners.value;
-      Object.keys(listeners).forEach(eventName => {
-        // 将 onMouseenter 转换为 mouseenter
-        const nativeEventName = eventName.replace(/^on/, '').toLowerCase();
-        customRef.addEventListener(nativeEventName, listeners[eventName] as EventListener);
+      Object.keys(referenceListeners.value).forEach(eventName => {
+        const listener = referenceListeners.value[eventName] as EventListener;
+        const eventBinding = resolveEventBinding(eventName);
+        customRef.addEventListener(eventBinding.name, listener, eventBinding.capture);
+        unbindCustomReferenceEvents.push(() => {
+          customRef.removeEventListener(eventBinding.name, listener, eventBinding.capture);
+        });
       });
     };
 
-    const unbindCustomReferenceEvents = () => {
-      if (!useCustomReference.value || isVirtualReferenceMode.value) return;
-
-      const customRef = getActualReferenceElement();
-      if (!customRef) return;
-
-      const listeners = referenceListeners.value;
-      Object.keys(listeners).forEach(eventName => {
-        const nativeEventName = eventName.replace(/^on/, '').toLowerCase();
-        customRef.removeEventListener(nativeEventName, listeners[eventName] as EventListener);
-      });
-    };
-
-    // 监听自定义 reference 变化
-    watch([() => reference.value, () => target.value], () => {
-      unbindCustomReferenceEvents();
-      nextTick(() => {
-        bindCustomReferenceEvents();
-      });
+    watch([() => reference.value, () => target.value, () => referenceListeners.value], () => {
+      nextTick(bindCustomReferenceEvents);
     });
 
     // 挂载时添加 clickoutside 监听
@@ -721,7 +824,8 @@ export default defineComponent({
     // 卸载时清理
     onBeforeUnmount(() => {
       document.removeEventListener('click', handleClickOutside, true);
-      unbindCustomReferenceEvents();
+      clearCustomReferenceEvents();
+      clearNoWrapperReferenceEvents();
       clearTimers();
       if (eventDelayTimer) {
         clearTimeout(eventDelayTimer);
@@ -742,7 +846,9 @@ export default defineComponent({
         id: popoverId,
         floatingEl: floatingRef.value,
         referenceEl,
-        referenceWrapperEl: referenceWrapperRef.value,
+        referenceWrapperEl: isReferenceWrapperDisabled.value
+          ? null
+          : resolveReferenceRefElement(referenceWrapperRef.value),
       });
     };
 
@@ -827,39 +933,79 @@ export default defineComponent({
         </div>
       ) : null;
 
+      const renderTeleport = () => (
+        <Teleport
+          disabled={disableTeleport.value}
+          to={teleportTo.value}
+        >
+          {floatingNode}
+        </Teleport>
+      );
+
       // 如果使用自定义 reference（虚拟元素或外部 HTMLElement），只渲染 Teleport 内容
       if (useCustomReference.value) {
-        return (
-          <Teleport
-            disabled={disableTeleport.value}
-            to={teleportTo.value}
-          >
-            {floatingNode}
-          </Teleport>
-        );
+        return renderTeleport();
       }
 
       const defaultSlotNodes = (slots.default?.() ?? []) as VNode[];
-      const useContentsWrapper = hasElementNode(filterEmptyNodes(defaultSlotNodes));
+      const referenceNodes = filterEmptyNodes(defaultSlotNodes);
+      const useContentsWrapper = hasElementNode(referenceNodes);
+
+      if (!isReferenceWrapperDisabled.value) {
+        return (
+          <>
+            <span
+              ref={referenceWrapperRef}
+              style={useContentsWrapper ? { display: 'contents' } : { display: 'inline-block' }}
+              class={[referenceCls.value, attrs.class as string]}
+              {...referenceListeners.value}
+            >
+              {defaultSlotNodes}
+            </span>
+            {renderTeleport()}
+          </>
+        );
+      }
+
+      const renderReferenceNode = () => {
+        if (!referenceNodes.length) {
+          return null;
+        }
+
+        // 无包裹模式下，只有“单个非文本 VNode”可以保持原 DOM 结构不变。
+        // 文本节点或多个节点没有唯一 HTMLElement 可作为 floating reference，必须降级为 span。
+        if (referenceNodes.length > 1 || referenceNodes[0].type === Text) {
+          return (
+            <span
+              ref={setReferenceRef as VNodeRef}
+              style={{ display: 'inline-block' }}
+              class={[referenceCls.value, attrs.class as string]}
+            >
+              {referenceNodes}
+            </span>
+          );
+        }
+
+        const referenceNode = referenceNodes[0];
+        if (!isVNode(referenceNode) || referenceNode.type === Comment) {
+          return referenceNode;
+        }
+
+        return cloneVNode(
+          referenceNode,
+          {
+            ref: setReferenceRef as VNodeRef,
+            class: [referenceCls.value, attrs.class as string],
+          },
+          true,
+        );
+      };
 
       // 默认情况：渲染 reference 和 floating content
-      // 元素触发器使用 display: contents 避免影响布局；纯文本触发器使用 inline-block 提供可定位尺寸
       return (
         <>
-          <span
-            ref={referenceWrapperRef}
-            style={useContentsWrapper ? { display: 'contents' } : { display: 'inline-block' }}
-            class={[referenceCls.value, attrs.class as string]}
-            {...referenceListeners.value}
-          >
-            {defaultSlotNodes}
-          </span>
-          <Teleport
-            disabled={disableTeleport.value}
-            to={teleportTo.value}
-          >
-            {floatingNode}
-          </Teleport>
+          {renderReferenceNode()}
+          {renderTeleport()}
         </>
       );
     };

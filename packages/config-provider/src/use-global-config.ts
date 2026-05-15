@@ -38,7 +38,7 @@ export const setPrefixVariable = (prefix: string) => {
 
 export const provideGlobalConfig = (config: ConfigProviderProps, app?: App) => {
   const configData = reactive({
-    ...merge(defaultRootConfig, config),
+    ...merge({}, defaultRootConfig, config),
   });
   setPrefixVariable(config.prefix);
   Object.keys(config).forEach(key => {
