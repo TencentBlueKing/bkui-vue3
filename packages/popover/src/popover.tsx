@@ -25,16 +25,20 @@
  */
 
 import {
+  Comment,
   computed,
   CSSProperties,
   defineComponent,
+  Fragment,
   nextTick,
   onBeforeUnmount,
   onMounted,
   ref,
   Teleport,
+  Text,
   toRefs,
   useAttrs,
+  VNode,
   watch,
 } from 'vue';
 
@@ -185,7 +189,7 @@ export default defineComponent({
         el !== null &&
         typeof el === 'object' &&
         'getBoundingClientRect' in el &&
-        typeof (el as any).getBoundingClientRect === 'function'
+        typeof (el as Record<string, unknown>).getBoundingClientRect === 'function'
       );
     };
 
@@ -542,6 +546,33 @@ export default defineComponent({
     // 计算 data-theme 属性（与旧版保持一致，完整 theme 字符串写入 data-theme）
     const dataTheme = computed(() => theme.value);
 
+    const filterEmptyNodes = (children: VNode[] = []): VNode[] => {
+      const nodes: VNode[] = [];
+      children.forEach(child => {
+        if (Array.isArray(child)) {
+          nodes.push(...filterEmptyNodes(child));
+          return;
+        }
+        if (child.type === Fragment) {
+          nodes.push(...filterEmptyNodes(child.children as VNode[]));
+          return;
+        }
+        nodes.push(child);
+      });
+      return nodes.filter(
+        child =>
+          !(
+            child &&
+            (child.type === Comment ||
+              (child.type === Fragment && Array.isArray(child.children) && child.children.length === 0) ||
+              (child.type === Text && `${child.children ?? ''}`.trim() === ''))
+          ),
+      );
+    };
+
+    const hasElementNode = (nodes: VNode[]) =>
+      nodes.some(node => node.type !== Text && node.type !== Comment);
+
     // 处理 clickoutside
     const handleClickOutside = (event: MouseEvent) => {
       if (disabled.value || always.value) {
@@ -774,9 +805,9 @@ export default defineComponent({
             pointerEvents: contentPointerEvents.value,
           }}
           class={contentClass.value}
+          data-arrow={arrowSide.value}
           data-bk-popover-id={popoverId}
           data-theme={dataTheme.value}
-          data-arrow={arrowSide.value}
           onClick={handleClickContent}
           {...guardedFloatingListeners.value}
         >
@@ -808,17 +839,20 @@ export default defineComponent({
         );
       }
 
+      const defaultSlotNodes = (slots.default?.() ?? []) as VNode[];
+      const useContentsWrapper = hasElementNode(filterEmptyNodes(defaultSlotNodes));
+
       // 默认情况：渲染 reference 和 floating content
-      // 使用 display: contents 避免影响内部元素布局
+      // 元素触发器使用 display: contents 避免影响布局；纯文本触发器使用 inline-block 提供可定位尺寸
       return (
         <>
           <span
             ref={referenceWrapperRef}
-            style={{ display: 'contents', width: '100%', height: '100%' }}
+            style={useContentsWrapper ? { display: 'contents' } : { display: 'inline-block' }}
             class={[referenceCls.value, attrs.class as string]}
             {...referenceListeners.value}
           >
-            {slots.default?.()}
+            {defaultSlotNodes}
           </span>
           <Teleport
             disabled={disableTeleport.value}
