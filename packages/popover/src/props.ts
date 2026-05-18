@@ -164,7 +164,7 @@ export const PopoverProps = {
    */
   referenceCls: PropTypes.string.def(''),
   /**
-   * 是否渲染默认插槽最外层 reference span；false 时不主动追加 span
+   * 是否渲染默认插槽最外层 reference span；仅 true 时主动追加 span
    */
   renderReferenceWrapper: PropTypes.bool.def(undefined),
   /**

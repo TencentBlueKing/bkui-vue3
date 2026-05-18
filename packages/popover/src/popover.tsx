@@ -190,17 +190,8 @@ export default defineComponent({
       renderReferenceWrapper,
     } = toRefs(props);
 
-    const isReferenceWrapperDisabled = computed(() => {
-      if (renderReferenceWrapper.value !== undefined) {
-        return renderReferenceWrapper.value === false;
-      }
-
-      const globalValue = globalConfig.value.popoverRenderReferenceWrapper;
-      if (globalValue !== undefined) {
-        return globalValue === false;
-      }
-
-      return false;
+    const shouldRenderReferenceWrapper = computed(() => {
+      return (renderReferenceWrapper.value ?? globalConfig.value.popoverRenderReferenceWrapper) === true;
     });
 
     const setReferenceRef: VNodeRef = refValue => {
@@ -317,36 +308,11 @@ export default defineComponent({
     /**
      * 解析默认 slot reference 元素
      *
-     * referenceWrapperRef 使用 display: contents，自身无布局尺寸，
-     * 因此需要从子元素中找到实际的 reference 元素。
-     *
-     * 策略：优先使用第一个元素子节点作为 reference；否则向下寻找第一个具有可见尺寸的 HTMLElement。
+     * referenceWrapperRef 在 wrapper 开启时指向外层 span，
+     * wrapper 关闭时指向默认 slot 的实际元素。
      */
     const resolveDefaultReferenceElement = (): HTMLElement | null => {
-      const wrapper = resolveReferenceRefElement(referenceWrapperRef.value);
-      if (!wrapper) return null;
-
-      if (isReferenceWrapperDisabled.value) {
-        return wrapper;
-      }
-
-      // display: contents 的元素自身尺寸为 0，直接查找子元素
-      const firstChild = wrapper.firstElementChild;
-      if (firstChild instanceof HTMLElement) {
-        return firstChild;
-      }
-
-      const descendants = wrapper.querySelectorAll('*');
-      for (const node of Array.from(descendants)) {
-        if (!(node instanceof HTMLElement)) continue;
-        const rect = node.getBoundingClientRect();
-        if (rect.width > 0 || rect.height > 0) {
-          return node;
-        }
-      }
-
-      // 兜底仍返回 wrapper，保证类型与行为一致
-      return wrapper;
+      return resolveReferenceRefElement(referenceWrapperRef.value);
     };
 
     // 延迟控制
@@ -429,9 +395,12 @@ export default defineComponent({
       },
       { immediate: true },
     );
-    watch([() => reference.value, () => target.value, () => floatingReference.value], () => {
-      nextTick(updateFloatingReference);
-    });
+    watch(
+      [() => reference.value, () => target.value, () => floatingReference.value, shouldRenderReferenceWrapper],
+      () => {
+        nextTick(updateFloatingReference);
+      },
+    );
     watch(isOpen, val => {
       if (val) {
         nextTick(updateFloatingReference);
@@ -482,7 +451,7 @@ export default defineComponent({
     const bindNoWrapperReferenceEvents = () => {
       clearNoWrapperReferenceEvents();
 
-      if (!isReferenceWrapperDisabled.value) return;
+      if (shouldRenderReferenceWrapper.value) return;
 
       const referenceEl = resolveReferenceRefElement(referenceWrapperRef.value);
       if (!referenceEl) return;
@@ -498,7 +467,7 @@ export default defineComponent({
     };
 
     watch(
-      [isReferenceWrapperDisabled, referenceWrapperRef, () => referenceListeners.value],
+      [shouldRenderReferenceWrapper, referenceWrapperRef, () => referenceListeners.value],
       () => {
         nextTick(bindNoWrapperReferenceEvents);
       },
@@ -515,9 +484,9 @@ export default defineComponent({
 
     const isTargetInSelfOrChildren = (targetEl: HTMLElement): boolean => {
       const actualRef = floatingReferenceRef.value;
-      const referenceWrapperEl = isReferenceWrapperDisabled.value
-        ? null
-        : resolveReferenceRefElement(referenceWrapperRef.value);
+      const referenceWrapperEl = shouldRenderReferenceWrapper.value
+        ? resolveReferenceRefElement(referenceWrapperRef.value)
+        : null;
       if (
         (actualRef instanceof HTMLElement && actualRef.contains(targetEl)) ||
         (referenceWrapperEl instanceof HTMLElement && referenceWrapperEl.contains(targetEl))
@@ -651,6 +620,17 @@ export default defineComponent({
     // 计算 data-theme 属性（与旧版保持一致，完整 theme 字符串写入 data-theme）
     const dataTheme = computed(() => theme.value);
 
+    // 兼容旧版自定义 theme 标记：theme="light bk-table-settings"
+    // 除了追加 bk-table-settings class 外，还需要生成 data-bk-table-settings-theme="true"，
+    // table settings 等组件的弹层样式依赖该属性选择器。
+    const extraThemeAttrs = computed(() => {
+      const { extraClasses } = parseTheme(theme.value);
+      return extraClasses.reduce<Record<string, string>>((attrs, className) => {
+        attrs[`data-${className}-theme`] = 'true';
+        return attrs;
+      }, {});
+    });
+
     const filterEmptyNodes = (children: VNode[] = []): VNode[] => {
       const nodes: VNode[] = [];
       children.forEach(child => {
@@ -678,8 +658,6 @@ export default defineComponent({
       );
     };
 
-    const hasElementNode = (nodes: VNode[]) => nodes.some(node => node.type !== Text && node.type !== Comment);
-
     // 处理 clickoutside
     const handleClickOutside = (event: MouseEvent) => {
       if (disabled.value || always.value) {
@@ -695,9 +673,9 @@ export default defineComponent({
 
       // 点击在 reference 内（包括自定义 reference 和默认 reference）
       const actualRef = floatingReferenceRef.value;
-      const referenceWrapperEl = isReferenceWrapperDisabled.value
-        ? null
-        : resolveReferenceRefElement(referenceWrapperRef.value);
+      const referenceWrapperEl = shouldRenderReferenceWrapper.value
+        ? resolveReferenceRefElement(referenceWrapperRef.value)
+        : null;
       const isInReference =
         (actualRef instanceof HTMLElement && actualRef.contains(target)) ||
         (referenceWrapperEl instanceof HTMLElement && referenceWrapperEl.contains(target));
@@ -846,9 +824,9 @@ export default defineComponent({
         id: popoverId,
         floatingEl: floatingRef.value,
         referenceEl,
-        referenceWrapperEl: isReferenceWrapperDisabled.value
-          ? null
-          : resolveReferenceRefElement(referenceWrapperRef.value),
+        referenceWrapperEl: shouldRenderReferenceWrapper.value
+          ? resolveReferenceRefElement(referenceWrapperRef.value)
+          : null,
       });
     };
 
@@ -914,6 +892,7 @@ export default defineComponent({
           data-arrow={arrowSide.value}
           data-bk-popover-id={popoverId}
           data-theme={dataTheme.value}
+          {...extraThemeAttrs.value}
           onClick={handleClickContent}
           {...guardedFloatingListeners.value}
         >
@@ -949,14 +928,13 @@ export default defineComponent({
 
       const defaultSlotNodes = (slots.default?.() ?? []) as VNode[];
       const referenceNodes = filterEmptyNodes(defaultSlotNodes);
-      const useContentsWrapper = hasElementNode(referenceNodes);
 
-      if (!isReferenceWrapperDisabled.value) {
+      if (shouldRenderReferenceWrapper.value) {
         return (
           <>
             <span
               ref={referenceWrapperRef}
-              style={useContentsWrapper ? { display: 'contents' } : { display: 'inline-block' }}
+              style={{ display: 'inline-block' }}
               class={[referenceCls.value, attrs.class as string]}
               {...referenceListeners.value}
             >
@@ -972,12 +950,14 @@ export default defineComponent({
           return null;
         }
 
-        // 无包裹模式下，只有“单个非文本 VNode”可以保持原 DOM 结构不变。
-        // 文本节点或多个节点没有唯一 HTMLElement 可作为 floating reference，必须降级为 span。
-        if (referenceNodes.length > 1 || referenceNodes[0].type === Text) {
+        // 默认无包裹模式：保持 Fragment 根结构，不主动追加任何具体 DOM。
+        // 为了兼容定位与触发事件，尽可能把 ref/class 透传到第一个非文本 reference 节点。
+        // 但纯文本 slot 没有可承载 ref 和监听器的 DOM 节点，需要生成一个 span 作为触发元素。
+        const isTextReference = referenceNodes.every(node => isVNode(node) && node.type === Text);
+        if (isTextReference) {
           return (
             <span
-              ref={setReferenceRef as VNodeRef}
+              ref={referenceWrapperRef}
               style={{ display: 'inline-block' }}
               class={[referenceCls.value, attrs.class as string]}
             >
@@ -986,19 +966,28 @@ export default defineComponent({
           );
         }
 
-        const referenceNode = referenceNodes[0];
-        if (!isVNode(referenceNode) || referenceNode.type === Comment) {
-          return referenceNode;
+        const referenceNodeIndex = referenceNodes.findIndex(
+          node => isVNode(node) && node.type !== Text && node.type !== Comment,
+        );
+
+        if (referenceNodeIndex < 0) {
+          return referenceNodes;
         }
 
-        return cloneVNode(
-          referenceNode,
-          {
-            ref: setReferenceRef as VNodeRef,
-            class: [referenceCls.value, attrs.class as string],
-          },
-          true,
-        );
+        return referenceNodes.map((node, index) => {
+          if (index !== referenceNodeIndex || !isVNode(node)) {
+            return node;
+          }
+
+          return cloneVNode(
+            node,
+            {
+              ref: setReferenceRef as VNodeRef,
+              class: [referenceCls.value, attrs.class as string],
+            },
+            true,
+          );
+        });
       };
 
       // 默认情况：渲染 reference 和 floating content

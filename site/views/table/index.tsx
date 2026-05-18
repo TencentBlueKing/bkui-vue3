@@ -53,7 +53,6 @@ import ScrollHorizontal from './scroll-horizontal.vue';
 import ScrollLoading from './scroll-loading.vue';
 import ScrollLoadingSlot from './scroll-loading-slot.vue';
 import Selection from './selection.vue';
-import TableDemo from './table-demo.vue';
 import virtualRender from './virtual-render.vue';
 
 export default defineComponent({
@@ -81,7 +80,6 @@ export default defineComponent({
     basicSortBehavior,
     ScrollHorizontal,
     MultiHeader,
-    TableDemo,
     // heightTest,
   },
   render() {

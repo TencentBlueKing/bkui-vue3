@@ -25,7 +25,11 @@
  */
 
 // 测试 composables 的单元测试
+import { mount } from '@vue/test-utils';
+
+import ConfigProvider from '../../config-provider/src';
 import { resolveDelay } from '../src/composables/use-delay';
+import Popover from '../src/popover';
 
 describe('Popover Composables', () => {
   describe('resolveDelay', () => {
@@ -64,7 +68,7 @@ describe('Popover Types', () => {
 describe('Popover Props', () => {
   it('should have PopoverProps exported', () => {
     const { PopoverProps } = require('../src/props');
-    
+
     // 检查关键 props 是否存在
     expect(PopoverProps).toBeDefined();
     expect(PopoverProps.isShow).toBeDefined();
@@ -80,12 +84,163 @@ describe('Popover Props', () => {
 
   it('should have correct default values', () => {
     const { PopoverProps } = require('../src/props');
-    
+
     // 检查默认值
     expect(PopoverProps.isShow.default).toBe(false);
     expect(PopoverProps.arrow.default).toBe(true);
     expect(PopoverProps.theme.default).toBe('dark');
     expect(PopoverProps.disabled.default).toBe(false);
     expect(PopoverProps.always.default).toBe(false);
+  });
+});
+
+describe('Popover renderReferenceWrapper', () => {
+  afterEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  it('should not render reference wrapper by default', () => {
+    const wrapper = mount(Popover, {
+      props: {
+        content: 'content',
+      },
+      slots: {
+        default: '<button class="ref-btn">ref</button>',
+      },
+    });
+
+    expect(wrapper.find('button.ref-btn').exists()).toBe(true);
+    expect(wrapper.find('span > button.ref-btn').exists()).toBe(false);
+    wrapper.unmount();
+  });
+
+  it('should not render reference wrapper when renderReferenceWrapper is false', () => {
+    const wrapper = mount(Popover, {
+      props: {
+        content: 'content',
+        renderReferenceWrapper: false,
+      },
+      slots: {
+        default: '<button class="ref-btn">ref</button>',
+      },
+    });
+
+    expect(wrapper.find('button.ref-btn').exists()).toBe(true);
+    expect(wrapper.find('span > button.ref-btn').exists()).toBe(false);
+    wrapper.unmount();
+  });
+
+  it('should render a span trigger when default slot is pure text by default', () => {
+    const wrapper = mount(Popover, {
+      props: {
+        content: 'content',
+      },
+      slots: {
+        default: 'plain reference',
+      },
+    });
+
+    const referenceWrapper = wrapper.find('span');
+    expect(referenceWrapper.exists()).toBe(true);
+    expect(referenceWrapper.text()).toBe('plain reference');
+    expect(referenceWrapper.attributes('style')).toContain('display: inline-block');
+    wrapper.unmount();
+  });
+
+  it('should render a span trigger for pure text when local and global wrapper configs are false', () => {
+    const wrapper = mount({
+      components: { ConfigProvider, Popover },
+      template: `
+        <ConfigProvider :popover-render-reference-wrapper="false">
+          <Popover
+            :render-reference-wrapper="false"
+            content="content"
+          >plain reference</Popover>
+        </ConfigProvider>
+      `,
+    });
+
+    const referenceWrapper = wrapper.find('span');
+    expect(referenceWrapper.exists()).toBe(true);
+    expect(referenceWrapper.text()).toBe('plain reference');
+    expect(referenceWrapper.attributes('style')).toContain('display: inline-block');
+    wrapper.unmount();
+  });
+
+  it('should keep fragment root without fallback span for multiple reference nodes by default', () => {
+    const wrapper = mount(Popover, {
+      props: {
+        content: 'content',
+      },
+      slots: {
+        default: `
+          <button class="ref-btn-first">first</button>
+          <button class="ref-btn-second">second</button>
+        `,
+      },
+    });
+
+    expect(wrapper.find('button.ref-btn-first').exists()).toBe(true);
+    expect(wrapper.find('button.ref-btn-second').exists()).toBe(true);
+    expect(wrapper.find('span > button.ref-btn-first').exists()).toBe(false);
+    expect(wrapper.find('span > button.ref-btn-second').exists()).toBe(false);
+    wrapper.unmount();
+  });
+
+  it('should render inline-block reference wrapper when renderReferenceWrapper is true', () => {
+    const wrapper = mount(Popover, {
+      props: {
+        content: 'content',
+        renderReferenceWrapper: true,
+      },
+      slots: {
+        default: '<button class="ref-btn">ref</button>',
+      },
+    });
+
+    const referenceWrapper = wrapper.find('span');
+    expect(referenceWrapper.exists()).toBe(true);
+    expect(referenceWrapper.attributes('style')).toContain('display: inline-block');
+    expect(wrapper.find('span > button.ref-btn').exists()).toBe(true);
+    wrapper.unmount();
+  });
+
+  it('should render reference wrapper when global config is true', () => {
+    const wrapper = mount({
+      components: { ConfigProvider, Popover },
+      template: `
+        <ConfigProvider :popover-render-reference-wrapper="true">
+          <Popover content="content">
+            <button class="ref-btn">ref</button>
+          </Popover>
+        </ConfigProvider>
+      `,
+    });
+
+    const referenceWrapper = wrapper.find('span');
+    expect(referenceWrapper.exists()).toBe(true);
+    expect(referenceWrapper.attributes('style')).toContain('display: inline-block');
+    expect(wrapper.find('span > button.ref-btn').exists()).toBe(true);
+    wrapper.unmount();
+  });
+
+  it('should prefer local false over global true', () => {
+    const wrapper = mount({
+      components: { ConfigProvider, Popover },
+      template: `
+        <ConfigProvider :popover-render-reference-wrapper="true">
+          <Popover
+            :render-reference-wrapper="false"
+            content="content"
+          >
+            <button class="ref-btn">ref</button>
+          </Popover>
+        </ConfigProvider>
+      `,
+    });
+
+    expect(wrapper.find('button.ref-btn').exists()).toBe(true);
+    expect(wrapper.find('span > button.ref-btn').exists()).toBe(false);
+    wrapper.unmount();
   });
 });

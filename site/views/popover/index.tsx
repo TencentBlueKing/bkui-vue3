@@ -248,7 +248,7 @@ const props: IPropsTableItem[] = [
     name: 'renderReferenceWrapper',
     type: 'Boolean',
     default: 'undefined',
-    desc: '是否渲染默认插槽最外层 reference span。undefined/true 保持默认渲染；false 时不主动追加 span，事件和 ref 会挂到默认插槽节点，组件节点通过实例解析真实 DOM',
+    desc: '是否渲染默认插槽最外层 reference span。仅 true 时主动追加 span；undefined/false 不主动追加 span，事件和 ref 会挂到默认插槽节点，组件节点通过实例解析真实 DOM',
     optional: ['true', 'false'],
   },
   {

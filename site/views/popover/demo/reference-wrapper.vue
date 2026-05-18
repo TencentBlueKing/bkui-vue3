@@ -1,18 +1,18 @@
 <template>
   <div class="popover-reference-wrapper-demo">
     <bk-popover
-      content="默认渲染 span"
+      :render-reference-wrapper="true"
+      content="显式渲染 span"
       trigger="click"
     >
-      <bk-button>默认行为</bk-button>
+      <bk-button>显式 wrapper</bk-button>
     </bk-popover>
 
     <bk-popover
-      :render-reference-wrapper="false"
-      content="原生 DOM 单根节点不渲染 span"
+      content="默认不渲染 span"
       trigger="click"
     >
-      <button class="native-trigger">原生 DOM</button>
+      <button class="native-trigger">默认行为</button>
     </bk-popover>
 
     <bk-popover
@@ -23,9 +23,9 @@
       <bk-button>组件节点</bk-button>
     </bk-popover>
 
-    <bk-config-provider :popover-render-reference-wrapper="false">
+    <bk-config-provider :popover-render-reference-wrapper="true">
       <bk-popover
-        content="全局配置仅对子树生效"
+        content="全局配置开启 wrapper"
         trigger="click"
       >
         <button class="native-trigger">全局配置示例</button>
