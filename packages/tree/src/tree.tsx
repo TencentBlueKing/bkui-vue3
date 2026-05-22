@@ -65,7 +65,6 @@ export default defineComponent({
       isNodeChecked,
       isNodeMatched,
       hasChildNode,
-      getNodePath,
       getNodeId,
       getNodeAttr,
       getNodeById,
@@ -74,29 +73,54 @@ export default defineComponent({
       getIntersectionResponse,
     } = useNodeAttribute(flatData, props);
 
-    const { searchFn, isSearchActive, refSearch, isSearchDisabled, isTreeUI, showChildNodes } = useSearch(props);
-    const matchedNodePath = reactive([]);
+    const { searchFn, isSearchActive, refSearch, isSearchDisabled, isTreeUI, resultType, showChildNodes } =
+      useSearch(props);
+    const matchedNodeIds = reactive(new Set<string>());
+    const visibleNodeIds = reactive(new Set<string>());
+    const searchOriginalOpenState = new Map<string, boolean>();
+
+    const getRenderNodeId = (node: TreeNode) => `${getNodeId(node)}`;
+
+    const setSearchNodeOpen = (node: TreeNode) => {
+      const nodeId = getRenderNodeId(node);
+      if (!searchOriginalOpenState.has(nodeId)) {
+        searchOriginalOpenState.set(nodeId, isNodeOpened(node));
+      }
+
+      setNodeAttribute(node, NODE_ATTRIBUTES.IS_OPEN, true, false);
+    };
+
+    const restoreSearchOpenState = () => {
+      searchOriginalOpenState.forEach((isOpen, nodeId) => {
+        const node = getNodeById(nodeId);
+        if (node) {
+          setNodeAttribute(node, NODE_ATTRIBUTES.IS_OPEN, isOpen, false);
+        }
+      });
+      searchOriginalOpenState.clear();
+    };
+
+    const addAncestorNodes = (node: TreeNode) => {
+      let parent = getParentNode(node) as TreeNode | null;
+      while (parent) {
+        const parentId = getRenderNodeId(parent);
+        visibleNodeIds.add(parentId);
+        setSearchNodeOpen(parent);
+        parent = getParentNode(parent) as TreeNode | null;
+      }
+    };
+
+    const addDescendantNodes = (node: TreeNode) => {
+      const children = flatData.childMap?.get(node) ?? [];
+      children.forEach(child => {
+        visibleNodeIds.add(getRenderNodeId(child));
+        addDescendantNodes(child);
+      });
+    };
 
     const filterFn = (item: TreeNode) => {
       if (isSearchActive.value) {
-        if (showChildNodes) {
-          const itemPath = getNodePath(item) ?? '';
-          const asParentPath = `${itemPath}-`;
-          const isNodeOpen = checkNodeIsOpen(item);
-          const isNodeMatch = isNodeMatched(item);
-          const isNodeRoot = isRootNode(item);
-          if (isNodeOpen) {
-            if (isNodeRoot) {
-              return isNodeMatch;
-            }
-
-            return isNodeMatch || matchedNodePath.some(path => asParentPath.indexOf(`${path}-`) === 0);
-          }
-
-          return false;
-        }
-
-        return checkNodeIsOpen(item) && isNodeMatched(item);
+        return visibleNodeIds.has(getRenderNodeId(item));
       }
 
       return checkNodeIsOpen(item);
@@ -191,26 +215,51 @@ export default defineComponent({
     });
 
     const handleSearch = debounce(120, () => {
-      matchedNodePath.length = 0;
+      restoreSearchOpenState();
+      matchedNodeIds.clear();
+      visibleNodeIds.clear();
+
       flatData.data.forEach((item: TreeNode) => {
-        const isMatch = searchFn(getLabel(item, props), item);
+        const isMatch = !isSearchDisabled.value && searchFn(getLabel(item, props), item);
+        const nodeId = getRenderNodeId(item);
         if (isMatch) {
-          matchedNodePath.push(getNodePath(item));
+          matchedNodeIds.add(nodeId);
+          visibleNodeIds.add(nodeId);
         }
 
-        setNodeAttribute(item, [NODE_ATTRIBUTES.IS_MATCH], [isMatch], isTreeUI.value && isMatch);
+        setNodeAttribute(
+          item,
+          [NODE_ATTRIBUTES.IS_MATCH, NODE_ATTRIBUTES.IS_OPEN],
+          [isMatch, isNodeOpened(item)],
+          false,
+        );
+      });
+
+      if (!isSearchActive.value) {
+        return;
+      }
+
+      flatData.data.forEach((item: TreeNode) => {
+        if (!matchedNodeIds.has(getRenderNodeId(item))) {
+          return;
+        }
+        if (resultType.value === 'tree') {
+          addAncestorNodes(item);
+        }
+        if (showChildNodes.value) {
+          setSearchNodeOpen(item);
+          addDescendantNodes(item);
+        }
       });
     });
 
-    if (!isSearchDisabled) {
-      watch(
-        [refSearch],
-        () => {
-          handleSearch();
-        },
-        { deep: true, immediate: true },
-      );
-    }
+    watch(
+      [refSearch, () => flatData.data, resultType, showChildNodes],
+      () => {
+        handleSearch();
+      },
+      { deep: true, immediate: true },
+    );
 
     onMounted(() => {
       if (props.virtualRender) {
