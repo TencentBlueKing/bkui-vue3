@@ -33,8 +33,8 @@ import Loading, { BkLoadingSize } from '@bkui-vue/loading';
 import Popover from '@bkui-vue/popover';
 import { useFormItem } from '@bkui-vue/shared';
 import debounce from 'lodash/debounce';
-import trim from 'lodash/trim';
 import filter from 'lodash/filter';
+import trim from 'lodash/trim';
 
 import { getCharLength, INPUT_MIN_WIDTH, useFlatList, usePage, useTagsOverflow } from './common';
 import ListTagRender from './list-tag-render';
@@ -215,7 +215,7 @@ export default defineComponent({
       // 修改popover offset（offset 可能被 props.popoverProps 覆盖为 number，需判断为对象再赋值）
       const offset = popoverProps.offset;
       if (typeof offset === 'object' && offset !== null && 'crossAxis' in offset) {
-        offset.crossAxis = isSingleSelect.value ? 0 : tagInputItemRef.value?.offsetLeft ?? 0;
+        offset.crossAxis = isSingleSelect.value ? 0 : (tagInputItemRef.value?.offsetLeft ?? 0);
       }
     };
     const scrollHandler = () => {
@@ -942,8 +942,11 @@ export default defineComponent({
      * remove current tag
      * @param data tag data
      */
-    const removeTag = (data) => {
-      listState.selectedTagList = filter(listState.selectedTagList, (item) => item[props.saveKey] !== data[props.saveKey]);
+    const removeTag = data => {
+      listState.selectedTagList = filter(
+        listState.selectedTagList,
+        item => item[props.saveKey] !== data[props.saveKey],
+      );
 
       const isExistInit = saveKeyMap.value[data[props.saveKey]];
 

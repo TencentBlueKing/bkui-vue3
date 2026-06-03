@@ -400,7 +400,14 @@ const useColumns = (props: TablePropTypes) => {
    */
   const createColumnSchema = (
     col: Column,
-    sortFilterConfig: { type: string; fn: unknown; scope: unknown; active: boolean; filterFn: unknown; filterObj: unknown },
+    sortFilterConfig: {
+      type: string;
+      fn: unknown;
+      scope: unknown;
+      active: boolean;
+      filterFn: unknown;
+      filterObj: unknown;
+    },
     spanConfig: { skipCol: boolean; skipColumnNum: number; skipColLen: number },
   ) => {
     const { type, fn, scope, active, filterFn, filterObj } = sortFilterConfig;

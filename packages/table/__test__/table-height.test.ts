@@ -24,8 +24,9 @@
  * IN THE SOFTWARE.
  */
 
-import { mount } from '@vue/test-utils';
 import { nextTick } from 'vue';
+
+import { mount } from '@vue/test-utils';
 
 import BkTable from '../src/table';
 
@@ -45,7 +46,10 @@ const columns = [
   { label: 'Time', field: 'create_time' },
 ];
 
-function mockElementLayout(el: HTMLElement, dimensions: { offsetHeight?: number; scrollHeight?: number; clientWidth?: number; clientHeight?: number }) {
+function mockElementLayout(
+  el: HTMLElement,
+  dimensions: { offsetHeight?: number; scrollHeight?: number; clientWidth?: number; clientHeight?: number },
+) {
   if (dimensions.offsetHeight !== undefined) {
     jest.spyOn(el, 'offsetHeight', 'get').mockReturnValue(dimensions.offsetHeight);
   }
@@ -58,10 +62,6 @@ function mockElementLayout(el: HTMLElement, dimensions: { offsetHeight?: number;
   if (dimensions.clientHeight !== undefined) {
     jest.spyOn(el, 'clientHeight', 'get').mockReturnValue(dimensions.clientHeight);
   }
-}
-
-function flushTimers() {
-  return new Promise<void>(resolve => setTimeout(resolve, 100));
 }
 
 describe('Table Height & Scroll', () => {

@@ -26,7 +26,7 @@
 import { toType } from 'vue-types';
 
 import { type ButtonPropTypes } from '@bkui-vue/button';
-import { type PopoverPropTypes } from '@bkui-vue/popover'
+import { type PopoverPropTypes } from '@bkui-vue/popover';
 import { PlacementEnum, placementType, PropTypes } from '@bkui-vue/shared';
 
 export enum TriggerEnum {
@@ -41,11 +41,11 @@ export function triggerType() {
 export const PopConfirmEvent = {
   confirm: {
     type: Function,
-    default: (): any => ({}),
+    default: () => ({}),
   },
   cancel: {
     type: Function,
-    default: (): any => ({}),
+    default: () => ({}),
   },
   // ...TabNavEventProps,
 };

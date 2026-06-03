@@ -96,7 +96,14 @@ const renderCellContent = (args: CellRenderArgsType) => {
   const renderCellCallbackFn = () => {
     const cell = getRowText(row, resolvePropVal(column, 'field', [column, row]));
     const data = row;
-    return (column.render as (...args: unknown[]) => void)({ cell, data, row, column, index, rows: rows.tableRowList.value });
+    return (column.render as (...args: unknown[]) => void)({
+      cell,
+      data,
+      row,
+      column,
+      index,
+      rows: rows.tableRowList.value,
+    });
   };
 
   const getExpandCell = () => {

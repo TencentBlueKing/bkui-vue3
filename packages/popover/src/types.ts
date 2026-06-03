@@ -24,13 +24,13 @@
  * IN THE SOFTWARE.
  */
 
-import type { CSSProperties, Ref, VNode } from 'vue';
 import type { Placement } from '@floating-ui/vue';
+import type { CSSProperties, Ref, VNode } from 'vue';
 
 /**
  * 触发方式类型
  */
-export type TriggerType = 'hover' | 'click' | 'manual';
+export type TriggerType = 'click' | 'hover' | 'manual';
 
 /**
  * 渲染指令类型
@@ -53,7 +53,7 @@ export type ThemeType = 'dark' | 'light' | string;
 export interface IAxesOffsets {
   mainAxis?: number;
   crossAxis?: number;
-  alignmentAxis?: number | null;
+  alignmentAxis?: null | number;
 }
 
 /**
@@ -61,24 +61,35 @@ export interface IAxesOffsets {
  * 只需要提供 getBoundingClientRect 方法
  */
 export interface VirtualElement {
-  getBoundingClientRect: () => DOMRect | { width: number; height: number; x: number; y: number; top: number; left: number; right: number; bottom: number };
+  getBoundingClientRect: () =>
+    | {
+        width: number;
+        height: number;
+        x: number;
+        y: number;
+        top: number;
+        left: number;
+        right: number;
+        bottom: number;
+      }
+    | DOMRect;
   contextElement?: Element;
 }
 
 /**
  * 弹出内容类型
  */
-export type PopoverContent = string | number | HTMLElement | VNode;
+export type PopoverContent = HTMLElement | VNode | number | string;
 
 /**
  * 目标元素类型
  */
-export type PopoverTarget = string | HTMLElement | PointerEvent | null;
+export type PopoverTarget = HTMLElement | PointerEvent | null | string;
 
 /**
  * 边界元素类型
  */
-export type PopoverBoundary = string | HTMLElement;
+export type PopoverBoundary = HTMLElement | string;
 
 /**
  * 延迟配置类型
@@ -106,11 +117,9 @@ export interface PopoverClickOutsidePayload {
  * Popover 事件定义
  */
 export interface PopoverEmits {
-  (e: 'afterShow', payload: PopoverShowHidePayload): void;
-  (e: 'afterHidden', payload: PopoverShowHidePayload): void;
+  (e: 'afterHidden' | 'afterShow', payload: PopoverShowHidePayload): void;
   (e: 'clickoutside', payload: PopoverClickOutsidePayload): void;
-  (e: 'contentMouseenter', event: MouseEvent): void;
-  (e: 'contentMouseleave', event: MouseEvent): void;
+  (e: 'contentMouseenter' | 'contentMouseleave', event: MouseEvent): void;
   (e: 'update:isShow', value: boolean): void;
 }
 
@@ -194,7 +203,7 @@ export interface PopoverPluginOptions {
   /** 是否显示箭头 */
   arrow?: boolean;
   /** 偏移量 */
-  offset?: number | IAxesOffsets;
+  offset?: IAxesOffsets | number;
   /** z-index */
   zIndex?: number;
   /** 延迟配置 */
@@ -206,13 +215,13 @@ export interface PopoverPluginOptions {
   /** 允许 HTML 内容 */
   allowHtml?: boolean;
   /** 宽度 */
-  width?: string | number;
+  width?: number | string;
   /** 高度 */
-  height?: string | number;
+  height?: number | string;
   /** 最大宽度 */
-  maxWidth?: string | number;
+  maxWidth?: number | string;
   /** 最大高度 */
-  maxHeight?: string | number;
+  maxHeight?: number | string;
   /** 显示回调 */
   onShow?: () => void;
   /** 隐藏回调 */
@@ -240,7 +249,7 @@ export interface PopoverPluginInstance {
   /** 卸载实例 */
   uninstall: () => void;
   /** Vue 实例 */
-  readonly vm: any;
+  readonly vm: unknown;
   /** DOM 元素 */
   readonly $el: HTMLElement;
 }

@@ -25,6 +25,7 @@
  */
 
 import { computed, unref, type CSSProperties, type Ref, type ComputedRef } from 'vue';
+
 import {
   useFloating as useFloatingUI,
   offset,
@@ -45,7 +46,7 @@ export interface UseFloatingProps {
   /** 弹出位置 */
   placement: PopoverPlacement;
   /** 偏移量 */
-  offset: number | IAxesOffsets;
+  offset: IAxesOffsets | number;
   /** 边界内边距 */
   padding: number;
   /** 是否显示箭头 */
@@ -82,7 +83,9 @@ export interface UseFloatingReturn {
 /**
  * 解析偏移量配置
  */
-function resolveOffset(offsetValue: number | IAxesOffsets): number | { mainAxis?: number; crossAxis?: number; alignmentAxis?: number } {
+function resolveOffset(
+  offsetValue: IAxesOffsets | number,
+): { mainAxis?: number; crossAxis?: number; alignmentAxis?: number } | number {
   if (typeof offsetValue === 'number') {
     return offsetValue;
   }
@@ -118,7 +121,7 @@ function getArrowSide(placement: Placement): string {
  */
 export function usePopoverFloating(
   props: Ref<UseFloatingProps>,
-  referenceRef: Ref<HTMLElement | VirtualElement | null> | ComputedRef<HTMLElement | VirtualElement | null>,
+  referenceRef: ComputedRef<HTMLElement | VirtualElement | null> | Ref<HTMLElement | VirtualElement | null>,
   floatingRef: Ref<HTMLElement | null>,
   arrowRef: Ref<HTMLElement | null>,
 ): UseFloatingReturn {
@@ -173,7 +176,7 @@ export function usePopoverFloating(
 
   // 处理浮动元素样式
   const floatingStyles = computed<CSSProperties>(() => {
-    const styles = { ...rawFloatingStyles.value } as CSSProperties;
+    const styles: CSSProperties = { ...rawFloatingStyles.value };
 
     // 处理 hide 中间件的隐藏逻辑
     if (props.value.autoVisibility && middlewareData.value.hide?.referenceHidden) {

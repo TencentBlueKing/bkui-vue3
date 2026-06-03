@@ -54,7 +54,7 @@ import { datePickerProps, timePanelProps, timePickerProps } from './props';
 import { extractTime, formatDate, isAllEmptyArr, parseDate, timePickerKey } from './utils';
 
 // import { PropTypes } from '@bkui-vue/shared';
-import type { DatePickerPanelType, SelectionModeType } from './interface';
+import type { DatePickerPanelType, DatePickerValueType, SelectionModeType } from './interface';
 
 export default defineComponent({
   name: 'TimePicker',
@@ -79,11 +79,11 @@ export default defineComponent({
   ],
   // slots: ['header'],
   slots: Object as SlotsType<{
-    header?: () => any;
-    trigger?: (displayValue: string) => any;
-    footer?: () => any;
-    shortcuts?: (arg?: { change: Function }) => any;
-    confirm?: {};
+    header?: () => unknown;
+    trigger?: (displayValue: string) => unknown;
+    footer?: () => unknown;
+    shortcuts?: (arg?: { change: () => void }) => unknown;
+    confirm?: Record<string, never>;
   }>,
   setup(props, { slots, emit, expose }) {
     const { resolveClassName } = usePrefix();
@@ -91,7 +91,7 @@ export default defineComponent({
     const formItem = useFormItem();
     const isRange = props.type.includes('range');
     const emptyArray = isRange ? [null, null] : [null];
-    let initialValue = isAllEmptyArr((isRange ? (props.modelValue as any[]) : [props.modelValue]) || [])
+    let initialValue = isAllEmptyArr((isRange ? (props.modelValue as DatePickerValueType[]) : [props.modelValue]) || [])
       ? emptyArray
       : parseDate(props.modelValue, props.type, props.multiple, props.format);
 
@@ -241,7 +241,9 @@ export default defineComponent({
         if (visible) {
           pickerDropdownRef.value?.forceUpdate?.();
           nextTick(() => {
-            (proxy as any).pickerPanelRef?.timeSpinnerRef?.updateScroll();
+            (
+              proxy as { pickerPanelRef?: { timeSpinnerRef?: { updateScroll?: () => void } } }
+            ).pickerPanelRef?.timeSpinnerRef?.updateScroll();
           });
         }
       },
@@ -613,8 +615,8 @@ export default defineComponent({
     const triggerRef = ref<HTMLElement>(null);
 
     expose({
-      focus: handleIconClick
-    })
+      focus: handleIconClick,
+    });
 
     return {
       ...toRefs(state),
