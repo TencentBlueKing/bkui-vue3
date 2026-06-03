@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "rootDir": "../../",
+    "ignoreDeprecations": "6.0",
     "strictNullChecks": false,
     "strict": true,
     "moduleResolution": "node",
@@ -16,7 +18,11 @@
     "target": "esnext",
     "lib": [
       "dom",
-      "es2017"
+      "es2022"
+    ],
+    "types": [
+      "node",
+      "vue/jsx"
     ],
     "skipLibCheck": true,
     "allowJs": true,
