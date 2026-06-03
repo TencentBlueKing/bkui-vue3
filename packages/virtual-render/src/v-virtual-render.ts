@@ -132,7 +132,13 @@ export class VisibleRender {
   }
 
   public render(e: { offset: { x: number; y: number } }) {
-    const { lineHeight = 30, handleScrollCallback, pagination = {}, onlyScroll, scrollOffsetTop = 0 } = this.binding.value;
+    const {
+      lineHeight = 30,
+      handleScrollCallback,
+      pagination = {},
+      onlyScroll,
+      scrollOffsetTop = 0,
+    } = this.binding.value;
     if (onlyScroll) {
       const elScrollTop = e.offset?.y;
       const elScrollLeft = e.offset?.x ?? 0;
@@ -159,19 +165,6 @@ export class VisibleRender {
     this.throttledRender(event);
   }
 
-  /**
-   * 原生滚动事件处理
-   */
-  private handleScroll(e: Event) {
-    const target = e.target as HTMLElement;
-    this.executeThrottledRender({
-      offset: {
-        x: target.scrollLeft,
-        y: target.scrollTop,
-      },
-    });
-  }
-
   public install() {
     this.wrapper?.addEventListener('scroll', this.boundScrollHandler, { passive: true });
   }
@@ -193,9 +186,25 @@ export class VisibleRender {
   }
 
   /**
+   * 原生滚动事件处理
+   */
+  private handleScroll(e: Event) {
+    const target = e.target as HTMLElement;
+    this.executeThrottledRender({
+      offset: {
+        x: target.scrollLeft,
+        y: target.scrollTop,
+      },
+    });
+  }
+
+  /**
    * 统一事件格式
    */
-  private getEvent = (event: { offset?: { x: number; y: number }; target?: HTMLElement }): { offset: { x: number; y: number } } => {
+  private getEvent = (event: {
+    offset?: { x: number; y: number };
+    target?: HTMLElement;
+  }): { offset: { x: number; y: number } } => {
     if (event?.offset) {
       return {
         offset: event.offset,

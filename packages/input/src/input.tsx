@@ -40,11 +40,10 @@ import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips, IOptions } from '@bkui-vue/directives';
 import { Close, DownSmall, Eye, Search, Unvisible } from '@bkui-vue/icon';
 import { classes, InputBehaviorType, PropTypes, useFormItem } from '@bkui-vue/shared';
+import isNumber from 'lodash/isNumber';
+import trim from 'lodash/trim';
 
 import { calcTextareaHeight } from './util';
-import trim from 'lodash/trim';
-import isNumber from 'lodash/isNumber';
-
 
 export type InputAutoSize = { minRows?: number; maxRows?: number };
 
@@ -361,7 +360,7 @@ export default defineComponent({
       if (props.disabled) {
         return;
       }
-      let value: string | number = '';
+      let value: number | string = '';
       if (props.type === 'number' && !props.allowEmptyValue) {
         value = props.min !== -Infinity ? props.min : 0;
       }
@@ -396,15 +395,12 @@ export default defineComponent({
           return;
         }
 
-        let inputValue: string | number = trim(e.target.value) || '';
+        let inputValue: number | string = trim(e.target.value) || '';
 
         // 字符类型输入框才会有这种场景
         if (showMaxLimit.value && !props.overMaxLengthLimit) {
           const limit = getValueLimits(inputValue);
-          if (
-            limit.len >= ceilMaxLength.value &&
-            (eventName === EVENTS.KEYDOWN || eventName === EVENTS.INPUT)
-          ) {
+          if (limit.len >= ceilMaxLength.value && (eventName === EVENTS.KEYDOWN || eventName === EVENTS.INPUT)) {
             const val = limit.pos > 0 ? `${inputValue}`.slice(0, limit.pos) : inputValue;
             innerInputValue.value = {
               value: val,
@@ -429,18 +425,18 @@ export default defineComponent({
 
         if (eventName === EVENTS.KEYDOWN && e.code === 'Enter') {
           // 输入框值改变时，数字输入框需要限制最大最小值
-          if (isNumber(inputValue)){
-            inputValue = Math.min(Math.max(Number(inputValue), props.min), props.max)
+          if (isNumber(inputValue)) {
+            inputValue = Math.min(Math.max(Number(inputValue), props.min), props.max);
           }
           ctx.emit(EVENTS.ENTER, inputValue, e);
           ctx.emit(EVENTS.UPDATE, inputValue, e);
-        }else if (eventName === EVENTS.INPUT) {
+        } else if (eventName === EVENTS.INPUT) {
           ctx.emit(EVENTS.INPUT, inputValue, e);
           ctx.emit(EVENTS.UPDATE, inputValue, e);
         } else if (eventName === EVENTS.CHANGE) {
           // 输入框值改变时，数字输入框需要限制最大最小值
-          if (isNumber(inputValue)){
-            inputValue = Math.min(Math.max(Number(inputValue), props.min), props.max)
+          if (isNumber(inputValue)) {
+            inputValue = Math.min(Math.max(Number(inputValue), props.min), props.max);
           }
           ctx.emit(EVENTS.CHANGE, inputValue, e);
           ctx.emit(EVENTS.UPDATE, inputValue, e);

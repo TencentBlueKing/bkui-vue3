@@ -72,8 +72,8 @@ type PopoverRegistryEntry = {
   referenceWrapperEl: HTMLElement | null;
 };
 
-let __bkPopoverIdSeed = 0;
-const __bkPopoverRegistry = new Map<string, PopoverRegistryEntry>();
+let bkPopoverIdSeed = 0;
+const bkPopoverRegistry = new Map<string, PopoverRegistryEntry>();
 
 const findPopoverIdInEventPath = (event: Event): null | string => {
   const path = typeof event.composedPath === 'function' ? event.composedPath() : [];
@@ -100,8 +100,8 @@ const isChildPopoverInteractionFor = (parentId: string, event: Event): boolean =
   const childId = findPopoverIdInEventPath(event);
   if (!childId || childId === parentId) return false;
 
-  const parent = __bkPopoverRegistry.get(parentId);
-  const child = __bkPopoverRegistry.get(childId);
+  const parent = bkPopoverRegistry.get(parentId);
+  const child = bkPopoverRegistry.get(childId);
   if (!parent?.floatingEl || !child) return false;
 
   const childRef = child.referenceEl;
@@ -141,7 +141,7 @@ export default defineComponent({
     const globalConfig = useGlobalConfig();
 
     // 当前实例 id（用于注册表与事件路径识别）
-    const popoverId = `bk-popover-${++__bkPopoverIdSeed}`;
+    const popoverId = `bk-popover-${++bkPopoverIdSeed}`;
 
     // 元素引用
     // 默认 slot 的包裹元素（仅用于渲染与事件冒泡承载）
@@ -498,8 +498,8 @@ export default defineComponent({
       }
       const childId = findPopoverIdFromElement(targetEl);
       if (!childId || childId === popoverId) return false;
-      const parent = __bkPopoverRegistry.get(popoverId);
-      const child = __bkPopoverRegistry.get(childId);
+      const parent = bkPopoverRegistry.get(popoverId);
+      const child = bkPopoverRegistry.get(childId);
       if (!parent?.floatingEl || !child) return false;
       const childRef = child.referenceEl;
       const childWrapper = child.referenceWrapperEl;
@@ -528,8 +528,8 @@ export default defineComponent({
       const rt = e.relatedTarget;
       const childId = findPopoverIdFromElement(rt);
       if (!childId || childId === popoverId) return false;
-      const parent = __bkPopoverRegistry.get(popoverId);
-      const child = __bkPopoverRegistry.get(childId);
+      const parent = bkPopoverRegistry.get(popoverId);
+      const child = bkPopoverRegistry.get(childId);
       if (!parent?.floatingEl || !child) return false;
       const childRef = child.referenceEl;
       const childWrapper = child.referenceWrapperEl;
@@ -808,7 +808,7 @@ export default defineComponent({
       if (eventDelayTimer) {
         clearTimeout(eventDelayTimer);
       }
-      __bkPopoverRegistry.delete(popoverId);
+      bkPopoverRegistry.delete(popoverId);
       stopHoverTrack();
     });
 
@@ -820,7 +820,7 @@ export default defineComponent({
         // 默认 reference（wrapper 尺寸为 0 时会解析到真实触发器）
         resolveDefaultReferenceElement();
 
-      __bkPopoverRegistry.set(popoverId, {
+      bkPopoverRegistry.set(popoverId, {
         id: popoverId,
         floatingEl: floatingRef.value,
         referenceEl,

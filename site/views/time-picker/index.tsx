@@ -282,8 +282,8 @@ export default defineComponent({
           title='事件'
         />
         <PropsBox
-          title="方法"
           propsData={methods}
+          title='方法'
         />
         <PropsBox
           columnMap={slotColumnMap}

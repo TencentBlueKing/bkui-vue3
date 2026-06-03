@@ -35,11 +35,11 @@ import {
   Node,
   stringLiteral,
 } from '@babel/types';
-const specialDirectivesPath = '@bkui-vue/directives';
 import path from 'path';
+const specialDirectivesPath = '@bkui-vue/directives';
 
 import { COMPONENT_URL } from './helpers';
-export const hasStyleComponentList = [
+export const HAS_STYLE_COMPONENT_LIST = [
   'Alert',
   'Affix',
   'Backtop',
@@ -118,7 +118,7 @@ const visitor = {
     // console.log(`Absolute path: ${state.filename}`);
     const libPath = getLibPath(value);
     const hasDefaultImportToInclude = specifiers.some(
-      item => isImportDefaultSpecifier(item) && hasStyleComponentList.includes(capitalize(item.local.name)),
+      item => isImportDefaultSpecifier(item) && HAS_STYLE_COMPONENT_LIST.includes(capitalize(item.local.name)),
     );
     const specifiersList: ImportSpecifier[] = [];
     const declarationList: Node[] = [];
@@ -137,7 +137,7 @@ const visitor = {
           importDeclaration([importDefaultSpecifier(identifier(capitalize(componentName)))], stringLiteral(libPath)),
         );
 
-        if (hasStyleComponentList.includes(capitalize(componentName))) {
+        if (HAS_STYLE_COMPONENT_LIST.includes(capitalize(componentName))) {
           declarationList.push(importDeclaration([], stringLiteral(cssPath)));
         }
       } else if (isImportSpecifier(specifier)) {

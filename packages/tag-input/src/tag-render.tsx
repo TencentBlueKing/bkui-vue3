@@ -137,9 +137,12 @@ export default defineComponent({
 
     const editValue = ref(props.node[props.displayKey]);
 
-    watch(() => props.node[props.displayKey], val => {
-      editValue.value = val;
-    });
+    watch(
+      () => props.node[props.displayKey],
+      val => {
+        editValue.value = val;
+      },
+    );
 
     onMounted(() => {
       isOverflow.value = checkOverflow(tagRef.value);
