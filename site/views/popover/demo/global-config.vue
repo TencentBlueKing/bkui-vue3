@@ -101,7 +101,7 @@
 
   const projectInitCode = `import { createApp } from 'vue';
 import BkUI from 'bkui-vue';
-import App from './App.vue';
+import App from './App.` + `vue';
 
 const app = createApp(App);
 
