@@ -11,6 +11,9 @@
     "test": "jest --passWithNoTests",
     "lint": "eslint \"./src/**/*.{ts,tsx}\" --max-warnings=0"
   },
+  "dependencies": {
+    "@floating-ui/vue": "^1.1.5"
+  },
   "devDependencies": {
     "@vue/test-utils": "2.1.0"
   },

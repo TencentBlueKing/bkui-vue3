@@ -56,7 +56,10 @@
     {
       value: 'sleep',
       label: '睡觉',
-      disabled: true,
+      disabled: {
+        disabled: true,
+        tips: '禁用提示',
+      },
     },
   ]);
 

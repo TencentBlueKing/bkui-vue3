@@ -236,4 +236,4 @@ export default defineComponent({
       </div>
     );
   },
-});
+}) as any;

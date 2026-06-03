@@ -196,14 +196,16 @@ export default defineComponent({
                 />
               </div>
             </div>
-            <div
-              class={{
-                [resolveClassName('modal-footer')]: true,
-                'is-fixed': isContentScroll.value,
-              }}
-            >
-              {slots.footer?.()}
-            </div>
+            {slots.footer && (
+              <div
+                class={{
+                  [resolveClassName('modal-footer')]: true,
+                  'is-fixed': isContentScroll.value,
+                }}
+              >
+                {slots.footer?.()}
+              </div>
+            )}
             {props.closeIcon && (
               <div
                 class={resolveClassName('modal-close')}

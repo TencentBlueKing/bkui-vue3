@@ -5,44 +5,70 @@
  * Copyright (C) 2025 Tencent.  All rights reserved.
  *
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
- *
- * License for 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition):
- *
- * ---------------------------------------------------
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
- * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of
- * the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
- * THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
- * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
  */
-import { NODE_ATTRIBUTES, NODE_SOURCE_ATTRS } from './constant';
-import { TreeNode } from './props';
+import { EVENTS, NODE_ATTRIBUTES, NODE_SOURCE_ATTRS } from './constant';
+import { TreeDataChangePayload, TreeNode, TreePropTypes } from './props';
 import useNodeAttribute from './use-node-attribute';
-import { updateTreeNode } from './util';
-export default (props, flatData) => {
-  const { setNodeAttr, getNodePath, getNodeAttr, resolveScopedSlotParam, setTreeNodeLoading } = useNodeAttribute(
-    flatData,
-    props,
-  );
+import { cloneTreeData, IFlatData, mutateTreeById } from './util';
 
-  /**
-   * 处理异步加载节点数据返回结果
-   * @param resp 异步请求返回结果
-   * @param item 当前节点
-   */
-  const setNodeRemoteLoad = (resp: Record<string, unknown>, item: TreeNode) => {
+type TreeContext = {
+  emit: (event: EVENTS, ...args: unknown[]) => void;
+};
+
+type AsyncLoadResponse = TreeNode | TreeNode[];
+
+export type UseNodeAsyncOptions = {
+  getTreeData?: () => TreeNode[];
+  onTreeDataChange?: (payload: TreeDataChangePayload) => void;
+};
+
+export default (props: TreePropTypes, flatData: IFlatData, ctx?: TreeContext, options: UseNodeAsyncOptions = {}) => {
+  const { setNodeAttr, getNodeId, getNodePath, getNodeAttr, resolveScopedSlotParam, setTreeNodeLoading } =
+    useNodeAttribute(flatData, props);
+  const requestVersionMap = new Map<string, number>();
+
+  const emitTreeDataChange = (payload: TreeDataChangePayload) => {
+    options.onTreeDataChange?.(payload);
+    ctx?.emit(EVENTS.NODE_ASYNC_LOAD, payload);
+  };
+
+  const setNodeRemoteLoad = (resp: AsyncLoadResponse, item: TreeNode, requestVersion?: number) => {
     if (typeof resp === 'object' && resp !== null) {
+      const nodeId = `${getNodeId(item)}`;
+      if (requestVersion !== undefined && requestVersionMap.get(nodeId) !== requestVersion) {
+        return Promise.resolve(resp);
+      }
+
       setNodeAttr(item, NODE_ATTRIBUTES.IS_OPEN, true);
       const nodeValue = Array.isArray(resp) ? resp : [resp];
-      updateTreeNode(getNodePath(item), props.data, props.children, props.children, nodeValue);
+      if (!options.onTreeDataChange) {
+        mutateTreeById(props.data, nodeId, props.nodeKey || NODE_ATTRIBUTES.UUID, props.children, targetNode => {
+          targetNode[props.children] = nodeValue;
+        });
+        if (!props.nodeKey && getNodePath(item)) {
+          // nodeKey 缺失时保留旧版按 path 写入的兜底行为。
+          const paths = `${getNodePath(item)}`.split('-');
+          const targetNode = paths.reduce<TreeNode | TreeNode[]>((pre: TreeNode | TreeNode[], nodeIndex: string) => {
+            const index = Number(nodeIndex);
+            return Array.isArray(pre) ? pre[index] : (pre[props.children] as TreeNode[])[index];
+          }, props.data) as TreeNode;
+          Object.assign(targetNode, { [props.children]: nodeValue });
+        }
+        return Promise.resolve(resp);
+      }
+
+      const nextTreeData = cloneTreeData(options.getTreeData?.() ?? props.data, props.children);
+      mutateTreeById(nextTreeData, nodeId, props.nodeKey || NODE_ATTRIBUTES.UUID, props.children, targetNode => {
+        targetNode[NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.IS_OPEN]] = true;
+        targetNode[props.children] = nodeValue;
+      });
+
+      emitTreeDataChange({
+        trigger: 'async',
+        data: nextTreeData,
+        node: item,
+        parentNode: item,
+      });
       return Promise.resolve(resp);
     }
 
@@ -51,34 +77,43 @@ export default (props, flatData) => {
 
   const asyncNodeClick = (item: TreeNode) => {
     const { callback = null, cache = true } = props.async || {};
-    /** 如果是异步请求加载 */
     if (typeof callback === 'function' && getNodeAttr(item, NODE_ATTRIBUTES.IS_ASYNC)) {
-      /** 用于注释当前节点是否已经初始化过 */
+      const nodeId = `${getNodeId(item)}`;
+      const requestVersion = (requestVersionMap.get(nodeId) || 0) + 1;
+      requestVersionMap.set(nodeId, requestVersion);
+
       setNodeAttr(item, NODE_ATTRIBUTES.IS_ASYNC_INIT, true);
       if (!getNodeAttr(item, NODE_ATTRIBUTES.IS_CACHED)) {
         setNodeAttr(item, NODE_ATTRIBUTES.IS_CACHED, cache);
-
         const dataAttr = resolveScopedSlotParam(item);
         const callbackResult = callback(
           item,
-          (resp: Record<string, unknown>) => setNodeRemoteLoad(resp, item),
+          (resp: AsyncLoadResponse) => setNodeRemoteLoad(resp, item, requestVersion),
           dataAttr,
         );
+
         if (typeof callbackResult === 'object' && callbackResult !== null) {
           setTreeNodeLoading(item, true);
           if (callbackResult instanceof Promise) {
             return Promise.resolve(
               callbackResult
-                .then((resp: Record<string, unknown>) => setNodeRemoteLoad(resp, item))
-                .catch((err: Record<string, unknown>) => console.error('load remote data error:', err))
+                .then((resp: AsyncLoadResponse) => setNodeRemoteLoad(resp, item, requestVersion))
+                .catch((error: Record<string, unknown>) => {
+                  if (requestVersionMap.get(nodeId) === requestVersion) {
+                    ctx?.emit(EVENTS.NODE_ASYNC_LOAD_ERROR, { node: item, error, requestVersion });
+                  }
+                  return false;
+                })
                 .finally(() => {
-                  setTreeNodeLoading(item, false);
-                  setNodeAttr(item, NODE_ATTRIBUTES.IS_CACHED, true);
+                  if (requestVersionMap.get(nodeId) === requestVersion) {
+                    setTreeNodeLoading(item, false);
+                    setNodeAttr(item, NODE_ATTRIBUTES.IS_CACHED, true);
+                  }
                 }),
             );
           }
 
-          setNodeRemoteLoad(callbackResult, item);
+          setNodeRemoteLoad(callbackResult, item, requestVersion);
           setTreeNodeLoading(item, false);
           return Promise.resolve(true);
         }
@@ -90,7 +125,6 @@ export default (props, flatData) => {
   };
 
   const deepAutoOpen = () => {
-    /** 过滤节点为异步加载 & 默认为展开 & 没有初始化过的节点 */
     const autoOpenNodes = flatData.data.filter(
       (item: TreeNode) =>
         getNodeAttr(item, NODE_ATTRIBUTES.IS_ASYNC) &&

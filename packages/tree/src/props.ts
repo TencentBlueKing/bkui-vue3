@@ -51,13 +51,72 @@ export type TreeNode = {
 
 /**
  * 拖拽放置类型
- * - child: 作为目标节点的子节点
- * - move: 作为目标节点的同级节点（非排序模式）
- * - sort: 同父节点下排序（排序模式）
+ * - 同父级节点，落在目标节点前/后：dropType = 'sort'
+ * - 同父级节点，落在目标节点中间作为直接子节点：dropType = 'child'
+ * - 非同父级等其他情况：dropType = 'move'
+ * 非同父级等其他情况：dropType = 'move'
  */
 export type DropType = 'child' | 'move' | 'sort';
 
+/**
+ * 拖拽添加为子节点后，目标节点的展开状态
+ * - expand: 展开目标节点
+ * - collapse: 收起目标节点
+ * - inherit: 保持目标节点当前展开收起状态
+ */
+export type DragTargetOpenState = 'collapse' | 'expand' | 'inherit';
+
 export type DisableDropHandler = (data: TreeNode, type: DropType, target: TreeNode) => boolean;
+
+export type TreeDataChangeTrigger = 'async' | 'drag';
+
+export type TreeDataChangePayload = {
+  trigger: TreeDataChangeTrigger;
+  data: TreeNode[];
+  node: TreeNode;
+  targetNode?: TreeNode;
+  parentNode?: TreeNode | null;
+  oldParentNode?: TreeNode | null;
+  dropType?: DropType;
+  sourceIndex?: number;
+  targetIndex?: number;
+};
+
+export type TreeDataChangeHandler = (payload: TreeDataChangePayload) => void;
+
+export type TreeCheckedPayload = {
+  checkedNodes: TreeNode[];
+  indeterminateNodes: TreeNode[];
+};
+
+export type TreeSelectedPayload = {
+  selected: boolean;
+  node: TreeNode;
+};
+
+export type TreeDropPayload = {
+  event: unknown;
+  element: HTMLElement;
+  targetNode: TreeNode;
+  sourceNode: TreeNode;
+  data: TreeNode[];
+  parentNode?: TreeNode | null;
+  oldParentNode?: TreeNode | null;
+  dropType?: DropType;
+  sourceIndex?: number;
+  targetIndex?: number;
+};
+
+export type TreeDragSortPayload = {
+  sourceNode: TreeNode;
+  targetNode: TreeNode;
+  data: TreeNode[];
+  parentNode?: TreeNode | null;
+  oldParentNode?: TreeNode | null;
+  dropType?: DropType;
+  sourceIndex?: number;
+  targetIndex?: number;
+};
 
 /**
  * Tree Prop: prefixIcon function
@@ -134,6 +193,11 @@ export const treeProps = {
    * 默认 true
    */
   prefixIcon: PropTypes.oneOfType([PropTypes.func.def(() => {}), PropTypes.bool.def(false)]).def(true),
+
+  /**
+   * 当树数据需要由外部接管更新时的统一回调
+   */
+  onDataChange: Function as PropType<TreeDataChangeHandler>,
 
   /**
    * 异步加载节点数据配置
@@ -225,14 +289,12 @@ export const treeProps = {
   disableDrop: Function as PropType<DisableDropHandler>,
 
   /**
-   * 拖拽阈值
-   * 用于判断拖拽时鼠标位置与节点的距离
-   * 当鼠标位置与节点的距离大于此值时，才会触发拖拽
+   * 拖拽阈值：节点顶部/底部区域占比用于判定前后插入，中间区域作为目标子节点
    */
-  dragThreshold: PropTypes.number.def(0.2),
+  dragThreshold: PropTypes.number.def(0.25),
 
   /**
-   * 节点拖拽时可交换位置（开启拖拽可交换位置后将不支持改变层级）
+   * 节点拖拽时可调整前后顺序；拖拽到节点中部仍会添加为目标子节点
    */
   dragSort: PropTypes.bool.def(false),
 
@@ -243,6 +305,14 @@ export const treeProps = {
    * 默认 any
    */
   dragSortMode: PropTypes.oneOf(['any', 'next']).def('any'),
+
+  /**
+   * 拖拽添加为子节点后，目标节点的展开状态
+   * - expand: 展开目标节点
+   * - collapse: 收起目标节点
+   * - inherit: 保持目标节点当前展开收起状态
+   */
+  dragTargetOpenState: PropTypes.oneOf(['expand', 'collapse', 'inherit']).def('inherit'),
 
   /**
    * 节点是否可以选中
@@ -323,6 +393,11 @@ export const treeProps = {
   checkStrictly: PropTypes.bool.def(true),
 
   /**
+   * 是否开启父子勾选级联；未传时沿用 checkStrictly 历史语义
+   */
+  cascade: PropTypes.bool.def(undefined),
+
+  /**
    * 是否开启监听Tree节点进入Tree容器可视区域
    */
   intersectionObserver: PropTypes.oneOfType([
@@ -334,8 +409,14 @@ export const treeProps = {
   ]).def(false),
 };
 
+type AsyncLoadCallback = (
+  item: TreeNode,
+  cb: (data: TreeNode | TreeNode[]) => Promise<unknown> | unknown,
+  data?: unknown,
+) => Promise<TreeNode | TreeNode[]> | TreeNode | TreeNode[];
+
 type AsyncOption = {
-  callback: (item, cb) => Promise<VNode | string>;
+  callback: AsyncLoadCallback;
   cache: boolean;
   deepAutoOpen?: string;
   trigger?: string[];

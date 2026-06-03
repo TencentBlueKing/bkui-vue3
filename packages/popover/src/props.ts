@@ -104,7 +104,11 @@ export const PopoverProps = {
   /**
    * 弹出内容绑定元素
    */
-  boundary: PropTypes.oneOfType([PropTypes.string.def('parent'), PropTypes.instanceOf(HTMLElement)]).def('body'),
+  boundary: PropTypes.oneOfType([
+    PropTypes.string.def('parent'),
+    PropTypes.instanceOf(HTMLElement),
+    PropTypes.func,
+  ]).def('body'),
 
   zIndex: PropTypes.number.def(undefined),
 
@@ -136,6 +140,12 @@ export const PopoverProps = {
   reference: PropTypes.any,
 
   /**
+   * 自定义浮动定位参考元素（仅用于定位，不影响 default slot 渲染）
+   * 与 reference 的区别：reference 会导致 default slot 不渲染
+   */
+  floatingReference: PropTypes.any,
+
+  /**
    * 兼容v1版本遗留配置
    * 不建议使用
    */
@@ -153,6 +163,10 @@ export const PopoverProps = {
    * 配置自定义样式类名，传入的类会被加在 Reference 外部的 div 上
    */
   referenceCls: PropTypes.string.def(''),
+  /**
+   * 是否渲染默认插槽最外层 reference span；仅 true 时主动追加 span
+   */
+  renderReferenceWrapper: PropTypes.bool.def(undefined),
   /**
    * 点击 Reference 占位区是否忽略收起 popover
    */

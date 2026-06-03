@@ -30,9 +30,10 @@ import { bkTooltips } from '@bkui-vue/directives';
 import debounce from 'lodash/debounce';
 import isElement from 'lodash/isElement';
 
-import { COLUMN_ATTRIBUTE, PROVIDE_KEY_INIT_COL, SCROLLY_WIDTH, TABLE_ROW_ATTRIBUTE } from './const';
+import { COLUMN_ATTRIBUTE, PROVIDE_KEY_INIT_COL, PROVIDE_KEY_COLUMN_REGISTRY, TABLE_ROW_ATTRIBUTE } from './const';
 import { EMIT_EVENT_TYPES } from './events';
 import useColumnResize from './hooks/use-column-resize';
+import useColumnRegistry from './hooks/use-column-registry';
 import useColumnTemplate from './hooks/use-column-template';
 import useColumns from './hooks/use-columns';
 import useDraggable from './hooks/use-draggable';
@@ -64,26 +65,32 @@ export default defineComponent({
       renderContainer,
       renderFixedBottom,
       renderBody,
-      renderHeader,
       renderFooter,
       setBodyHeight,
+      setBodyScrollable,
       setFootHeight,
       setDragOffsetX,
       setOffsetRight,
       setHeaderRowCount,
       setLineHeight,
       getBodyHeight,
+      headHeight,
       refBody,
       refRoot,
+      translateX,
     } = useLayout(props, ctx);
 
     const scrollTo = (...args) => refBody.value?.scrollTo(...args);
+
+    if (props.rowHeight === 'auto' && props.virtualEnabled) {
+      console.warn('[BkTable] rowHeight="auto" 与 virtualEnabled 不兼容：虚拟滚动依赖固定行高计算，auto 模式下行高由内容决定，滚动位置将不准确。请勿同时使用。');
+    }
 
     if (typeof props.rowHeight === 'function') {
       setLineHeight(args => {
         return rows.getRowHeight(args.rows[0], args.index);
       });
-    } else {
+    } else if (props.rowHeight !== 'auto') {
       setLineHeight(props.rowHeight);
     }
 
@@ -97,7 +104,7 @@ export default defineComponent({
         scrollTo(0, 0);
       }
 
-      if (typeof props.rowHeight !== 'function') {
+      if (typeof props.rowHeight !== 'function' && props.rowHeight !== 'auto') {
         rows.setRowHeight(height);
         setLineHeight(height);
       }
@@ -118,7 +125,12 @@ export default defineComponent({
 
     const { resolveColumns } = useColumnTemplate();
 
+    // 创建列注册表（用于增量更新）
+    const columnRegistry = useColumnRegistry();
+
     const instance = getCurrentInstance();
+
+    // 旧模式：VNode 全量解析（作为降级方案）
     const initTableColumns = () => {
       const children = instance.subTree?.children ?? [];
       columns.debounceUpdateColumns(resolveColumns(children), () => {
@@ -126,7 +138,26 @@ export default defineComponent({
       });
     };
 
+    // 提供旧的初始化函数（降级模式使用）
     provide(PROVIDE_KEY_INIT_COL, initTableColumns);
+    // 提供列注册表（新模式使用）
+    provide(PROVIDE_KEY_COLUMN_REGISTRY, columnRegistry);
+
+    // 监听列注册表版本变化（模板方式）
+    // 当 TableColumn 组件注册/更新/注销时，版本号会递增
+    watch(
+      () => columnRegistry.version.value,
+      () => {
+        // 只有当没有使用 props.columns 配置时，才使用注册表中的列
+        // 避免配置式和模板式混用时的冲突
+        if (!props.columns?.length && columnRegistry.hasColumns()) {
+          const registryColumns = columnRegistry.getColumns();
+          columns.debounceUpdateColumns(registryColumns, () => {
+            setHeaderRowCount(columns.columnGroup.length);
+          });
+        }
+      },
+    );
 
     const { renderFixedRows, resolveFixedColumnStyle } = useFixedColumn(props, columns);
 
@@ -135,12 +166,18 @@ export default defineComponent({
      * 计算每一列的实际宽度
      */
     const computedColumnRect = () => {
-      const width = refRoot.value?.offsetWidth - (props.scrollbar ? 1 : SCROLLY_WIDTH) || 0;
+      const scrollContainer = refBody.value?.refRoot as HTMLElement;
+      const width = scrollContainer?.clientWidth ?? refRoot.value?.clientWidth ?? 0;
       columns.resolveColsCalcWidth(width);
       resolveFixedColumnStyle();
     };
 
-    const { dragOffsetX } = useColumnResize(columns, { afterResize: resolveFixedColumnStyle });
+    useColumnResize(columns, {
+      afterResize: resolveFixedColumnStyle,
+      onDragOffsetXChange: (val: number) => setDragOffsetX(val),
+      getRootEl: () => refRoot.value,
+      getTranslateX: () => translateX.value,
+    });
 
     const isResizeBodyHeight = ref(false);
 
@@ -158,7 +195,13 @@ export default defineComponent({
       return list.slice(startIndex, endIndex);
     };
 
-    const getFilterAndSortList = () => {
+    // 使用 computed 缓存过滤和排序结果，避免重复计算
+    // 依赖：rows.tableRowList, columns.filterColumns, columns.sortColumns, filterVersion, sortVersion
+    const filteredAndSortedList = computed(() => {
+      // 引用版本号以确保依赖追踪正确
+      void columns.filterVersion.value;
+      void columns.sortVersion.value;
+
       let renderList = rows.tableRowList.value.slice();
 
       columns.filterColumns.forEach(item => {
@@ -188,23 +231,144 @@ export default defineComponent({
       });
 
       return renderList;
-    };
+    });
+
+    const isNumericPx = (val: unknown) => /^\d+\.?\d*(px)?$/.test(`${val}`);
+
+    const hasMaxHeightConstraint = () =>
+      props.maxHeight != null && props.maxHeight !== 'auto';
 
     const footHeight = computed(() => {
       return pagination.isShowPagination.value ? props.paginationHeight : 0;
     });
 
+    const hasNonPxHeight = () =>
+      props.height != null && props.height !== 'auto' && !isNumericPx(props.height);
+
+    const needsDynamicBodyHeight = () =>
+      props.virtualEnabled || hasNonPxHeight() || (props.height === 'auto' && hasMaxHeightConstraint());
+
+    /**
+     * 计算滚动容器内的实际内容总高度
+     * 滚动容器 (.bk-table-body) 内包含：
+     *   1. 表头 — 由 showHead 控制是否展示，高度 = headHeight(受 headHeight/thead props) × headerRowCount（多级表头）
+     *   2. 数据行 — 高度 = 各行行高之和（受 rowHeight prop 和行数据影响）
+     *
+     * rowHeight='auto' 时每行 schema 存储的是估算值(LINE_HEIGHT=42)，
+     * 不反映实际渲染高度，故改为从 DOM 读取 scrollHeight 获得真实内容高度。
+     */
+    const getScrollContentHeight = () => {
+      const scrollEl = refBody.value?.refRoot as HTMLElement;
+
+      if (props.rowHeight === 'auto') {
+        if (scrollEl && scrollEl.scrollHeight > 0) {
+          return scrollEl.scrollHeight;
+        }
+      }
+
+      const rowsHeight = rows.getCurrentPageRowsHeight();
+      const scrollHeaderHeight = props.showHead ? headHeight.value : 0;
+      const calculatedHeight = rowsHeight + scrollHeaderHeight;
+
+      if (rows.pageRowList.length === 0) {
+        if (scrollEl && scrollEl.scrollHeight > calculatedHeight) {
+          return scrollEl.scrollHeight;
+        }
+      }
+
+      // 当行高不是 auto 时，schema 中存储的是估算行高（如 LINE_HEIGHT=42），
+      // 但实际 DOM 渲染可能因自定义 render 中包含更高元素而超出估算值。
+      // 此时需从 DOM 读取真实 scrollHeight，避免因估算偏低导致滚动条不出现。
+      if (scrollEl && scrollEl.scrollHeight > calculatedHeight) {
+        return scrollEl.scrollHeight;
+      }
+
+      return calculatedHeight;
+    };
+
+    /**
+     * 获取外层容器的最大可用高度
+     *
+     * 当 height="auto" + 非像素值 maxHeight（如 calc(100vh - 180px)）时，
+     * root 容器的 offsetHeight 会因 height:auto 随内容缩小，
+     * 导致异步加载数据后 offsetHeight 反映的是缩小后的高度而非实际可用空间。
+     *
+     * 此函数通过 getComputedStyle 获取浏览器解析后的 maxHeight 真实像素值，
+     * 作为计算可用空间的天花板，打破循环依赖。
+     *
+     * 对于像素值 maxHeight，直接使用该数值（无循环依赖问题）。
+     * 对于非 auto 的固定 height，使用 offsetHeight（不会缩小）。
+     */
+    const getMaxContainerHeight = (): number => {
+      if (!isElement(refRoot.value) || refRoot.value.offsetHeight <= 0) return 0;
+
+      if (isNumericPx(props.maxHeight)) {
+        return Number(`${props.maxHeight}`.replace('px', ''));
+      }
+
+      if (props.height === 'auto' && hasMaxHeightConstraint()) {
+        const resolved = parseFloat(getComputedStyle(refRoot.value).maxHeight);
+        if (!isNaN(resolved) && resolved > 0) return resolved;
+      }
+
+      return refRoot.value.offsetHeight;
+    };
+
+    /**
+     * 计算 height="auto" + maxHeight 模式下滚动容器的高度
+     *
+     * 可用空间 = getMaxContainerHeight() - 分页器(paginationHeight) - fixedBottom - 边框
+     *   由 getBodyHeight 统一计算，内部已根据各 props 动态得出
+     *
+     * 内容 < 可用空间 → bodyHeight 保持 'auto'，由 CSS 自然撑高，避免整数截断导致的伪滚动条
+     * 内容 ≥ 可用空间 → 设置固定 px 高度，触发真实滚动
+     *
+     * 之所以不用 Math.min(contentHeight, availableHeight)：
+     * 行高为 auto 时内容高度有小数（如 589.33px），JS scrollHeight 向上取整为 590，
+     * 若强制 bodyHeight = 589（整数），则 clientHeight(589) < scrollHeight(590) 产生假滚动条。
+     */
+    const resolveContentAwareBodyHeight = (): boolean => {
+      const containerHeight = getMaxContainerHeight();
+      if (containerHeight <= 0) return false;
+
+      const contentHeight = getScrollContentHeight();
+      const availableHeight = getBodyHeight(containerHeight);
+      if (availableHeight > 0 && contentHeight > 0) {
+        if (contentHeight >= availableHeight) {
+          // 内容超出最大高度：固定 body 高度 + 开启 overflow-y:auto，触发真实滚动
+          setBodyScrollable(true);
+          setBodyHeight(availableHeight, false);
+        } else {
+          // 内容未超出：重置为 auto + 关闭 overflow-y（hidden），
+          // 阻止 Chrome scrollHeight/clientHeight 整数截断产生的 1px 虚假滚动条
+          setBodyScrollable(false);
+          setBodyHeight('auto', false);
+        }
+        return true;
+      }
+      return false;
+    };
+
     const setTableFootHeight = () => {
       setFootHeight(footHeight.value);
-      if (/^\d+\.?\d*(px)?$/.test(`${props.height}`)) {
+      if (isNumericPx(props.height)) {
         setBodyHeight(Number(`${props.height}`.replace('px', '')));
+      } else if (needsDynamicBodyHeight() && isElement(refRoot.value) && refRoot.value.offsetHeight > 0) {
+        if (props.height === 'auto' && hasMaxHeightConstraint()) {
+          if (!resolveContentAwareBodyHeight()) {
+            setBodyHeight(refRoot.value.offsetHeight);
+          }
+        } else {
+          setBodyHeight(refRoot.value.offsetHeight);
+        }
       }
     };
 
     const scrollTo00 = ref(false);
 
     const setTableData = debounce((resetScroll = true) => {
-      const filterOrderList = getFilterAndSortList();
+      // 使用缓存的过滤排序结果
+      const filterOrderList = filteredAndSortedList.value;
       if (!props.remotePagination) {
         pagination.setPagination({ count: filterOrderList.length });
       }
@@ -224,7 +388,7 @@ export default defineComponent({
           scrollTo00.value = false;
         }
       });
-    }, 64);
+    }, 64, { leading: true, trailing: true });
 
     const observerResizing = ref(false);
     let observerResizingTimer = null;
@@ -232,21 +396,27 @@ export default defineComponent({
     useObserverResize(refRoot, () => {
       if (!observerResizing.value) {
         observerResizing.value = true;
-        if (props.virtualEnabled && isElement(refRoot.value)) {
+        if (needsDynamicBodyHeight() && isElement(refRoot.value)) {
           if (isResizeBodyHeight.value) {
             setTimeout(() => {
               isResizeBodyHeight.value = false;
             });
             return;
           }
-          const tableHeight = refRoot.value.offsetHeight;
           isResizeBodyHeight.value = true;
-          setBodyHeight(tableHeight);
+
+          if (props.height === 'auto' && hasMaxHeightConstraint()) {
+            if (!resolveContentAwareBodyHeight()) {
+              setBodyHeight(refRoot.value.offsetHeight);
+            }
+          } else {
+            setBodyHeight(refRoot.value.offsetHeight);
+          }
+
           setOffsetRight();
         }
         computedColumnRect();
         setOffsetRight();
-        scrollTo(0, 0);
         return;
       }
 
@@ -257,76 +427,89 @@ export default defineComponent({
     });
 
     const setRowsBodyHeight = () => {
-      if (props.virtualEnabled) {
-        const rowsHeight = rows.getCurrentPageRowsHeight();
-        let bodyHeight = rowsHeight;
-        if (/^\d+\.?\d*(px)?$/.test(`${props.maxHeight}`)) {
-          const maxHeight = getBodyHeight(Number(`${props.maxHeight}`.replace('px', '')));
-          if (bodyHeight > maxHeight) {
-            setBodyHeight(maxHeight, false);
-            return;
+      if (isNumericPx(props.height)) {
+        return;
+      }
+
+      if (hasMaxHeightConstraint()) {
+        if (!resolveContentAwareBodyHeight()) {
+          const contentHeight = getScrollContentHeight();
+          if (contentHeight > 0) {
+            setBodyHeight(contentHeight, false);
           }
         }
-        setBodyHeight(bodyHeight, false);
       }
     };
 
+    // 监听 props.columns 变化（配置式用法）
+    // 只有当 props.columns 有值时才使用，避免与模板方式冲突
     watch(
       () => [props.columns],
       () => {
-        columns.debounceUpdateColumns(props.columns, () => {
-          setHeaderRowCount(columns.columnGroup.length);
-        });
+        if (props.columns?.length > 0) {
+          columns.debounceUpdateColumns(props.columns, () => {
+            setHeaderRowCount(columns.columnGroup.length);
+          });
+        }
+      },
+      { immediate: true },
+    );
+
+    // drag offset is pushed into layout by useColumnResize via onDragOffsetXChange
+
+    // 使用版本号监听替代深度监听，提升性能
+    watch(
+      () => columns.columnsVersion.value,
+      () => {
+        nextTick(() => computedColumnRect());
       },
       { immediate: true },
     );
 
     watch(
-      () => [dragOffsetX.value],
-      () => {
-        setDragOffsetX(dragOffsetX.value);
-      },
-    );
-
-    watch(
-      () => [columns.visibleColumns],
-      () => {
-        nextTick(() => computedColumnRect());
-      },
-      { immediate: true, deep: true },
-    );
-
-    watch(
-      () => [columns.filterColumns],
+      () => columns.filterVersion.value,
       () => {
         setTableData();
       },
-      { deep: true },
     );
 
     watch(
-      () => [columns.sortColumns],
+      () => columns.sortVersion.value,
       () => {
         setTableData(false);
       },
-      { deep: true },
     );
 
     watch(
       () => [pagination.isShowPagination.value],
       () => {
         setTableFootHeight();
+        nextTick(() => scrollTo(0, 0));
       },
       { immediate: true },
     );
 
+    // 监听 data 变化
+    // 注意：deep: true 对大数据量有性能影响，建议用户通过替换数组引用来触发更新
+    // 如需手动刷新，可调用 exposed 的 refreshData 方法
     watch(
-      () => [props.data],
+      () => props.data,
       () => {
         rows.setTableRowList(props.data);
         setTableData(false);
       },
-      { immediate: true, deep: true },
+      { immediate: true },
+    );
+
+    // 监听 data 数组长度变化，用于处理数组元素增减的情况
+    watch(
+      () => props.data?.length,
+      (newLen, oldLen) => {
+        if (newLen !== oldLen) {
+          rows.setTableRowList(props.data);
+          setTableData(false);
+        }
+      },
     );
 
     watch(
@@ -346,6 +529,12 @@ export default defineComponent({
       }
     });
 
+    // 手动刷新数据方法，用于用户直接修改数据对象属性后触发更新
+    const refreshData = () => {
+      rows.setTableRowList(props.data);
+      setTableData(false);
+    };
+
     ctx.expose({
       setRowExpand: rows.setRowExpand,
       setAllRowExpand: rows.setAllRowExpand,
@@ -360,12 +549,20 @@ export default defineComponent({
       clearSort: columns.clearColumnSort,
       scrollTo,
       getRoot: () => refRoot.value,
+      refreshData,
     });
 
     return () =>
       renderContainer([
-        renderHeader(renderColumns, settings.renderSettings, renderFixedRows),
-        renderBody(rows.pageRowList, renderTBody, renderFixedRows),
+        renderBody(
+          rows.pageRowList,
+          {
+            header: renderColumns,
+            body: renderTBody,
+            settings: settings.renderSettings,
+          },
+          renderFixedRows,
+        ),
         renderFixedBottom(),
         renderFooter(renderTFoot()),
       ]);

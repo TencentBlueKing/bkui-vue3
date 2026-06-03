@@ -23,190 +23,980 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { computed, defineComponent, onBeforeUnmount, onMounted, ref, Teleport, Text, toRefs, watch } from 'vue';
 
-import { clickoutside } from '@bkui-vue/directives';
-import { RenderType } from '@bkui-vue/shared';
+import {
+  Comment,
+  cloneVNode,
+  computed,
+  CSSProperties,
+  defineComponent,
+  Fragment,
+  isVNode,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  Teleport,
+  Text,
+  toRefs,
+  useAttrs,
+  VNode,
+  VNodeRef,
+  watch,
+} from 'vue';
 
-import Arrow from './arrow';
-import { EMIT_EVENT_TYPES } from './const';
-import Content from './content';
+import { useGlobalConfig, usePrefix } from '@bkui-vue/config-provider';
+import { bkZIndexManager, RenderType } from '@bkui-vue/shared';
+
+import { useDelay, usePopoverFloating, useTrigger } from './composables';
 import { PopoverProps } from './props';
-import Reference from './reference';
-import Root from './root';
-import usePopoverInit from './use-popover-init';
-import { contentAsHTMLElement, ReferenceClickSharedState } from './utils';
+
+import type { TriggerType, PopoverPlacement, IAxesOffsets, VirtualElement } from './types';
+import type { ComponentPublicInstance } from 'vue';
+
+type ReferenceRefValue = ComponentPublicInstance | Element | null;
+
+/**
+ * 全局 Popover 注册表（用于处理“弹层里再弹弹层”的 clickoutside / hover-leave 场景）
+ *
+ * 典型问题：父 Popover 的内容区里包含一个会 Teleport 到 body 的子 Popover（如 Select 下拉）。
+ * 此时点击/移入子 Popover，会被父 Popover 当作“外部”交互从而收起。
+ *
+ * 解决思路：当事件命中某个子 Popover 的 floating 节点时，如果该子 Popover 的 reference 节点位于父 Popover 的 floating 内，
+ * 则认为这是父内容区的延伸交互，不触发父 popover 的 hide。
+ */
+type PopoverRegistryEntry = {
+  id: string;
+  floatingEl: HTMLElement | null;
+  referenceEl: HTMLElement | null;
+  referenceWrapperEl: HTMLElement | null;
+};
+
+let __bkPopoverIdSeed = 0;
+const __bkPopoverRegistry = new Map<string, PopoverRegistryEntry>();
+
+const findPopoverIdInEventPath = (event: Event): null | string => {
+  const path = typeof event.composedPath === 'function' ? event.composedPath() : [];
+  for (const node of path) {
+    if (!(node instanceof HTMLElement)) continue;
+    const id = (node as HTMLElement).dataset?.bkPopoverId;
+    if (id) return id;
+  }
+  return null;
+};
+
+const findPopoverIdFromElement = (target: EventTarget | null): null | string => {
+  if (!(target instanceof HTMLElement)) return null;
+  let el: HTMLElement | null = target;
+  while (el) {
+    const id = el.dataset?.bkPopoverId;
+    if (id) return id;
+    el = el.parentElement;
+  }
+  return null;
+};
+
+const isChildPopoverInteractionFor = (parentId: string, event: Event): boolean => {
+  const childId = findPopoverIdInEventPath(event);
+  if (!childId || childId === parentId) return false;
+
+  const parent = __bkPopoverRegistry.get(parentId);
+  const child = __bkPopoverRegistry.get(childId);
+  if (!parent?.floatingEl || !child) return false;
+
+  const childRef = child.referenceEl;
+  const childWrapper = child.referenceWrapperEl;
+  // 只在“子 popover 的 reference 在父 popover 内容里”时才认为是关联交互
+  return (
+    (!!childRef && parent.floatingEl.contains(childRef)) || (!!childWrapper && parent.floatingEl.contains(childWrapper))
+  );
+};
+
+// 事件类型定义
+const EMIT_EVENTS = {
+  AFTER_SHOW: 'afterShow',
+  AFTER_HIDDEN: 'afterHidden',
+  CLICK_OUTSIDE: 'clickoutside',
+  CONTENT_MOUSEENTER: 'contentMouseenter',
+  CONTENT_MOUSELEAVE: 'contentMouseleave',
+  UPDATE_IS_SHOW: 'update:isShow',
+} as const;
+
 export default defineComponent({
   name: 'Popover',
-  components: {
-    Content,
-    Arrow,
-    Root,
-  },
-  directives: {
-    clickoutside,
-  },
+  inheritAttrs: false,
   props: PopoverProps,
-  emits: EMIT_EVENT_TYPES,
+  emits: [
+    EMIT_EVENTS.AFTER_SHOW,
+    EMIT_EVENTS.AFTER_HIDDEN,
+    EMIT_EVENTS.CLICK_OUTSIDE,
+    EMIT_EVENTS.CONTENT_MOUSEENTER,
+    EMIT_EVENTS.CONTENT_MOUSELEAVE,
+    EMIT_EVENTS.UPDATE_IS_SHOW,
+  ],
 
-  setup(props, ctx) {
-    const { reference } = toRefs(props);
-    const refDefaultReference = ref();
-    const refContent = ref();
-    const refArrow = ref();
-    const refRoot = ref();
+  setup(props, { slots, emit, expose }) {
+    const attrs = useAttrs();
+    const { resolveClassName } = usePrefix();
+    const globalConfig = useGlobalConfig();
 
-    const refReference = computed(() => reference.value || refDefaultReference.value);
+    // 当前实例 id（用于注册表与事件路径识别）
+    const popoverId = `bk-popover-${++__bkPopoverIdSeed}`;
 
+    // 元素引用
+    // 默认 slot 的包裹元素（仅用于渲染与事件冒泡承载）
+    const referenceWrapperRef = ref<ReferenceRefValue>(null);
+    // 提供给 floating-ui 的实际定位 reference（可能是 wrapper，也可能是 slot 内部元素）
+    const floatingReferenceRef = ref<HTMLElement | VirtualElement | null>(null);
+    const floatingRef = ref<HTMLElement | null>(null);
+    const arrowRef = ref<HTMLElement | null>(null);
+
+    // 解构 props
     const {
-      onMountedFn,
-      onUnmountedFn,
-      beforeInstanceUnmount,
-      initPopInstance,
-      showFn,
-      hideFn,
-      showPopover,
-      hidePopover,
-      updatePopover,
-      resetPopover,
-      stopHide,
-      localIsShow,
+      isShow,
+      always,
+      disabled,
+      trigger,
+      placement,
+      offset,
+      padding,
+      arrow,
+      autoPlacement,
+      autoVisibility,
+      disableTransform,
       boundary,
-      uniqKey,
-    } = usePopoverInit(props, ctx, {
-      refReference,
-      refContent,
-      refArrow,
-      refRoot,
+      disableTeleport,
+      renderDirective,
+      renderType,
+      theme,
+      extCls,
+      referenceCls,
+      width,
+      height,
+      maxWidth,
+      maxHeight,
+      zIndex,
+      popoverDelay,
+      allowHtml,
+      content,
+      clickContentAutoHide,
+      disableOutsideClick,
+      hideIgnoreReference,
+      forceClickoutside,
+      componentEventDelay,
+      reference,
+      target,
+      floatingReference,
+      renderReferenceWrapper,
+    } = toRefs(props);
+
+    const shouldRenderReferenceWrapper = computed(() => {
+      return (renderReferenceWrapper.value ?? globalConfig.value.popoverRenderReferenceWrapper) === true;
     });
 
+    const setReferenceRef: VNodeRef = refValue => {
+      referenceWrapperRef.value = refValue as ReferenceRefValue;
+    };
 
+    // 判断是否为虚拟元素
+    const isVirtualElement = (el: unknown): el is VirtualElement => {
+      return (
+        el !== null &&
+        typeof el === 'object' &&
+        'getBoundingClientRect' in el &&
+        typeof (el as Record<string, unknown>).getBoundingClientRect === 'function'
+      );
+    };
+
+    // 解析自定义 reference 元素
+    const resolveReferenceElement = (ref: unknown): HTMLElement | VirtualElement | null => {
+      if (!ref) return null;
+      // 虚拟元素
+      if (isVirtualElement(ref)) {
+        return ref;
+      }
+      if (typeof ref === 'string') {
+        return document.querySelector(ref) as HTMLElement | null;
+      }
+      if (ref instanceof HTMLElement) {
+        return ref;
+      }
+      return null;
+    };
+
+    const resolveElementFromVNode = (node?: VNode): HTMLElement | null => {
+      if (!node) return null;
+      if (node.el instanceof HTMLElement) return node.el;
+      const subTree = node.component?.subTree;
+      if (subTree) {
+        const element = resolveElementFromVNode(subTree as VNode);
+        if (element) return element;
+      }
+      if (Array.isArray(node.children)) {
+        for (const child of node.children) {
+          if (!isVNode(child)) continue;
+          const element = resolveElementFromVNode(child);
+          if (element) return element;
+        }
+      }
+      return null;
+    };
+
+    const resolveReferenceRefElement = (refValue: ReferenceRefValue): HTMLElement | null => {
+      if (refValue instanceof HTMLElement) {
+        return refValue;
+      }
+      if (!refValue || typeof refValue !== 'object') {
+        return null;
+      }
+      const instance = refValue as ComponentPublicInstance & { $?: { subTree?: VNode } };
+      if (instance.$el instanceof HTMLElement) {
+        return instance.$el;
+      }
+      return resolveElementFromVNode(instance.$?.subTree);
+    };
+
+    // 是否使用自定义 reference
+    const useCustomReference = computed(() => {
+      return !!reference.value || !!target.value;
+    });
+
+    // 是否为虚拟元素模式（虚拟元素不需要绑定事件）
+    const isVirtualReferenceMode = computed(() => {
+      if (reference.value && isVirtualElement(reference.value)) {
+        return true;
+      }
+      return false;
+    });
+
+    // 获取实际的 reference 元素（用于事件绑定，只返回 HTMLElement）
+    const getActualReferenceElement = (): HTMLElement | null => {
+      // 优先使用 reference prop
+      if (reference.value) {
+        const resolved = resolveReferenceElement(reference.value);
+        // 虚拟元素不能绑定事件
+        if (resolved && resolved instanceof HTMLElement) {
+          return resolved;
+        }
+        return null;
+      }
+      // 其次使用 target prop（兼容 PointerEvent）
+      if (target.value) {
+        if (target.value instanceof PointerEvent) {
+          // 对于 PointerEvent，使用事件目标元素
+          return target.value.target as HTMLElement;
+        }
+        return resolveReferenceElement(target.value as HTMLElement | string) as HTMLElement | null;
+      }
+      return null;
+    };
+
+    // 获取用于 floating-ui 定位的 reference（可以是 HTMLElement 或 VirtualElement）
+    const getFloatingReference = (): HTMLElement | VirtualElement | null => {
+      if (reference.value) {
+        return resolveReferenceElement(reference.value);
+      }
+      if (target.value) {
+        if (target.value instanceof PointerEvent) {
+          return target.value.target as HTMLElement;
+        }
+        return resolveReferenceElement(target.value);
+      }
+      return null;
+    };
+
+    /**
+     * 解析默认 slot reference 元素
+     *
+     * referenceWrapperRef 在 wrapper 开启时指向外层 span，
+     * wrapper 关闭时指向默认 slot 的实际元素。
+     */
+    const resolveDefaultReferenceElement = (): HTMLElement | null => {
+      return resolveReferenceRefElement(referenceWrapperRef.value);
+    };
+
+    // 延迟控制
+    const delayOptions = computed(() => ({
+      isShow: isShow.value,
+      popoverDelay: popoverDelay.value,
+      disabled: disabled.value,
+      always: always.value,
+      trigger: trigger.value,
+    }));
+
+    const { isOpen, show, hide, toggle, stopHide, clearTimers } = useDelay(delayOptions, (event, payload) => {
+      if (event === 'afterShow') {
+        emit(EMIT_EVENTS.AFTER_SHOW, payload);
+        // 避免循环更新：只有当 isShow 与当前状态不一致时才 emit
+        if (!isShow.value) {
+          emit(EMIT_EVENTS.UPDATE_IS_SHOW, true);
+        }
+      } else if (event === 'afterHidden') {
+        emit(EMIT_EVENTS.AFTER_HIDDEN, payload);
+        // 避免循环更新：只有当 isShow 与当前状态不一致时才 emit
+        if (isShow.value) {
+          emit(EMIT_EVENTS.UPDATE_IS_SHOW, false);
+        }
+      }
+    });
+
+    const resolveBoundary = () => {
+      const b = boundary.value;
+      return typeof b === 'function' ? b() : b;
+    };
+
+    const floatingStrategy = computed<'absolute' | 'fixed'>(() => {
+      if (disableTeleport.value) return 'absolute';
+
+      const b = resolveBoundary();
+      if (typeof b === 'string') {
+        return b === 'body' || b === 'parent' ? 'fixed' : 'absolute';
+      }
+      if (b === document.body) return 'fixed';
+      return 'absolute';
+    });
+
+    // 浮动定位
+    const floatingProps = computed(() => ({
+      placement: placement.value as PopoverPlacement,
+      offset: offset.value as IAxesOffsets | number,
+      padding: padding.value,
+      arrow: arrow.value,
+      autoPlacement: autoPlacement.value,
+      autoVisibility: autoVisibility.value,
+      disableTransform: disableTransform.value,
+      strategy: floatingStrategy.value,
+      isOpen: isOpen.value,
+    }));
+
+    // 更新 floating-ui 定位 reference（避免 computed 缓存导致 DOM 布局变化时 reference 解析不生效）
+    const updateFloatingReference = () => {
+      // 优先使用 floatingReference（仅定位，不影响 slot 渲染）
+      if (floatingReference.value) {
+        const resolved = resolveReferenceElement(floatingReference.value);
+        if (resolved) {
+          floatingReferenceRef.value = resolved;
+          return;
+        }
+      }
+      // 其次使用 reference/target（会影响 slot 渲染）
+      if (useCustomReference.value) {
+        floatingReferenceRef.value = getFloatingReference();
+        return;
+      }
+      floatingReferenceRef.value = resolveDefaultReferenceElement();
+    };
+
+    // wrapper/props/展开状态变化时，重新解析 reference
     watch(
-      () => props.isShow,
+      () => referenceWrapperRef.value,
       () => {
-        if (!props.always && !props.disabled) {
-          props.isShow ? showPopover() : hidePopover();
-        }
+        nextTick(updateFloatingReference);
       },
-      {
-        immediate: true
-      },
-    )
-
+      { immediate: true },
+    );
     watch(
-      () => [props.disabled],
-      val => {
-        if (val[0]) {
-          beforeInstanceUnmount();
-        } else {
-          initPopInstance();
-        }
+      [() => reference.value, () => target.value, () => floatingReference.value, shouldRenderReferenceWrapper],
+      () => {
+        nextTick(updateFloatingReference);
       },
     );
+    watch(isOpen, val => {
+      if (val) {
+        nextTick(updateFloatingReference);
+      }
+    });
 
-    onMounted(onMountedFn);
-    onBeforeUnmount(onUnmountedFn);
+    const { floatingStyles, arrowStyles, update, arrowSide } = usePopoverFloating(
+      floatingProps,
+      floatingReferenceRef,
+      floatingRef,
+      arrowRef,
+    );
 
-    const isRenderModeShow = computed(() => props.renderDirective === 'show');
-    const transBoundary = computed(() => isRenderModeShow.value || (localIsShow.value && !props.disableTeleport));
-    const contentIsShow = computed(() => {
-      if (props.renderType === RenderType.AUTO) {
+    // 触发事件管理
+    const triggerProps = computed(() => ({
+      trigger: trigger.value as TriggerType,
+      disabled: disabled.value,
+      always: always.value,
+      hideIgnoreReference: hideIgnoreReference.value,
+      isOpen: isOpen.value,
+    }));
+
+    const { referenceListeners, floatingListeners } = useTrigger(triggerProps, {
+      show,
+      hide,
+      toggle,
+      stopHide,
+      emitContentMouseenter: (e: MouseEvent) => emit(EMIT_EVENTS.CONTENT_MOUSEENTER, e),
+      emitContentMouseleave: (e: MouseEvent) => emit(EMIT_EVENTS.CONTENT_MOUSELEAVE, e),
+    });
+
+    let unbindNoWrapperReferenceEvents: Array<() => void> = [];
+
+    const clearNoWrapperReferenceEvents = () => {
+      unbindNoWrapperReferenceEvents.forEach(unbind => unbind());
+      unbindNoWrapperReferenceEvents = [];
+    };
+
+    const resolveEventBinding = (eventName: string) => {
+      const rawName = eventName.replace(/^on/, '');
+      const capture = rawName.endsWith('Capture');
+      return {
+        capture,
+        name: rawName.replace(/Capture$/, '').toLowerCase(),
+      };
+    };
+
+    const bindNoWrapperReferenceEvents = () => {
+      clearNoWrapperReferenceEvents();
+
+      if (shouldRenderReferenceWrapper.value) return;
+
+      const referenceEl = resolveReferenceRefElement(referenceWrapperRef.value);
+      if (!referenceEl) return;
+
+      Object.keys(referenceListeners.value).forEach(eventName => {
+        const listener = referenceListeners.value[eventName] as EventListener;
+        const eventBinding = resolveEventBinding(eventName);
+        referenceEl.addEventListener(eventBinding.name, listener, eventBinding.capture);
+        unbindNoWrapperReferenceEvents.push(() => {
+          referenceEl.removeEventListener(eventBinding.name, listener, eventBinding.capture);
+        });
+      });
+    };
+
+    watch(
+      [shouldRenderReferenceWrapper, referenceWrapperRef, () => referenceListeners.value],
+      () => {
+        nextTick(bindNoWrapperReferenceEvents);
+      },
+      { immediate: true },
+    );
+
+    // hover 模式：把“子弹层”视为内容区的延伸（避免 PopConfirm 内 Select 下拉导致父弹层收起）
+    let hoverTrackMoveHandler: ((e: MouseEvent) => void) | null = null;
+    const stopHoverTrack = () => {
+      if (!hoverTrackMoveHandler) return;
+      document.removeEventListener('mousemove', hoverTrackMoveHandler, true);
+      hoverTrackMoveHandler = null;
+    };
+
+    const isTargetInSelfOrChildren = (targetEl: HTMLElement): boolean => {
+      const actualRef = floatingReferenceRef.value;
+      const referenceWrapperEl = shouldRenderReferenceWrapper.value
+        ? resolveReferenceRefElement(referenceWrapperRef.value)
+        : null;
+      if (
+        (actualRef instanceof HTMLElement && actualRef.contains(targetEl)) ||
+        (referenceWrapperEl instanceof HTMLElement && referenceWrapperEl.contains(targetEl))
+      ) {
+        return true;
+      }
+      if (floatingRef.value?.contains(targetEl)) {
+        return true;
+      }
+      const childId = findPopoverIdFromElement(targetEl);
+      if (!childId || childId === popoverId) return false;
+      const parent = __bkPopoverRegistry.get(popoverId);
+      const child = __bkPopoverRegistry.get(childId);
+      if (!parent?.floatingEl || !child) return false;
+      const childRef = child.referenceEl;
+      const childWrapper = child.referenceWrapperEl;
+      return (
+        (!!childRef && parent.floatingEl.contains(childRef)) ||
+        (!!childWrapper && parent.floatingEl.contains(childWrapper))
+      );
+    };
+
+    const startHoverTrack = () => {
+      if (hoverTrackMoveHandler) return;
+      hoverTrackMoveHandler = (e: MouseEvent) => {
+        if (disabled.value || always.value) return;
+        const t = e.target;
+        if (!(t instanceof HTMLElement)) return;
+        if (isTargetInSelfOrChildren(t)) return;
+        stopHoverTrack();
+        if (isOpen.value) {
+          hide();
+        }
+      };
+      document.addEventListener('mousemove', hoverTrackMoveHandler, true);
+    };
+
+    const isMouseleaveToChildPopover = (e: MouseEvent): boolean => {
+      const rt = e.relatedTarget;
+      const childId = findPopoverIdFromElement(rt);
+      if (!childId || childId === popoverId) return false;
+      const parent = __bkPopoverRegistry.get(popoverId);
+      const child = __bkPopoverRegistry.get(childId);
+      if (!parent?.floatingEl || !child) return false;
+      const childRef = child.referenceEl;
+      const childWrapper = child.referenceWrapperEl;
+      return (
+        (!!childRef && parent.floatingEl.contains(childRef)) ||
+        (!!childWrapper && parent.floatingEl.contains(childWrapper))
+      );
+    };
+
+    const guardedFloatingListeners = computed(() => {
+      const base = floatingListeners.value;
+      if (trigger.value !== 'hover') return base;
+      return {
+        ...base,
+        onMouseenter: (e: Event) => {
+          stopHoverTrack();
+          base.onMouseenter?.(e);
+        },
+        onMouseleave: (e: Event) => {
+          const me = e as MouseEvent;
+          if (isMouseleaveToChildPopover(me)) {
+            // 进入子弹层时保持显示，并开始跟踪鼠标离开“父 + 子”的整体区域
+            startHoverTrack();
+            return;
+          }
+          base.onMouseleave?.(e);
+        },
+      };
+    });
+
+    // 计算样式
+    const resolvePixelValue = (val: number | string): string => {
+      if (typeof val === 'number' || /^\d+$/.test(String(val))) {
+        return `${val}px`;
+      }
+      return String(val);
+    };
+
+    // 内容样式
+    const contentStyles = computed<CSSProperties>(() => {
+      const styles: CSSProperties = {
+        ...floatingStyles.value,
+        width: width.value !== 'auto' ? resolvePixelValue(width.value) : undefined,
+        height: height.value !== 'auto' ? resolvePixelValue(height.value) : undefined,
+        maxWidth: maxWidth.value !== 'auto' ? resolvePixelValue(maxWidth.value) : undefined,
+        maxHeight: maxHeight.value !== 'auto' ? resolvePixelValue(maxHeight.value) : undefined,
+      };
+
+      // 设置 z-index
+      if (isOpen.value) {
+        styles.zIndex = zIndex.value ?? bkZIndexManager.getPopperIndex();
+      }
+
+      // 隐藏时设置 display: none
+      if (!isOpen.value && renderDirective.value === 'show') {
+        styles.display = 'none';
+      }
+
+      return styles;
+    });
+
+    // 解析 theme 中的额外类名
+    // theme 可能包含 "light bk-select-popover" 这样的格式，需要提取出额外的类名
+    const parseTheme = (themeValue: string) => {
+      const parts = themeValue.trim().split(/\s+/);
+      const baseTheme = parts[0]; // 'dark' 或 'light'
+      const extraClasses = parts.slice(1); // 额外的类名
+      return { baseTheme, extraClasses };
+    };
+
+    // 内容类名
+    const contentClass = computed(() => {
+      const { extraClasses } = parseTheme(theme.value);
+      const classes = [
+        resolveClassName('popover'),
+        resolveClassName('pop2-content'),
+        extCls.value,
+        ...extraClasses, // 添加 theme 中的额外类名
+      ];
+
+      if (!isOpen.value) {
+        classes.push('hidden');
+      }
+
+      return classes.filter(Boolean);
+    });
+
+    // 计算 data-theme 属性（与旧版保持一致，完整 theme 字符串写入 data-theme）
+    const dataTheme = computed(() => theme.value);
+
+    // 兼容旧版自定义 theme 标记：theme="light bk-table-settings"
+    // 除了追加 bk-table-settings class 外，还需要生成 data-bk-table-settings-theme="true"，
+    // table settings 等组件的弹层样式依赖该属性选择器。
+    const extraThemeAttrs = computed(() => {
+      const { extraClasses } = parseTheme(theme.value);
+      return extraClasses.reduce<Record<string, string>>((attrs, className) => {
+        attrs[`data-${className}-theme`] = 'true';
+        return attrs;
+      }, {});
+    });
+
+    const filterEmptyNodes = (children: VNode[] = []): VNode[] => {
+      const nodes: VNode[] = [];
+      children.forEach(child => {
+        if (!child) {
+          return;
+        }
+        if (Array.isArray(child)) {
+          nodes.push(...filterEmptyNodes(child));
+          return;
+        }
+        if (child.type === Fragment && Array.isArray(child.children)) {
+          nodes.push(...filterEmptyNodes(child.children as VNode[]));
+          return;
+        }
+        nodes.push(child);
+      });
+      return nodes.filter(
+        child =>
+          !(
+            child &&
+            (child.type === Comment ||
+              (child.type === Fragment && Array.isArray(child.children) && child.children.length === 0) ||
+              (child.type === Text && `${child.children ?? ''}`.trim() === ''))
+          ),
+      );
+    };
+
+    // 处理 clickoutside
+    const handleClickOutside = (event: MouseEvent) => {
+      if (disabled.value || always.value) {
+        return;
+      }
+
+      // 命中“子弹层”且其 reference 位于本 popover 内容区内：不视为外部点击
+      if (isChildPopoverInteractionFor(popoverId, event)) {
+        return;
+      }
+
+      const target = event.target as HTMLElement;
+
+      // 点击在 reference 内（包括自定义 reference 和默认 reference）
+      const actualRef = floatingReferenceRef.value;
+      const referenceWrapperEl = shouldRenderReferenceWrapper.value
+        ? resolveReferenceRefElement(referenceWrapperRef.value)
+        : null;
+      const isInReference =
+        (actualRef instanceof HTMLElement && actualRef.contains(target)) ||
+        (referenceWrapperEl instanceof HTMLElement && referenceWrapperEl.contains(target));
+      if (isInReference) {
+        // 对于 click 和 hover 模式，点击 reference 的行为由 referenceListeners 处理
+        if (trigger.value === 'click' || trigger.value === 'hover') {
+          return;
+        }
+        // hideIgnoreReference 为 true 时，点击 reference 不触发 clickoutside
+        if (hideIgnoreReference.value) {
+          return;
+        }
+      }
+
+      // 点击在 floating 内
+      if (floatingRef.value?.contains(target)) {
+        return;
+      }
+
+      // 触发 clickoutside 事件（让调用者决定如何处理）
+      emit(EMIT_EVENTS.CLICK_OUTSIDE, { isShow: isOpen.value, event });
+
+      // 决定是否自动隐藏 popover
+      // manual 模式下不自动隐藏（除非 forceClickoutside）
+      if (trigger.value === 'manual' && !forceClickoutside.value) {
+        return;
+      }
+
+      // disableOutsideClick 为 true 时不自动隐藏（除非 forceClickoutside）
+      if (disableOutsideClick.value && !forceClickoutside.value) {
+        return;
+      }
+
+      // 隐藏 popover
+      if (isOpen.value) {
+        hide();
+      }
+    };
+
+    // 处理点击内容区
+    const handleClickContent = () => {
+      if (clickContentAutoHide.value && trigger.value !== 'manual' && !always.value) {
+        hide();
+      }
+    };
+
+    // 处理 componentEventDelay
+    const contentPointerEvents = ref<'auto' | 'none'>('auto');
+    let eventDelayTimer: ReturnType<typeof setTimeout> | undefined;
+
+    watch(isOpen, newVal => {
+      if (newVal && componentEventDelay.value > 0) {
+        contentPointerEvents.value = 'none';
+        eventDelayTimer = setTimeout(() => {
+          contentPointerEvents.value = 'auto';
+        }, componentEventDelay.value);
+      }
+    });
+
+    // 渲染内容
+    const renderContent = () => {
+      if (allowHtml.value && typeof content.value === 'string') {
+        return <span innerHTML={content.value}></span>;
+      }
+      return content.value;
+    };
+
+    // 是否应该渲染内容
+    const shouldRenderContent = computed(() => {
+      if (renderDirective.value === 'show') {
         return true;
       }
 
-      return localIsShow.value;
+      if (renderType.value === RenderType.AUTO) {
+        return true;
+      }
+
+      return isOpen.value;
     });
 
-    const show = () => {
-      showFn();
+    let unbindCustomReferenceEvents: Array<() => void> = [];
+
+    const clearCustomReferenceEvents = () => {
+      unbindCustomReferenceEvents.forEach(unbind => unbind());
+      unbindCustomReferenceEvents = [];
     };
 
-    const hide = () => {
-      hideFn();
+    const bindCustomReferenceEvents = () => {
+      clearCustomReferenceEvents();
+      if (!useCustomReference.value || isVirtualReferenceMode.value) return;
+
+      const customRef = getActualReferenceElement();
+      if (!customRef) return;
+
+      Object.keys(referenceListeners.value).forEach(eventName => {
+        const listener = referenceListeners.value[eventName] as EventListener;
+        const eventBinding = resolveEventBinding(eventName);
+        customRef.addEventListener(eventBinding.name, listener, eventBinding.capture);
+        unbindCustomReferenceEvents.push(() => {
+          customRef.removeEventListener(eventBinding.name, listener, eventBinding.capture);
+        });
+      });
     };
 
-    const handleClickReferenceWraper = () => {
-      ReferenceClickSharedState[uniqKey] = true;
+    watch([() => reference.value, () => target.value, () => referenceListeners.value], () => {
+      nextTick(bindCustomReferenceEvents);
+    });
+
+    // 挂载时添加 clickoutside 监听
+    onMounted(() => {
+      document.addEventListener('click', handleClickOutside, true);
+
+      // 绑定自定义 reference 事件
+      bindCustomReferenceEvents();
+
+      // 如果 always 为 true，立即显示
+      if (always.value) {
+        nextTick(() => {
+          show();
+        });
+      }
+    });
+
+    // 卸载时清理
+    onBeforeUnmount(() => {
+      document.removeEventListener('click', handleClickOutside, true);
+      clearCustomReferenceEvents();
+      clearNoWrapperReferenceEvents();
+      clearTimers();
+      if (eventDelayTimer) {
+        clearTimeout(eventDelayTimer);
+      }
+      __bkPopoverRegistry.delete(popoverId);
+      stopHoverTrack();
+    });
+
+    // 注册到全局表（用于父子弹层交互判定）
+    const updateRegistry = () => {
+      const referenceEl =
+        // 自定义 reference（仅 HTMLElement 可用）
+        getActualReferenceElement() ||
+        // 默认 reference（wrapper 尺寸为 0 时会解析到真实触发器）
+        resolveDefaultReferenceElement();
+
+      __bkPopoverRegistry.set(popoverId, {
+        id: popoverId,
+        floatingEl: floatingRef.value,
+        referenceEl,
+        referenceWrapperEl: shouldRenderReferenceWrapper.value
+          ? resolveReferenceRefElement(referenceWrapperRef.value)
+          : null,
+      });
     };
 
-    // 点击 content 收起面板
-    const handleClickContent = () => {
-      if (props.trigger !== 'manual' && !props.always && props.clickContentAutoHide) {
-        localIsShow.value = false;
+    watch([floatingRef, floatingReferenceRef, referenceWrapperRef], () => updateRegistry(), { immediate: true });
+
+    // 暴露公共方法
+    // updatePopover 保持与旧 API 兼容，接受可选参数但实际上使用 @floating-ui/vue 自动更新
+    const updatePopover = (_virtualEl?: unknown, _props?: unknown, callFn?: () => void) => {
+      update();
+      if (typeof callFn === 'function') {
+        nextTick(callFn);
       }
     };
 
-    const renderContent = () => {
-      if (props.allowHtml) {
-        const { vNode } = contentAsHTMLElement(props.content);
-        return vNode;
-      }
-
-      return props.content;
+    const resetPopover = () => {
+      clearTimers();
+      isOpen.value = false;
+      nextTick(() => {
+        update();
+      });
     };
 
-    return {
-      boundary,
-      refDefaultReference,
-      refContent,
-      refArrow,
-      isRenderModeShow,
-      transBoundary,
-      handleClickContent,
+    expose({
+      show,
+      hide,
       updatePopover,
       resetPopover,
-      hide,
-      show,
       stopHide,
-      contentIsShow,
-      renderContent,
-      localIsShow,
-      handleClickReferenceWraper,
-    };
-  },
+      handleClickOutside,
+      isOpen,
+      localIsShow: isOpen, // 兼容旧 API
+    });
 
-  render() {
-    const renderReferSlot = slot => {
-      if (Text === slot?.[0]?.type) {
-        return <span>{slot}</span>;
+    const teleportTo = computed(() => {
+      const boundaryVal = resolveBoundary();
+      if (typeof boundaryVal === 'string') {
+        if (boundaryVal === 'body' || boundaryVal === 'parent') {
+          return 'body';
+        }
+        try {
+          const target = document.querySelector(boundaryVal);
+          if (target) {
+            return boundaryVal;
+          }
+        } catch {
+          // 无效选择器
+        }
+        return 'body';
+      }
+      return boundaryVal instanceof HTMLElement ? boundaryVal : 'body';
+    });
+
+    return () => {
+      // 渲染 floating content
+      const floatingNode = shouldRenderContent.value ? (
+        <div
+          ref={floatingRef}
+          style={{
+            ...contentStyles.value,
+            pointerEvents: contentPointerEvents.value,
+          }}
+          class={contentClass.value}
+          data-arrow={arrowSide.value}
+          data-bk-popover-id={popoverId}
+          data-theme={dataTheme.value}
+          {...extraThemeAttrs.value}
+          onClick={handleClickContent}
+          {...guardedFloatingListeners.value}
+        >
+          {/* 箭头 */}
+          {arrow.value && (
+            <div
+              ref={arrowRef}
+              style={arrowStyles.value}
+              class={resolveClassName('pop2-arrow')}
+              data-arrow={arrowSide.value}
+            >
+              {slots.arrow?.()}
+            </div>
+          )}
+          {/* 内容 */}
+          {slots.content?.() ?? renderContent()}
+        </div>
+      ) : null;
+
+      const renderTeleport = () => (
+        <Teleport
+          disabled={disableTeleport.value}
+          to={teleportTo.value}
+        >
+          {floatingNode}
+        </Teleport>
+      );
+
+      // 如果使用自定义 reference（虚拟元素或外部 HTMLElement），只渲染 Teleport 内容
+      if (useCustomReference.value) {
+        return renderTeleport();
       }
 
-      return slot;
+      const defaultSlotNodes = (slots.default?.() ?? []) as VNode[];
+      const referenceNodes = filterEmptyNodes(defaultSlotNodes);
+
+      if (shouldRenderReferenceWrapper.value) {
+        return (
+          <>
+            <span
+              ref={referenceWrapperRef}
+              style={{ display: 'inline-block' }}
+              class={[referenceCls.value, attrs.class as string]}
+              {...referenceListeners.value}
+            >
+              {defaultSlotNodes}
+            </span>
+            {renderTeleport()}
+          </>
+        );
+      }
+
+      const renderReferenceNode = () => {
+        if (!referenceNodes.length) {
+          return null;
+        }
+
+        // 默认无包裹模式：保持 Fragment 根结构，不主动追加任何具体 DOM。
+        // 为了兼容定位与触发事件，尽可能把 ref/class 透传到第一个非文本 reference 节点。
+        // 但纯文本 slot 没有可承载 ref 和监听器的 DOM 节点，需要生成一个 span 作为触发元素。
+        const isTextReference = referenceNodes.every(node => isVNode(node) && node.type === Text);
+        if (isTextReference) {
+          return (
+            <span
+              ref={referenceWrapperRef}
+              style={{ display: 'inline-block' }}
+              class={[referenceCls.value, attrs.class as string]}
+            >
+              {referenceNodes}
+            </span>
+          );
+        }
+
+        const referenceNodeIndex = referenceNodes.findIndex(
+          node => isVNode(node) && node.type !== Text && node.type !== Comment,
+        );
+
+        if (referenceNodeIndex < 0) {
+          return referenceNodes;
+        }
+
+        return referenceNodes.map((node, index) => {
+          if (index !== referenceNodeIndex || !isVNode(node)) {
+            return node;
+          }
+
+          return cloneVNode(
+            node,
+            {
+              ref: setReferenceRef as VNodeRef,
+              class: [referenceCls.value, attrs.class as string],
+            },
+            true,
+          );
+        });
+      };
+
+      // 默认情况：渲染 reference 和 floating content
+      return (
+        <>
+          {renderReferenceNode()}
+          {renderTeleport()}
+        </>
+      );
     };
-    return (
-      <Root ref='refRoot'>
-        {this.hideIgnoreReference ? (
-          <div
-            style='display: inline-block;'
-            class={this.referenceCls}
-            onClick={this.handleClickReferenceWraper}
-          >
-            <Reference ref='refDefaultReference'>{renderReferSlot(this.$slots.default?.() ?? <span></span>)}</Reference>
-          </div>
-        ) : (
-          <Reference ref='refDefaultReference'>{renderReferSlot(this.$slots.default?.() ?? <span></span>)}</Reference>
-        )}
-        <Teleport
-          disabled={!this.transBoundary}
-          to={this.boundary}
-        >
-          <Content
-            ref='refContent'
-            width={this.width}
-            height={this.height}
-            extCls={this.extCls}
-            data-theme={this.theme}
-            eventDelay={this.componentEventDelay}
-            maxHeight={this.maxHeight}
-            maxWidth={this.maxWidth}
-            visible={this.localIsShow}
-            onClick={this.handleClickContent}
-          >
-            {this.arrow ? <Arrow ref='refArrow'>{this.$slots.arrow?.()}</Arrow> : ''}
-            {this.isRenderModeShow || this.contentIsShow ? this.$slots.content?.() ?? this.renderContent() : ''}
-          </Content>
-        </Teleport>
-      </Root>
-    );
   },
 });

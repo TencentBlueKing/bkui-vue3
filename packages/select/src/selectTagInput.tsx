@@ -206,7 +206,12 @@ export default defineComponent({
                 onClose={() => this.handleRemoveTag(item.value)}
               >
                 {this.$slots.tagRender?.(item) ?? (
-                  <OverflowTitle type='tips'>{this.select?.handleGetLabelByValue(item.value)}</OverflowTitle>
+                  <OverflowTitle
+                    class={this.resolveClassName('select-tag-overflow-title')}
+                    type='tips'
+                  >
+                    {this.select?.handleGetLabelByValue(item.value)}
+                  </OverflowTitle>
                 )}
               </Tag>
             ))}
