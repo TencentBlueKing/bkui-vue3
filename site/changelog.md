@@ -1,6 +1,18 @@
 ## 更新日志
 
 
+### 2.1.0-beta.11
+
+* **[feat]**:
+    - bugfix(pop-confirm): popoverOptions.disabled 默认为 ture 时关闭不了
+
+
+### 2.1.0-beta.10
+
+* **[feat]**:
+    - bugfix(select): 分组搜索时隐藏为空的组
+
+
 ### 2.1.0-beta.8
 
 * **[feat]**:
@@ -1562,3 +1574,4 @@
 
 * **[feat]**:
     - feat(tag-input): tooltips 展示被折叠的内容
+

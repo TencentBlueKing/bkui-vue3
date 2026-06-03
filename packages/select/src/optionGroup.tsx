@@ -72,7 +72,10 @@ export default defineComponent({
       () => `${props.label} (${[...optionsMap.value.values()].filter(option => option.visible).length})`,
     );
     const isVisible = computed(() => {
-      return props.visible && !select.isSearchEmpty;
+      if (!props.visible) return false;
+      const groupOptions = [...optionsMap.value.values()];
+      if (!groupOptions.length) return !select.isSearchEmpty;
+      return groupOptions.some(option => option.visible);
     });
 
     const handleToggleCollapse = () => {
