@@ -29,7 +29,7 @@ import { useLocale } from '@bkui-vue/config-provider';
 import debounce from 'lodash/debounce';
 import { v4 as uuidv4 } from 'uuid';
 
-import { COL_MIN_WIDTH, COLUMN_ATTRIBUTE, IEmptyObject } from '../const';
+import { AUTO_WIDTH_VALUES, COL_MIN_WIDTH, COLUMN_ATTRIBUTE, IEmptyObject } from '../const';
 import { Column, IColSortBehavior, IFilterShape, IHeadGroup, Settings, TablePropTypes } from '../props';
 import {
   getRowText,
@@ -37,6 +37,7 @@ import {
   resolveColumnFilterProp,
   resolveColumnSortProp,
   resolveColumnSpan,
+  resolveActiveColumns,
   resolvePropVal,
 } from '../utils';
 
@@ -50,6 +51,11 @@ const useColumns = (props: TablePropTypes) => {
   const columnGroup: Column[][] = reactive([]);
   const columnGroupMap = new WeakMap<Column, IHeadGroup>();
 
+  // 版本号机制：用于追踪排序和过滤状态变化，避免深度监听
+  const sortVersion = ref(0);
+  const filterVersion = ref(0);
+  const columnsVersion = ref(0);
+
   /**
    * 用来记录列的排序状态
    * @param col
@@ -61,17 +67,19 @@ const useColumns = (props: TablePropTypes) => {
     const target = sortColumns.find(item => item.col === col);
     if (target) {
       Object.assign(target, sortOption, { active: true });
-      return;
+    } else {
+      sortColumns.push({ col, ...sortOption, active: true });
     }
-
-    sortColumns.push({ col, ...sortOption, active: true });
+    // 更新版本号，触发依赖更新
+    sortVersion.value++;
   };
 
   const setColumnCalcWidth = (col: Column, attrName: string, width: number) => {
     let colWidth = 0;
     if (/^\d+\.?\d*(px)?$/.test(`${col[attrName]}`)) {
       colWidth = Number(`${col[attrName]}`.replace(/px/, ''));
-      setColumnAttribute(col, COLUMN_ATTRIBUTE.WIDTH, colWidth);
+      // 计算宽度统一落到 calcWidth，避免覆盖用户拖拽的 resizeWidth
+      setColumnAttribute(col, COLUMN_ATTRIBUTE.CALC_WIDTH, colWidth);
       setColumnRect(col, {
         width: colWidth,
         left: null,
@@ -81,7 +89,7 @@ const useColumns = (props: TablePropTypes) => {
 
     if (/^\d+\.?\d*%$/.test(`${col[attrName]}`)) {
       colWidth = (Number(`${col[attrName]}`.replace(/%/, '')) / 100) * width;
-      setColumnAttribute(col, COLUMN_ATTRIBUTE.WIDTH, colWidth);
+      setColumnAttribute(col, COLUMN_ATTRIBUTE.CALC_WIDTH, colWidth);
       setColumnRect(col, {
         width: colWidth,
         left: null,
@@ -107,7 +115,7 @@ const useColumns = (props: TablePropTypes) => {
         const calcWidth = setColumnCalcWidth(col, attrName, width);
         diffWidth = diffWidth - calcWidth;
 
-        if ([undefined, null, 'auto', 'undefined', 'null', ''].includes(col[attrName] as string)) {
+        if (AUTO_WIDTH_VALUES.includes(col[attrName] as string)) {
           filterList.push(col);
         }
       });
@@ -122,9 +130,25 @@ const useColumns = (props: TablePropTypes) => {
     const minWidthList = resolveColWidth(visibleColumns);
     const autoWidthList = resolveColWidth(minWidthList, 'minWidth');
 
+    visibleColumns.forEach(col => {
+      if (autoWidthList.includes(col)) return;
+      const calcWidth = (getColumnAttribute(col, COLUMN_ATTRIBUTE.CALC_WIDTH) as number) || 0;
+      const resolvedMinWidth = (getColumnAttribute(col, COLUMN_ATTRIBUTE.COL_MIN_WIDTH) as number) || COL_MIN_WIDTH;
+      if (calcWidth > 0 && calcWidth < resolvedMinWidth) {
+        setColumnAttribute(col, COLUMN_ATTRIBUTE.CALC_WIDTH, resolvedMinWidth);
+        setColumnRect(col, { width: resolvedMinWidth, left: null, right: null });
+        diffWidth -= resolvedMinWidth - calcWidth;
+      }
+    });
+
+    if (autoWidthList.length > 0) {
+      minColWidth = diffWidth > 0 ? diffWidth / autoWidthList.length : COL_MIN_WIDTH;
+    }
+
     autoWidthList.forEach(col => {
-      const calcWidth = minColWidth > COL_MIN_WIDTH ? minColWidth : COL_MIN_WIDTH;
-      setColumnAttribute(col, COLUMN_ATTRIBUTE.WIDTH, calcWidth);
+      const colMinWidth = (getColumnAttribute(col, COLUMN_ATTRIBUTE.COL_MIN_WIDTH) as number) || COL_MIN_WIDTH;
+      const calcWidth = minColWidth > colMinWidth ? minColWidth : colMinWidth;
+      setColumnAttribute(col, COLUMN_ATTRIBUTE.CALC_WIDTH, calcWidth);
       setColumnRect(col, {
         width: calcWidth,
         left: null,
@@ -143,16 +167,19 @@ const useColumns = (props: TablePropTypes) => {
     const target = filterColumns.find(item => item.col === col);
     if (target) {
       Object.assign(target, filterOption);
-      return;
+    } else {
+      filterColumns.push({ col, ...filterOption });
     }
-
-    filterColumns.push({ col, ...filterOption });
+    // 更新版本号，触发依赖更新
+    filterVersion.value++;
   };
 
   const visibleColumns: Column[] = reactive([]);
   const setVisibleColumns = () => {
     visibleColumns.length = 0;
     visibleColumns.push(...tableColumnList.filter(col => !isHiddenColumn(col)));
+    // 更新版本号，触发依赖更新
+    columnsVersion.value++;
   };
 
   const resolveDraggableColumn = () => {
@@ -339,85 +366,146 @@ const useColumns = (props: TablePropTypes) => {
   const getGroupAttribute = (group: Column) => columnGroupMap.get(group);
 
   /**
-   * Format columns
-   * @param columns
+   * 初始化列的过滤和排序配置
+   * @param col 列配置
+   */
+  const initColumnFilterSort = (col: Column) => {
+    const { type, fn, scope, active, enabled } = resolveColumnSortProp(col, props);
+    const filterFn = resolveFilterFn(col);
+    const filterObj = resolveColumnFilterProp(col);
+
+    if (filterObj.enabled) {
+      setFilterColumns(col, {
+        [COLUMN_ATTRIBUTE.COL_FILTER_FN]: filterFn,
+        [COLUMN_ATTRIBUTE.COL_FILTER_VALUES]: filterObj.checked ?? [],
+      });
+    }
+
+    if (enabled) {
+      setSortColumns(col, {
+        [COLUMN_ATTRIBUTE.COL_SORT_TYPE]: type,
+        [COLUMN_ATTRIBUTE.COL_SORT_FN]: fn,
+        [COLUMN_ATTRIBUTE.COL_SORT_SCOPE]: scope,
+      });
+    }
+
+    return { type, fn, scope, active, filterFn, filterObj };
+  };
+
+  /**
+   * 创建列的初始 schema
+   * @param col 列配置
+   * @param sortFilterConfig 排序过滤配置
+   * @param spanConfig span 配置
+   */
+  const createColumnSchema = (
+    col: Column,
+    sortFilterConfig: {
+      type: string;
+      fn: unknown;
+      scope: unknown;
+      active: boolean;
+      filterFn: unknown;
+      filterObj: unknown;
+    },
+    spanConfig: { skipCol: boolean; skipColumnNum: number; skipColLen: number },
+  ) => {
+    const { type, fn, scope, active, filterFn, filterObj } = sortFilterConfig;
+    const { skipCol, skipColumnNum, skipColLen } = spanConfig;
+    const settings = (props.settings ?? {}) as Settings;
+
+    return {
+      [COLUMN_ATTRIBUTE.CALC_WIDTH]: undefined,
+      [COLUMN_ATTRIBUTE.RESIZE_WIDTH]: undefined,
+      [COLUMN_ATTRIBUTE.COL_RECT]: reactive({
+        width: null,
+        left: null,
+        right: null,
+        height: null,
+      }),
+      [COLUMN_ATTRIBUTE.COL_MIN_WIDTH]: resolveMinWidth(col),
+      [COLUMN_ATTRIBUTE.LISTENERS]: new Map(),
+      [COLUMN_ATTRIBUTE.WIDTH]: col.width,
+      [COLUMN_ATTRIBUTE.IS_HIDDEN]: isColumnHidden(settings.fields ?? [], col, settings.checked ?? []),
+      [COLUMN_ATTRIBUTE.COL_SORT_TYPE]: ref(type),
+      [COLUMN_ATTRIBUTE.COL_SORT_FN]: fn,
+      [COLUMN_ATTRIBUTE.COL_FILTER_OBJ]: filterObj,
+      [COLUMN_ATTRIBUTE.COL_FILTER_FN]: filterFn,
+      [COLUMN_ATTRIBUTE.COL_FILTER_SCOPE]: undefined,
+      [COLUMN_ATTRIBUTE.COL_SORT_SCOPE]: scope,
+      [COLUMN_ATTRIBUTE.COL_SORT_ACTIVE]: ref(active),
+      [COLUMN_ATTRIBUTE.COL_IS_DRAG]: false,
+      [COLUMN_ATTRIBUTE.COL_SPAN]: { skipCol, skipColumnNum, skipColLen },
+      [COLUMN_ATTRIBUTE.COL_UID]: uuidv4(),
+      [COLUMN_ATTRIBUTE.SELECTION_DISABLED]: false,
+      [COLUMN_ATTRIBUTE.SELECTION_INDETERMINATE]: false,
+      [COLUMN_ATTRIBUTE.SELECTION_VAL]: false,
+      [COLUMN_ATTRIBUTE.COL_RESIZEABLE]: col.resizable !== false,
+      [COLUMN_ATTRIBUTE.COL_FIXED_STYLE]: reactive({}),
+    };
+  };
+
+  /**
+   * 更新列的 span 配置
+   * @param col 列配置
+   * @param spanConfig span 配置
+   */
+  const updateColumnSpanConfig = (
+    col: Column,
+    spanConfig: { skipCol: boolean; skipColumnNum: number; skipColLen: number },
+  ) => {
+    Object.assign(tableColumnSchema.get(col), {
+      [COLUMN_ATTRIBUTE.COL_SPAN]: spanConfig,
+      [COLUMN_ATTRIBUTE.COL_MIN_WIDTH]: resolveMinWidth(col),
+    });
+  };
+
+  /**
+   * 格式化列配置
+   * 职责：遍历所有列，初始化或更新列的 schema
    */
   const formatColumns = () => {
     sortColumns.length = 0;
-    // resolveDraggableColumn();
     let skipColNum = 0;
+
     (tableColumnList || []).forEach((col, index) => {
-      const { skipCol, skipColumnNum, skipColLen } = needColSpan.value
+      // 计算 span 配置
+      const spanConfig = needColSpan.value
         ? getColumnSpanConfig(col, index, skipColNum)
         : { skipCol: false, skipColumnNum: 0, skipColLen: 0 };
 
-      skipColNum = skipColumnNum;
+      skipColNum = spanConfig.skipColumnNum;
+
+      // 首次处理该列时，初始化 schema
       if (!tableColumnSchema.has(col)) {
-        const { type, fn, scope, active, enabled } = resolveColumnSortProp(col, props);
-        const filterFn = resolveFilterFn(col);
-        const settings = (props.settings ?? {}) as Settings;
-        const filterObj = resolveColumnFilterProp(col);
-
-        if (filterObj.enabled) {
-          setFilterColumns(col, {
-            [COLUMN_ATTRIBUTE.COL_FILTER_FN]: filterFn,
-            [COLUMN_ATTRIBUTE.COL_FILTER_VALUES]: filterObj.checked ?? [],
-          });
-        }
-
-        if (enabled) {
-          setSortColumns(col, {
-            [COLUMN_ATTRIBUTE.COL_SORT_TYPE]: type,
-            [COLUMN_ATTRIBUTE.COL_SORT_FN]: fn,
-            [COLUMN_ATTRIBUTE.COL_SORT_SCOPE]: scope,
-          });
-        }
-
-        tableColumnSchema.set(col, {
-          [COLUMN_ATTRIBUTE.CALC_WIDTH]: undefined,
-          [COLUMN_ATTRIBUTE.RESIZE_WIDTH]: undefined,
-          [COLUMN_ATTRIBUTE.COL_RECT]: reactive({
-            width: null,
-            left: null,
-            right: null,
-            height: null,
-          }),
-          [COLUMN_ATTRIBUTE.COL_MIN_WIDTH]: resolveMinWidth(col),
-          [COLUMN_ATTRIBUTE.LISTENERS]: new Map(),
-          [COLUMN_ATTRIBUTE.WIDTH]: col.width,
-          [COLUMN_ATTRIBUTE.IS_HIDDEN]: isColumnHidden(settings.fields ?? [], col, settings.checked ?? []),
-          [COLUMN_ATTRIBUTE.COL_SORT_TYPE]: ref(type),
-          [COLUMN_ATTRIBUTE.COL_SORT_FN]: fn,
-          [COLUMN_ATTRIBUTE.COL_FILTER_OBJ]: filterObj,
-          [COLUMN_ATTRIBUTE.COL_FILTER_FN]: filterFn,
-          [COLUMN_ATTRIBUTE.COL_FILTER_SCOPE]: undefined,
-          [COLUMN_ATTRIBUTE.COL_SORT_SCOPE]: scope,
-          [COLUMN_ATTRIBUTE.COL_SORT_ACTIVE]: ref(active),
-          [COLUMN_ATTRIBUTE.COL_IS_DRAG]: false,
-          [COLUMN_ATTRIBUTE.COL_SPAN]: { skipCol, skipColumnNum, skipColLen },
-          [COLUMN_ATTRIBUTE.COL_UID]: uuidv4(),
-          [COLUMN_ATTRIBUTE.SELECTION_DISABLED]: false,
-          [COLUMN_ATTRIBUTE.SELECTION_INDETERMINATE]: false,
-          [COLUMN_ATTRIBUTE.SELECTION_VAL]: false,
-          [COLUMN_ATTRIBUTE.COL_RESIZEABLE]: col.resizable !== false,
-          [COLUMN_ATTRIBUTE.COL_FIXED_STYLE]: reactive({}),
-        });
+        const sortFilterConfig = initColumnFilterSort(col);
+        const schema = createColumnSchema(col, sortFilterConfig, spanConfig);
+        tableColumnSchema.set(col, schema);
+      } else {
+        // 已存在的列，仅更新 span 配置
+        updateColumnSpanConfig(col, spanConfig);
       }
-
-      Object.assign(tableColumnSchema.get(col), {
-        [COLUMN_ATTRIBUTE.COL_SPAN]: { skipCol, skipColumnNum, skipColLen },
-        [COLUMN_ATTRIBUTE.COL_MIN_WIDTH]: resolveMinWidth(col),
-      });
     });
   };
 
   const setFixedStyle = (column: Column, style: { left?: string; right?: string }) => {
-    setColumnAttribute(column, COLUMN_ATTRIBUTE.COL_FIXED_STYLE, style);
+    const existing = tableColumnSchema.get(column)?.[COLUMN_ATTRIBUTE.COL_FIXED_STYLE];
+    if (existing) {
+      // 清空旧属性，避免 left 和 right 同时存在
+      for (const key in existing) {
+        delete existing[key];
+      }
+      // 更新响应式对象而不是替换它，保持响应性
+      Object.assign(existing, style);
+    }
   };
 
-  const getFixedStlye = (column: Column) => {
+  const getFixedStyle = (column: Column) => {
     return getColumnAttribute(column, COLUMN_ATTRIBUTE.COL_FIXED_STYLE) ?? {};
   };
+
+  // 兼容旧名称（拼写错误），将在未来版本移除
+  const getFixedStlye = getFixedStyle;
 
   const getColumnRect = (column: Column) => {
     return getColumnAttribute(column, COLUMN_ATTRIBUTE.COL_RECT);
@@ -428,7 +516,7 @@ const useColumns = (props: TablePropTypes) => {
   };
 
   const getColumnWidth = (column: Column) => {
-    return getColumnAttribute(column, COLUMN_ATTRIBUTE.WIDTH);
+    return getColumnOrderWidth(column);
   };
 
   type ColumnRect = { left?: number; right?: number; width?: number; height?: number };
@@ -443,14 +531,43 @@ const useColumns = (props: TablePropTypes) => {
     setColumnAttribute(col, COLUMN_ATTRIBUTE.COL_RECT, target);
   };
 
-  const debounceUpdateColumns = debounce((columns, onComplete?) => {
-    tableColumnList.length = 0;
-    tableColumnList.push(...flatColumnTemplate(columns));
-    formatColumns();
+  // 用于缓存上一次的列配置，避免相同配置重复处理
+  let lastColumnsHash = '';
 
-    setVisibleColumns();
-    onComplete?.();
-  });
+  /**
+   * 生成列配置的简单哈希，用于比较配置是否变化
+   */
+  const getColumnsHash = (cols: Column[]) => {
+    if (!cols || cols.length === 0) return '';
+    return cols.map(col => `${col.field || col.prop || ''}:${col.label || ''}`).join('|');
+  };
+
+  /**
+   * 防抖更新列配置
+   * 延迟时间设为 16ms（约一帧），确保多次快速调用只执行一次
+   * leading: true 确保首次调用立即执行，避免首帧空白
+   * trailing: true 确保最后一次调用会执行
+   */
+  const debounceUpdateColumns = debounce(
+    (columns: Column[], onComplete?: () => void) => {
+      // 检查配置是否真的变化了
+      const newHash = getColumnsHash(columns);
+      if (newHash === lastColumnsHash && tableColumnList.length > 0) {
+        onComplete?.();
+        return;
+      }
+      lastColumnsHash = newHash;
+
+      tableColumnList.length = 0;
+      tableColumnList.push(...flatColumnTemplate(columns));
+      formatColumns();
+
+      setVisibleColumns();
+      onComplete?.();
+    },
+    16,
+    { leading: true, trailing: true },
+  );
 
   const setColumnIsHidden = (column: Column, value = false) => {
     setColumnAttribute(column, COLUMN_ATTRIBUTE.IS_HIDDEN, value);
@@ -487,7 +604,8 @@ const useColumns = (props: TablePropTypes) => {
     }
   };
 
-  const ORDER_LIST = [COLUMN_ATTRIBUTE.WIDTH];
+  // 宽度优先级：拖拽宽度 > 计算宽度 > 配置宽度
+  const ORDER_LIST = [COLUMN_ATTRIBUTE.RESIZE_WIDTH, COLUMN_ATTRIBUTE.CALC_WIDTH, COLUMN_ATTRIBUTE.WIDTH];
 
   /**
    * 获取当前列实际宽度
@@ -548,7 +666,8 @@ const useColumns = (props: TablePropTypes) => {
     const diffWidth = getColumnOrderWidth(col) - newWidth;
     const nextColumn = visibleColumns[index + 1];
     if (nextColumn) {
-      setColumnAttribute(nextColumn, COLUMN_ATTRIBUTE.WIDTH, getColumnOrderWidth(nextColumn) + diffWidth);
+      // 兼容旧逻辑：该方法仅在 resize 场景使用，应写入 resizeWidth
+      setColumnAttribute(nextColumn, COLUMN_ATTRIBUTE.RESIZE_WIDTH, getColumnOrderWidth(nextColumn) + diffWidth);
     }
   };
 
@@ -609,11 +728,19 @@ const useColumns = (props: TablePropTypes) => {
     return tableColumnSchema.get(col)?.[attributeName];
   };
 
+  const activeColumns = computed(() => resolveActiveColumns(props));
+  const isActiveColumn = (column: Column, colIndex?: number) => {
+    const idx = visibleColumns.indexOf(column);
+    const realIndex = idx >= 0 ? idx : (colIndex ?? -1);
+    return realIndex >= 0 && activeColumns.value.includes(realIndex);
+  };
+
   const getColumnClass = (column: Column, colIndex: number) => ({
     [`${uuid}-column-${colIndex}`]: false,
     column_fixed: !!column.fixed,
-    column_fixed_left: !!column.fixed,
+    column_fixed_left: !!column.fixed && column.fixed !== 'right',
     column_fixed_right: column.fixed === 'right',
+    active: isActiveColumn(column, colIndex),
   });
 
   const getHeadColumnClass = (column: Column, colIndex: number) => ({
@@ -716,6 +843,10 @@ const useColumns = (props: TablePropTypes) => {
     filterColumns,
     columnGroup,
     columnGroupMap,
+    // 版本号用于追踪状态变化，避免深度监听
+    sortVersion,
+    filterVersion,
+    columnsVersion,
     clearColumnSort,
     clearSelectionAll,
     formatColumns,
@@ -726,6 +857,7 @@ const useColumns = (props: TablePropTypes) => {
     getColumnAttribute,
     getHeadColumnClass,
     getColumnClass,
+    getFixedStyle,
     getFixedStlye,
     getColumnRect,
     getColumnCustomClass,

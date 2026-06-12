@@ -33,6 +33,7 @@ import Loading, { BkLoadingSize } from '@bkui-vue/loading';
 import Popover from '@bkui-vue/popover';
 import { useFormItem } from '@bkui-vue/shared';
 import debounce from 'lodash/debounce';
+import filter from 'lodash/filter';
 import trim from 'lodash/trim';
 
 import { getCharLength, INPUT_MIN_WIDTH, useFlatList, usePage, useTagsOverflow } from './common';
@@ -212,8 +213,11 @@ export default defineComponent({
     });
 
     const changePopoverOffset = () => {
-      // 修改popover offset
-      popoverProps.offset.crossAxis = isSingleSelect.value ? 0 : tagInputItemRef.value?.offsetLeft;
+      // 修改popover offset（offset 可能被 props.popoverProps 覆盖为 number，需判断为对象再赋值）
+      const offset = popoverProps.offset;
+      if (typeof offset === 'object' && offset !== null && 'crossAxis' in offset) {
+        offset.crossAxis = isSingleSelect.value ? 0 : (tagInputItemRef.value?.offsetLeft ?? 0);
+      }
     };
     const scrollHandler = () => {
       if (pageState.isPageLoading || selectorListRef.value.scrollTop === 0) {
@@ -262,7 +266,7 @@ export default defineComponent({
         listState.selectedTagListCache = [...listState.selectedTagList];
 
         curInputValue.value = listState.selectedTagListCache[0][props.saveKey];
-        removeTag(listState.selectedTagList[0], 0);
+        removeTag(listState.selectedTagList[0]);
 
         handleInput();
       }
@@ -601,9 +605,9 @@ export default defineComponent({
      * @param index tag index
      * @param e mouse event
      */
-    const handleTagRemove = (data, index: number, e?: MouseEvent) => {
+    const handleTagRemove = (data, e?: MouseEvent) => {
       e?.stopPropagation();
-      removeTag(data, index);
+      removeTag(data);
       clearInput();
       handleChange('remove', data);
       tagInputRef.value.style.width = `${INPUT_MIN_WIDTH}px`;
@@ -938,10 +942,12 @@ export default defineComponent({
     /**
      * remove current tag
      * @param data tag data
-     * @param index tag index
      */
-    const removeTag = (data, index) => {
-      listState.selectedTagList.splice(index, 1);
+    const removeTag = data => {
+      listState.selectedTagList = filter(
+        listState.selectedTagList,
+        item => item[props.saveKey] !== data[props.saveKey],
+      );
 
       const isExistInit = saveKeyMap.value[data[props.saveKey]];
 
@@ -1090,7 +1096,7 @@ export default defineComponent({
                         {this.showTagClose && (
                           <Error
                             class='remove-tag'
-                            onClick={this.handleTagRemove.bind(this, item, index)}
+                            onClick={this.handleTagRemove.bind(this, item)}
                           />
                         )}
                       </li>

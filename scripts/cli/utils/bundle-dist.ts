@@ -130,10 +130,12 @@ export const buildDistScript = async () =>
             {
               format: 'cjs',
               exports: 'named',
+              assetFileNames: 'style.css',
             },
             {
               format: 'esm',
               exports: 'named',
+              assetFileNames: 'style.css',
             },
             {
               globals: {
@@ -142,6 +144,7 @@ export const buildDistScript = async () =>
               exports: 'named',
               format: 'umd',
               name: 'bkuiVue',
+              assetFileNames: 'style.css',
             },
           ],
         },

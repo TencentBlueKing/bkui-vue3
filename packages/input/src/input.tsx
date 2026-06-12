@@ -30,6 +30,8 @@ import { useLocale, usePrefix } from '@bkui-vue/config-provider';
 import { bkTooltips } from '@bkui-vue/directives';
 import { Close, DownSmall, Eye, Search, Unvisible } from '@bkui-vue/icon';
 import { classes, useFormItem } from '@bkui-vue/shared';
+import isNumber from 'lodash/isNumber';
+import trim from 'lodash/trim';
 
 import { emits } from './emits';
 import { props } from './props';
@@ -51,6 +53,7 @@ export const enum EVENTS {
   KEYPRESS = 'keypress',
   KEYUP = 'keyup',
   PASTE = 'paste',
+  SEARCH = 'search',
   UPDATE = 'update:modelValue',
 }
 
@@ -70,7 +73,6 @@ export default defineComponent({
     const formItem = useFormItem();
     const t = useLocale('input');
     const isFocused = ref(false);
-    const isCNInput = ref(false);
     const isTextArea = computed(() => props.type === 'textarea');
     const inputClsPrefix = computed(() =>
       isTextArea.value ? resolveClassName('textarea') : resolveClassName('input'),
@@ -103,8 +105,9 @@ export default defineComponent({
     const textareaCalcStyle = ref<StyleValue>();
 
     const suffixCls = getCls('suffix-icon');
+
     const suffixIconMap = {
-      search: () => <Search />,
+      search: () => <Search onClick={handleSearch} />,
       password: () => (
         <Unvisible
           class={suffixCls}
@@ -171,13 +174,13 @@ export default defineComponent({
 
     const incControlCls = computed(() =>
       classes({
-        'is-disabled': props.disabled || (props.modelValue as number) >= props.max,
+        'is-disabled': props.disabled || Number(props.modelValue) >= props.max,
       }),
     );
 
     const decControlCls = computed(() =>
       classes({
-        'is-disabled': props.disabled || (props.modelValue as number) <= props.min,
+        'is-disabled': props.disabled || Number(props.modelValue) <= props.min,
       }),
     );
 
@@ -283,10 +286,15 @@ export default defineComponent({
     }
 
     function clear() {
-      if (props.disabled) return;
-      const resetVal = isNumberInput.value ? props.min : '';
-      ctx.emit(EVENTS.UPDATE, resetVal, null);
-      ctx.emit(EVENTS.CHANGE, resetVal, null);
+      if (props.disabled) {
+        return;
+      }
+      let value: number | string = '';
+      if (props.type === 'number' && !props.allowEmptyValue) {
+        value = props.min !== -Infinity ? props.min : 0;
+      }
+      ctx.emit(EVENTS.UPDATE, value, null);
+      ctx.emit(EVENTS.CHANGE, value, null);
       ctx.emit(EVENTS.CLEAR);
     }
 
@@ -302,19 +310,27 @@ export default defineComponent({
         formItem?.validate?.('blur');
       }
     }
+    // type = search suffix icon click event
+    function handleSearch(e: Event) {
+      ctx.emit(EVENTS.SEARCH, e);
+    }
 
     // 事件句柄生成器
     function eventHandler(eventName) {
       return e => {
         props.stopPropagation && e.stopPropagation();
+        if (e.isComposing) {
+          // 跳过输入法复合事件
+          return;
+        }
+
+        let inputValue: number | string = trim(e.target.value) || '';
+
+        // 字符类型输入框才会有这种场景
         if (showMaxLimit.value && !props.overMaxLengthLimit) {
-          const limit = getValueLimits(e.target.value);
-          if (
-            limit.len >= ceilMaxLength.value &&
-            (eventName === EVENTS.KEYDOWN || eventName === EVENTS.INPUT) &&
-            !isCNInput.value
-          ) {
-            const val = limit.pos > 0 ? e.target.value.slice(0, limit.pos) : e.target.value;
+          const limit = getValueLimits(inputValue);
+          if (limit.len >= ceilMaxLength.value && (eventName === EVENTS.KEYDOWN || eventName === EVENTS.INPUT)) {
+            const val = limit.pos > 0 ? `${inputValue}`.slice(0, limit.pos) : inputValue;
             innerInputValue.value = {
               value: val,
             };
@@ -323,40 +339,39 @@ export default defineComponent({
             return;
           }
         }
-        if (eventName === EVENTS.KEYDOWN && (e.code === 'Enter' || e.key === 'Enter' || e.keyCode === 13)) {
-          ctx.emit(EVENTS.ENTER, isNumberInput.value ? handleNumber(e.target.value, 0) : e.target.value, e);
+
+        // 数字输入框需要处理空值和类型转换
+        if (props.type === 'number') {
+          if (inputValue === '') {
+            // 处理空值(默认为0，可通过allowEmptyValue控制)
+            if (!props.allowEmptyValue) {
+              inputValue = props.min !== -Infinity ? props.min : 0;
+            }
+          } else {
+            inputValue = Number(Number(inputValue).toFixed(props.precision));
+          }
         }
 
-        if (isCNInput.value && [EVENTS.INPUT, EVENTS.CHANGE, EVENTS.KEYDOWN].some(e => eventName === e)) return;
-        if (eventName === EVENTS.INPUT) {
-          // ctx.emit(EVENTS.UPDATE, isNumberInput.value ? handleNumber(e.target.value, 0) : e.target.value, e);
-          ctx.emit(
-            EVENTS.UPDATE,
-            isNumberInput.value
-              ? // 这里不直接使用 handleNumber，是因为 handleNumber 里有 min 和 max 的判断
-                // https://github.com/TencentBlueKing/bkui-vue3/issues/2426
-                (() => {
-                  const precision = Number.isInteger(props.precision) ? props.precision : 0;
-                  const val = e.target.value;
-
-                  if (Number.isNaN(val)) {
-                    return isNum(props.min) ? props.min : 0;
-                  }
-                  if (val === '' || val === null || val === undefined) {
-                    return '';
-                  }
-                  return (+val).toFixed(precision);
-                })()
-              : e.target.value,
-            e,
-          );
-        } else if (eventName === EVENTS.CHANGE && isNumberInput.value) {
-          const val = handleNumber(e.target.value, 0);
-          ctx.emit(EVENTS.UPDATE, val, e);
-          ctx.emit(eventName, val, e);
-          return;
+        if (eventName === EVENTS.KEYDOWN && e.code === 'Enter') {
+          // 输入框值改变时，数字输入框需要限制最大最小值
+          if (isNumber(inputValue)) {
+            inputValue = Math.min(Math.max(Number(inputValue), props.min), props.max);
+          }
+          ctx.emit(EVENTS.ENTER, inputValue, e);
+          ctx.emit(EVENTS.UPDATE, inputValue, e);
+        } else if (eventName === EVENTS.INPUT) {
+          ctx.emit(EVENTS.INPUT, inputValue, e);
+          ctx.emit(EVENTS.UPDATE, inputValue, e);
+        } else if (eventName === EVENTS.CHANGE) {
+          // 输入框值改变时，数字输入框需要限制最大最小值
+          if (isNumber(inputValue)) {
+            inputValue = Math.min(Math.max(Number(inputValue), props.min), props.max);
+          }
+          ctx.emit(EVENTS.CHANGE, inputValue, e);
+          ctx.emit(EVENTS.UPDATE, inputValue, e);
+        } else {
+          ctx.emit(eventName, inputValue, e);
         }
-        ctx.emit(eventName, isNumberInput.value ? handleNumber(e.target.value, 0) : e.target.value, e);
       };
     }
 
@@ -369,52 +384,22 @@ export default defineComponent({
       EVENTS.INPUT,
     ].map(eventHandler);
 
-    // 输入法启用时
-    function handleCompositionStart() {
-      isCNInput.value = true;
-    }
-
-    // 输入法输入结束时
-    function handleCompositionEnd(e) {
-      isCNInput.value = false;
-      handleInput(e);
-    }
-
-    function isNum(num): boolean {
-      return typeof num === 'number' && !Number.isNaN(num);
-    }
-
-    function handleNumber(modelValue: number, step: number, INC = true) {
-      const numStep = Number(step);
-      const factor = isNum(numStep) ? numStep : 1;
-      const precision = Number.isInteger(props.precision) ? props.precision : 0;
-      const val = Number(modelValue);
-
-      if (Number.isNaN(val)) {
-        return isNum(props.min) ? props.min : 0;
-      }
-      let newVal = val + (INC ? factor : -1 * factor);
-      if (isNum(props.max)) {
-        newVal = Math.min(newVal, props.max);
-      }
-      if (isNum(props.min)) {
-        newVal = Math.max(newVal, props.min);
-      }
-      return +newVal.toFixed(precision);
-    }
-
     function handleInc(e) {
-      if (props.disabled) return;
-      const newVal = handleNumber(props.modelValue as number, props.step);
-      ctx.emit(EVENTS.UPDATE, newVal, e);
-      ctx.emit(EVENTS.CHANGE, newVal, e);
+      if (props.disabled) {
+        return;
+      }
+      const newValue = Number(Math.min(Number(props.modelValue) + props.step, props.max).toFixed(props.precision));
+      ctx.emit(EVENTS.UPDATE, newValue, e);
+      ctx.emit(EVENTS.CHANGE, newValue, e);
     }
 
     function handleDec(e) {
-      if (props.disabled) return;
-      const newVal = handleNumber(props.modelValue as number, props.step, false);
-      ctx.emit(EVENTS.UPDATE, newVal, e);
-      ctx.emit(EVENTS.CHANGE, newVal, e);
+      if (props.disabled) {
+        return;
+      }
+      const newValue = Number(Math.max(Number(props.modelValue) - props.step, props.min).toFixed(props.precision));
+      ctx.emit(EVENTS.UPDATE, newValue, e);
+      ctx.emit(EVENTS.CHANGE, newValue, e);
     }
 
     function getCls(name) {
@@ -443,8 +428,6 @@ export default defineComponent({
       onKeypress: handleKeyPress,
       onKeydown: handleKeydown,
       onKeyup: handleKeyup,
-      onCompositionstart: handleCompositionStart,
-      onCompositionend: handleCompositionEnd,
     };
     return () => (
       <div

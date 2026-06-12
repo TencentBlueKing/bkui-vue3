@@ -43,6 +43,7 @@ export const props = {
   checked: PropTypes.bool.def(false),
   radius: PropTypes.string.def('2px'),
   size: PropTypes.size(),
+  stopPropagation: PropTypes.bool.def(true),
 };
 
 export type TagProps = ExtractPropTypes<typeof props>;

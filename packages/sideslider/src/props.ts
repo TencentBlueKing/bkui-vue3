@@ -46,6 +46,12 @@ export const props = {
       return true;
     },
   },
+  showFooter: PropTypes.bool.def(true),
+  resizable: PropTypes.bool.def(false), // 是否可以拖拽调整大小
+  minWidth: PropTypes.number.def(400), // 最小宽度
+  maxWidth: PropTypes.number.def(Infinity), // 最大宽度
+  triggerWidth: PropTypes.number.def(5), // 拖拽触发区域宽度
+  immediate: PropTypes.bool.def(false), // 是否实时拖拽（拖拽时立即改变宽度）
 };
 
 export type SidesliderType = ExtractPropTypes<typeof props>;

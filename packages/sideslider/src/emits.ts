@@ -29,6 +29,9 @@ export const emits = {
   ['shown']: () => void 0,
   ['hidden']: () => void 0,
   ['animation-end']: () => void 0,
+  ['before-resize']: (_event: MouseEvent) => _event,
+  ['resizing']: (_width: number) => _width,
+  ['after-resize']: (_width: number) => _width,
 };
 
 export type SidesliderEmits = typeof emits;

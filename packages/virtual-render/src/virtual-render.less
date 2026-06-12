@@ -1,12 +1,45 @@
 @import '@bkui-vue/styles/themes/themes.less';
 @import '@bkui-vue/styles/mixins/scroll.less';
-@import '@bkui-vue/scrollbar/css/scrollbar.less';
 
 .@{bk-prefix}-virtual-render {
   position: relative;
+  overflow: auto;
 
+  // 自定义滚动条样式（可选）
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  // 占位元素，撑起滚动高度
   .@{bk-prefix}-virtual-section {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 1px;
     background: transparent;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  // 实际内容容器，使用 transform 定位
+  .@{bk-prefix}-virtual-content {
+    position: relative;
+    width: 100%;
+    will-change: transform;
+    z-index: 1;
   }
 }

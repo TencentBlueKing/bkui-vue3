@@ -26,36 +26,57 @@
 
 import { Ref } from 'vue';
 
-import BkScrollbar, { IScrollbarSize, VirtualElement } from '@bkui-vue/scrollbar';
+/**
+ * 原生滚动管理 Hook
+ * 提供统一的滚动控制 API
+ */
+export default () => {
+  let targetElement: HTMLElement = null;
 
-import { VirtualRenderProps } from './props';
-
-export default (props: VirtualRenderProps) => {
-  let instance: BkScrollbar = null;
-
-  const init = (target: Ref<Partial<Element> & Partial<VirtualElement>>) => {
-    instance = new BkScrollbar(target.value, {
-      scrollingThreshold: 120,
-      scrollSize: props.scrollbar?.size as IScrollbarSize,
-    });
+  /**
+   * 初始化滚动目标元素
+   */
+  const init = (target: Ref<HTMLElement>) => {
+    targetElement = target.value;
   };
 
-  const scrollTo = (x, y) => {
-    instance?.scrollTo({ x, y });
-  };
-
-  const updateScrollHeight = (height: number) => {
-    if (instance?.element) {
-      (instance?.element as VirtualElement).scrollHeight = height;
-      instance?.update();
+  /**
+   * 滚动到指定位置
+   */
+  const scrollTo = (x: number, y: number) => {
+    if (targetElement) {
+      if (typeof (targetElement as any).scrollTo === 'function') {
+        targetElement.scrollTo({
+          left: x,
+          top: y,
+          behavior: 'auto',
+        });
+      } else {
+        // jsdom 等环境可能没有 scrollTo，降级为直接赋值
+        targetElement.scrollLeft = x;
+        targetElement.scrollTop = y;
+      }
     }
+  };
+
+  /**
+   * 更新方法（兼容旧 API，原生滚动无需更新）
+   */
+  const update = () => {
+    // 原生滚动无需手动更新
+  };
+
+  /**
+   * 更新滚动高度（兼容旧 API，原生滚动由 CSS 控制）
+   */
+  const updateScrollHeight = (_height: number) => {
+    // 原生滚动高度由内容决定，无需手动设置
   };
 
   return {
     init,
-    instance,
     scrollTo,
-    update: () => instance?.update(),
+    update,
     updateScrollHeight,
   };
 };

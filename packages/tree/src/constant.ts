@@ -25,9 +25,12 @@
  */
 
 export enum EVENTS {
+  NODE_ASYNC_LOAD = 'nodeAsyncLoad',
+  NODE_ASYNC_LOAD_ERROR = 'nodeAsyncLoadError',
   NODE_CHECKED = 'nodeChecked',
   NODE_CLICK = 'nodeClick',
   NODE_COLLAPSE = 'nodeCollapse',
+  NODE_DATA_CHANGE = 'nodeDataChange',
   NODE_DRAG_LEAVE = 'nodeDragLeave',
   NODE_DRAG_OVER = 'nodeDragOver',
   NODE_DRAG_SORT = 'nodeDragSort',
@@ -39,10 +42,13 @@ export enum EVENTS {
 }
 const EMPTY = (..._args) => true;
 export const TreeEmitEventsType = {
+  [EVENTS.NODE_ASYNC_LOAD]: EMPTY,
+  [EVENTS.NODE_ASYNC_LOAD_ERROR]: EMPTY,
   [EVENTS.NODE_CLICK]: EMPTY,
   [EVENTS.NODE_COLLAPSE]: EMPTY,
   [EVENTS.NODE_EXPAND]: EMPTY,
   [EVENTS.NODE_CHECKED]: EMPTY,
+  [EVENTS.NODE_DATA_CHANGE]: EMPTY,
   [EVENTS.NODE_DRAG_START]: EMPTY,
   [EVENTS.NODE_DRAG_OVER]: EMPTY,
   [EVENTS.NODE_DRAG_LEAVE]: EMPTY,
@@ -93,6 +99,7 @@ export const NODE_SOURCE_ATTRS = {
  * 节点点击可执行行为配置
  */
 export enum NodeContentActionEnum {
+  CHECKED = 'checked',
   CLICK = 'click',
   COLLAPSE = 'collapse',
   EXPAND = 'expand',

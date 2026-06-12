@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { computed, h, onMounted, onUnmounted, reactive, ref } from 'vue';
+import { computed, h, onMounted, onUnmounted, ref } from 'vue';
 
 import { VirtualRenderProps } from './props';
 import useFixTop from './use-fix-top';
@@ -32,25 +32,18 @@ import { VisibleRender } from './v-virtual-render';
 
 export default (props: VirtualRenderProps, ctx) => {
   const { renderAs } = props;
-  const refRoot = ref(null);
+  const refRoot = ref<HTMLElement>(null);
 
-  const { init, scrollTo } = useScrollbar(props);
-  const contentStyle = reactive({ x: 0, y: 0 });
+  const { init, scrollTo } = useScrollbar();
 
   /** 指令触发Scroll事件，计算当前startIndex & endIndex & scrollTop & translateY */
   const handleScrollCallback = (event, _startIndex, _endIndex, _scrollTop, translateY, scrollLeft, pos) => {
-    const { scrollbar } = pos;
-    if (scrollbar?.offset) {
-      Object.assign(contentStyle, scrollbar?.offset ?? {});
-    }
-
     ctx.emit('content-scroll', [event, { translateY, translateX: scrollLeft, pos }]);
   };
 
-  let renderInstance = null;
+  let renderInstance: VisibleRender = null;
   const binding = computed(() => ({
     lineHeight: props.lineHeight,
-    scrollbar: props.scrollbar,
     handleScrollCallback,
     pagination: {},
     throttleDelay: props.throttleDelay,
@@ -65,6 +58,7 @@ export default (props: VirtualRenderProps, ctx) => {
       width: typeof props.width === 'number' ? `${props.width}px` : props.width,
       display: 'inline-block',
       maxHeight: props.maxHeight ?? height,
+      overflow: 'auto', // 使用原生滚动
       ...props.wrapperStyle,
     };
   });
@@ -80,10 +74,7 @@ export default (props: VirtualRenderProps, ctx) => {
 
   onMounted(() => {
     renderInstance = new VisibleRender(binding, refRoot.value);
-    if (props.scrollbar?.enabled) {
-      init(refRoot);
-    }
-
+    init(refRoot);
     renderInstance.install();
   });
 
@@ -91,13 +82,7 @@ export default (props: VirtualRenderProps, ctx) => {
     renderInstance?.uninstall();
   });
 
-  const wrapperClassNames = computed(() => {
-    if (props.scrollbar.enabled) {
-      return [props.className];
-    }
-
-    return [props.className];
-  });
+  const wrapperClassNames = computed(() => [props.className]);
 
   return {
     rendAsTag: () =>

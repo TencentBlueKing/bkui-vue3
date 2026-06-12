@@ -37,7 +37,7 @@ type IntersectionObserverOptions = {
 
 type IntersectionObserverResponseValue = {
   level: number;
-  node: Record<string, any>;
+  node: Record<string, unknown>;
   index: number;
   entry: IntersectionObserverEntry;
 };

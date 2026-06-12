@@ -30,53 +30,66 @@ import { SearchOption, TreePropTypes } from './props';
 
 export default (props: TreePropTypes) => {
   const refSearch = toRef(props, 'search');
-  const { resultType = 'tree', showChildNodes = true } = (props.search ?? {}) as SearchOption;
 
   const isCommonType = (val: unknown) => ['string', 'number', 'boolean'].includes(typeof val);
-  const exactMath = (matchValue: unknown, itemValue: unknown) => matchValue === itemValue;
-  const regMatch = (matchValue: unknown, itemValue: unknown) => new RegExp(`${matchValue}`, 'i').test(`${itemValue}`);
+  const exactMatch = (matchValue: unknown, itemValue: unknown) => matchValue === itemValue;
+  const fuzzyMatch = (matchValue: unknown, itemValue: unknown) => {
+    try {
+      return new RegExp(`${matchValue}`, 'i').test(`${itemValue}`);
+    } catch {
+      return `${itemValue}`.toLowerCase().includes(`${matchValue}`.toLowerCase());
+    }
+  };
   const matchFn = (match: (...args) => boolean, args: unknown[]) => Reflect.apply(match, this, args);
-  const isSearchDisabled = refSearch.value === undefined || refSearch.value === false;
+
+  const isSearchDisabled = computed(() => refSearch.value === undefined || refSearch.value === false);
+
+  const searchOption = computed<SearchOption>(() => {
+    if (refSearch.value && typeof refSearch.value === 'object') {
+      return refSearch.value as SearchOption;
+    }
+    const emptyOption: SearchOption = { value: '' };
+    return emptyOption;
+  });
+
+  const resultType = computed(() => searchOption.value.resultType ?? 'tree');
+  const showChildNodes = computed(() => searchOption.value.showChildNodes ?? false);
+
+  const getSearchValue = () => {
+    if (isCommonType(refSearch.value)) {
+      return refSearch.value;
+    }
+    return searchOption.value.value ?? '';
+  };
 
   const searchFn = (itemValue: unknown, item: unknown) => {
-    if (isSearchDisabled) {
+    if (isSearchDisabled.value) {
       return true;
     }
 
-    if (isCommonType(refSearch.value)) {
-      if (`${refSearch.value}`.length === 0) {
-        return false;
-      }
-
-      return matchFn(regMatch, [refSearch.value, itemValue, item]);
-    }
-
-    const { value = '', match = 'fuzzy' } = refSearch.value as SearchOption;
-    const defultMatch = match === 'fuzzy' ? regMatch : exactMath;
-    const matchCallback = typeof match === 'function' ? match : defultMatch;
+    const value = getSearchValue();
     if (`${value}`.length === 0) {
       return false;
     }
 
+    if (isCommonType(refSearch.value)) {
+      return matchFn(fuzzyMatch, [value, itemValue, item]);
+    }
+
+    const { match = 'fuzzy' } = searchOption.value;
+    const defaultMatch = match === 'fuzzy' ? fuzzyMatch : exactMatch;
+    const matchCallback = typeof match === 'function' ? match : defaultMatch;
     return matchFn(matchCallback, [value, itemValue, item]);
   };
 
   const isSearchActive = computed(() => {
-    if (refSearch.value === false) {
+    if (isSearchDisabled.value) {
       return false;
     }
-
-    if (isCommonType(refSearch.value)) {
-      return `${refSearch.value}`.length > 0;
-    }
-
-    const { value = '' } = refSearch.value as SearchOption;
-    return `${value}`.length > 0;
+    return `${getSearchValue()}`.length > 0;
   });
-  /**
-   * 索索结果展示为Tree
-   */
-  const isTreeUI = computed(() => resultType === 'tree');
+
+  const isTreeUI = computed(() => resultType.value === 'tree');
 
   return {
     searchFn,

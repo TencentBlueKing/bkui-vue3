@@ -136,7 +136,7 @@ export default ({
       return column.renderHead({ index, column });
     }
 
-    return resolvePropVal(column, 'label', [index]);
+    return resolvePropVal(column, 'label', [column, index]);
   };
 
   const getHeadCellRender = () => {
@@ -268,7 +268,7 @@ export default ({
     }
   };
 
-  const headStyle = Object.assign(columns.getFixedStlye(column), {
+  const headStyle = Object.assign(columns.getFixedStyle(column), {
     '--background-color': DEF_COLOR[props.thead?.color ?? IHeadColor.DEF1],
   });
 
@@ -293,7 +293,7 @@ export default ({
   );
 
   const getGroupRender = () => {
-    return resolvePropVal(column, 'label', [index, column]);
+    return resolvePropVal(column, 'label', [column, index]);
   };
 
   const getTH = () => {

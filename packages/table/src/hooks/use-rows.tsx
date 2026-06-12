@@ -78,6 +78,10 @@ const useRows = (props: TablePropTypes) => {
   };
 
   const getSelfRowHeight = (row?: Record<string, object>, rowIndex?: number, type?: string) => {
+    if (props.rowHeight === 'auto') {
+      return LINE_HEIGHT;
+    }
+
     if (typeof props.rowHeight === 'function' || /^\d+/.test(`${props.rowHeight}`)) {
       return resolvePropVal(props, 'rowHeight', [
         {

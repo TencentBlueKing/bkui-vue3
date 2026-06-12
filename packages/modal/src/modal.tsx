@@ -113,8 +113,11 @@ export default defineComponent({
     };
 
     const handleClickOutSide = (e: MouseEvent) => {
-      e.stopImmediatePropagation();
-      e.stopPropagation();
+      const target = e.target as HTMLElement;
+      // 判断点击的是否是当前 Dialog 的 mask（而不是子 Dialog 的 mask）
+      if (target !== maskRef.value) {
+        return; // 不是当前 Dialog 的 mask，不处理
+      }
       e.preventDefault();
 
       if (props.quickClose) {
@@ -193,14 +196,16 @@ export default defineComponent({
                 />
               </div>
             </div>
-            <div
-              class={{
-                [resolveClassName('modal-footer')]: true,
-                'is-fixed': isContentScroll.value,
-              }}
-            >
-              {slots.footer?.()}
-            </div>
+            {slots.footer && (
+              <div
+                class={{
+                  [resolveClassName('modal-footer')]: true,
+                  'is-fixed': isContentScroll.value,
+                }}
+              >
+                {slots.footer?.()}
+              </div>
+            )}
             {props.closeIcon && (
               <div
                 class={resolveClassName('modal-close')}

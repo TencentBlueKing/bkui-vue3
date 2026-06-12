@@ -37,9 +37,9 @@ export const props = {
   suffixIcon: PropTypes.string,
   suffix: PropTypes.string,
   prefix: PropTypes.string,
-  step: PropTypes.number,
-  max: PropTypes.number,
-  min: PropTypes.number,
+  step: PropTypes.number.def(1),
+  max: PropTypes.number.def(Infinity),
+  min: PropTypes.number.def(-Infinity),
   maxlength: PropTypes.number,
   maxcharacter: PropTypes.number,
   behavior: PropTypes.oneOf(['normal', 'simplicity']).def('normal'),
@@ -61,6 +61,7 @@ export const props = {
   resize: PropTypes.bool.def(true),
   autosize: PropTypes.oneOfType([Boolean, Object]).def(false),
   stopPropagation: PropTypes.bool.def(true),
+  allowEmptyValue: PropTypes.bool.def(false),
 };
 
 export type InputProps = ExtractPropTypes<typeof props>;

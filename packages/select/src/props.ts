@@ -97,8 +97,16 @@ export const optionProps = {
     require: true,
   },
   name: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  disabled: PropTypes.bool.def(false),
+  disabled: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.shape({
+      disabled: PropTypes.bool,
+      tips: PropTypes.string,
+    }),
+  ]).def(false),
   order: PropTypes.number.def(0),
+  // 虚拟滚动模式下跳过注册，避免频繁 register/unregister 造成更新风暴
+  skipRegister: PropTypes.bool.def(false),
 };
 
 export type OptionProps = ExtractPropTypes<typeof optionProps>;
@@ -109,6 +117,7 @@ export const optionGroupProps = {
   collapsible: PropTypes.bool.def(false), // 是否开启折叠
   collapse: PropTypes.bool.def(false), // 是否折叠初始状态
   visible: PropTypes.bool.def(true),
+  groupStyle: PropTypes.oneOf(['default', 'divider']).def('default'),
 };
 
 export type OptionGroupProps = ExtractPropTypes<typeof optionGroupProps>;

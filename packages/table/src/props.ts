@@ -251,7 +251,8 @@ export const RowClassFunctionStringType = toType<RowClassFunctionString>('RowCla
 
 export type RowHeightFunctionNumber =
   | ((type: string, row: Record<string, object>, rowIndex: number, size?) => number)
-  | number;
+  | number
+  | 'auto';
 export const RowHeightFunctionNumberType = toType<RowHeightFunctionNumber>('RowHeightFunctionNumberType', {});
 
 type FunctionNumber = ((...args) => void) | number;

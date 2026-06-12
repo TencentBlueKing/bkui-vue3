@@ -28,12 +28,13 @@ import { withInstallProps } from '@bkui-vue/shared';
 import { useHover } from './common';
 import Option from './option';
 import OptionGroup from './optionGroup';
+import pinyin from './pinyin/index';
 import Component from './select';
 
 const BkSelect = withInstallProps(Component, { Option, Group: OptionGroup });
 
 export default BkSelect;
-export { BkSelect, Option as BkOption, OptionGroup as BkOptionGroup, useHover };
+export { BkSelect, Option as BkOption, OptionGroup as BkOptionGroup, useHover, pinyin };
 export type { SelectEmits, OptionEmits, OptionGroupEmits } from './emits';
 export type { SelectProps, OptionProps, OptionGroupProps } from './props';
 export type { ISelected } from './type';

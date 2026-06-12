@@ -61,6 +61,10 @@ export const props = {
   dialogType: dialogTypeUnion(),
   // 按钮loading
   isLoading: PropTypes.bool.def(false),
+  // 是否为默认内容区包裹 dialog-content 样式类
+  showContentClass: PropTypes.bool.def(true),
+  // 是否显示在body内即与#app同级
+  transfer: PropTypes.oneOfType([Boolean, String, HTMLElement]).def(true),
 };
 
 export type DialogProps = ExtractPropTypes<typeof props>;

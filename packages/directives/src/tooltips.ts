@@ -169,12 +169,10 @@ function renderContext(value: string, content: HTMLElement) {
 function renderContent(opts): HTMLElement {
   const { content: value, arrow: hasArrow, theme, extCls } = opts;
   const isLight = theme === 'light';
-  const zIndex = bkZIndexManager.getPopperIndex();
   const content = document.createElement('div');
   const prefix = document.documentElement.style.getPropertyValue('--bk-prefix') || 'bk';
   content.className = `${resolveClassName('popper', prefix)} ${isLight ? 'light' : 'dark'} ${extCls}`;
   content.innerText = value;
-  content.style.zIndex = String(zIndex);
   renderContext(value, content);
 
   if (hasArrow) {
@@ -252,6 +250,7 @@ function show(el: HTMLElement) {
   const { popper, opts } = nodeList.get(el);
   const { disabled, content, arrow: hasArrow, onShow, boundary, modifiers = [] } = opts;
   if (disabled) return;
+  popper.style.zIndex = String(bkZIndexManager.getPopperIndex());
   renderContext(content, popper);
   if (hasArrow) {
     const arrow = renderArrow();
