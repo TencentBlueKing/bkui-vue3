@@ -30,13 +30,31 @@ const BkPopover = withInstall(Component);
 
 export default BkPopover;
 
-export type { PopoverEmits } from './emits';
 export { default as $bkPopover } from './plugin-popover';
 
-// 这里兼容旧的类型， 导出两个
-export type {
-  PopoverPropTypes as PopoverProps,
-  PopoverPropTypes,
-  IAxesOffsets,
-} from './props';
+// 兼容旧的类型导出：PopoverProps 作为 PopoverPropTypes 的别名（外部均以类型方式使用）
+export type { PopoverPropTypes as PopoverProps, PopoverPropTypes } from './props';
 export type PopoverInstance = InstanceType<typeof BkPopover>;
+
+// 导出 composables
+export { useDelay, useTrigger, usePopoverFloating } from './composables';
+
+// 导出类型
+export type {
+  TriggerType,
+  RenderDirectiveType,
+  RenderType,
+  ThemeType,
+  IAxesOffsets,
+  PopoverContent,
+  PopoverTarget,
+  PopoverBoundary,
+  PopoverDelay,
+  PopoverPlacement,
+  PopoverShowHidePayload,
+  PopoverClickOutsidePayload,
+  PopoverEmits,
+  PopoverExpose,
+  PopoverPluginOptions,
+  PopoverPluginInstance,
+} from './types';

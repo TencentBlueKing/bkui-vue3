@@ -23,16 +23,12 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { defineComponent } from 'vue';
 
-import { PropTypes } from '@bkui-vue/shared';
+export { useDelay, resolveDelay } from './use-delay';
+export type { UseDelayOptions } from './use-delay';
 
-export default defineComponent({
-  props: {
-    class: PropTypes.string.def(''),
-    mode: PropTypes.string.def(''),
-  },
-  render() {
-    return <>{this.$slots.default?.()}</>;
-  },
-});
+export { useTrigger } from './use-trigger';
+export type { UseTriggerOptions, UseTriggerProps, UseTriggerReturn } from './use-trigger';
+
+export { usePopoverFloating, useFloating } from './use-floating';
+export type { UseFloatingProps, UseFloatingReturn } from './use-floating';

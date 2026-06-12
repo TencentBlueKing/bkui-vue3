@@ -94,7 +94,7 @@ export default defineComponent({
     // 定义isShowPanel变量，用于标致面板显示
     const isShowPanel = ref(false);
 
-    // 用computed定义checkedValue变量，用于监听modelValue的变化
+    // 定义checkedValue变量，用于监听modelValue的变化
     const checkedValue = computed({
       get: () => modelValue.value,
       set: (value: Array<number | string | string[]>) => {
@@ -260,7 +260,6 @@ export default defineComponent({
         return;
       }
       // 开始过滤
-      isFiltering.value = true;
       isFiltering.value = true;
 
       // 筛选方法，如果props中存在filterMethod，则使用props中的方法，否则使用默认方法

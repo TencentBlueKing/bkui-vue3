@@ -17,7 +17,18 @@
 
 <script lang="ts" setup>
 import hljs from 'highlight.js/lib/core';
+import bash from 'highlight.js/lib/languages/bash';
+import css from 'highlight.js/lib/languages/css';
 import javascript from 'highlight.js/lib/languages/javascript';
+import json from 'highlight.js/lib/languages/json';
+import less from 'highlight.js/lib/languages/less';
+import markdown from 'highlight.js/lib/languages/markdown';
+import plaintext from 'highlight.js/lib/languages/plaintext';
+import scss from 'highlight.js/lib/languages/scss';
+import shell from 'highlight.js/lib/languages/shell';
+import typescript from 'highlight.js/lib/languages/typescript';
+import xml from 'highlight.js/lib/languages/xml';
+import yaml from 'highlight.js/lib/languages/yaml';
 import MarkdownIt from 'markdown-it';
 import MarkdownItContainer from 'markdown-it-container';
 import { computed } from 'vue';
@@ -44,8 +55,21 @@ const props = withDefaults(defineProps<IProps>(), {
   parseTagList: () => ['h2'],
 });
 
-// 注册语言
+// 注册语言（registerLanguage 会自动注册各语言的别名，如 js、ts、sh、html 等）
 hljs.registerLanguage('javascript', javascript);
+hljs.registerLanguage('typescript', typescript);
+hljs.registerLanguage('xml', xml);
+hljs.registerLanguage('css', css);
+hljs.registerLanguage('scss', scss);
+hljs.registerLanguage('less', less);
+hljs.registerLanguage('json', json);
+hljs.registerLanguage('yaml', yaml);
+hljs.registerLanguage('markdown', markdown);
+hljs.registerLanguage('bash', bash);
+hljs.registerLanguage('shell', shell);
+hljs.registerLanguage('plaintext', plaintext);
+// Vue 单文件以 HTML 模板为主，使用 xml 语法可同时高亮 template / 内嵌 script / style
+hljs.registerLanguage('vue', xml);
 
 // 将标题转换为合法的 id
 const titleToId = (title: string): string => {
@@ -97,14 +121,23 @@ const md = new MarkdownIt({
   typographer: true,    // 启用排版优化
   breaks: true,         // 将换行符转换为 <br>
   highlight: (str: string, lang: string) => {
-    // 代码高亮函数
+    // 指定了已注册的语言：按该语言高亮
     if (lang && hljs.getLanguage(lang)) {
-      return `<pre class="hljs"><code class="language-${lang}">${
-        hljs.highlight(str, { language: lang, ignoreIllegals: true }).value
-      }</code></pre>`;
+      try {
+        return `<pre class="hljs"><code class="language-${lang}">${
+          hljs.highlight(str, { language: lang, ignoreIllegals: true }).value
+        }</code></pre>`;
+      } catch {
+        // 高亮失败时降级为自动识别
+      }
     }
-    // 没有指定语言或高亮失败时，使用转义的纯文本
-    return `<pre class="hljs"><code>${md.utils.escapeHtml(str)}</code></pre>`;
+    // 未指定语言或语言未注册：自动识别，尽量保证有高亮效果
+    try {
+      const { value, language } = hljs.highlightAuto(str);
+      return `<pre class="hljs"><code class="language-${language ?? ''}">${value}</code></pre>`;
+    } catch {
+      return `<pre class="hljs"><code>${md.utils.escapeHtml(str)}</code></pre>`;
+    }
   },
 }).use(MarkdownItContainer, 'info', {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -163,14 +196,14 @@ const getMarkdownHtml = () => {
 <style scoped lang="postcss">
 .markdown-container {
   display: flex;
-  width: 100%;
   gap: 24px;
+  width: 100%;
 }
 
 .markdown-body-content {
   width: calc(100% - 146px);
-  background-color: #fff;
   padding: 24px;
+  background-color: #fff;
 }
 
 :deep(.markdown-body) {
@@ -178,102 +211,175 @@ const getMarkdownHtml = () => {
   font-size: 16px;
   line-height: 1.6;
   color: #333;
-  word-wrap: break-word;
+  overflow-wrap: break-word;
 
   >*:first-child {
     margin-top: 0 !important;
   }
 
   h1,h2,h3,h4,h5,h6,p,hr,li,img {
-    margin: 0;
     padding: 0;
-    border-bottom: none;
+    margin: 0;
     font-family: PingFangSC, PingFangSC-Medium;
+    border-bottom: none;
   }
+
   h1,h2,h3,h4,h5,h6 {
       font-family: PingFangSC, PingFangSC-Medium;
   }
+
   h1 {
       margin-top: 40px;
       margin-bottom: 12px;
       font-size: 20px;
       font-weight: 500;
-      text-align: left;
-      color: #000;
       line-height: 28px;
+      color: #000;
+      text-align: left;
   }
+
   h2 {
       margin-top: 40px;
       font-size: 16px;
       font-weight: 500;
-      text-align: left;
-      color: #000;
       line-height: 24px;
+      color: #000;
+      text-align: left;
   }
+
   h3 {
       margin-top: 30px;
       margin-bottom: 6px;
       font-size: 14px;
       font-weight: 500;
-      text-align: left;
-      color: #000;
       line-height: 22px;
+      color: #000;
+      text-align: left;
   }
+
   h4,h5,h6 {
       margin-top: 20px;
       font-size: 14px;
       font-weight: 500;
-      text-align: left;
-      color: #000000;
       line-height: 22px;
+      color: #000;
+      text-align: left;
   }
+
   p {
       margin-top: 8px;
+      font-family: PingFangSC, PingFangSC-Regular;
       font-size: 14px;
       font-weight: 400;
-      text-align: left;
-      color: #63656e;
       line-height: 24px;
-      font-family: PingFangSC, PingFangSC-Regular;
+      color: #63656e;
+      text-align: left;
   }
+
   hr {
       margin-top: 40px;
       border: none;
       border-top:1px solid #dcdee5;
   }
+
   ul {
     padding-left: 0;
   }
+
   li {
       margin-top: 4px;
       margin-left: 17px;
+      font-family: PingFangSC, PingFangSC-Regular;
       font-size: 14px;
       font-weight: 400;
-      text-align: left;
-      color: #63656e;
       line-height: 22px;
-      font-family: PingFangSC, PingFangSC-Regular;
+      color: #63656e;
+      text-align: left;
       list-style: disc;
   }
+
   img {
-      margin-top: 10px;
       max-width: 100%;
+      margin-top: 10px;
   }
+
   a {
     color: #3a84ff;
   }
 
-  .custom-container {
+  /* 表格样式 */
+  table {
+    display: block;
+    width: 100%;
     margin: 16px 0;
-    padding: 0;
+    overflow-x: auto;
+    font-size: 14px;
+    border-collapse: collapse;
+  }
+
+  table th,
+  table td {
+    padding: 8px 16px;
+    line-height: 22px;
+    text-align: left;
+    border: 1px solid #dcdee5;
+  }
+
+  table th {
+    font-weight: 500;
+    color: #313238;
+    background-color: #f5f7fa;
+  }
+
+  table td {
+    color: #63656e;
+  }
+
+  table tr:nth-child(even) td {
+    background-color: #fafbfd;
+  }
+
+  /* 行内代码 */
+  code {
+    padding: 2px 6px;
+    margin: 0 2px;
+    font-family: 'Roboto Mono', Consolas, Monaco, monospace;
+    font-size: 13px;
+    color: #e96900;
+    background-color: #f5f7fa;
     border-radius: 2px;
+  }
+
+  /* 代码块 */
+  pre {
+    margin: 16px 0;
+    overflow: auto;
+    font-size: 13px;
+    line-height: 1.6;
+    border-radius: 4px;
+  }
+
+  pre code {
+    display: block;
+    padding: 16px;
+    margin: 0;
+    font-family: 'Roboto Mono', Consolas, Monaco, monospace;
+    color: inherit;
+    background: transparent;
+    border-radius: 0;
+  }
+
+  .custom-container {
+    padding: 0;
+    margin: 16px 0;
     border-left: 4px solid;
+    border-radius: 2px;
 
     p {
-      margin: 0;
       padding: 8px 16px;
-      font-weight: 500;
+      margin: 0;
       font-size: 14px;
+      font-weight: 500;
       line-height: 22px;
     }
 

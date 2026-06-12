@@ -106,12 +106,28 @@ export default defineComponent({
       if (item.nodeType === 'vnode') {
         return <div class={`${this.resolveClassName('timeline-content')}`}>{item.content}</div>;
       }
-      return (
-        <div
-          class={`${this.resolveClassName('timeline-content')}`}
-          v-html={typeof item.content === 'string' ? DOMPurify.sanitize(item.content) : item.content}
-        />
-      );
+      if (typeof item.content === 'string') {
+        return (
+          <div
+            class={`${this.resolveClassName('timeline-content')}`}
+            v-html={DOMPurify.sanitize(item.content)}
+          />
+        );
+      }
+      return <div class={`${this.resolveClassName('timeline-content')}`}>{item.content}</div>;
+    };
+
+    const renderTag = (item: TimelinePropTypes['list'][number]) => {
+      if (item.nodeType === 'vnode') {
+        return item.tag;
+      }
+      if (typeof item.tag === 'object') {
+        return item.tag;
+      }
+      if (typeof item.tag === 'string') {
+        return <span v-html={DOMPurify.sanitize(item.tag)}></span>;
+      }
+      return <span></span>;
     };
 
     return (
@@ -137,7 +153,7 @@ export default defineComponent({
                   class={`${this.resolveClassName('timeline-title')}`}
                   onClick={() => this.handleTitleSelect(item)}
                 >
-                  {item.nodeType === 'vnode' ? item.tag : <span v-html={DOMPurify.sanitize(item.tag || '')}></span>}
+                  {renderTag(item)}
                 </div>
               }
               {renderContent(item)}

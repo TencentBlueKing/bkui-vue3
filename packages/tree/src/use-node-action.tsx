@@ -69,7 +69,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
 
   const { registerNextLoop } = initOption;
 
-  const { asyncNodeClick, deepAutoOpen } = useNodeAsync(props, flatData);
+  const { asyncNodeClick, deepAutoOpen } = useNodeAsync(props, flatData, ctx, initOption);
 
   /**
    * 根据当前节点状态获取节点类型Icon
@@ -107,7 +107,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
   };
 
   const getLoadingIcon = (item: TreeNode) =>
-    ctx.slots.nodeLoading?.(getScopedSlotData(item)) ?? isNodeLoading(item) ? <Spinner></Spinner> : '';
+    (ctx.slots.nodeLoading?.(getScopedSlotData(item)) ?? isNodeLoading(item)) ? <Spinner></Spinner> : '';
 
   /**
    * 根据节点状态获取节点操作Icon
@@ -185,22 +185,24 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
 
   const updateParentChecked = (item: TreeNode, isChecked) => {
     const parent = getParentNode(item);
-    if (parent) {
-      const isNeedChecked = isChecked
-        ? isChecked
-        : (getChildNodes(parent) || []).some((node: TreeNode) => isNodeChecked(node));
+    if (!parent) {
+      return;
+    }
 
-      setNodeAttr(parent, NODE_ATTRIBUTES.IS_CHECKED, isNeedChecked);
+    const isNeedChecked = isChecked
+      ? isChecked
+      : (getChildNodes(parent) || []).some((node: TreeNode) => isNodeChecked(node));
 
-      setNodeAttr(
-        parent,
-        NODE_ATTRIBUTES.IS_INDETERMINATE,
-        (getChildNodes(parent) || []).some((node: TreeNode) => !isNodeChecked(node) || isIndeterminate(node)),
-      );
+    setNodeAttr(parent, NODE_ATTRIBUTES.IS_CHECKED, isNeedChecked);
 
-      if (!isRootNode(parent)) {
-        updateParentChecked(parent, isChecked);
-      }
+    setNodeAttr(
+      parent,
+      NODE_ATTRIBUTES.IS_INDETERMINATE,
+      (getChildNodes(parent) || []).some((node: TreeNode) => !isNodeChecked(node) || isIndeterminate(node)),
+    );
+
+    if (!isRootNode(parent)) {
+      updateParentChecked(parent, isChecked);
     }
   };
 
@@ -263,9 +265,9 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
         onClick={handleNodeCheckboxClick}
       >
         <Checkbox
+          disabled={props.disableCheck}
           indeterminate={isIndeterminate(item)}
           modelValue={isNodeChecked(item)}
-          disabled={props.disableCheck}
           size='small'
           onChange={(val, event) => handleNodeItemCheckboxChange(item, !!val, event)}
         ></Checkbox>
@@ -350,6 +352,10 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
 
       if (!isRootNode(resolvedItem)) {
         const parent = getParentNode(resolvedItem);
+        if (!parent) {
+          return;
+        }
+
         attrNames.forEach((name, index) => {
           const parentVal = getNodeAttr(parent, name);
           if (parentVal !== value) {
@@ -426,9 +432,10 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
       return;
     }
 
-    let resolvedItem = resolveNodeItem(nodeList[0]);
-    if (typeof resolvedItem === 'string' || typeof resolvedItem === 'number' || typeof resolvedItem === 'symbol') {
-      resolvedItem = flatData.data.find(item => getNodeId(item) === resolvedItem) ?? {
+    let resolvedItem = resolveNodeItem(nodeList[0]) as TreeNode | number | string | symbol;
+    if (typeof resolvedItem === 'number' || typeof resolvedItem === 'string' || typeof resolvedItem === 'symbol') {
+      const nodeId = resolvedItem;
+      resolvedItem = flatData.data.find(item => getNodeId(item) === nodeId) ?? {
         [NODE_ATTRIBUTES.IS_NULL]: true,
       };
     }
@@ -470,8 +477,9 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
 
     /**
      * 处理异步节点多层级展开选中
+     * 仅在 autoOpen 为 true 时才触发异步加载和展开
      */
-    if (getNodeAttr(resolvedItem, NODE_ATTRIBUTES.IS_ASYNC)) {
+    if (autoOpen && getNodeAttr(resolvedItem, NODE_ATTRIBUTES.IS_ASYNC)) {
       if (isRemoteFnExec(event)) {
         asyncNodeClick(resolvedItem).then(() => {
           nextTick(() => {
@@ -509,30 +517,37 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
   const handleNodeContentClick = (item: TreeNode, e: MouseEvent, event?: string) => {
     const nodeActions = resolveNodeAction(item);
     const isOpened = isNodeOpened(item);
-    
+
+    // checkbox 点击事件不应触发 expand/collapse 行为
+    const isCheckboxEvent = event === 'checked';
+
     // 1. 处理 selected 行为：选中节点
     if (nodeActions.includes('selected')) {
-      // 如果配置了 expand 或 collapse，selected 不应该自动展开节点
-      // 让展开/收起逻辑由 expand/collapse 单独处理
-      const hasExpandOrCollapse = nodeActions.includes('expand') || nodeActions.includes('collapse');
-      const autoOpen = !hasExpandOrCollapse;
-      setSelect(item, true, autoOpen, true, event);
+      setSelect(item, true, false, true, event);
     }
 
     // 2. 处理 expand 行为：仅当节点是收起状态时展开
-    if (nodeActions.includes('expand') && !isOpened) {
+    if (nodeActions.includes('expand') && !isOpened && !isCheckboxEvent) {
       handleTreeNodeClick(item, e, 'expand');
     }
 
     // 3. 处理 collapse 行为：仅当节点是展开状态时收起
-    if (nodeActions.includes('collapse') && isOpened) {
+    if (nodeActions.includes('collapse') && isOpened && !isCheckboxEvent) {
       handleTreeNodeClick(item, e, 'expand');
     }
 
     // 4. 处理 click 行为：触发 node-click 事件
-    if (nodeActions.includes('click')) {
+    if (nodeActions.includes('click') && !isCheckboxEvent) {
       const eventName: string = EVENTS.NODE_CLICK;
       ctx.emit(eventName, item, resolveScopedSlotParam(item), getSchemaVal(item), e);
+    }
+
+    // 处理 checked 操作：当 showCheckbox 为 true 时，点击节点内容切换复选框状态
+    if (nodeActions.includes('checked') && event !== 'checked') {
+      if (showCheckbox(props, extendNodeScopedData(item)) && !props.disableCheck) {
+        const currentChecked = isNodeChecked(item);
+        handleNodeItemCheckboxChange(item, !currentChecked, e);
+      }
     }
   };
 
@@ -630,8 +645,12 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     return (
       <div
         key={getNodeId(item)}
-        class={getNodeRowClass(item, flatData.schema)}
+        class={[
+          getNodeRowClass(item, flatData.schema),
+          { [resolveClassName('tree-node-draggable')]: props.draggable || props.dragSort },
+        ]}
         data-tree-node={getNodeId(item)}
+        draggable={props.draggable || props.dragSort}
       >
         <div
           style={getNodeItemStyle(item, props, flatData, showTree)}
@@ -666,5 +685,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     setOpen,
     setNodeAttribute,
     isIndeterminate,
+    deepUpdateChildNode,
+    updateParentChecked,
   };
 };

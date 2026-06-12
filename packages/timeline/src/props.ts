@@ -29,7 +29,7 @@ import { PropTypes } from '@bkui-vue/shared';
 import type { ExtractPropTypes } from 'vue';
 
 export type TimelineItem = {
-  tag: string;
+  tag: object | string;
   content: object | string;
   type: string;
   size: string;
@@ -43,7 +43,7 @@ export type TimelineItem = {
 export const props = {
   list: PropTypes.arrayOf(
     PropTypes.shape({
-      tag: PropTypes.string,
+      tag: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
       content: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
       type: PropTypes.string,
       size: PropTypes.string,

@@ -112,7 +112,9 @@ export default defineComponent({
           if (node) {
             // 只展开，不需要重复触发
             const expandNode = (node: INode) => {
-              if (!node || node?.isDisabled) return;
+              if (!node || node?.isDisabled) {
+                return;
+              }
 
               const level = node.level;
               // 确保面板只更新到当前节点层级
@@ -165,7 +167,9 @@ export default defineComponent({
 
     /** node点击展开回调 */
     const nodeExpandHandler = (node: INode) => {
-      if (!node || node?.isDisabled) return;
+      if (!node || node?.isDisabled) {
+        return;
+      }
 
       menus.list = menus.list.slice(0, node.level);
       activePath.value = activePath.value.slice(0, node.level - 1);
@@ -355,6 +359,7 @@ export default defineComponent({
         >
           {this.suggestions.map(node => (
             <li
+              key={node.id}
               class={[
                 this.resolveClassName('cascader-node'),
                 { 'is-selected': this.isNodeInPath(node) },
@@ -381,6 +386,7 @@ export default defineComponent({
           ? searchPanelRender()
           : this.menus.list.map((menu, index) => (
               <ul
+                key={index === 0 ? '__root__' : (this.activePath[index - 1]?.id ?? `__level_${index}__`)}
                 style={{ height: this.panelHeight, width: this.panelWidth }}
                 class={[this.resolveClassName('cascader-panel'), this.resolveClassName('scroll-y')]}
               >
@@ -388,6 +394,7 @@ export default defineComponent({
                 {menu.length ? (
                   menu.map(node => (
                     <li
+                      key={node.id}
                       class={[
                         this.resolveClassName('cascader-node'),
                         { 'is-selected': this.isNodeInPath(node) },

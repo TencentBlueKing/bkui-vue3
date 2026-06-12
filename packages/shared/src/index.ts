@@ -25,6 +25,7 @@
  */
 import { App, Directive, Plugin } from 'vue';
 export * from './dom';
+export * from './frame-throttle';
 export * from './helper';
 export * from './hooks/use-form';
 export * from './hooks/use-form-item';
@@ -34,7 +35,6 @@ export * from './token';
 export * from './utils';
 export * from './vue-types';
 export * from './z-index-manager';
-export * from './frame-throttle';
 export * from './nav';
 
 export function classes(dynamicCls: object, constCls = ''): string {

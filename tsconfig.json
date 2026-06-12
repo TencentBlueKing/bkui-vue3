@@ -34,6 +34,9 @@
   "ts-node": {
     "transpileOnly": false
   },
+  "exclude": [
+    "node_modules"
+  ],
   "include": [
     "packages/**/*.ts",
     "packages/**/*.d.ts",

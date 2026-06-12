@@ -34,7 +34,7 @@ import * as Diff2Html from 'diff2html';
 import { emits } from './emits';
 import { props } from './props';
 
-import 'diff2html/bundles/css/diff2html.min.css';
+// import 'diff2html/bundles/css/diff2html.min.css';
 
 // TODO: 感觉像是highlight.js的问题, 一些关键字无法显示高亮
 function changeCodeCls(htmlStr: string, lang): string {

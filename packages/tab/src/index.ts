@@ -29,7 +29,8 @@ import { PositionEnum, SortTypeEnum } from './props';
 import Tab from './tab';
 import TabPanel from './tab-panel';
 
-const BkTab = withInstallProps(Tab, { TabPanel });
+// 使用 any 断言避免 declaration 生成时引用 Vue 内部类型 SchedulerJob（TS4023/TS4082）
+const BkTab = withInstallProps(Tab as any, { TabPanel });
 export { BkTab, TabPanel as BkTabPanel, SortTypeEnum, PositionEnum };
 export default BkTab;
 export type { TabEmits } from './emits';

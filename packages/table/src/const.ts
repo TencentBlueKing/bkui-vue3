@@ -144,6 +144,11 @@ export const createDefaultSizeList = (t: ComputedRef<Language['table']>) => [
  */
 export const PROVIDE_KEY_INIT_COL = Symbol('bkInitColumns');
 
+/**
+ * Provide key: 列注册表（用于增量更新）
+ */
+export const PROVIDE_KEY_COLUMN_REGISTRY = Symbol('bkColumnRegistry');
+
 export const PROVIDE_KEY_TB_CACHE = Symbol('bkTableCahce');
 
 export const BK_COLUMN_UPDATE_DEFINE = Symbol('bkColumnUpdateDefine');
@@ -171,6 +176,19 @@ export const SORT_OPTIONS = [SORT_OPTION.ASC, SORT_OPTION.DESC, SORT_OPTION.NULL
  * 列宽最小设置
  */
 export const COL_MIN_WIDTH = 80;
+
+/**
+ * 自动宽度值列表
+ * 用于判断列宽是否为自动计算
+ */
+export const AUTO_WIDTH_VALUES: (string | null | undefined)[] = [
+  undefined,
+  null,
+  'auto',
+  'undefined',
+  'null',
+  '',
+];
 
 export type IEmptyObject = Record<string, never>;
 

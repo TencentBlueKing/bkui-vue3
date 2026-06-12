@@ -70,6 +70,12 @@ export const customComponentList = [
     titleCN: '状态标签',
     description: '业务组件 Status Tag， 用于呈现状态标签的组件',
   },
+  {
+    name: '@blueking/login-userinfo',
+    title: 'LoginUserinfo',
+    titleCN: '登录用户信息',
+    description: '业务组件 Login Userinfo， 用于呈现登录用户信息的组件',
+  },
 ];
 
 // 文档「开始」分组列表

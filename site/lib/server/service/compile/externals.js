@@ -40,6 +40,7 @@ export const externals = {
   'lodash/isDate': 'lodashIsDate',
   'lodash/isEmpty': 'lodashIsEmpty',
   'lodash/isEqual': 'lodashIsEqual',
+  'lodash/isNumber': 'lodashIsNumber',
   'lodash/trim': 'lodashTrim',
   'lodash/has': 'lodashHas',
   'vue-types': 'vueTypes',
@@ -58,4 +59,5 @@ export const externals = {
   '@popperjs/core': 'popperjsCore',
   '@floating-ui/dom': 'floatingUiDom',
   '@blueking/fork-resize-detector': 'forkResizeDetector',
+  '@floating-ui/vue': 'floatingUiVue',
 };

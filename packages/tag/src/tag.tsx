@@ -49,14 +49,18 @@ export default defineComponent({
 
     const handleClose = (e: Event) => {
       e.preventDefault();
-      e.stopPropagation();
+      if (props.stopPropagation) {
+        e.stopPropagation();
+      }
 
       emit('close', e);
     };
 
     const handleClick = (e: Event) => {
       e.preventDefault();
-      e.stopPropagation();
+      if (props.stopPropagation) {
+        e.stopPropagation();
+      }
 
       if (props.checkable) {
         emit('change', !props.checked);

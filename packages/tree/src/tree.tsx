@@ -30,9 +30,9 @@ import { debounce } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 import { cloneDeep } from 'lodash';
 
-import { EVENTS, NODE_ATTRIBUTES } from './constant';
+import { EVENTS, NODE_ATTRIBUTES, NODE_SOURCE_ATTRS } from './constant';
 import { emits } from './emits';
-import { props, TreeNode } from './props';
+import { props, TreeDataChangePayload, TreeNode } from './props';
 import useEmpty from './use-empty';
 import useIntersectionObserver from './use-intersection-observer';
 import useNodeAction from './use-node-action';
@@ -53,8 +53,9 @@ export default defineComponent({
   emits,
   setup(props, ctx) {
     const root = ref();
+    const treeDataRef = ref<TreeNode[]>(props.data as TreeNode[]);
 
-    const { flatData, onSelected, registerNextLoop } = useTreeInit(props);
+    const { flatData, onSelected, rebuildData, registerNextLoop } = useTreeInit(props);
 
     const {
       checkNodeIsOpen,
@@ -63,7 +64,6 @@ export default defineComponent({
       isNodeChecked,
       isNodeMatched,
       hasChildNode,
-      getNodePath,
       getNodeId,
       getNodeAttr,
       getNodeById,
@@ -72,29 +72,54 @@ export default defineComponent({
       getIntersectionResponse,
     } = useNodeAttribute(flatData, props);
 
-    const { searchFn, isSearchActive, refSearch, isSearchDisabled, isTreeUI, showChildNodes } = useSearch(props);
-    const matchedNodePath = reactive([]);
+    const { searchFn, isSearchActive, refSearch, isSearchDisabled, isTreeUI, resultType, showChildNodes } =
+      useSearch(props);
+    const matchedNodeIds = reactive(new Set<string>());
+    const visibleNodeIds = reactive(new Set<string>());
+    const searchOriginalOpenState = new Map<string, boolean>();
+
+    const getRenderNodeId = (node: TreeNode) => `${getNodeId(node)}`;
+
+    const setSearchNodeOpen = (node: TreeNode) => {
+      const nodeId = getRenderNodeId(node);
+      if (!searchOriginalOpenState.has(nodeId)) {
+        searchOriginalOpenState.set(nodeId, isNodeOpened(node));
+      }
+
+      setNodeAttribute(node, NODE_ATTRIBUTES.IS_OPEN, true, false);
+    };
+
+    const restoreSearchOpenState = () => {
+      searchOriginalOpenState.forEach((isOpen, nodeId) => {
+        const node = getNodeById(nodeId);
+        if (node) {
+          setNodeAttribute(node, NODE_ATTRIBUTES.IS_OPEN, isOpen, false);
+        }
+      });
+      searchOriginalOpenState.clear();
+    };
+
+    const addAncestorNodes = (node: TreeNode) => {
+      let parent = getParentNode(node) as TreeNode | null;
+      while (parent) {
+        const parentId = getRenderNodeId(parent);
+        visibleNodeIds.add(parentId);
+        setSearchNodeOpen(parent);
+        parent = getParentNode(parent) as TreeNode | null;
+      }
+    };
+
+    const addDescendantNodes = (node: TreeNode) => {
+      const children = flatData.childMap?.get(node) ?? [];
+      children.forEach(child => {
+        visibleNodeIds.add(getRenderNodeId(child));
+        addDescendantNodes(child);
+      });
+    };
 
     const filterFn = (item: TreeNode) => {
       if (isSearchActive.value) {
-        if (showChildNodes) {
-          const itemPath = getNodePath(item) ?? '';
-          const asParentPath = `${itemPath}-`;
-          const isNodeOpen = checkNodeIsOpen(item);
-          const isNodeMatch = isNodeMatched(item);
-          const isNodeRoot = isRootNode(item);
-          if (isNodeOpen) {
-            if (isNodeRoot) {
-              return isNodeMatch;
-            }
-
-            return isNodeMatch || matchedNodePath.some(path => asParentPath.indexOf(`${path}-`) === 0);
-          }
-
-          return false;
-        }
-
-        return checkNodeIsOpen(item) && isNodeMatched(item);
+        return visibleNodeIds.has(getRenderNodeId(item));
       }
 
       return checkNodeIsOpen(item);
@@ -103,6 +128,73 @@ export default defineComponent({
     // 计算当前需要渲染的节点信息
     const renderData = computed(() => flatData.data.filter(item => filterFn(item)));
     const { getLastVisibleElement, intersectionObserver } = useIntersectionObserver(props);
+
+    const collectOpenNodeIds = () => {
+      const openNodeIds = new Set<string>();
+      flatData.data.forEach(node => {
+        if (isNodeOpened(node)) {
+          openNodeIds.add(`${getNodeId(node)}`);
+        }
+      });
+
+      return openNodeIds;
+    };
+
+    const getSourceNodeId = (node: TreeNode) => `${node?.[props.nodeKey || NODE_ATTRIBUTES.UUID]}`;
+    const getSourceChildren = (node: TreeNode) => (node?.[props.children] as TreeNode[]) || [];
+    const sourceOpenAttr = NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.IS_OPEN];
+
+    const removeOpenState = (node: TreeNode, openNodeIds: Set<string>) => {
+      openNodeIds.delete(getSourceNodeId(node));
+      getSourceChildren(node).forEach(child => {
+        removeOpenState(child, openNodeIds);
+      });
+    };
+
+    const syncDragTargetOpenState = (openNodeIds: Set<string>, payload: TreeDataChangePayload) => {
+      if (payload.trigger !== 'drag' || payload.dropType !== 'child' || !payload.targetNode) {
+        return;
+      }
+
+      const targetOpenState = props.dragTargetOpenState || 'inherit';
+      if (targetOpenState === 'inherit') {
+        return;
+      }
+
+      const targetNodeId = getSourceNodeId(payload.targetNode);
+      if (targetOpenState === 'expand') {
+        openNodeIds.add(targetNodeId);
+      }
+      if (targetOpenState === 'collapse') {
+        removeOpenState(payload.targetNode, openNodeIds);
+      }
+    };
+
+    const syncSourceOpenState = (treeData: TreeNode[], openNodeIds: Set<string>, parentOpened = true) => {
+      treeData.forEach(node => {
+        const isOpen = parentOpened && openNodeIds.has(getSourceNodeId(node));
+        if (isOpen || !parentOpened || Object.prototype.hasOwnProperty.call(node, sourceOpenAttr)) {
+          node[sourceOpenAttr] = isOpen;
+        }
+        syncSourceOpenState(getSourceChildren(node), openNodeIds, isOpen);
+      });
+    };
+
+    const normalizeDragOpenState = (payload: TreeDataChangePayload) => {
+      const openNodeIds = collectOpenNodeIds();
+      syncDragTargetOpenState(openNodeIds, payload);
+      syncSourceOpenState(payload.data, openNodeIds);
+    };
+
+    const onTreeDataChange = (payload: TreeDataChangePayload) => {
+      if (payload.trigger === 'drag') {
+        normalizeDragOpenState(payload);
+      }
+      treeDataRef.value = payload.data ?? [];
+      rebuildData(treeDataRef.value);
+      ctx.emit(EVENTS.NODE_DATA_CHANGE, payload);
+      props.onDataChange?.(payload);
+    };
 
     const {
       renderTreeNode,
@@ -113,29 +205,60 @@ export default defineComponent({
       asyncNodeClick,
       setNodeAttribute,
       isIndeterminate,
-    } = useNodeAction(props, ctx, flatData, renderData, { registerNextLoop });
+      deepUpdateChildNode,
+      updateParentChecked,
+    } = useNodeAction(props, ctx, flatData, renderData, {
+      getTreeData: () => treeDataRef.value,
+      onTreeDataChange,
+      registerNextLoop,
+    });
 
     const handleSearch = debounce(120, () => {
-      matchedNodePath.length = 0;
+      restoreSearchOpenState();
+      matchedNodeIds.clear();
+      visibleNodeIds.clear();
+
       flatData.data.forEach((item: TreeNode) => {
-        const isMatch = searchFn(getLabel(item, props), item);
+        const isMatch = !isSearchDisabled.value && searchFn(getLabel(item, props), item);
+        const nodeId = getRenderNodeId(item);
         if (isMatch) {
-          matchedNodePath.push(getNodePath(item));
+          matchedNodeIds.add(nodeId);
+          visibleNodeIds.add(nodeId);
         }
 
-        setNodeAttribute(item, [NODE_ATTRIBUTES.IS_MATCH], [isMatch], isTreeUI.value && isMatch);
+        setNodeAttribute(
+          item,
+          [NODE_ATTRIBUTES.IS_MATCH, NODE_ATTRIBUTES.IS_OPEN],
+          [isMatch, isNodeOpened(item)],
+          false,
+        );
+      });
+
+      if (!isSearchActive.value) {
+        return;
+      }
+
+      flatData.data.forEach((item: TreeNode) => {
+        if (!matchedNodeIds.has(getRenderNodeId(item))) {
+          return;
+        }
+        if (resultType.value === 'tree') {
+          addAncestorNodes(item);
+        }
+        if (showChildNodes.value) {
+          setSearchNodeOpen(item);
+          addDescendantNodes(item);
+        }
       });
     });
 
-    if (!isSearchDisabled) {
-      watch(
-        [refSearch],
-        () => {
-          handleSearch();
-        },
-        { deep: true, immediate: true },
-      );
-    }
+    watch(
+      [refSearch, () => flatData.data, resultType, showChildNodes],
+      () => {
+        handleSearch();
+      },
+      { deep: true, immediate: true },
+    );
 
     onMounted(() => {
       if (props.virtualRender) {
@@ -147,12 +270,55 @@ export default defineComponent({
 
     /**
      * 设置指定节点是否选中
-     * @param item Node item | Node Id
+     * @param item Node item | Node Id | Array of Node items or Node Ids
      * @param checked
      * @param triggerEvent 是否触发抛出事件
      */
-    const setChecked = (item: TreeNode | TreeNode[], checked = true, triggerEvent = false) => {
-      setNodeAction(resolveNodeItem(item as TreeNode), NODE_ATTRIBUTES.IS_CHECKED, checked);
+    const setChecked = (
+      item: (number | string)[] | TreeNode | TreeNode[] | number | string,
+      checked = true,
+      triggerEvent = false,
+    ) => {
+      // 将 item 转换为 TreeNode 数组
+      const resolveToNodes = (input: (number | string)[] | TreeNode | TreeNode[] | number | string): TreeNode[] => {
+        if (Array.isArray(input)) {
+          return input
+            .map(i => {
+              if (typeof i === 'string' || typeof i === 'number') {
+                return getNodeById(i as string);
+              }
+              return i as TreeNode;
+            })
+            .filter(Boolean);
+        }
+
+        if (typeof input === 'string' || typeof input === 'number') {
+          const node = getNodeById(input as string);
+          return node ? [node] : [];
+        }
+
+        return [input as TreeNode].filter(Boolean);
+      };
+
+      const nodes = resolveToNodes(item);
+      nodes.forEach(node => {
+        const resolvedNode = resolveNodeItem(node);
+        setNodeAction(resolvedNode, NODE_ATTRIBUTES.IS_CHECKED, checked);
+        if (checked) {
+          setNodeAction(resolvedNode, NODE_ATTRIBUTES.IS_INDETERMINATE, false);
+        }
+
+        // 如果设置了 checkStrictly，需要同步更新子节点和父节点的状态
+        if (props.checkStrictly) {
+          deepUpdateChildNode(
+            resolvedNode,
+            [NODE_ATTRIBUTES.IS_CHECKED, NODE_ATTRIBUTES.IS_INDETERMINATE],
+            [checked, false],
+          );
+          updateParentChecked(resolvedNode, checked);
+        }
+      });
+
       if (triggerEvent) {
         ctx.emit(
           EVENTS.NODE_CHECKED,
@@ -165,6 +331,13 @@ export default defineComponent({
     onSelected((newData: TreeNode) => {
       setSelect(newData, true, props.autoOpenParentNode, true);
     });
+
+    watch(
+      () => props.data,
+      value => {
+        treeDataRef.value = value as TreeNode[];
+      },
+    );
 
     /**
      * 根据最新的schema生成最新的Tree结构数据
@@ -202,7 +375,18 @@ export default defineComponent({
     watch(
       () => [props.checked],
       () => {
+        // 先清除所有节点的选中和半选状态
+        flatData.data.forEach(node => {
+          if (isNodeChecked(node) || isIndeterminate(node)) {
+            setNodeAction(node, NODE_ATTRIBUTES.IS_CHECKED, false);
+            setNodeAction(node, NODE_ATTRIBUTES.IS_INDETERMINATE, false);
+          }
+        });
+        // 再设置新的选中节点
         setChecked(props.checked, true);
+      },
+      {
+        immediate: true,
       },
     );
 
@@ -274,7 +458,10 @@ export default defineComponent({
     });
 
     const { renderEmpty } = useEmpty(props);
-    useNodeDrag(props, ctx, root, flatData);
+    useNodeDrag(props, ctx, root, flatData, {
+      getTreeData: () => treeDataRef.value,
+      onTreeDataChange,
+    });
     const renderTreeContent = (scopedData: TreeNode[]) => {
       if (scopedData.length) {
         return scopedData.map(d => renderTreeNode(d, !isSearchActive.value || isTreeUI.value));

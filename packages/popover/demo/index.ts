@@ -25,8 +25,6 @@
  */
 import { NavGroupMeta, type IComponentWiki } from '@bkui-vue/shared';
 
-import { EMIT_EVENTS } from '../src/const';
-
 // 组件示例
 const presets = [
   {
@@ -331,7 +329,7 @@ const props = [
 // 组件事件，用来自动生成事件文档
 const emits = [
   {
-    name: EMIT_EVENTS.CLICK_OUTSIDE,
+    name: 'clickoutside',
     description: '点击空白区域时触发的事件',
     params: [
       {
@@ -341,7 +339,7 @@ const emits = [
     ],
   },
   {
-    name: EMIT_EVENTS.CONTENT_MOUSEENTER,
+    name: 'contentMouseenter',
     description: '鼠标移入内容时触发的事件',
     params: [
       {
@@ -351,7 +349,7 @@ const emits = [
     ],
   },
   {
-    name: EMIT_EVENTS.CONTENT_MOUSELEAVE,
+    name: 'contentMouseleave',
     description: '鼠标移出内容时触发的事件',
     params: [
       {
@@ -361,7 +359,7 @@ const emits = [
     ],
   },
   {
-    name: EMIT_EVENTS.CONTENT_AfterHidden,
+    name: 'afterHidden',
     description: '内容隐藏时触发的事件',
     params: [
       {
@@ -371,7 +369,7 @@ const emits = [
     ],
   },
   {
-    name: EMIT_EVENTS.CONTENT_AfterShow,
+    name: 'afterShow',
     description: '内容显示时触发的事件',
     params: [
       {

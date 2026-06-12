@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     "outDir": "../../preset",
+    "rootDir": "../../packages",
+    "ignoreDeprecations": "6.0",
     "strictNullChecks": false,
     "strict": false,
     "moduleResolution": "node",
@@ -12,7 +14,8 @@
     "noImplicitAny": false,
     "module": "esnext",
     "target": "esnext",
-    "lib": ["dom", "es2017"],
+    "lib": ["dom", "es2022"],
+    "types": ["node", "vue/jsx"],
     "baseUrl": "../../packages",
     "paths": {
       "@bkui-vue/*": ["*/src"],
