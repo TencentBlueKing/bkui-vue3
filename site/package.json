@@ -125,20 +125,5 @@
   },
   "engines": {
     "node": ">= 16.16.0"
-  },
-  "devDependencies": {
-    "@types/node": "^20.4.6",
-    "@blueking/crontab": "~0.0.2-beta.1",
-    "@blueking/date-picker": "~2.0.0-beta.19",
-    "@blueking/ediatable": "~0.0.1-beta.12",
-    "@blueking/functional-dependency": "~0.0.1-beta.8",
-    "@blueking/log-search": "0.0.9-beta.1",
-    "@blueking/release-note": "~0.0.1-beta.15",
-    "@blueking/status-tag": "~1.0.6",
-    "@vitejs/plugin-vue": "^6.0.7",
-    "@vitejs/plugin-vue-jsx": "^5.1.5",
-    "unplugin-vue-markdown": "^0.26.3",
-    "vite": "^8.0.16",
-    "vue-i18n": "^9.14.3"
   }
 }
