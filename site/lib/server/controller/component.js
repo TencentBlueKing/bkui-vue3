@@ -1,14 +1,14 @@
 import { Controller, Get, QueryParams, OutputJson, OutputJavascript } from '../decorator';
 import {
   getVersions,
-  getFileAuthors,
   getComponent,
   getCss,
   getNavGroups,
   getReleaseZipPath,
-  getDesign,
-  getNpmMarkdown,
 } from '../service/component';
+import { getDesign } from '../service/external/design';
+import { getFileAuthors } from '../service/external/github';
+import { getNpmMarkdown } from '../service/external/npm';
 
 @Controller('/api')
 export default class ComponentController {

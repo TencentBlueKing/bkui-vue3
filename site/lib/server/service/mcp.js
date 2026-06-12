@@ -5,7 +5,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 
 // import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
-import { getComponentInfo, getLatestVersion, getNavGroups, getReleaseDistPath, getReleaseZipPath } from './component.js';
+import { getComponentInfo, getLatestVersion, getNavGroups, getReleaseDistPath, getReleaseZipPath } from './component';
 
 // 存储 transport 实例，用于多会话管理
 const transports = new Map();
