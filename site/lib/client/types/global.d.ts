@@ -17,14 +17,16 @@ declare interface Window {
   lodashIsDate: Function;
   lodashIsEmpty: Function;
   lodashIsEqual: Function;
+  lodashIsNumber: Function;
   lodashTrim: Function;
   lodashHas: Function;
   normalizeWheel: Function;
   floatingUiDom: Function;
+  floatingUiVue: Function;
   forkResizeDetector: Function;
   dateFns: Function;
   jsCalendar: Function;
-  resizeObserverPolyfill: Function; 
+  resizeObserverPolyfill: Function;
   clipboard: Function;
   jsonFormatterJs: Function;
   tinycolor2: Function;

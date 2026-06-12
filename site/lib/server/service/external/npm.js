@@ -27,8 +27,7 @@ import fs from 'node:fs';
 import https from 'node:https';
 import os from 'node:os';
 import path from 'node:path';
-
-import tar from 'tar';
+import { extract } from 'tar';
 
 import http from '../../util/http';
 import { validateNpmPackageName } from '../validate';
@@ -42,7 +41,7 @@ const downloadAndExtractTarball = (url, destDir) => new Promise((resolve, reject
         return;
       }
       response
-        .pipe(tar.extract({ cwd: destDir, strip: 1 })) // strip 去掉 package/ 前缀
+        .pipe(extract({ cwd: destDir, strip: 1 })) // strip 去掉 package/ 前缀
         .on('finish', resolve)
         .on('error', reject);
     })

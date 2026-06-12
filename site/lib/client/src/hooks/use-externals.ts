@@ -1,4 +1,16 @@
+import * as Clipboard from 'clipboard';
+import * as DateFns from 'date-fns';
+import * as Diff from 'diff';
+import * as Diff2Html from 'diff2html';
+import * as Diff2HtmlCss from 'diff2html/bundles/css/diff2html.min.css';
+import * as Dompurify from 'dompurify';
+import * as JsCalendar from 'js-calendar';
+import * as JsonFormatter from 'json-formatter-js';
 import * as Lodash from 'lodash';
+import * as NormalizeWheel from 'normalize-wheel';
+import * as ResizeObserverPolyfill from 'resize-observer-polyfill';
+import * as SparkMd5 from 'spark-md5';
+import * as Tinycolor2 from 'tinycolor2';
 import * as UUID from 'uuid';
 import {
   onBeforeMount,
@@ -7,21 +19,10 @@ import {
 import * as Vue from 'vue';
 import * as VueTypes from 'vue-types';
 
-import * as PopperjsCore from '@popperjs/core';
-import * as NormalizeWheel from 'normalize-wheel';
-import * as FloatingUiDom from '@floating-ui/dom';
-import * as DateFns from 'date-fns';
-import * as JsCalendar from 'js-calendar';
 import * as ForkResizeDetector from '@blueking/fork-resize-detector';
-import * as ResizeObserverPolyfill from 'resize-observer-polyfill';
-import * as Clipboard from 'clipboard';
-import * as JsonFormatter from 'json-formatter-js';
-import * as Tinycolor2 from 'tinycolor2';
-import * as Dompurify from 'dompurify';
-import * as SparkMd5 from 'spark-md5';
-import * as Diff from 'diff';
-import * as Diff2Html from 'diff2html';
-import * as Diff2HtmlCss from 'diff2html/bundles/css/diff2html.min.css';
+import * as FloatingUiDom from '@floating-ui/dom';
+import * as FloatingUiVue from '@floating-ui/vue';
+import * as PopperjsCore from '@popperjs/core';
 
 export const useExternals = () => {
   const loadExternals = () => {
@@ -41,10 +42,12 @@ export const useExternals = () => {
     window.lodashIsDate = () => Lodash.isDate;
     window.lodashIsEmpty = () => Lodash.isEmpty;
     window.lodashIsEqual = () => Lodash.isEqual;
+    window.lodashIsNumber = () => Lodash.isNumber;
     window.lodashTrim = () => Lodash.trim;
     window.lodashHas = () => Lodash.has;
     window.normalizeWheel = () => NormalizeWheel;
     window.floatingUiDom = () => FloatingUiDom;
+    window.floatingUiVue = () => FloatingUiVue;
     window.forkResizeDetector = () => ForkResizeDetector;
     window.dateFns = () => DateFns;
     window.jsCalendar = () => JsCalendar;
