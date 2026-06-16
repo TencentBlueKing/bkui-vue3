@@ -440,6 +440,10 @@ export default defineComponent({
           }
           ctx.emit(EVENTS.CHANGE, inputValue, e);
           ctx.emit(EVENTS.UPDATE, inputValue, e);
+        } else if (eventName === EVENTS.KEYUP && e.code === 'Space') {
+          ctx.emit(EVENTS.KEYUP, inputValue, e);
+          ctx.emit(EVENTS.UPDATE, inputValue, e);
+          ctx.emit(EVENTS.INPUT, inputValue, e);
         } else {
           ctx.emit(eventName, inputValue, e);
         }

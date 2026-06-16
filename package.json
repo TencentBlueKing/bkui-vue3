@@ -6,6 +6,7 @@
     "scripts/cli",
     "site"
   ],
+  "private": true,
   "files": [
     "lib",
     "dist"
@@ -124,6 +125,9 @@
     "parse-path": ">=5.0.0",
     "shelljs": "^0.8.5",
     "semver": ">=7.5.2",
+    "string-width": "4.2.3",
+    "strip-ansi": "6.0.1",
+    "wrap-ansi": "7.0.0",
     "@vue/compiler-dom": "~3.5.35",
     "@vue/compiler-sfc": "~3.5.35",
     "@vue/runtime-dom": "~3.5.35",
