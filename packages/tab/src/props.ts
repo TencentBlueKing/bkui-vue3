@@ -23,10 +23,14 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { ExtractPropTypes, PropType, VNode } from 'vue';
+import { ComputedRef, ExtractPropTypes, InjectionKey, PropType, VNode } from 'vue';
 import { toType } from 'vue-types';
 
 import { PropTypes, renderDirectiveType } from '@bkui-vue/shared';
+
+// Tab 通过 provide 向下注入当前激活面板的 name，TabPanel 通过 inject 获取，
+// 避免依赖 this.$parent 这种与组件层级强耦合的写法。
+export const tabActiveInjectionKey: InjectionKey<ComputedRef<number | string>> = Symbol('tabActive');
 
 export enum TabTypeEnum {
   BORDER_CARD = 'border-card',
@@ -101,14 +105,14 @@ export const tabEventProps = {
 
 export const tabPanelProps = {
   name: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).def(''),
-  label: PropTypes.string || PropTypes.func,
+  label: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
   tips: PropTypes.string,
   closable: PropTypes.bool,
   visible: PropTypes.bool.def(true),
   disabled: PropTypes.bool,
   sortable: PropTypes.bool,
   renderDirective: renderDirectiveType(),
-  panel: PropTypes.string || PropTypes.func,
+  panel: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
   num: PropTypes.number.def(undefined),
   numDisplayType: PropTypes.string.def('default'),
 };
