@@ -29,7 +29,11 @@ import {
   CSSProperties,
   defineComponent,
   h,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
   ref,
+  watch,
   type Ref,
   type ComponentInternalInstance,
   type ExtractPropTypes,
@@ -57,10 +61,14 @@ export default defineComponent({
   props: tabNavProps,
   setup(props: Props) {
     const activeRef: Ref<HTMLElement | null> = ref(null);
-    const activeBarStyle = computed<CSSProperties>(() => {
-      const initStyle: CSSProperties = { width: 0, height: 0, bottom: 0, left: 0 };
+    // 激活条位置依赖 DOM 的 clientWidth/offsetLeft 等非响应式量，computed 无法在
+    // label 内容（宽度）变化但激活项不变时重算。改为 ref + 主动测量，并在 DOM
+    // 更新后/激活项尺寸变化时刷新。
+    const initBarStyle: CSSProperties = { width: 0, height: 0, bottom: 0, left: 0 };
+    const activeBarStyle = ref<CSSProperties>({ ...initBarStyle });
+    const calcActiveBarStyle = (): CSSProperties => {
       if (!activeRef.value) {
-        return initStyle;
+        return { ...initBarStyle };
       }
       const positionArr: string[] = [PositionEnum.LEFT, PositionEnum.RIGHT];
       if (positionArr.includes(props.tabPosition)) {
@@ -88,7 +96,32 @@ export default defineComponent({
           background: props.activeBarColor,
         };
       }
-      return initStyle;
+      return { ...initBarStyle };
+    };
+    const updateActiveBarStyle = () => {
+      const next = calcActiveBarStyle();
+      // 仅在确有变化时赋值，避免无意义的重渲染
+      if (JSON.stringify(next) !== JSON.stringify(activeBarStyle.value)) {
+        activeBarStyle.value = next;
+      }
+    };
+
+    // 观察激活项自身尺寸变化（label 长度变化、字体异步加载、容器缩放等）
+    let barResizeObserver: ResizeObserver | null = null;
+    const observeActiveBar = () => {
+      barResizeObserver?.disconnect();
+      if (typeof ResizeObserver !== 'undefined' && activeRef.value) {
+        barResizeObserver = new ResizeObserver(() => updateActiveBarStyle());
+        barResizeObserver.observe(activeRef.value);
+      }
+    };
+    onMounted(() => {
+      observeActiveBar();
+      updateActiveBarStyle();
+    });
+    onBeforeUnmount(() => {
+      barResizeObserver?.disconnect();
+      barResizeObserver = null;
     });
     const tableNavList = computed(() => {
       if (!Array.isArray(props.panels) || !props.panels.length) {
@@ -96,18 +129,14 @@ export default defineComponent({
       }
 
       const list = [];
-      let hasFindActive = false;
       const panels = props.panels as unknown[];
-      panels.filter((item: Partial<ComponentInternalInstance>, index: number) => {
+      panels.forEach((item: Partial<ComponentInternalInstance>, index: number) => {
         if (!item.props) {
-          return null;
+          return;
         }
         const { name, label, num, closable, visible, disabled, sortable, tips, numDisplayType } = item.props;
         if (!visible) {
-          return false;
-        }
-        if (props.active === name) {
-          hasFindActive = true;
+          return;
         }
         const renderLabel = (label: StringOrFunction) => {
           if (item.slots.label) {
@@ -135,18 +164,50 @@ export default defineComponent({
           tabLabel: renderLabel(label as StringOrFunction),
           tabNum: num,
         });
-        return true;
       });
-      if (!hasFindActive && props.validateActive) {
-        props.panels[0].props && props.tabChange(props.panels[0].props.name);
-      }
       return list;
     });
+
+    // 激活项、页签内容（label/数量）、位置或激活条尺寸/颜色变化后，等 DOM 更新完成再重新测量；
+    // 同时把 ResizeObserver 重新挂到新的激活元素上。
+    watch(
+      [
+        () => props.active,
+        () => props.tabPosition,
+        () => props.type,
+        () => props.activeBarSize,
+        () => props.activeBarColor,
+        tableNavList,
+      ],
+      () => {
+        nextTick(() => {
+          observeActiveBar();
+          updateActiveBarStyle();
+        });
+      },
+    );
+
+    // 当没有匹配到激活项且开启校验时，默认激活第一个面板。
+    // 该逻辑必须放在副作用（watch）中，computed 需保持纯函数。
+    watch(
+      [tableNavList, () => props.active],
+      () => {
+        if (!props.validateActive) {
+          return;
+        }
+        const hasFindActive = tableNavList.value.some(item => item?.name === props.active);
+        const firstPanel = props.panels?.[0] as Partial<ComponentInternalInstance> | undefined;
+        if (!hasFindActive && firstPanel?.props) {
+          props.tabChange(firstPanel.props.name);
+        }
+      },
+      { immediate: true },
+    );
     const dragenterIndex = ref(-1);
     const dragStartIndex = ref(-1);
-    const draggingEle = ref('');
+    const draggingEle = ref<string>('');
 
-    const distinctRoots = (el1: string, el2: string) => el1 === el2;
+    const isSameRoot = (el1: string, el2: string) => el1 === el2;
     const methods = {
       /**
        * @description  判断拖动的元素是否是在同一个tab。
@@ -167,18 +228,18 @@ export default defineComponent({
       },
       dragenter(index: number) {
         // 缓存目标元素索引，方便添加样式
-        if (distinctRoots(draggingEle.value, props.guid)) {
+        if (isSameRoot(draggingEle.value, props.guid)) {
           dragenterIndex.value = index;
         }
       },
       dragend() {
         dragenterIndex.value = -1;
         dragStartIndex.value = -1;
-        draggingEle.value = null;
+        draggingEle.value = '';
       },
       drop(index: number, sortType: string) {
         // 不是同一个tab，返回——暂时不支持跨tab拖动
-        if (!distinctRoots(draggingEle.value, props.guid)) {
+        if (!isSameRoot(draggingEle.value, props.guid)) {
           return false;
         }
         props.tabSort(dragStartIndex.value, index, sortType);
@@ -201,7 +262,7 @@ export default defineComponent({
       dragenterIndex,
       dragStartIndex,
       draggingEle,
-      guid: Math.random().toString(16).substr(4) + Math.random().toString(16).substr(4),
+      guid: `${Date.now().toString(16)}-${Math.random().toString(16).slice(2, 10)}`,
       resolveClassName,
     };
   },
@@ -241,10 +302,20 @@ export default defineComponent({
           <div
             key={name}
             ref={active === name ? 'activeRef' : 'tabLabelRef'}
+            role='tab'
+            aria-selected={active === name}
+            aria-disabled={disabled || undefined}
+            tabindex={disabled ? -1 : 0}
             class={getNavItemClass()}
             v-bk-tooltips={{ content: item.tips || '', disabled: !item.tips }}
             draggable={getValue(item.sortable, sortable)}
             onClick={() => !disabled && this.handleTabChange(name)}
+            onKeydown={(e: KeyboardEvent) => {
+              if (!disabled && (e.key === 'Enter' || e.key === ' ')) {
+                e.preventDefault();
+                this.handleTabChange(name);
+              }
+            }}
             onDragend={e => {
               e.preventDefault();
               dragend();
@@ -333,7 +404,10 @@ export default defineComponent({
         style={{ lineHeight: `${labelHeight}px` }}
         class={this.resolveClassName('tab-header')}
       >
-        <div class={[this.resolveClassName('tab-header-nav'), operations || setting ? 'tab-header-auto' : '']}>
+        <div
+          role='tablist'
+          class={[this.resolveClassName('tab-header-nav'), operations || setting ? 'tab-header-auto' : '']}
+        >
           {renderActiveBar()}
           {renderNavs()}
         </div>

@@ -27,18 +27,20 @@
 import {
   Component,
   ComponentInternalInstance,
+  computed,
   defineComponent,
   Fragment,
   getCurrentInstance,
   onMounted,
   onUpdated,
+  provide,
   ref,
   VNode,
 } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 
-import { PositionEnum, SortTypeEnum, tabProps, TabTypeEnum } from './props';
+import { PositionEnum, SortTypeEnum, tabActiveInjectionKey, tabProps, TabTypeEnum } from './props';
 import TabNav from './tab-nav';
 
 export default defineComponent({
@@ -66,30 +68,43 @@ export default defineComponent({
     const isMounted = ref(false);
     const panels = ref([]);
     const instance = getCurrentInstance();
-    // 动态插入tabPanel
+
+    // 向下注入当前激活面板，供 TabPanel 通过 inject 读取，替代 this.$parent.active。
+    provide(
+      tabActiveInjectionKey,
+      computed(() => _props.active),
+    );
+
+    // 递归收集已挂载的 TabPanel 实例。
+    // 仅向下穿透 Tab 自身的包裹元素（原生标签、Fragment、template），
+    // 不进入用户自定义组件，避免误收集嵌套 Tab 的面板。
     const getPaneInstanceFromSlot = (vnode: VNode, panelInstanceList: ComponentInternalInstance[] = []) => {
-      const { children } = vnode;
-      ((children || []) as Array<VNode>).forEach(node => {
-        let { type } = node;
-        type = (type as Component).name || type;
+      const children = vnode?.children;
+      if (!Array.isArray(children)) {
+        return panelInstanceList;
+      }
+      (children as Array<VNode>).forEach(node => {
+        if (!node || typeof node !== 'object') {
+          return;
+        }
+        const rawType = node.type;
+        const type = (rawType as Component)?.name || rawType;
         if (type === 'TabPanel' && node.component) {
           panelInstanceList.push(node.component);
-        } else if (type === Fragment || type === 'template') {
+        } else if (rawType === Fragment || rawType === 'template' || typeof rawType === 'string') {
           getPaneInstanceFromSlot(node, panelInstanceList);
         }
       });
       return panelInstanceList;
     };
     const setPanelInstances = () => {
-      if (slots.default) {
-        const { children } = instance.subTree.children[1];
-        if (!children) return;
-        const content = children[0];
-        const panelInstanceList = getPaneInstanceFromSlot(content);
-        const isChanged = panelInstanceList.length !== panels.value.length;
-        if (isChanged) {
-          panels.value = panelInstanceList;
-        }
+      if (!slots.default || !instance?.subTree) {
+        return;
+      }
+      const panelInstanceList = getPaneInstanceFromSlot(instance.subTree);
+      const isChanged = panelInstanceList.length !== panels.value.length;
+      if (isChanged) {
+        panels.value = panelInstanceList;
       }
     };
 
@@ -102,9 +117,10 @@ export default defineComponent({
       */
       setPanelInstances();
       isMounted.value = true;
-      onUpdated(() => {
-        setPanelInstances();
-      });
+    });
+
+    onUpdated(() => {
+      setPanelInstances();
     });
 
     const methods = {
@@ -130,10 +146,10 @@ export default defineComponent({
         // 如果是插队模式
         if (sortType === SortTypeEnum.INSERT) {
           if (dragTabIndex < dropTabIndex) {
-            list.splice(dropTabIndex + 1, 0, panels[dragTabIndex]);
+            list.splice(dropTabIndex + 1, 0, list[dragTabIndex]);
             list.splice(dragTabIndex, 1);
           } else if (dragTabIndex > dropTabIndex) {
-            list.splice(dropTabIndex, 0, panels[dragTabIndex]);
+            list.splice(dropTabIndex, 0, list[dragTabIndex]);
             list.splice(dragTabIndex + 1, 1);
           } else {
             return false;
