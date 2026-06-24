@@ -87,6 +87,7 @@ export default defineComponent({
     showAll: PropTypes.bool.def(false), // 全部
     allOptionText: PropTypes.string.def(''), // 全部选项文本
     allOptionId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]), // 全部选项ID
+    showAllDisabled: PropTypes.bool.def(false), // 全部选项是否禁用
     showSelectAll: PropTypes.bool.def(false), // 全选
     popoverMinWidth: PropTypes.number.def(0), // popover最小宽度
     showOnInit: PropTypes.bool.def(false), // 是否默认显示popover
@@ -101,6 +102,7 @@ export default defineComponent({
     placeholder: PropTypes.string,
     searchPlaceholder: PropTypes.string,
     selectAllText: PropTypes.string,
+    showSelectAllDisabled: PropTypes.bool.def(false), // 全选选项是否禁用
     scrollLoading: PropTypes.bool.def(false),
     allowCreate: PropTypes.bool.def(false), // 是否运行创建自定义选项
     popoverOptions: Object as PropType<Partial<PopoverPropTypes>>, // popover属性
@@ -164,6 +166,7 @@ export default defineComponent({
       enableVirtualRender,
       showSelectAll,
       showAll,
+      showAllDisabled,
       allOptionId,
       scrollHeight,
       list,
@@ -182,6 +185,7 @@ export default defineComponent({
       disableFocusBehavior,
       trigger,
       disableScrollToSelectedOption,
+      showSelectAllDisabled,
     } = toRefs(props);
 
     const virtualRenderRef = ref(null);
@@ -844,6 +848,7 @@ export default defineComponent({
     };
     // 全选/取消全选
     const toggleSelectAll = () => {
+      if (showSelectAllDisabled.value) return;
       if (isAllSelected.value) {
         selected.value = [];
       } else {
@@ -869,6 +874,7 @@ export default defineComponent({
     // 全部/取消全部
     const toggleAll = () => {
       if (!isShowAll.value) return;
+      if (showAllDisabled.value) return;
 
       const index = selected.value.findIndex(item => item.value === allOptionId.value);
       if (index > -1) {
@@ -1379,13 +1385,14 @@ export default defineComponent({
       if (!this.isShowSelectAll) return;
       return (
         <li
-          class={this.resolveClassName('select-option')}
-          onClick={this.toggleSelectAll}
+          class={[this.resolveClassName('select-option'), this.showSelectAllDisabled ? 'is-disabled' : '']}
+          onClick={this.showSelectAllDisabled ? undefined : this.toggleSelectAll}
           onMouseenter={this.handleSelectedAllOptionMouseEnter}
         >
           {this.selectedStyle === 'checkbox' && (
             <Checkbox
               class={this.resolveClassName('select-checkbox')}
+              disabled={this.showSelectAllDisabled}
               indeterminate={!this.isAllSelected && !!this.selected.length && !this.isAll}
               modelValue={this.isAllSelected}
             />
@@ -1411,8 +1418,9 @@ export default defineComponent({
             class={[
               'wrapper',
               this.selected.length === 1 && this.selected[0]?.value === this.allOptionId ? 'active' : '',
+              this.showAllDisabled ? 'is-disabled' : '',
             ]}
-            onClick={this.toggleAll}
+            onClick={this.showAllDisabled ? undefined : this.toggleAll}
           >
             {renderAllIcon()}
             {renderAllText()}
