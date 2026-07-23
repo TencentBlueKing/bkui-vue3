@@ -29,6 +29,7 @@ import {
   defineComponent,
   ExtractPropTypes,
   nextTick,
+  onBeforeUnmount,
   onMounted,
   PropType,
   ref,
@@ -53,8 +54,6 @@ export const inputType = {
   disabled: PropTypes.bool,
   readonly: PropTypes.bool,
   placeholder: PropTypes.string.def(''),
-  prefixIcon: PropTypes.string,
-  suffixIcon: PropTypes.string,
   suffix: PropTypes.string,
   prefix: PropTypes.string,
   step: PropTypes.number.def(1),
@@ -148,7 +147,6 @@ export default defineComponent({
     const inputClsPrefix = computed(() =>
       isTextArea.value ? resolveClassName('textarea') : resolveClassName('input'),
     );
-    const { class: cls, style, ...inputAttrs } = ctx.attrs;
 
     const inputRef = ref();
     const innerInputValue = ref<{ value?: number | string }>(
@@ -167,7 +165,6 @@ export default defineComponent({
           'is-readonly': props.readonly && !props.selectReadonly,
           'is-disabled': props.disabled,
           'is-simplicity': props.behavior === 'simplicity',
-          [`${ctx.attrs.class}`]: !!ctx.attrs.class,
         },
         inputClsPrefix.value,
       ),
@@ -199,7 +196,10 @@ export default defineComponent({
       return icon ? <icon class={suffixCls} /> : null;
     });
     const isNumberInput = computed(() => props.type === 'number');
-    const ceilMaxLength = computed(() => Math.floor(props.maxlength ?? props.maxcharacter ?? 0));
+    const useMaxCharacter = computed(() => typeof props.maxcharacter === 'number');
+    const ceilMaxLength = computed(() =>
+      Math.floor(useMaxCharacter.value ? props.maxcharacter : (props.maxlength ?? 0)),
+    );
     const pwdVisible = ref(false);
     const clearCls = computed(() =>
       classes(
@@ -217,7 +217,7 @@ export default defineComponent({
       }),
     );
     const getValueLimits = (val: string) => {
-      if (typeof props.maxcharacter === 'number') {
+      if (useMaxCharacter.value) {
         return val.split('').reduce(
           (limit, char, index) => {
             limit.len += char.charCodeAt(0) > 255 ? 2 : 1;
@@ -239,19 +239,19 @@ export default defineComponent({
     };
 
     const modelValueLength = computed(() => {
-      const modelValue = (props.modelValue ?? '') as string;
+      const modelValue = String(props.modelValue ?? '');
       return getValueLimits(modelValue).len;
     });
 
     const incControlCls = computed(() =>
       classes({
-        'is-disabled': props.disabled || Number(props.modelValue) >= props.max,
+        'is-disabled': props.disabled || props.readonly || Number(props.modelValue) >= props.max,
       }),
     );
 
     const decControlCls = computed(() =>
       classes({
-        'is-disabled': props.disabled || Number(props.modelValue) <= props.min,
+        'is-disabled': props.disabled || props.readonly || Number(props.modelValue) <= props.min,
       }),
     );
 
@@ -281,8 +281,19 @@ export default defineComponent({
     watch(
       () => props.type,
       () => {
+        nextTick(() => {
+          onResize();
+          observeInputResize();
+        });
+      },
+    );
+
+    watch(
+      [() => props.autosize, () => props.resize],
+      () => {
         nextTick(onResize);
       },
+      { deep: true },
     );
 
     watch(
@@ -299,11 +310,28 @@ export default defineComponent({
     );
 
     onMounted(() => {
-      nextTick(onResize);
+      nextTick(() => {
+        onResize();
+        observeInputResize();
+      });
       // Hack: 修复autofocus属性失效问题 原生autofocus属性只在页面加载时生效
       if (Object.prototype.hasOwnProperty.call(ctx.attrs, 'autofocus')) {
         inputRef.value?.focus?.();
       }
+    });
+
+    let resizeObserver: ResizeObserver | null = null;
+    function observeInputResize() {
+      resizeObserver?.disconnect();
+      if (typeof ResizeObserver !== 'undefined' && inputRef.value) {
+        resizeObserver = new ResizeObserver(onResize);
+        resizeObserver.observe(inputRef.value);
+      }
+    }
+
+    onBeforeUnmount(() => {
+      resizeObserver?.disconnect();
+      resizeObserver = null;
     });
 
     ctx.expose({
@@ -323,8 +351,13 @@ export default defineComponent({
     }
 
     function autoResizeTextarea() {
+      if (!isTextArea.value) return;
+      if (props.resize) {
+        textareaCalcStyle.value = undefined;
+        return;
+      }
       const isElHidden = inputRef.value?.offsetParent === null;
-      if (!isTextArea.value || isElHidden || props.resize) return;
+      if (isElHidden) return;
 
       if (props.autosize) {
         const minRows = (props.autosize as InputAutoSize)?.minRows;
@@ -357,7 +390,7 @@ export default defineComponent({
     }
 
     function clear() {
-      if (props.disabled) {
+      if (props.disabled || props.readonly) {
         return;
       }
       let value: number | string = '';
@@ -383,6 +416,9 @@ export default defineComponent({
     }
     // type = search suffix icon click event
     function handleSearch(e: Event) {
+      if (props.disabled) {
+        return;
+      }
       ctx.emit(EVENTS.SEARCH, e);
     }
 
@@ -401,7 +437,7 @@ export default defineComponent({
         if (showMaxLimit.value && !props.overMaxLengthLimit) {
           const limit = getValueLimits(inputValue);
           if (limit.len >= ceilMaxLength.value && (eventName === EVENTS.KEYDOWN || eventName === EVENTS.INPUT)) {
-            const val = limit.pos > 0 ? `${inputValue}`.slice(0, limit.pos) : inputValue;
+            const val = limit.pos >= 0 ? `${inputValue}`.slice(0, limit.pos) : inputValue;
             innerInputValue.value = {
               value: val,
             };
@@ -460,16 +496,18 @@ export default defineComponent({
     ].map(eventHandler);
 
     function handleInc(e) {
-      if (props.disabled) {
+      if (props.disabled || props.readonly) {
         return;
       }
-      const newValue = Number(Math.min(Number(props.modelValue) + props.step, props.max).toFixed(props.precision));
+      const currentValue =
+        (props.modelValue ?? '') === '' && props.min !== -Infinity ? props.min : Number(props.modelValue) + props.step;
+      const newValue = Number(Math.min(currentValue, props.max).toFixed(props.precision));
       ctx.emit(EVENTS.UPDATE, newValue, e);
       ctx.emit(EVENTS.CHANGE, newValue, e);
     }
 
     function handleDec(e) {
-      if (props.disabled) {
+      if (props.disabled || props.readonly) {
         return;
       }
       const newValue = Number(Math.max(Number(props.modelValue) - props.step, props.min).toFixed(props.precision));
@@ -485,15 +523,6 @@ export default defineComponent({
       pwdVisible.value = !pwdVisible.value;
     }
 
-    const bindProps = computed(() => {
-      return {
-        maxlength: !props.overMaxLengthLimit && props.maxlength,
-        placeholder: props.placeholder || t.value.placeholder,
-        readonly: props.readonly,
-        disabled: props.disabled,
-      };
-    });
-
     const eventListener = {
       onInput: handleInput,
       onFocus: handleFocus,
@@ -504,84 +533,87 @@ export default defineComponent({
       onKeydown: handleKeydown,
       onKeyup: handleKeyup,
     };
-    return () => (
-      <div
-        style={style as StyleValue}
-        class={inputCls.value}
-        v-bk-tooltips={tooltips.value}
-      >
-        {ctx.slots?.prefix?.() ??
-          (props.prefix && (
-            <div class={getCls('prefix-area')}>
-              <span class={getCls('prefix-area--text')}>{props.prefix}</span>
-            </div>
-          ))}
-        {isTextArea.value ? (
-          <textarea
-            ref={inputRef}
-            spellcheck={false}
-            {...inputAttrs}
-            {...eventListener}
-            {...bindProps.value}
-            style={textareaCalcStyle.value}
-            rows={props.rows}
-            {...innerInputValue.value}
-          />
-        ) : (
-          <input
-            spellcheck={false}
-            {...inputAttrs}
-            ref={inputRef}
-            class={`${inputClsPrefix.value}--text`}
-            max={props.max}
-            min={props.min}
-            step={props.step}
-            type={pwdVisible.value && props.type === 'password' ? 'text' : props.type}
-            {...eventListener}
-            {...bindProps.value}
-            {...innerInputValue.value}
-          />
-        )}
-        {/* {!isTextarea.value && props.clearable && !!props.modelValue && ( */}
-        {props.clearable && !!props.modelValue && (
-          <span
-            class={clearCls.value}
-            onClick={clear}
-          >
-            <Close />
-          </span>
-        )}
-        {suffixIcon.value}
-        {showMaxLimit.value && (props.showWordLimit || isTextArea.value) && (
-          <p class={maxLengthCls.value}>
-            {props.overMaxLengthLimit ? (
-              ceilMaxLength.value - modelValueLength.value
-            ) : (
-              <>
-                {modelValueLength.value} / <span>{ceilMaxLength.value}</span>
-              </>
-            )}
-          </p>
-        )}
-        {isNumberInput.value && props.showControl && (
-          <div class={getCls('number-control')}>
-            <DownSmall
-              class={incControlCls.value}
-              onClick={handleInc}
+    return () => {
+      const { class: rootClass, style, ...inputAttrs } = ctx.attrs;
+      return (
+        <div
+          style={style as StyleValue}
+          class={[inputCls.value, rootClass]}
+          v-bk-tooltips={tooltips.value}
+        >
+          {ctx.slots?.prefix?.() ??
+            (props.prefix && (
+              <div class={getCls('prefix-area')}>
+                <span class={getCls('prefix-area--text')}>{props.prefix}</span>
+              </div>
+            ))}
+          {isTextArea.value ? (
+            <textarea
+              ref={inputRef}
+              spellcheck={false}
+              {...inputAttrs}
+              {...eventListener}
+              style={textareaCalcStyle.value}
+              disabled={props.disabled}
+              placeholder={props.placeholder || t.value.placeholder}
+              readonly={props.readonly}
+              {...innerInputValue.value}
             />
-            <DownSmall
-              class={decControlCls.value}
-              onClick={handleDec}
+          ) : (
+            <input
+              spellcheck={false}
+              {...inputAttrs}
+              ref={inputRef}
+              class={`${inputClsPrefix.value}--text`}
+              type={pwdVisible.value && props.type === 'password' ? 'text' : props.type}
+              {...eventListener}
+              disabled={props.disabled}
+              placeholder={props.placeholder || t.value.placeholder}
+              readonly={props.readonly}
+              {...innerInputValue.value}
             />
-          </div>
-        )}
-        {ctx.slots?.suffix?.() ??
-          (props.suffix && (
-            <div class={getCls('suffix-area')}>
-              <span class={getCls('suffix-area--text')}>{props.suffix}</span>
+          )}
+          {/* {!isTextarea.value && props.clearable && !!props.modelValue && ( */}
+          {props.clearable && !props.readonly && (props.modelValue ?? '') !== '' && (
+            <span
+              class={clearCls.value}
+              onClick={clear}
+            >
+              <Close />
+            </span>
+          )}
+          {suffixIcon.value}
+          {showMaxLimit.value && (props.showWordLimit || isTextArea.value) && (
+            <p class={maxLengthCls.value}>
+              {props.overMaxLengthLimit ? (
+                ceilMaxLength.value - modelValueLength.value
+              ) : (
+                <>
+                  {modelValueLength.value} / <span>{ceilMaxLength.value}</span>
+                </>
+              )}
+            </p>
+          )}
+          {isNumberInput.value && props.showControl && (
+            <div class={getCls('number-control')}>
+              <DownSmall
+                class={incControlCls.value}
+                onClick={handleInc}
+              />
+              <DownSmall
+                class={decControlCls.value}
+                onClick={handleDec}
+              />
             </div>
-          ))}
-      </div>
-    );
+          )}
+          {ctx.slots?.suffix?.() ??
+            (props.suffix && (
+              <div class={getCls('suffix-area')}>
+                <span class={getCls('suffix-area--text')}>{props.suffix}</span>
+              </div>
+            ))}
+        </div>
+      );
+    };
   },
 });
