@@ -30,7 +30,8 @@
     display: flex;
     height: var(--lineHeight);
     padding-left: 0;
-    line-height: var(--lineHeight);
+    /* 行高只作用在文本上；此处用 normal 避免 SVG/icon 继承大行高后贴基线，导致视觉中心偏上、连线看起来打在 prefix 底部 */
+    line-height: normal;
     cursor: pointer;
     align-items: center;
 
@@ -45,7 +46,7 @@
 
             &::before {
               position: absolute;
-              top: calc(50% + 1px);
+              top: 50%;
               left: 0;
               right: 0;
               z-index: 1;
@@ -59,7 +60,7 @@
 
         &::before {
           position: absolute;
-          top: calc(50% + 1px);
+          top: 50%;
           left: calc(0px - var(--indent) + 6px);
           z-index: 1;
           width: calc(var(--indent) - 6px);
@@ -80,7 +81,12 @@
 
     .node-virtual-line {
       position: absolute;
-      top: -12px;
+      /*
+       * 竖线终点：当前行中线（与横向连线相接）
+       * 竖线起点：父级行中线 + 半个 prefix(14/2)，即父级 bk-node-prefix 下沿
+       * 避免 top=-50% 时竖线穿过父级展开图标中心造成「重合」
+       */
+      top: calc(var(--lineHeight) / -2 + 7px);
       bottom: 50%;
       left: calc(var(--depth) * var(--indent) * -1 + 6px);
       display: inline-block;
@@ -90,17 +96,24 @@
 
     .@{bk-prefix}-node-prefix {
       display: flex;
+      flex-shrink: 0;
       width: 14px;
       height: 14px;
+      line-height: 1;
       align-items: center;
       justify-content: center;
-      transform: translateY(3px);
     }
 
     .@{bk-prefix}-node-action {
+      display: inline-flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
       margin-right: 6px;
+      line-height: 1;
       color: #979ba5;
-      min-width: 14px;
     }
 
     .@{bk-prefix}-tree-icon {
@@ -112,9 +125,13 @@
       flex: 1;
       align-items: center;
       min-width: 0;
+      line-height: normal;
 
       .node-check-box {
         display: inline-flex;
+        flex-shrink: 0;
+        align-items: center;
+        line-height: 1;
       }
 
       .@{bk-prefix}-checkbox {
@@ -130,6 +147,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        line-height: var(--lineHeight);
       }
     }
   }

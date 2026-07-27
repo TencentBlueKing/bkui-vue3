@@ -25,7 +25,7 @@
  */
 
 import isElement from 'lodash/isElement';
-import { toRaw } from 'vue';
+import { markRaw, toRaw } from 'vue';
 
 import { NODE_ATTRIBUTES, NODE_SOURCE_ATTRS } from './constant';
 import { TreeNode, TreePropTypes } from './props';
@@ -355,14 +355,21 @@ export default (
   });
 
   const extendNodeAttr = (item: TreeNode) =>
-    Object.assign({}, item, {
-      [NODE_ATTRIBUTES.TREE_NODE_ATTR]: resolveScopedSlotParam(item),
-    });
+    markRaw(
+      Object.assign({}, toRaw(item) as TreeNode, {
+        [NODE_ATTRIBUTES.TREE_NODE_ATTR]: resolveScopedSlotParam(item),
+      }),
+    );
 
-  const extendNodeScopedData = (item: TreeNode) => ({
-    data: item,
-    attributes: resolveScopedSlotParam(item),
-  });
+  /**
+   * 插槽参数：data 使用 toRaw，避免深层 Proxy；整体 markRaw，降低自定义渲染时的响应式开销。
+   * 注意：data 仍持有原 children 引用，业务侧勿对整棵 data 做 JSON.stringify。
+   */
+  const extendNodeScopedData = (item: TreeNode) =>
+    markRaw({
+      data: toRaw(item) as TreeNode,
+      attributes: resolveScopedSlotParam(item),
+    });
 
   /**
    * 组装进入可视区域元素返回数据

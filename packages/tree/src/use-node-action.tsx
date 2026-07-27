@@ -244,7 +244,12 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     }
 
     if (options.refresh !== false) {
-      scheduleUiRefresh?.();
+      // 级联勾选可能影响大量节点，走全局刷新；单节点勾选只刷新当前行
+      if (isCascadeEnabled(props)) {
+        scheduleUiRefresh?.();
+      } else {
+        scheduleUiRefresh?.(item);
+      }
     }
 
     if (options.emitEvent !== false) {

@@ -61,7 +61,12 @@
           level-line
           show-checkbox
           virtual-render
-        />
+        >
+          <!-- 自定义节点：只读叶子字段，勿 JSON.stringify(data)（会序列化整棵子树） -->
+          <template #default="{ data }">
+            <span>{{ data.name }}</span>
+          </template>
+        </bk-tree>
       </div>
     </div>
   </div>

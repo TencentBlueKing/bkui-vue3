@@ -32,6 +32,7 @@ import { cloneDeep } from 'lodash';
 
 import { EVENTS, NODE_ATTRIBUTES, NODE_SOURCE_ATTRS, TreeEmitEventsType } from './constant';
 import { TreeDataChangePayload, treeProps, TreePropTypes as defineTypes, TreeNode } from './props';
+import TreeNodeRow from './tree-node-row';
 import useEmpty from './use-empty';
 import useIntersectionObserver from './use-intersection-observer';
 import useNodeAction from './use-node-action';
@@ -86,6 +87,8 @@ export default defineComponent({
     const {
       visibleNodes: renderData,
       uiVersion,
+      uiTick,
+      nodeUiVersions,
       rebuildVisibleNodes,
       syncNodeOpenState: syncNodeOpenStateRaw,
       scheduleUiRefresh,
@@ -93,6 +96,7 @@ export default defineComponent({
       checkNodeIsOpen,
       getChildNodes,
       getNodeAttr,
+      getNodeId,
       getNodePath,
       getNodeOrder: node => (getNodeAttr(node, NODE_ATTRIBUTES.ORDER) as number) ?? 0,
       getSchemaVal,
@@ -114,17 +118,19 @@ export default defineComponent({
     const syncNodeOpenState = (node: TreeNode, isOpen: boolean) => {
       if (isSearchActive.value) {
         rebuildVisibleNodes(filterFn);
+        scheduleUiRefresh(node);
         return;
       }
       syncNodeOpenStateRaw(node, isOpen);
     };
 
-    flatData.notifySchemaChange = (_node, attr) => {
-      // IS_OPEN 由 syncNodeOpenState 增量维护可见列表
+    flatData.notifySchemaChange = (node, attr) => {
+      // IS_OPEN 由 syncNodeOpenState 增量维护可见列表，并按节点刷新图标
       if (attr === NODE_ATTRIBUTES.IS_OPEN) {
         return;
       }
-      scheduleUiRefresh();
+      // 选中/勾选等：只刷新变更节点，避免自定义插槽全量重跑
+      scheduleUiRefresh(node);
     };
 
     const getRenderNodeId = (node: TreeNode) => `${getNodeId(node)}`;
@@ -512,7 +518,21 @@ export default defineComponent({
     });
     const renderTreeContent = (scopedData: TreeNode[]) => {
       if (scopedData.length) {
-        return scopedData.map(d => renderTreeNode(d, !isSearchActive.value || isTreeUI.value));
+        const showTree = !isSearchActive.value || isTreeUI.value;
+        const globalVersion = uiVersion.value;
+        return scopedData.map(d => {
+          const id = `${getNodeId(d)}`;
+          return (
+            <TreeNodeRow
+              key={id}
+              item={d}
+              showTree={showTree}
+              version={nodeUiVersions[id] || 0}
+              globalVersion={globalVersion}
+              renderFn={renderTreeNode}
+            />
+          );
+        });
       }
 
       const emptyType = isSearchActive.value ? 'search-empty' : 'empty';
@@ -545,8 +565,8 @@ export default defineComponent({
     const { resolveClassName } = usePrefix();
 
     return () => {
-      // 依赖 uiVersion，确保 checkbox/selected 等 schema 变更能触发重渲染
-      void uiVersion.value;
+      // uiTick：节点级刷新时唤醒 Tree；具体哪些行更新由 TreeNodeRow 的 version 决定
+      void uiTick.value;
 
       return (
         <VirtualRender
