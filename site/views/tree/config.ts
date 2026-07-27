@@ -68,6 +68,13 @@ export default [
         optional: [],
       },
       {
+        name: 'watch-data-deep',
+        type: 'Boolean',
+        default: 'false',
+        desc: '是否深度监听 data 内部变更（原地 push/改 children 等）。默认 false：仅监听 data 引用变化，大数据量下性能更好；若业务依赖「不换引用、原地改树」自动刷新，可设为 true（建议仅小数据场景）',
+        optional: ['true', 'false'],
+      },
+      {
         name: 'prefix-icon',
         type: 'Boolean|Function',
         default: 'true',
