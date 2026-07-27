@@ -139,6 +139,11 @@ export default (flatData: IFlatData, helpers: VisibleNodeHelpers) => {
     emitListChange(next);
   };
 
+  /** 直接设置可见列表（搜索态按候选集过滤后使用，避免再扫全表） */
+  const setVisibleNodes = (nodes: TreeNode[]) => {
+    emitListChange(nodes.slice());
+  };
+
   const collectOpenedBranch = (node: TreeNode, result: TreeNode[]) => {
     const children = getChildNodes(node);
     for (let i = 0, len = children.length; i < len; i++) {
@@ -146,6 +151,57 @@ export default (flatData: IFlatData, helpers: VisibleNodeHelpers) => {
       result.push(child);
       if (isNodeOpened(child)) {
         collectOpenedBranch(child, result);
+      }
+    }
+  };
+
+  /** 在 flatData（DFS 序）中按 ORDER 二分定位 */
+  const findFlatIndexByOrder = (targetOrder: number) => {
+    const data = flatData.data;
+    let low = 0;
+    let high = data.length - 1;
+    while (low <= high) {
+      const mid = (low + high) >> 1;
+      const midOrder = Number(getNodeOrder(data[mid]));
+      if (midOrder === targetOrder) {
+        return mid;
+      }
+      if (midOrder < targetOrder) {
+        low = mid + 1;
+      } else {
+        high = mid - 1;
+      }
+    }
+    return -1;
+  };
+
+  /**
+   * 收起时清除 flat 连续子孙区间内的 IS_OPEN（O(子树)）。
+   * 避免「可见区外仍保持 IS_OPEN」导致再次展开时 collectOpenedBranch 一次插入巨量子树。
+   */
+  const resetFlatDescendantOpenState = (node: TreeNode) => {
+    const nodeOrder = Number(getNodeOrder(node));
+    const nodeDepth = Number(getNodeAttr(node, NODE_ATTRIBUTES.DEPTH) ?? 0);
+    if (Number.isNaN(nodeOrder)) {
+      return;
+    }
+    const start = findFlatIndexByOrder(nodeOrder) + 1;
+    if (start <= 0) {
+      return;
+    }
+    const data = flatData.data;
+    for (let i = start, len = data.length; i < len; i++) {
+      const depth = Number(getNodeAttr(data[i], NODE_ATTRIBUTES.DEPTH) ?? -1);
+      if (depth <= nodeDepth) {
+        break;
+      }
+      const schema = getSchemaVal(data[i]);
+      if (!schema?.[NODE_ATTRIBUTES.IS_OPEN]) {
+        continue;
+      }
+      schema[NODE_ATTRIBUTES.IS_OPEN] = false;
+      if ((flatData.openCount || 0) > 0) {
+        flatData.openCount -= 1;
       }
     }
   };
@@ -210,18 +266,18 @@ export default (flatData: IFlatData, helpers: VisibleNodeHelpers) => {
   };
 
   /**
-   * 展开节点：在可见列表中插入直接子节点，以及已展开子树。
+   * 展开节点：默认只插入直接子节点。
+   * 若直接子节点自身已展开，再按需带上其已展开子树；
+   * 配合 collapse 时清除 flat 子孙 IS_OPEN，避免一次插入数十万节点。
    */
   const expandVisibleNode = (node: TreeNode) => {
     const index = findVisibleIndex(node);
     if (index < 0) {
-      // 不回退全表 rebuild（百万节点会卡 ~1s），只刷新当前行展开图标
       scheduleUiRefresh(node);
       return;
     }
 
     const list = visibleNodes.value;
-    // 已有后代可见则认为已展开，只刷新图标
     const nodeDepth = Number(getNodeAttr(node, NODE_ATTRIBUTES.DEPTH) ?? 0);
     const next = list[index + 1];
     if (next) {
@@ -232,26 +288,36 @@ export default (flatData: IFlatData, helpers: VisibleNodeHelpers) => {
       }
     }
 
-    const insertNodes: TreeNode[] = [];
-    collectOpenedBranch(node, insertNodes);
-    if (!insertNodes.length) {
+    const children = getChildNodes(node);
+    if (!children.length) {
       scheduleUiRefresh(node);
       return;
     }
 
+    // 只展开一层：已打开的子节点再带上其子树（收起时已清子孙 IS_OPEN，通常不会很大）
+    const insertNodes: TreeNode[] = [];
+    for (let i = 0, len = children.length; i < len; i++) {
+      const child = children[i];
+      insertNodes.push(child);
+      if (isNodeOpened(child)) {
+        collectOpenedBranch(child, insertNodes);
+      }
+    }
+
     emitListChange(list.slice(0, index + 1).concat(insertNodes, list.slice(index + 1)));
-    // 列表变更会挂载新行；当前行展开图标需按节点刷新（避免无关自定义插槽重跑）
     scheduleUiRefresh(node);
   };
 
   /**
    * 收起节点：
-   * 1) 只关闭「可见后代」中的 IS_OPEN（不必扫 flat 全量子树）
+   * 1) 清除 flat 子孙 IS_OPEN（防止再次展开时拖入巨量子树）
    * 2) 从可见列表移除该区间
    */
   const collapseVisibleNode = (node: TreeNode) => {
     const index = findVisibleIndex(node);
     if (index < 0) {
+      // 即使不在可见列表，也清掉 flat 子孙 open，保持状态一致
+      resetFlatDescendantOpenState(node);
       scheduleUiRefresh(node);
       return;
     }
@@ -266,6 +332,9 @@ export default (flatData: IFlatData, helpers: VisibleNodeHelpers) => {
       }
       end += 1;
     }
+
+    // 先清 flat 子孙，再改可见列表（closeOpenedInRange 对已关闭节点是 no-op）
+    resetFlatDescendantOpenState(node);
 
     if (end === index + 1) {
       scheduleUiRefresh(node);
@@ -294,6 +363,7 @@ export default (flatData: IFlatData, helpers: VisibleNodeHelpers) => {
     nodeUiVersions,
     getNodeUiVersion,
     rebuildVisibleNodes,
+    setVisibleNodes,
     expandVisibleNode,
     collapseVisibleNode,
     syncNodeOpenState,

@@ -47,6 +47,7 @@ import {
 export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, initOption) => {
   // const checkedNodes = [];
   let selectedNodeId = props.selected;
+  let selectedNode: TreeNode | null = null;
   const {
     setNodeAttr,
     setNodeAttrById,
@@ -466,11 +467,10 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     let resolvedItem = resolveNodeItem(nodeList[0]) as TreeNode | number | string | symbol;
     if (typeof resolvedItem === 'number' || typeof resolvedItem === 'string' || typeof resolvedItem === 'symbol') {
       const nodeId = String(resolvedItem);
-      resolvedItem =
-        flatData.nodeMap?.get(nodeId) ??
-        flatData.data.find(item => `${getNodeId(item)}` === nodeId) ?? {
-          [NODE_ATTRIBUTES.IS_NULL]: true,
-        };
+      // 只走 nodeMap，禁止 data.find O(N)
+      resolvedItem = flatData.nodeMap?.get(nodeId) ?? {
+        [NODE_ATTRIBUTES.IS_NULL]: true,
+      };
     }
 
     if (resolvedItem[NODE_ATTRIBUTES.IS_NULL]) {
@@ -485,16 +485,24 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
       console.warn('props.selectable is false or undefined, please set selectable with true');
       return;
     }
-    if (selectedNodeId !== null && selectedNodeId !== undefined) {
-      setNodeAttrById(selectedNodeId, NODE_ATTRIBUTES.IS_SELECTED, !selected);
+
+    // 取消旧选中：优先用缓存节点引用，避免 setNodeAttrById → 全表查找
+    if (selectedNode && selectedNode !== resolvedItem) {
+      setNodeAttr(selectedNode, NODE_ATTRIBUTES.IS_SELECTED, false, undefined, { silent: true });
+      scheduleUiRefresh?.(selectedNode);
+    } else if (selectedNodeId !== null && selectedNodeId !== undefined && `${selectedNodeId}` !== `${getNodeId(resolvedItem)}`) {
+      setNodeAttrById(selectedNodeId, NODE_ATTRIBUTES.IS_SELECTED, false, { silent: true });
     }
 
-    if (props.selected && props.selected !== selectedNodeId) {
-      setNodeAttrById(props.selected, NODE_ATTRIBUTES.IS_SELECTED, !selected);
+    if (props.selected && props.selected !== selectedNodeId && `${props.selected}` !== `${getNodeId(resolvedItem)}`) {
+      setNodeAttrById(props.selected, NODE_ATTRIBUTES.IS_SELECTED, false, { silent: true });
     }
 
-    setNodeAttr(resolvedItem, NODE_ATTRIBUTES.IS_SELECTED, selected);
+    setNodeAttr(resolvedItem, NODE_ATTRIBUTES.IS_SELECTED, selected, undefined, { silent: true });
+    selectedNode = resolvedItem as TreeNode;
     selectedNodeId = getNodeId(resolvedItem);
+    scheduleUiRefresh?.(resolvedItem as TreeNode);
+
     if (triggerEvent) {
       ctx.emit(EVENTS.NODE_SELECTED, { selected: selected, node: resolvedItem });
     }

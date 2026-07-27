@@ -161,16 +161,25 @@ export default (
     }
   };
 
-  const getNodeById = (id: string | unknown): TreeNode =>
-    flatData.nodeMap?.get(`${id}`) ?? flatData.data.find(item => `${getNodeId(item)}` === `${id}`);
+  const getNodeById = (id: string | unknown): TreeNode => {
+    if (id === undefined || id === null || id === '') {
+      return undefined;
+    }
+    // 禁止回退 flatData.data.find（百万节点 O(N)）
+    return flatData.nodeMap?.get(`${id}`);
+  };
 
-  const setNodeAttrById = (id: unknown, attr: string, val: unknown) => {
+  const setNodeAttrById = (id: unknown, attr: string, val: unknown, setOptions?: SetNodeAttrOptions) => {
     if (Array.isArray(id)) {
-      Array.prototype.forEach.call(id, (item: TreeNode) => setNodeAttr(getNodeById(item), attr, val, id));
+      Array.prototype.forEach.call(id, (item: TreeNode) => setNodeAttr(getNodeById(item), attr, val, id, setOptions));
       return;
     }
 
-    setNodeAttr(getNodeById(id), attr, val, id);
+    const node = getNodeById(id);
+    if (!node) {
+      return;
+    }
+    setNodeAttr(node, attr, val, id, setOptions);
   };
 
   const getNodePath = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.PATH);

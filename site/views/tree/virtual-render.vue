@@ -38,13 +38,27 @@
         >
           ScrollToTop({{ scrollToPath }})
         </bk-button>
+        <span style="padding: 4px" />
+        <bk-button
+          theme="primary"
+          @click="handleOpenAllNodes"
+        >
+          openAllNodes
+        </bk-button>
+        <span style="padding: 4px" />
+        <bk-button
+          theme="warning"
+          @click="handleCollapseAll"
+        >
+          collapseAll
+        </bk-button>
         <bk-input
           style="width: 400px; margin-left: 20px"
           v-model="search.value"
           type="search"
         />
         <span style="margin-left: 12px; color: #63656e">
-          节点数: {{ nodeCount.toLocaleString() }} {{ genCostText }}
+          节点数: {{ nodeCount.toLocaleString() }} {{ genCostText }} {{ actionCostText }}
         </span>
       </div>
       <div
@@ -141,6 +155,7 @@
         nodeCount: BASIC_DATA.length,
         generating: false,
         genCostText: '',
+        actionCostText: '',
         search: {
           value: '',
           showChildNodes: true,
@@ -154,6 +169,7 @@
         }
         this.generating = true;
         this.genCostText = '（生成中…）';
+        this.actionCostText = '';
         // 让 loading 先上屏，再同步构建大数据
         requestAnimationFrame(() => {
           const genStart = performance.now();
@@ -174,6 +190,7 @@
       },
       handleRandomRows() {
         this.genCostText = '';
+        this.actionCostText = '';
         function randomChildren(depth = 5) {
           if (depth > 0) {
             const length = Math.ceil(Math.random() * depth);
@@ -209,6 +226,32 @@
         const targetItem = data.data[Math.ceil(data.data.length / 2)];
         this.scrollToPath = targetItem.name;
         this.$refs.refTree.scrollToTop(targetItem);
+      },
+      handleOpenAllNodes() {
+        const tree = this.$refs.refTree;
+        if (!tree?.openAllNodes) {
+          return;
+        }
+        const start = performance.now();
+        tree.openAllNodes();
+        this.$nextTick(() => {
+          const cost = Math.round(performance.now() - start);
+          this.actionCostText = `（openAllNodes ${cost}ms）`;
+          console.info('[tree virtual-render] openAllNodes', { cost });
+        });
+      },
+      handleCollapseAll() {
+        const tree = this.$refs.refTree;
+        if (!tree?.collapseAll) {
+          return;
+        }
+        const start = performance.now();
+        tree.collapseAll();
+        this.$nextTick(() => {
+          const cost = Math.round(performance.now() - start);
+          this.actionCostText = `（collapseAll ${cost}ms）`;
+          console.info('[tree virtual-render] collapseAll', { cost });
+        });
       },
     },
   });
