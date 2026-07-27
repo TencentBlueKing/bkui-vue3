@@ -31,6 +31,7 @@ import { DownShape, Folder, FolderShapeOpen, RightShape, Spinner, TextFile } fro
 
 import { EVENTS, NODE_ATTRIBUTES } from './constant';
 import { TreeNode, TreePropTypes } from './props';
+import useCheckedState from './use-checked-state';
 import useNodeAsync from './use-node-async';
 import useNodeAttribute from './use-node-attribute';
 import {
@@ -39,6 +40,7 @@ import {
   getNodeItemStyle,
   getNodeRowClass,
   IFlatData,
+  isCascadeEnabled,
   resolveNodeItem,
   showCheckbox,
 } from './util';
@@ -63,11 +65,29 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     resolveScopedSlotParam,
     extendNodeAttr,
     extendNodeScopedData,
+    getRootNodeList,
   } = useNodeAttribute(flatData, props);
 
   const { resolveClassName } = usePrefix();
 
-  const { registerNextLoop } = initOption;
+  const { registerNextLoop, syncNodeOpenState, scheduleUiRefresh } = initOption;
+
+  const {
+    setNodeCheckedState,
+    setDescendantChecked,
+    forEachDescendant,
+    updateParentChecked,
+    getCheckedEmitPayload,
+    rebuildCheckedSetsFromList,
+    clearAllCheckedState,
+    isNodeIndeterminate,
+  } = useCheckedState(flatData, {
+    getChildNodes,
+    getNodeAttr,
+    getParentNode,
+    getSchemaVal,
+    isRootNode,
+  });
 
   const { asyncNodeClick, deepAutoOpen } = useNodeAsync(props, flatData, ctx, initOption);
 
@@ -183,40 +203,16 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     return null;
   };
 
-  const updateParentChecked = (item: TreeNode, isChecked) => {
-    const parent = getParentNode(item);
-    if (!parent) {
-      return;
-    }
-
-    const isNeedChecked = isChecked
-      ? isChecked
-      : (getChildNodes(parent) || []).some((node: TreeNode) => isNodeChecked(node));
-
-    setNodeAttr(parent, NODE_ATTRIBUTES.IS_CHECKED, isNeedChecked);
-
-    setNodeAttr(
-      parent,
-      NODE_ATTRIBUTES.IS_INDETERMINATE,
-      (getChildNodes(parent) || []).some((node: TreeNode) => !isNodeChecked(node) || isIndeterminate(node)),
-    );
-
-    if (!isRootNode(parent)) {
-      updateParentChecked(parent, isChecked);
-    }
-  };
-
   const deepUpdateChildNode = (node: TreeNode, attr: string | string[], value: unknown | unknown[]) => {
-    getChildNodes(node).forEach(chid => {
+    // 按 DFS 连续区间扫描后代，避免递归 forEach
+    forEachDescendant(node, chid => {
       if (Array.isArray(attr)) {
         attr.forEach((val, index) => {
-          setNodeAttr(chid, val, value[index]);
+          setNodeAttr(chid, val, value[index], undefined, { silent: true });
         });
       } else {
-        setNodeAttr(chid, attr, value);
+        setNodeAttr(chid, attr, value, undefined, { silent: true });
       }
-
-      deepUpdateChildNode(chid, attr, value);
     });
   };
 
@@ -227,32 +223,46 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     return true;
   };
 
+  const emitCheckedChange = () => {
+    // 先让勾选 UI 刷新，再异步抛出列表，避免百万级 Array.from 阻塞交互
+    nextTick(() => {
+      const [checkedNodes, indeterminateNodes] = getCheckedEmitPayload();
+      ctx.emit(EVENTS.NODE_CHECKED, checkedNodes, indeterminateNodes);
+    });
+  };
+
+  const applyCheckedChange = (
+    item: TreeNode,
+    value: boolean,
+    options: { emitEvent?: boolean; refresh?: boolean } = {},
+  ) => {
+    const checked = !!value;
+    setNodeCheckedState(item, checked, false);
+
+    if (isCascadeEnabled(props)) {
+      setDescendantChecked(item, checked);
+      updateParentChecked(item);
+    }
+
+    if (options.refresh !== false) {
+      scheduleUiRefresh?.();
+    }
+
+    if (options.emitEvent !== false) {
+      emitCheckedChange();
+    }
+  };
+
   const handleNodeItemCheckboxChange = (item: TreeNode, value: boolean, event?: Event) => {
     event?.preventDefault();
     event?.stopImmediatePropagation();
     event?.stopPropagation();
 
-    setNodeAttr(item, NODE_ATTRIBUTES.IS_CHECKED, !!value);
-    if (value) {
-      setNodeAttr(item, NODE_ATTRIBUTES.IS_INDETERMINATE, false);
-    }
-
-    if (props.checkStrictly) {
-      deepUpdateChildNode(item, [NODE_ATTRIBUTES.IS_CHECKED, NODE_ATTRIBUTES.IS_INDETERMINATE], [!!value, false]);
-      updateParentChecked(item, value);
-    }
-
-    ctx.emit(
-      EVENTS.NODE_CHECKED,
-      flatData.data.filter((t: TreeNode) => isNodeChecked(t)),
-      flatData.data.filter((t: TreeNode) => isIndeterminate(t)),
-    );
-
+    applyCheckedChange(item, value);
     handleNodeContentClick(item, event as MouseEvent, 'checked');
   };
 
-  const isIndeterminate = (item: TreeNode) =>
-    isNodeChecked(item) && getNodeAttr(item, NODE_ATTRIBUTES.IS_INDETERMINATE);
+  const isIndeterminate = (item: TreeNode) => isNodeIndeterminate(item);
 
   const getCheckboxRender = (item: TreeNode) => {
     if (!showCheckbox(props, extendNodeScopedData(item))) {
@@ -283,15 +293,13 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
   const setNodeOpened = (item: TreeNode, isOpen = null, e: MouseEvent = null, fireEmit = true) => {
     const newVal = isOpen === null ? !isItemOpen(item) : !!isOpen;
 
+    setNodeAttr(item, NODE_ATTRIBUTES.IS_OPEN, newVal, undefined, { silent: true });
     /**
-     * 在收起节点时需要重置当前节点的所有叶子节点状态为 __isOpen = false
-     * 如果是需要点击当前节点展开所有叶子节点此处也可以打开
+     * 增量维护可见列表：
+     * - 展开：插入子节点
+     * - 收起：移除可见后代，并仅重置可见区间内的 IS_OPEN（不再扫 flat 全量子树）
      */
-    if (!newVal) {
-      deepUpdateChildNode(item, NODE_ATTRIBUTES.IS_OPEN, newVal);
-    }
-
-    setNodeAttr(item, NODE_ATTRIBUTES.IS_OPEN, newVal);
+    syncNodeOpenState?.(item, newVal);
 
     if (fireEmit) {
       const emitEvent: string = isItemOpen(item) ? EVENTS.NODE_EXPAND : EVENTS.NODE_COLLAPSE;
@@ -323,7 +331,26 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
    * @returns
    */
   const setOpen = (item: TreeNode, isOpen = true, autoOpenParents = false) => {
-    setNodeAttribute(item, NODE_ATTRIBUTES.IS_OPEN, isOpen, autoOpenParents && isOpen);
+    const resolvedItem = resolveNodeItem(item);
+    if (resolvedItem[NODE_ATTRIBUTES.IS_NULL]) {
+      return;
+    }
+
+    if (autoOpenParents && isOpen && !isRootNode(resolvedItem)) {
+      const parents: TreeNode[] = [];
+      let parent = getParentNode(resolvedItem) as TreeNode | null;
+      while (parent) {
+        parents.unshift(parent);
+        parent = getParentNode(parent) as TreeNode | null;
+      }
+      parents.forEach(node => {
+        if (!isItemOpen(node)) {
+          setNodeOpened(node, true, null, false);
+        }
+      });
+    }
+
+    setNodeOpened(resolvedItem, isOpen, null, false);
   };
 
   /**
@@ -435,9 +462,11 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     let resolvedItem = resolveNodeItem(nodeList[0]) as TreeNode | number | string | symbol;
     if (typeof resolvedItem === 'number' || typeof resolvedItem === 'string' || typeof resolvedItem === 'symbol') {
       const nodeId = resolvedItem;
-      resolvedItem = flatData.data.find(item => getNodeId(item) === nodeId) ?? {
-        [NODE_ATTRIBUTES.IS_NULL]: true,
-      };
+      resolvedItem =
+        flatData.nodeMap?.get(`${nodeId}`) ??
+        flatData.data.find(item => getNodeId(item) === nodeId) ?? {
+          [NODE_ATTRIBUTES.IS_NULL]: true,
+        };
     }
 
     if (resolvedItem[NODE_ATTRIBUTES.IS_NULL]) {
@@ -563,20 +592,29 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
       return false;
     }
 
-    const nodepath = getNodePath(node);
-    const paths = `${nodepath}`.split('-').slice(0, depth + 1);
-    const currentPath = paths.join('-');
-
-    // 如果是判定当前节点，则必须要有一条线
-    if (currentPath === nodepath) {
+    const nodeDepth = (getNodeAttr(node, NODE_ATTRIBUTES.DEPTH) as number) ?? 0;
+    // 当前节点所在 depth：必有连线
+    if (depth === nodeDepth) {
       return true;
     }
 
-    const lastLevel = paths.pop();
-    const nextLevel = parseInt(lastLevel, 10);
-    paths.push(`${nextLevel + 1}`);
-    const nextNodePath = paths.join('-');
-    return flatData.data.some((val: TreeNode) => getNodePath(val) === nextNodePath);
+    if (depth > nodeDepth) {
+      return false;
+    }
+
+    // 取 depth 层祖先，判断其是否存在下一个兄弟节点 —— O(depth) 替代全表 some
+    let ancestor: TreeNode = node;
+    for (let i = nodeDepth; i > depth; i--) {
+      ancestor = getParentNode(ancestor) as TreeNode;
+      if (!ancestor) {
+        return false;
+      }
+    }
+
+    const parent = getParentNode(ancestor) as TreeNode | null;
+    const siblings = parent ? getChildNodes(parent) : getRootNodeList();
+    const idx = siblings.indexOf(ancestor);
+    return idx >= 0 && idx < siblings.length - 1;
   };
 
   /**
@@ -586,6 +624,11 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
    */
   const getVirtualLines = (node: TreeNode) => {
     if (!props.levelLine) {
+      return null;
+    }
+
+    // 根节点不渲染层级连线（与基础用法一致）
+    if (isRootNode(node)) {
       return null;
     }
 
@@ -687,5 +730,9 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     isIndeterminate,
     deepUpdateChildNode,
     updateParentChecked,
+    applyCheckedChange,
+    emitCheckedChange,
+    rebuildCheckedSetsFromList,
+    clearAllCheckedState,
   };
 };

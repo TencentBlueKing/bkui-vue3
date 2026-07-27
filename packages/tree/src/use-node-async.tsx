@@ -9,7 +9,7 @@
 import { EVENTS, NODE_ATTRIBUTES, NODE_SOURCE_ATTRS } from './constant';
 import { TreeDataChangePayload, TreeNode, TreePropTypes } from './props';
 import useNodeAttribute from './use-node-attribute';
-import { cloneTreeData, IFlatData, mutateTreeById } from './util';
+import { IFlatData, mutateTreeById } from './util';
 
 type TreeContext = {
   emit: (event: EVENTS, ...args: unknown[]) => void;
@@ -57,7 +57,8 @@ export default (props: TreePropTypes, flatData: IFlatData, ctx?: TreeContext, op
         return Promise.resolve(resp);
       }
 
-      const nextTreeData = cloneTreeData(options.getTreeData?.() ?? props.data, props.children);
+      // 原地写入子节点，避免百万节点全量 cloneTreeData
+      const nextTreeData = options.getTreeData?.() ?? props.data;
       mutateTreeById(nextTreeData, nodeId, props.nodeKey || NODE_ATTRIBUTES.UUID, props.children, targetNode => {
         targetNode[NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.IS_OPEN]] = true;
         targetNode[props.children] = nodeValue;

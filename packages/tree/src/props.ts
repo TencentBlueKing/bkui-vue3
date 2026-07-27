@@ -189,6 +189,13 @@ export const treeProps = {
   virtualRender: PropTypes.bool.def(false),
 
   /**
+   * 是否深度监听 data 内部变更（原地 push/改 children 等）
+   * 默认 false：仅监听 data 引用变化，大数据量下性能更好
+   * 若业务依赖「不换引用、原地改树」自动刷新，可设为 true（小数据场景）
+   */
+  watchDataDeep: PropTypes.bool.def(false),
+
+  /**
    * 当前节点标识图标
    * 默认 true
    */

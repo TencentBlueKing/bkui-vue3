@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { computed, defineComponent, nextTick, onMounted, reactive, ref, watch } from 'vue';
+import { defineComponent, nextTick, onMounted, reactive, ref, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { debounce } from '@bkui-vue/shared';
@@ -39,6 +39,7 @@ import useNodeAttribute from './use-node-attribute';
 import useNodeDrag from './use-node-drag';
 import useSearch from './use-search';
 import useTreeInit from './use-tree-init';
+import useVisibleNodes from './use-visible-nodes';
 import { getLabel, getTreeStyle, resolveNodeItem } from './util';
 
 export type TreePropTypes = defineTypes;
@@ -56,7 +57,7 @@ export default defineComponent({
     const root = ref();
     const treeDataRef = ref<TreeNode[]>(props.data as TreeNode[]);
 
-    const { flatData, onSelected, rebuildData, registerNextLoop } = useTreeInit(props);
+    const { flatData, onSelected, rebuildData, registerNextLoop, onAfterRebuild } = useTreeInit(props);
 
     const {
       checkNodeIsOpen,
@@ -71,6 +72,9 @@ export default defineComponent({
       getParentNode,
       getRootNodeList,
       getIntersectionResponse,
+      getChildNodes,
+      getNodePath,
+      getSchemaVal,
     } = useNodeAttribute(flatData, props);
 
     const { searchFn, isSearchActive, refSearch, isSearchDisabled, isTreeUI, resultType, showChildNodes } =
@@ -78,6 +82,50 @@ export default defineComponent({
     const matchedNodeIds = reactive(new Set<string>());
     const visibleNodeIds = reactive(new Set<string>());
     const searchOriginalOpenState = new Map<string, boolean>();
+
+    const {
+      visibleNodes: renderData,
+      uiVersion,
+      rebuildVisibleNodes,
+      syncNodeOpenState: syncNodeOpenStateRaw,
+      scheduleUiRefresh,
+    } = useVisibleNodes(flatData, {
+      checkNodeIsOpen,
+      getChildNodes,
+      getNodeAttr,
+      getNodePath,
+      getNodeOrder: node => (getNodeAttr(node, NODE_ATTRIBUTES.ORDER) as number) ?? 0,
+      getSchemaVal,
+      isNodeOpened,
+    });
+
+    const filterFn = (item: TreeNode) => {
+      if (isSearchActive.value) {
+        return visibleNodeIds.has(`${getNodeId(item)}`);
+      }
+
+      return checkNodeIsOpen(item);
+    };
+
+    /**
+     * 搜索态下可见集由 matched/visibleNodeIds 决定，不能按父子关系增量插入；
+     * 非搜索态走 O(子树) 增量更新。
+     */
+    const syncNodeOpenState = (node: TreeNode, isOpen: boolean) => {
+      if (isSearchActive.value) {
+        rebuildVisibleNodes(filterFn);
+        return;
+      }
+      syncNodeOpenStateRaw(node, isOpen);
+    };
+
+    flatData.notifySchemaChange = (_node, attr) => {
+      // IS_OPEN 由 syncNodeOpenState 增量维护可见列表
+      if (attr === NODE_ATTRIBUTES.IS_OPEN) {
+        return;
+      }
+      scheduleUiRefresh();
+    };
 
     const getRenderNodeId = (node: TreeNode) => `${getNodeId(node)}`;
 
@@ -118,16 +166,6 @@ export default defineComponent({
       });
     };
 
-    const filterFn = (item: TreeNode) => {
-      if (isSearchActive.value) {
-        return visibleNodeIds.has(getRenderNodeId(item));
-      }
-
-      return checkNodeIsOpen(item);
-    };
-
-    // 计算当前需要渲染的节点信息
-    const renderData = computed(() => flatData.data.filter(item => filterFn(item)));
     const { getLastVisibleElement, intersectionObserver } = useIntersectionObserver(props);
 
     const collectOpenNodeIds = () => {
@@ -205,16 +243,46 @@ export default defineComponent({
       setSelect,
       asyncNodeClick,
       setNodeAttribute,
-      isIndeterminate,
-      deepUpdateChildNode,
-      updateParentChecked,
+      applyCheckedChange,
+      emitCheckedChange,
+      rebuildCheckedSetsFromList,
+      clearAllCheckedState,
     } = useNodeAction(props, ctx, flatData, renderData, {
       getTreeData: () => treeDataRef.value,
       onTreeDataChange,
       registerNextLoop,
+      syncNodeOpenState,
+      scheduleUiRefresh,
     });
 
+    // 数据重建完成后同步勾选索引与可见列表（保证读到最新 schema）
+    const syncAfterRebuild = () => {
+      rebuildCheckedSetsFromList(flatData.checkedList || []);
+      rebuildVisibleNodes(isSearchActive.value ? filterFn : undefined);
+    };
+    onAfterRebuild(syncAfterRebuild);
+    watch(() => flatData.data, syncAfterRebuild);
+
     const handleSearch = debounce(120, () => {
+      // 非搜索态：禁止扫全表写 IS_MATCH（百万节点首屏会卡死）
+      if (!isSearchActive.value) {
+        if (searchOriginalOpenState.size) {
+          restoreSearchOpenState();
+        }
+        if (matchedNodeIds.size) {
+          matchedNodeIds.forEach(nodeId => {
+            const node = getNodeById(nodeId);
+            if (node) {
+              setNodeAttribute(node, NODE_ATTRIBUTES.IS_MATCH, false, false);
+            }
+          });
+          matchedNodeIds.clear();
+        }
+        visibleNodeIds.clear();
+        rebuildVisibleNodes();
+        return;
+      }
+
       restoreSearchOpenState();
       matchedNodeIds.clear();
       visibleNodeIds.clear();
@@ -235,10 +303,6 @@ export default defineComponent({
         );
       });
 
-      if (!isSearchActive.value) {
-        return;
-      }
-
       flatData.data.forEach((item: TreeNode) => {
         if (!matchedNodeIds.has(getRenderNodeId(item))) {
           return;
@@ -251,14 +315,16 @@ export default defineComponent({
           addDescendantNodes(item);
         }
       });
+
+      rebuildVisibleNodes(filterFn);
     });
 
     watch(
-      [refSearch, () => flatData.data, resultType, showChildNodes],
+      [refSearch, resultType, showChildNodes, isSearchActive],
       () => {
         handleSearch();
       },
-      { deep: true, immediate: true },
+      { immediate: true },
     );
 
     onMounted(() => {
@@ -304,28 +370,16 @@ export default defineComponent({
       const nodes = resolveToNodes(item);
       nodes.forEach(node => {
         const resolvedNode = resolveNodeItem(node);
-        setNodeAction(resolvedNode, NODE_ATTRIBUTES.IS_CHECKED, checked);
-        if (checked) {
-          setNodeAction(resolvedNode, NODE_ATTRIBUTES.IS_INDETERMINATE, false);
+        if (resolvedNode[NODE_ATTRIBUTES.IS_NULL]) {
+          return;
         }
-
-        // 如果设置了 checkStrictly，需要同步更新子节点和父节点的状态
-        if (props.checkStrictly) {
-          deepUpdateChildNode(
-            resolvedNode,
-            [NODE_ATTRIBUTES.IS_CHECKED, NODE_ATTRIBUTES.IS_INDETERMINATE],
-            [checked, false],
-          );
-          updateParentChecked(resolvedNode, checked);
-        }
+        applyCheckedChange(resolvedNode, checked, { emitEvent: false, refresh: false });
       });
 
+      scheduleUiRefresh();
+
       if (triggerEvent) {
-        ctx.emit(
-          EVENTS.NODE_CHECKED,
-          flatData.data.filter(t => isNodeChecked(t)),
-          flatData.data.filter(t => isIndeterminate(t)),
-        );
+        emitCheckedChange();
       }
     };
 
@@ -376,14 +430,7 @@ export default defineComponent({
     watch(
       () => [props.checked],
       () => {
-        // 先清除所有节点的选中和半选状态
-        flatData.data.forEach(node => {
-          if (isNodeChecked(node) || isIndeterminate(node)) {
-            setNodeAction(node, NODE_ATTRIBUTES.IS_CHECKED, false);
-            setNodeAction(node, NODE_ATTRIBUTES.IS_INDETERMINATE, false);
-          }
-        });
-        // 再设置新的选中节点
+        clearAllCheckedState();
         setChecked(props.checked, true);
       },
       {
@@ -497,25 +544,30 @@ export default defineComponent({
 
     const { resolveClassName } = usePrefix();
 
-    return () => (
-      <VirtualRender
-        ref={root}
-        style={getTreeStyle(null, props)}
-        height={props.height}
-        class={resolveClassName('tree')}
-        contentClassName={resolveClassName('container')}
-        enabled={props.virtualRender}
-        keepAlive={true}
-        lineHeight={props.lineHeight}
-        list={renderData.value}
-        rowKey={NODE_ATTRIBUTES.UUID}
-        throttleDelay={0}
-        onContentScroll={handleContentScroll}
-      >
-        {{
-          default: (scoped: { data: TreeNode[] }) => renderTreeContent(scoped.data || []),
-        }}
-      </VirtualRender>
-    );
+    return () => {
+      // 依赖 uiVersion，确保 checkbox/selected 等 schema 变更能触发重渲染
+      void uiVersion.value;
+
+      return (
+        <VirtualRender
+          ref={root}
+          style={getTreeStyle(null, props)}
+          height={props.height}
+          class={resolveClassName('tree')}
+          contentClassName={resolveClassName('container')}
+          enabled={props.virtualRender}
+          keepAlive={true}
+          lineHeight={props.lineHeight}
+          list={renderData.value}
+          rowKey={props.nodeKey || NODE_ATTRIBUTES.UUID}
+          throttleDelay={0}
+          onContentScroll={handleContentScroll}
+        >
+          {{
+            default: (scoped: { data: TreeNode[] }) => renderTreeContent(scoped.data || []),
+          }}
+        </VirtualRender>
+      );
+    };
   },
 });

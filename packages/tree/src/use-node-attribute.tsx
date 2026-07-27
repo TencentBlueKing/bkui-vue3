@@ -25,6 +25,7 @@
  */
 
 import isElement from 'lodash/isElement';
+import { toRaw } from 'vue';
 
 import { NODE_ATTRIBUTES, NODE_SOURCE_ATTRS } from './constant';
 import { TreeNode, TreePropTypes } from './props';
@@ -51,6 +52,16 @@ type TreeNodeAttributeMap = {
   [NODE_ATTRIBUTES.UUID]: string | number;
 };
 
+type SetNodeAttrOptions = {
+  /** 跳过 UI 刷新通知（批量更新时使用） */
+  silent?: boolean;
+};
+
+type UseNodeAttributeOptions = {
+  /** schema 变更后的 UI 刷新（schema 已 markRaw，需显式通知） */
+  onSchemaChange?: (node: TreeNode, attr: string, val: unknown) => void;
+};
+
 export default (
   flatData: {
     data: TreeNode[];
@@ -58,15 +69,39 @@ export default (
     nodeMap?: Map<number | string, TreeNode>;
     childMap?: WeakMap<TreeNode, TreeNode[]>;
     rootNodes?: TreeNode[];
+    openCount?: number;
+    notifySchemaChange?: (node: TreeNode, attr: string, val: unknown) => void;
+    syncCheckedState?: (node: TreeNode) => void;
   },
   props?: TreePropTypes,
+  options: UseNodeAttributeOptions = {},
 ) => {
+  /**
+   * WeakMap 以对象引用为 key；Vue Proxy 与 raw 不是同一引用，需同时兼容
+   */
+  const resolveSchemaNode = (node: TreeNode | null | undefined): TreeNode | null => {
+    if (!node) {
+      return null;
+    }
+    if (flatData.schema.has(node)) {
+      return node;
+    }
+    const raw = toRaw(node);
+    if (raw && raw !== node && flatData.schema.has(raw)) {
+      return raw;
+    }
+    return null;
+  };
+
   /**
    * 获取Schema中指定的对象值
    * @param key
    * @returns
    */
-  const getSchemaVal = (node: TreeNode) => flatData.schema.get(node);
+  const getSchemaVal = (node: TreeNode) => {
+    const schemaNode = resolveSchemaNode(node);
+    return schemaNode ? flatData.schema.get(schemaNode) : undefined;
+  };
 
   /**
    * 获取节点属性
@@ -84,19 +119,46 @@ export default (
   }
 
   /**
-   * 设置节点属性
+   * 设置节点属性（原地更新 schema，避免每次 Object.assign 新对象）
    * @param node 指定节点
    * @param attr 节点属性
    * @param val 属性值
    * @returns
    */
-  const setNodeAttr = (node: TreeNode, attr: string, val: unknown, id?) => {
-    if (!flatData.schema.has(node)) {
+  const setNodeAttr = (node: TreeNode, attr: string, val: unknown, id?, setOptions: SetNodeAttrOptions = {}) => {
+    const schemaNode = resolveSchemaNode(node);
+    if (!schemaNode) {
       console.warn('node is not in schema, please check', id, node);
       return;
     }
 
-    flatData.schema.set(node, Object.assign({}, getSchemaVal(node), { [attr]: val }));
+    const schemaVal = flatData.schema.get(schemaNode);
+    if (!schemaVal) {
+      return;
+    }
+
+    if (schemaVal[attr] === val) {
+      return;
+    }
+
+    if (attr === NODE_ATTRIBUTES.IS_OPEN) {
+      const prevOpen = !!schemaVal[attr];
+      const nextOpen = !!val;
+      if (prevOpen !== nextOpen) {
+        flatData.openCount = (flatData.openCount || 0) + (nextOpen ? 1 : -1);
+      }
+    }
+
+    schemaVal[attr] = val;
+
+    if (attr === NODE_ATTRIBUTES.IS_CHECKED || attr === NODE_ATTRIBUTES.IS_INDETERMINATE) {
+      flatData.syncCheckedState?.(node);
+    }
+
+    if (!setOptions.silent) {
+      options.onSchemaChange?.(node, attr, val);
+      flatData.notifySchemaChange?.(node, attr, val);
+    }
   };
 
   const getNodeById = (id: string | unknown): TreeNode =>
@@ -112,9 +174,32 @@ export default (
   };
 
   const getNodePath = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.PATH);
-  const getNodeId = (node: TreeNode | null | undefined) => getNodeAttr(node, NODE_ATTRIBUTES.UUID) as string | number;
+  const getNodeId = (node: TreeNode | null | undefined) => {
+    const schemaId = getNodeAttr(node, NODE_ATTRIBUTES.UUID);
+    if (schemaId !== undefined && schemaId !== null && schemaId !== '') {
+      return schemaId as string | number;
+    }
+    if (!node) {
+      return undefined;
+    }
+    if (props?.nodeKey && node[props.nodeKey] !== undefined && node[props.nodeKey] !== null) {
+      return node[props.nodeKey] as string | number;
+    }
+    return node[NODE_ATTRIBUTES.UUID] as string | number;
+  };
   const isNodeOpened = (node: TreeNode) => !!getNodeAttr(node, NODE_ATTRIBUTES.IS_OPEN);
-  const hasChildNode = (node: TreeNode) => !!getNodeAttr(node, NODE_ATTRIBUTES.HAS_CHILD);
+  const hasChildNode = (node: TreeNode) => {
+    if (!!getNodeAttr(node, NODE_ATTRIBUTES.HAS_CHILD)) {
+      return true;
+    }
+    const schemaNode = resolveSchemaNode(node);
+    if (schemaNode && (flatData.childMap?.get(schemaNode)?.length ?? 0) > 0) {
+      return true;
+    }
+    const childKey = props?.children || 'children';
+    const rawNode = toRaw(node) as TreeNode;
+    return !!((rawNode?.[childKey] as TreeNode[] | undefined)?.length || (node?.[childKey] as TreeNode[] | undefined)?.length);
+  };
   const isNodeMatched = (node: TreeNode) => !!getNodeAttr(node, NODE_ATTRIBUTES.IS_MATCH);
   const isNodeChecked = (node: TreeNode) => !!getNodeAttr(node, NODE_ATTRIBUTES.IS_CHECKED);
   const getNodeParentId = (node: TreeNode) =>
@@ -147,7 +232,14 @@ export default (
       return !!getNodeAttrById(node, NODE_ATTRIBUTES.IS_ROOT);
     }
 
-    return !!getNodeAttr(node, NODE_ATTRIBUTES.IS_ROOT);
+    if (!!getNodeAttr(node, NODE_ATTRIBUTES.IS_ROOT)) {
+      return true;
+    }
+    if (getNodeAttr(node, NODE_ATTRIBUTES.PARENT)) {
+      return false;
+    }
+    const schemaNode = resolveSchemaNode(node);
+    return !!schemaNode && !!flatData.rootNodes?.includes(schemaNode);
   };
 
   const getNodeParentIdById = (id: string) => {
@@ -218,7 +310,14 @@ export default (
   };
 
   const getChildNodes = (node: TreeNode) => {
-    return flatData.childMap?.get(node) ?? flatData.data.filter(item => getParentNode(item) === node);
+    const schemaNode = resolveSchemaNode(node) ?? (toRaw(node) as TreeNode);
+    const mapped = flatData.childMap?.get(schemaNode) ?? flatData.childMap?.get(node);
+    if (mapped) {
+      return mapped;
+    }
+    // 禁止回退 flatData.data.filter（百万节点 O(N)）；直接读源数据 children
+    const childKey = props?.children || 'children';
+    return ((schemaNode?.[childKey] as TreeNode[]) || (node?.[childKey] as TreeNode[]) || []);
   };
 
   const getSourceNodeByUID = (uid: string) => getNodeById(uid);

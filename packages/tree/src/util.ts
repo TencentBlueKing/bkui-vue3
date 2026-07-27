@@ -24,6 +24,8 @@
  * IN THE SOFTWARE.
  */
 
+import { toRaw } from 'vue';
+
 import { usePrefix } from '@bkui-vue/config-provider';
 
 import { NODE_ATTRIBUTES } from './constant';
@@ -37,6 +39,14 @@ export type IFlatData = {
   nodeMap?: Map<TreeNodeKey, TreeNode>;
   childMap?: WeakMap<TreeNode, TreeNode[]>;
   rootNodes?: TreeNode[];
+  /** 当前 IS_OPEN=true 的节点数，用于可见列表快速重建 */
+  openCount?: number;
+  /** flatten 阶段收集的初始勾选节点 */
+  checkedList?: TreeNode[];
+  /** schema 已 markRaw 时，用于通知 UI 刷新 */
+  notifySchemaChange?: (node: TreeNode, attr: string, val: unknown) => void;
+  /** 勾选相关 schema 变更后同步增量 Set */
+  syncCheckedState?: (node: TreeNode) => void;
 };
 
 /**
@@ -129,7 +139,8 @@ export const getTreeStyle = (item: TreeNode, props: TreePropTypes) => {
  */
 export const getNodeItemStyle = (item: TreeNode, props: TreePropTypes, flatData: IFlatData, showTree = true) => {
   const { schema } = flatData;
-  const depth = schema.get(item)?.[NODE_ATTRIBUTES.DEPTH];
+  const depth =
+    schema.get(item)?.[NODE_ATTRIBUTES.DEPTH] ?? schema.get(toRaw(item) as TreeNode)?.[NODE_ATTRIBUTES.DEPTH];
   if (showTree) {
     const args = ['node'];
     const levelLine = () => getPropsOneOfBoolValueWithDefault(props, 'levelLine', item, DEFAULT_LEVLE_LINE, null, args);
@@ -147,17 +158,23 @@ export const getNodeItemStyle = (item: TreeNode, props: TreePropTypes, flatData:
  * @param item
  * @returns
  */
+const getSchemaAttr = (schema: WeakMap<TreeNode, Record<string, unknown>>, item: TreeNode) =>
+  schema.get(item) || schema.get(toRaw(item) as TreeNode) || {};
+
 export const getNodeItemClass = (
   item: TreeNode,
   schema: WeakMap<TreeNode, Record<string, unknown>>,
   props: TreePropTypes,
   showTree = true,
 ) => {
+  const schemaAttr = getSchemaAttr(schema, item);
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  const { __is_root, __is_open } = schema.get(item) || {};
+  const { __is_root, __is_open, __parent, __depth } = schemaAttr as Record<string, unknown>;
+  // 根节点必须带 is-root，否则会命中子节点连线样式（左侧伪元素横线堆叠成“竖线”）
+  const isRoot = __is_root ?? (__parent == null && (__depth === 0 || __depth === undefined));
   const { resolveClassName } = usePrefix();
   return {
-    'is-root': __is_root,
+    'is-root': !!isRoot,
     [`${resolveClassName('tree-node')}`]: true,
     'is-open': __is_open,
     'is-virtual-render': props.virtualRender,
@@ -172,7 +189,7 @@ export const getNodeItemClass = (
  */
 export const getNodeRowClass = (item: TreeNode, schema: WeakMap<TreeNode, Record<string, unknown>>) => {
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  const { __is_checked, __is_indeterminate, __is_selected } = schema.get(item) || {};
+  const { __is_checked, __is_indeterminate, __is_selected } = getSchemaAttr(schema, item);
   const { resolveClassName } = usePrefix();
   return {
     'is-checked': __is_checked,
@@ -370,20 +387,20 @@ export const moveTreeNodeById = (
   childKey: string,
   options: { dropType: 'child' | 'move' | 'sort'; willInsertAfter?: boolean },
 ): TreeDataChangePayload | null => {
-  const nextTreeData = cloneTreeData(treeData, childKey);
-  const removeResult = removeTreeNodeById(nextTreeData, nodeId, nodeKey, childKey);
+  // 原地移动，避免百万节点全量 cloneTreeData
+  const removeResult = removeTreeNodeById(treeData, nodeId, nodeKey, childKey);
   if (!removeResult.node) {
     return null;
   }
 
-  const insertResult = insertTreeNodeById(nextTreeData, removeResult.node, targetNodeId, nodeKey, childKey, options);
+  const insertResult = insertTreeNodeById(treeData, removeResult.node, targetNodeId, nodeKey, childKey, options);
   if (!insertResult.targetNode) {
     return null;
   }
 
   return {
     trigger: 'drag',
-    data: nextTreeData,
+    data: treeData,
     node: removeResult.node,
     targetNode: insertResult.targetNode,
     parentNode: insertResult.parentNode,
