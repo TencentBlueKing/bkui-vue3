@@ -263,13 +263,13 @@ export default (
    * @param item 节点或者节点 UUID
    * @returns
    */
-  const isItemOpen = (item: TreeNode) => {
-    if (typeof item === 'object') {
+  const isItemOpen = (item: TreeNode): boolean => {
+    if (typeof item === 'object' && item !== null) {
       return isNodeOpened(item);
     }
 
     if (typeof item === 'string') {
-      return getNodeAttrById(item, NODE_ATTRIBUTES.IS_OPEN);
+      return !!getNodeAttrById(item, NODE_ATTRIBUTES.IS_OPEN);
     }
 
     return false;
@@ -279,7 +279,8 @@ export default (
     return getNodeAttr(getNodeAttr(node, NODE_ATTRIBUTES.PARENT), attrName);
   };
 
-  const isParentNodeOpened = (node: TreeNode) => isItemOpen(getNodeAttr(node, NODE_ATTRIBUTES.PARENT));
+  const isParentNodeOpened = (node: TreeNode): boolean =>
+    isItemOpen(getNodeAttr(node, NODE_ATTRIBUTES.PARENT) as TreeNode);
 
   /**
    * 过滤当前状态为Open的节点
@@ -287,7 +288,8 @@ export default (
    * @param item
    * @returns
    */
-  const checkNodeIsOpen = (node: TreeNode) => isRootNode(node) || isItemOpen(node) || isParentNodeOpened(node);
+  const checkNodeIsOpen = (node: TreeNode): boolean =>
+    isRootNode(node) || isItemOpen(node) || isParentNodeOpened(node);
 
   /**
    * 根据节点path返回源数据中节点信息

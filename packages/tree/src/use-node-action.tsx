@@ -50,7 +50,6 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
   const {
     setNodeAttr,
     setNodeAttrById,
-    getNodePath,
     getSchemaVal,
     getNodeAttr,
     getNodeId,
@@ -461,10 +460,10 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
 
     let resolvedItem = resolveNodeItem(nodeList[0]) as TreeNode | number | string | symbol;
     if (typeof resolvedItem === 'number' || typeof resolvedItem === 'string' || typeof resolvedItem === 'symbol') {
-      const nodeId = resolvedItem;
+      const nodeId = String(resolvedItem);
       resolvedItem =
-        flatData.nodeMap?.get(`${nodeId}`) ??
-        flatData.data.find(item => getNodeId(item) === nodeId) ?? {
+        flatData.nodeMap?.get(nodeId) ??
+        flatData.data.find(item => `${getNodeId(item)}` === nodeId) ?? {
           [NODE_ATTRIBUTES.IS_NULL]: true,
         };
     }

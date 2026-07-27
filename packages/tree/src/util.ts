@@ -43,6 +43,7 @@ export type IFlatData = {
   openCount?: number;
   /** flatten 阶段收集的初始勾选节点 */
   checkedList?: TreeNode[];
+  levelLineSchema?: Record<string, unknown>;
   /** schema 已 markRaw 时，用于通知 UI 刷新 */
   notifySchemaChange?: (node: TreeNode, attr: string, val: unknown) => void;
   /** 勾选相关 schema 变更后同步增量 Set */

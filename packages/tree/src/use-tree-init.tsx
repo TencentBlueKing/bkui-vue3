@@ -31,7 +31,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { NODE_ATTRIBUTES, NODE_SOURCE_ATTRS } from './constant';
 import { TreeNode, TreePropTypes } from './props';
 import useNodeAsync from './use-node-async';
-import { resolvePropIsMatched, showCheckbox } from './util';
+import { IFlatData, resolvePropIsMatched, showCheckbox } from './util';
 
 const toRawStore = <T extends object>(value: T): T => markRaw(value);
 
@@ -109,8 +109,8 @@ export default (props: TreePropTypes) => {
     const expandAll = !!props.expandAll;
     const autoOpenParentNode = !!props.autoOpenParentNode;
     const selectable = !!props.selectable;
-    const hasCheckedProp = props.checked !== undefined && props.checked !== null && props.checked !== false;
-    const hasSelectedProp = props.selected !== undefined && props.selected !== null && props.selected !== false;
+    const hasCheckedProp = Array.isArray(props.checked) && props.checked.length > 0;
+    const hasSelectedProp = props.selected !== undefined && props.selected !== null;
     const checkboxEnabled = props.showCheckbox !== false && !!props.showCheckbox;
     const useCache = !!cachedSchema;
 
@@ -268,7 +268,7 @@ export default (props: TreePropTypes) => {
    * shallowReactive：只跟踪 data/rootNodes 等字段替换，避免百万节点被深代理
    * schema/nodeMap/childMap 使用 markRaw，避免 WeakMap get/set 进入依赖收集
    */
-  const flatData = shallowReactive({
+  const flatData = shallowReactive<IFlatData>({
     data: formatData[0] as Array<TreeNode>,
     schema: toRawStore(formatData[1] as WeakMap<TreeNode, Record<string, unknown>>),
     nodeMap: toRawStore(formatData[2] as Map<string, TreeNode>),
