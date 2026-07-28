@@ -157,6 +157,16 @@ const en = {
     noData: 'No data',
     emptyText: 'No Data',
   },
+  image: {
+    zoomIn: 'Zoom in',
+    zoomOut: 'Zoom out',
+    rotate: 'Rotate',
+    reset: 'Reset',
+    download: 'Download',
+    reload: 'Reload',
+    loadFailed: 'Sorry, the image failed to load. You can try reloading.',
+    width: 'Width',
+  },
   // exception: {
   //   403: 'Forbidden',
   //   404: 'Not Found',

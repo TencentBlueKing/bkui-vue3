@@ -158,6 +158,16 @@ const jp: EnLanguage = {
     noData: 'データがありません',
     emptyText: '該当する検索結果がありません',
   },
+  image: {
+    zoomIn: '拡大',
+    zoomOut: '縮小',
+    rotate: '回転',
+    reset: 'リセット',
+    download: 'ダウンロード',
+    reload: '再読み込み',
+    loadFailed: '申し訳ありません、画像の読み込みに失敗しました。再読み込みをお試しください。',
+    width: '幅',
+  },
   versionLog: {
     current: '現在のバージョン',
   },

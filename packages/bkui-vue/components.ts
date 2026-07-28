@@ -47,6 +47,12 @@ export { default as Dropdown } from '@bkui-vue/dropdown';
 export { default as Exception } from '@bkui-vue/exception';
 export { default as FixedNavbar } from '@bkui-vue/fixed-navbar';
 export { default as Form } from '@bkui-vue/form';
+export type { ImageItem, ImageLoadingStatus, ImagePreviewMeta } from '@bkui-vue/image';
+export {
+  default as Image,
+  BkImagePreview as ImagePreview,
+  BkImagePreviewGroup as ImagePreviewGroup,
+} from '@bkui-vue/image';
 export { default as InfoBox } from '@bkui-vue/info-box';
 export { default as Input } from '@bkui-vue/input';
 export { default as Link } from '@bkui-vue/link';

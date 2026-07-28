@@ -95,6 +95,7 @@ export const HAS_STYLE_COMPONENT_LIST = [
   'SearchSelect',
   'OverflowTitle',
   'PopConfirm',
+  'Image',
 ];
 export const capitalize = (name: string) =>
   name.replace(/^([a-z])|-(.)/g, (_, a: string, b: string) => (a || b).toUpperCase());

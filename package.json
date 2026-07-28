@@ -11,6 +11,7 @@
     "lib",
     "dist"
   ],
+  "private": true,
   "packageManager": "yarn@1.22.10",
   "sideEffects": [
     "*.css",
