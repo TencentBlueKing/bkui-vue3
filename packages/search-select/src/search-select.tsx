@@ -263,25 +263,22 @@ export default defineComponent({
       const maxWidth = wrapRef.value.querySelector('.search-container').clientWidth - SELECTED_MARGIN_RIGHT - 2;
       const tagList = inputEl.querySelectorAll('.search-container-selected:not(.overflow-selected)');
       let width = 0;
-      let index = 0;
-      let i = 0;
-      while (index === 0 && width <= maxWidth - INPUT_PADDING_WIDTH && i <= tagList.length - 1) {
+      let overflowIdx = -1;
+
+      for (let i = 0; i < tagList.length; i++) {
         const el = tagList[i];
-        if (el.clientHeight > INPUT_MIN_HEIGHT) {
-          overflowIndex.value = i;
-          return;
-        }
         width += el ? el.clientWidth + SELECTED_MARGIN_RIGHT : 0;
-        if (width >= maxWidth - INPUT_PADDING_WIDTH) {
-          index = i;
+        if (el.clientHeight > INPUT_MIN_HEIGHT || width >= maxWidth - INPUT_PADDING_WIDTH) {
+          overflowIdx = i;
+          break;
         }
-        i += 1;
       }
-      if (index === tagList.length - 1 && width <= maxWidth) {
+
+      if (overflowIdx < 0 || overflowIdx >= tagList.length) {
         overflowIndex.value = -1;
         return;
       }
-      overflowIndex.value = width >= maxWidth - INPUT_PADDING_WIDTH ? index : index - 1;
+      overflowIndex.value = overflowIdx;
     }
     function handleWrapClick() {
       if (!editKey.value) {
@@ -384,7 +381,7 @@ export default defineComponent({
           <div class='search-prefix'>{this.$slots.prepend?.()}</div>
           <div
             style={{ 'max-height': `${maxHeight}px` }}
-            class='search-container'
+            class={`search-container ${this.overflowIndex >= 0 ? 'has-overflow' : ''}`}
           >
             <SearchSelected
               v-slots={{ ...menuSlots }}

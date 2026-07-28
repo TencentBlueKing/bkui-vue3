@@ -38,6 +38,7 @@ import {
 
 import Checkbox from '@bkui-vue/checkbox';
 import { usePrefix } from '@bkui-vue/config-provider';
+import { bkTooltips } from '@bkui-vue/directives';
 import { Done } from '@bkui-vue/icon';
 import { classes, PropTypes, SelectedTypeEnum } from '@bkui-vue/shared';
 import isEqual from 'lodash/isEqual';
@@ -46,14 +47,25 @@ import { optionGroupKey, selectKey } from './common';
 
 export default defineComponent({
   name: 'Option',
+  directives: {
+    bkTooltips,
+  },
   props: {
     id: {
       type: [String, Number],
       require: true,
     },
     name: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    disabled: PropTypes.bool.def(false),
+    disabled: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.shape({
+        disabled: PropTypes.bool,
+        tips: PropTypes.string,
+      }),
+    ]).def(false),
     order: PropTypes.number.def(0),
+    // 虚拟滚动模式下跳过注册，避免频繁 register/unregister 造成更新风暴
+    skipRegister: PropTypes.bool.def(false),
   },
   setup(props, { attrs }) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -63,11 +75,26 @@ export default defineComponent({
       visible: true,
     });
 
-    const { disabled, id, name } = toRefs(props);
+    const { id, name } = toRefs(props);
     // 兼容label
     const optionName = computed(() => (name.value !== undefined ? name.value : (attrs.label as string)));
     // 兼容value
     const optionID = computed(() => (id.value !== undefined ? id.value : (attrs.value as string)));
+
+    // 解析 disabled 配置，支持 boolean 和对象两种格式
+    const isDisabled = computed(() => {
+      if (typeof props.disabled === 'boolean') {
+        return props.disabled;
+      }
+      return props.disabled?.disabled ?? false;
+    });
+
+    const disabledTips = computed(() => {
+      if (typeof props.disabled === 'object' && props.disabled?.tips) {
+        return props.disabled.tips;
+      }
+      return '';
+    });
     const select = inject(selectKey, null);
     const group = inject(optionGroupKey, null);
     const selected = computed<boolean>(() => select?.selected?.some(item => isEqual(item.value, optionID.value)));
@@ -79,7 +106,7 @@ export default defineComponent({
     const highlightKeyword = computed(() => select?.highlightKeyword);
 
     const handleOptionClick = () => {
-      if (disabled.value) return;
+      if (isDisabled.value) return;
       select?.handleOptionSelected(proxy);
     };
 
@@ -116,11 +143,15 @@ export default defineComponent({
     };
 
     onBeforeMount(() => {
+      // 虚拟滚动模式下跳过注册，避免频繁 mount/unmount 造成 optionsMap 抖动
+      if (props.skipRegister) return;
       select?.register(optionID.value, proxy);
       group?.register(optionID.value, proxy);
     });
 
     onBeforeUnmount(() => {
+      // 虚拟滚动模式下跳过注销
+      if (props.skipRegister) return;
       select?.unregister(optionID.value, proxy);
       group?.unregister(optionID.value, proxy);
     });
@@ -137,6 +168,8 @@ export default defineComponent({
       optionName,
       optionID,
       highlightKeyword,
+      isDisabled,
+      disabledTips,
       handleOptionClick,
       handleMouseEnter,
       handleMouseLeave,
@@ -145,17 +178,26 @@ export default defineComponent({
     };
   },
   render() {
-    const selectItemClass = classes({
-      'is-selected': this.selected,
-      'is-disabled': this.disabled,
-      'is-multiple': this.multiple,
-      'is-hover': this.isHover,
-      'is-checkbox': this.selectedStyle === SelectedTypeEnum.CHECKBOX,
-      [this.resolveClassName('select-option')]: true,
-    });
+    const selectItemClass = [
+      classes({
+        'is-selected': this.selected,
+        'is-disabled': this.isDisabled,
+        'is-multiple': this.multiple,
+        'is-hover': this.isHover,
+        'is-checkbox': this.selectedStyle === SelectedTypeEnum.CHECKBOX,
+        [this.resolveClassName('select-option')]: true,
+      }),
+      // 允许透传 class（用于虚拟分组等场景的样式扩展）
+      this.$attrs.class,
+    ];
     return (
       <li
         class={selectItemClass}
+        v-bk-tooltips={{
+          content: this.disabledTips,
+          disabled: !this.disabledTips,
+          placement: 'right',
+        }}
         v-show={this.visible}
         onClick={this.handleOptionClick}
         onMouseenter={this.handleMouseEnter}
@@ -164,7 +206,7 @@ export default defineComponent({
         {this.showSelectedIcon && this.selectedStyle === SelectedTypeEnum.CHECKBOX && (
           <Checkbox
             class={this.resolveClassName('select-checkbox')}
-            disabled={this.disabled}
+            disabled={this.isDisabled}
             modelValue={this.selected}
           />
         )}

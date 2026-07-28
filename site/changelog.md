@@ -1,6 +1,36 @@
 ## 更新日志
 
 
+### 3.0.3
+
+* **[feat]**:
+    - bugfix(CollapsePanel): 补充类型定义
+
+
+### 3.0.2
+
+* **[feat]**:
+    - bugfix(input): 中文输入和英文输入行为不一致
+
+
+### 2.1.0-beta.11
+
+* **[feat]**:
+    - bugfix(pop-confirm): popoverOptions.disabled 默认为 ture 时关闭不了
+
+
+### 2.1.0-beta.10
+
+* **[feat]**:
+    - bugfix(select): 分组搜索时隐藏为空的组
+
+
+### 2.1.0-beta.8
+
+* **[feat]**:
+    - bugfix(cascader): 修复二级面板不刷新问题
+
+
 ### 2.1.0-beta.7
 
 * **[feat]**:
@@ -1556,3 +1586,4 @@
 
 * **[feat]**:
     - feat(tag-input): tooltips 展示被折叠的内容
+

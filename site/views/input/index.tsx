@@ -153,6 +153,13 @@ const inputProps: IPropsTableItem[] = [
     optional: [],
   },
   {
+    name: 'rows',
+    type: 'Number',
+    default: null,
+    desc: '文本框显示行数，只在 type = "textarea" 时有效。设置 autosize 后高度由内容决定，该配置失效',
+    optional: [],
+  },
+  {
     name: 'autosize',
     type: 'Boolean, Object',
     default: false,
@@ -177,7 +184,7 @@ const inputProps: IPropsTableItem[] = [
     name: 'stopPropagation',
     type: 'Boolean',
     default: true,
-    desc: '是否阻止事件冒泡',
+    desc: '是否阻止输入类事件（input、change、keydown 等）冒泡，清除、搜索等图标的点击事件不受影响',
     optional: [],
   },
   {

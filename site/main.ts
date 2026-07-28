@@ -26,12 +26,10 @@
 
 import { createApp } from 'vue';
 
-// import bkuiVue from '../lib/index';
-// import { zhCn } from '../lib/locale';
+// dev 使用 packages 源码，避免依赖 lib 及缺失的 source map
 import bkuiVue, { version } from '../packages/bkui-vue/index';
-// import jp from '../packages/locale/src/lang/ja-jp';
-import zhCn from '../packages/locale/src/lang/zh-cn';
-import '../packages/styles/src/index';
+// import zhCn from 'bkui-vue/lib/locale';
+import '../packages/styles/src/index.ts';
 import App from './app';
 import router from './router';
 
@@ -43,7 +41,7 @@ console.log(
 );
 const app = createApp(App);
 app.use(bkuiVue, {
-  locale: zhCn,
+  // locale: zhCn,
   // prefix: 'aabb',
 });
 app.use(router);

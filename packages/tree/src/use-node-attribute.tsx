@@ -25,23 +25,83 @@
  */
 
 import isElement from 'lodash/isElement';
+import { markRaw, toRaw } from 'vue';
 
 import { NODE_ATTRIBUTES, NODE_SOURCE_ATTRS } from './constant';
 import { TreeNode, TreePropTypes } from './props';
 
+type TreeNodeAttributeMap = {
+  [NODE_ATTRIBUTES.DEPTH]: number;
+  [NODE_ATTRIBUTES.HAS_CHILD]: boolean;
+  [NODE_ATTRIBUTES.INDEX]: number;
+  [NODE_ATTRIBUTES.IS_ASYNC]: boolean;
+  [NODE_ATTRIBUTES.IS_ASYNC_INIT]: boolean;
+  [NODE_ATTRIBUTES.IS_CACHED]: boolean;
+  [NODE_ATTRIBUTES.IS_CHECKED]: boolean;
+  [NODE_ATTRIBUTES.IS_INDETERMINATE]: boolean;
+  [NODE_ATTRIBUTES.IS_LOADING]: boolean;
+  [NODE_ATTRIBUTES.IS_MATCH]: boolean;
+  [NODE_ATTRIBUTES.IS_NULL]: boolean;
+  [NODE_ATTRIBUTES.IS_OPEN]: boolean;
+  [NODE_ATTRIBUTES.IS_ROOT]: boolean;
+  [NODE_ATTRIBUTES.IS_SELECTED]: boolean;
+  [NODE_ATTRIBUTES.ORDER]: number;
+  [NODE_ATTRIBUTES.PARENT]: TreeNode;
+  [NODE_ATTRIBUTES.PATH]: string;
+  [NODE_ATTRIBUTES.TREE_NODE_ATTR]: Record<string, unknown>;
+  [NODE_ATTRIBUTES.UUID]: string | number;
+};
+
+type SetNodeAttrOptions = {
+  /** 跳过 UI 刷新通知（批量更新时使用） */
+  silent?: boolean;
+};
+
+type UseNodeAttributeOptions = {
+  /** schema 变更后的 UI 刷新（schema 已 markRaw，需显式通知） */
+  onSchemaChange?: (node: TreeNode, attr: string, val: unknown) => void;
+};
+
 export default (
   flatData: {
     data: TreeNode[];
-    schema: WeakMap<TreeNode, unknown>;
+    schema: WeakMap<TreeNode, Record<string, unknown>>;
+    nodeMap?: Map<number | string, TreeNode>;
+    childMap?: WeakMap<TreeNode, TreeNode[]>;
+    rootNodes?: TreeNode[];
+    openCount?: number;
+    notifySchemaChange?: (node: TreeNode, attr: string, val: unknown) => void;
+    syncCheckedState?: (node: TreeNode) => void;
   },
   props?: TreePropTypes,
+  options: UseNodeAttributeOptions = {},
 ) => {
+  /**
+   * WeakMap 以对象引用为 key；Vue Proxy 与 raw 不是同一引用，需同时兼容
+   */
+  const resolveSchemaNode = (node: TreeNode | null | undefined): TreeNode | null => {
+    if (!node) {
+      return null;
+    }
+    if (flatData.schema.has(node)) {
+      return node;
+    }
+    const raw = toRaw(node);
+    if (raw && raw !== node && flatData.schema.has(raw)) {
+      return raw;
+    }
+    return null;
+  };
+
   /**
    * 获取Schema中指定的对象值
    * @param key
    * @returns
    */
-  const getSchemaVal = (node: TreeNode) => flatData.schema.get(node);
+  const getSchemaVal = (node: TreeNode) => {
+    const schemaNode = resolveSchemaNode(node);
+    return schemaNode ? flatData.schema.get(schemaNode) : undefined;
+  };
 
   /**
    * 获取节点属性
@@ -49,49 +109,116 @@ export default (
    * @param attr 节点属性
    * @returns
    */
-  const getNodeAttr = (node: TreeNode, attr: string) => getSchemaVal(node)?.[attr];
+  function getNodeAttr<T extends NODE_ATTRIBUTES>(
+    node: TreeNode | null | undefined,
+    attr: T,
+  ): TreeNodeAttributeMap[T] | undefined;
+  function getNodeAttr(node: TreeNode | null | undefined, attr: string): unknown;
+  function getNodeAttr(node: TreeNode | null | undefined, attr: string) {
+    return node ? getSchemaVal(node)?.[attr] : undefined;
+  }
 
   /**
-   * 设置节点属性
+   * 设置节点属性（原地更新 schema，避免每次 Object.assign 新对象）
    * @param node 指定节点
    * @param attr 节点属性
    * @param val 属性值
    * @returns
    */
-  const setNodeAttr = (node: TreeNode, attr: string, val: unknown, id?) => {
-    if (!flatData.schema.has(node)) {
+  const setNodeAttr = (node: TreeNode, attr: string, val: unknown, id?, setOptions: SetNodeAttrOptions = {}) => {
+    const schemaNode = resolveSchemaNode(node);
+    if (!schemaNode) {
       console.warn('node is not in schema, please check', id, node);
       return;
     }
 
-    flatData.schema.set(node, Object.assign({}, getSchemaVal(node), { [attr]: val }));
-  };
-
-  const getNodeById = (id: string | unknown): TreeNode => flatData.data.find(item => getNodeId(item) === id);
-
-  const setNodeAttrById = (id: unknown, attr: string, val: unknown) => {
-    if (Array.isArray(id)) {
-      Array.prototype.forEach.call(id, (item: TreeNode) => setNodeAttr(getNodeById(item), attr, val, id));
+    const schemaVal = flatData.schema.get(schemaNode);
+    if (!schemaVal) {
       return;
     }
 
-    setNodeAttr(getNodeById(id), attr, val, id);
+    if (schemaVal[attr] === val) {
+      return;
+    }
+
+    if (attr === NODE_ATTRIBUTES.IS_OPEN) {
+      const prevOpen = !!schemaVal[attr];
+      const nextOpen = !!val;
+      if (prevOpen !== nextOpen) {
+        flatData.openCount = (flatData.openCount || 0) + (nextOpen ? 1 : -1);
+      }
+    }
+
+    schemaVal[attr] = val;
+
+    if (attr === NODE_ATTRIBUTES.IS_CHECKED || attr === NODE_ATTRIBUTES.IS_INDETERMINATE) {
+      flatData.syncCheckedState?.(node);
+    }
+
+    if (!setOptions.silent) {
+      options.onSchemaChange?.(node, attr, val);
+      flatData.notifySchemaChange?.(node, attr, val);
+    }
+  };
+
+  const getNodeById = (id: string | unknown): TreeNode => {
+    if (id === undefined || id === null || id === '') {
+      return undefined;
+    }
+    // 禁止回退 flatData.data.find（百万节点 O(N)）
+    return flatData.nodeMap?.get(`${id}`);
+  };
+
+  const setNodeAttrById = (id: unknown, attr: string, val: unknown, setOptions?: SetNodeAttrOptions) => {
+    if (Array.isArray(id)) {
+      Array.prototype.forEach.call(id, (item: TreeNode) => setNodeAttr(getNodeById(item), attr, val, id, setOptions));
+      return;
+    }
+
+    const node = getNodeById(id);
+    if (!node) {
+      return;
+    }
+    setNodeAttr(node, attr, val, id, setOptions);
   };
 
   const getNodePath = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.PATH);
-  const getNodeId = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.UUID);
-  const isNodeOpened = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.IS_OPEN);
-  const hasChildNode = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.HAS_CHILD);
-  const isNodeMatched = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.IS_MATCH);
-  const isNodeChecked = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.IS_CHECKED);
+  const getNodeId = (node: TreeNode | null | undefined) => {
+    const schemaId = getNodeAttr(node, NODE_ATTRIBUTES.UUID);
+    if (schemaId !== undefined && schemaId !== null && schemaId !== '') {
+      return schemaId as string | number;
+    }
+    if (!node) {
+      return undefined;
+    }
+    if (props?.nodeKey && node[props.nodeKey] !== undefined && node[props.nodeKey] !== null) {
+      return node[props.nodeKey] as string | number;
+    }
+    return node[NODE_ATTRIBUTES.UUID] as string | number;
+  };
+  const isNodeOpened = (node: TreeNode) => !!getNodeAttr(node, NODE_ATTRIBUTES.IS_OPEN);
+  const hasChildNode = (node: TreeNode) => {
+    if (!!getNodeAttr(node, NODE_ATTRIBUTES.HAS_CHILD)) {
+      return true;
+    }
+    const schemaNode = resolveSchemaNode(node);
+    if (schemaNode && (flatData.childMap?.get(schemaNode)?.length ?? 0) > 0) {
+      return true;
+    }
+    const childKey = props?.children || 'children';
+    const rawNode = toRaw(node) as TreeNode;
+    return !!((rawNode?.[childKey] as TreeNode[] | undefined)?.length || (node?.[childKey] as TreeNode[] | undefined)?.length);
+  };
+  const isNodeMatched = (node: TreeNode) => !!getNodeAttr(node, NODE_ATTRIBUTES.IS_MATCH);
+  const isNodeChecked = (node: TreeNode) => !!getNodeAttr(node, NODE_ATTRIBUTES.IS_CHECKED);
   const getNodeParentId = (node: TreeNode) =>
-    getNodeAttr(getNodeAttr(node, NODE_ATTRIBUTES.PARENT), NODE_ATTRIBUTES.UUID);
-  const isNodeLoading = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.IS_LOADING);
+    getNodeAttr(getNodeAttr(node, NODE_ATTRIBUTES.PARENT) as TreeNode, NODE_ATTRIBUTES.UUID);
+  const isNodeLoading = (node: TreeNode) => !!getNodeAttr(node, NODE_ATTRIBUTES.IS_LOADING);
   const getParentNode = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.PARENT);
-  const isMatchedNode = (node: TreeNode) => getNodeAttr(node, NODE_ATTRIBUTES.IS_MATCH);
+  const isMatchedNode = (node: TreeNode) => !!getNodeAttr(node, NODE_ATTRIBUTES.IS_MATCH);
 
   const getNodeAttrById = (id: string, attr: string) => {
-    const target = flatData.data.find(item => getNodeId(item) === id);
+    const target = getNodeById(id);
     return getNodeAttr(target, attr);
   };
 
@@ -100,30 +227,37 @@ export default (
    * @param id 节点 ID
    * @returns 节点索引
    */
-  const getNodeIndexById = (id: string): number => getNodeAttrById(id, NODE_ATTRIBUTES.INDEX);
+  const getNodeIndexById = (id: string): number => getNodeAttrById(id, NODE_ATTRIBUTES.INDEX) as number;
 
   /**
    * 获取节点索引
    * @param node 节点
    * @returns 节点索引
    */
-  const getNodeIndexByNode = (node: TreeNode): number => getNodeAttr(node, NODE_ATTRIBUTES.INDEX);
+  const getNodeIndexByNode = (node: TreeNode): number => getNodeAttr(node, NODE_ATTRIBUTES.INDEX) as number;
 
   const isRootNode = (node: TreeNode | string) => {
     if (typeof node === 'string') {
-      return getNodeAttrById(node, NODE_ATTRIBUTES.IS_ROOT);
+      return !!getNodeAttrById(node, NODE_ATTRIBUTES.IS_ROOT);
     }
 
-    return getNodeAttr(node, NODE_ATTRIBUTES.IS_ROOT);
+    if (!!getNodeAttr(node, NODE_ATTRIBUTES.IS_ROOT)) {
+      return true;
+    }
+    if (getNodeAttr(node, NODE_ATTRIBUTES.PARENT)) {
+      return false;
+    }
+    const schemaNode = resolveSchemaNode(node);
+    return !!schemaNode && !!flatData.rootNodes?.includes(schemaNode);
   };
 
   const getNodeParentIdById = (id: string) => {
-    const target = flatData.data.find(item => getNodeId(item) === id);
+    const target = getNodeById(id);
     return getNodeParentId(target);
   };
 
   const getNodePathById = (id: string) => {
-    const target = flatData.data.find(item => getNodeId(item) === id);
+    const target = getNodeById(id);
     return getNodePath(target);
   };
 
@@ -138,13 +272,13 @@ export default (
    * @param item 节点或者节点 UUID
    * @returns
    */
-  const isItemOpen = (item: TreeNode) => {
-    if (typeof item === 'object') {
+  const isItemOpen = (item: TreeNode): boolean => {
+    if (typeof item === 'object' && item !== null) {
       return isNodeOpened(item);
     }
 
     if (typeof item === 'string') {
-      return getNodeAttrById(item, NODE_ATTRIBUTES.IS_OPEN);
+      return !!getNodeAttrById(item, NODE_ATTRIBUTES.IS_OPEN);
     }
 
     return false;
@@ -154,7 +288,8 @@ export default (
     return getNodeAttr(getNodeAttr(node, NODE_ATTRIBUTES.PARENT), attrName);
   };
 
-  const isParentNodeOpened = (node: TreeNode) => isItemOpen(getNodeAttr(node, NODE_ATTRIBUTES.PARENT));
+  const isParentNodeOpened = (node: TreeNode): boolean =>
+    isItemOpen(getNodeAttr(node, NODE_ATTRIBUTES.PARENT) as TreeNode);
 
   /**
    * 过滤当前状态为Open的节点
@@ -162,7 +297,8 @@ export default (
    * @param item
    * @returns
    */
-  const checkNodeIsOpen = (node: TreeNode) => isRootNode(node) || isItemOpen(node) || isParentNodeOpened(node);
+  const checkNodeIsOpen = (node: TreeNode): boolean =>
+    isRootNode(node) || isItemOpen(node) || isParentNodeOpened(node);
 
   /**
    * 根据节点path返回源数据中节点信息
@@ -185,10 +321,17 @@ export default (
   };
 
   const getChildNodes = (node: TreeNode) => {
-    return flatData.data.filter(item => getParentNode(item) === node);
+    const schemaNode = resolveSchemaNode(node) ?? (toRaw(node) as TreeNode);
+    const mapped = flatData.childMap?.get(schemaNode) ?? flatData.childMap?.get(node);
+    if (mapped) {
+      return mapped;
+    }
+    // 禁止回退 flatData.data.filter（百万节点 O(N)）；直接读源数据 children
+    const childKey = props?.children || 'children';
+    return ((schemaNode?.[childKey] as TreeNode[]) || (node?.[childKey] as TreeNode[]) || []);
   };
 
-  const getSourceNodeByUID = (uid: string) => flatData.data.find(item => getNodeId(item) === uid);
+  const getSourceNodeByUID = (uid: string) => getNodeById(uid);
 
   const getParentNodeData = (node: TreeNode | string) => {
     let target = node;
@@ -221,14 +364,21 @@ export default (
   });
 
   const extendNodeAttr = (item: TreeNode) =>
-    Object.assign({}, item, {
-      [NODE_ATTRIBUTES.TREE_NODE_ATTR]: resolveScopedSlotParam(item),
-    });
+    markRaw(
+      Object.assign({}, toRaw(item) as TreeNode, {
+        [NODE_ATTRIBUTES.TREE_NODE_ATTR]: resolveScopedSlotParam(item),
+      }),
+    );
 
-  const extendNodeScopedData = (item: TreeNode) => ({
-    data: item,
-    attributes: resolveScopedSlotParam(item),
-  });
+  /**
+   * 插槽参数：data 使用 toRaw，避免深层 Proxy；整体 markRaw，降低自定义渲染时的响应式开销。
+   * 注意：data 仍持有原 children 引用，业务侧勿对整棵 data 做 JSON.stringify。
+   */
+  const extendNodeScopedData = (item: TreeNode) =>
+    markRaw({
+      data: toRaw(item) as TreeNode,
+      attributes: resolveScopedSlotParam(item),
+    });
 
   /**
    * 组装进入可视区域元素返回数据
@@ -248,13 +398,14 @@ export default (
     const level = getNodeAttr(node as TreeNode, NODE_ATTRIBUTES.DEPTH);
     const isRoot = getNodeAttr(node as TreeNode, NODE_ATTRIBUTES.IS_ROOT);
     const parent = getNodeAttr(node as TreeNode, NODE_ATTRIBUTES.PARENT);
+    const children = parent?.[props.children] as TreeNode[] | undefined;
     const index = isRoot
       ? getNodeAttr(node as TreeNode, NODE_ATTRIBUTES.INDEX)
-      : parent?.[props.children]?.findIndex(child => child === node);
+      : children?.findIndex(child => child === node);
     return { level, target, index, parent, node, isRoot };
   };
 
-  const getRootNodeList = () => flatData.data.filter(item => isRootNode(item));
+  const getRootNodeList = () => flatData.rootNodes ?? flatData.data.filter(item => isRootNode(item));
 
   return {
     getSchemaVal,

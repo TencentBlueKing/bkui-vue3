@@ -19,13 +19,15 @@
     "@blueking/magicbox-header": "~1.1.61",
     "@blueking/release-note": "~0.0.1-beta.15",
     "@blueking/status-tag": "~1.0.6",
-    "@vitejs/plugin-vue": "~5.0.4",
-    "@vitejs/plugin-vue-jsx": "~3.1.0",
-    "bkui-vue": "~2.0.1-beta.61",
+    "@vitejs/plugin-vue": "^6.0.7",
+    "@vitejs/plugin-vue-jsx": "^5.1.5",
+    "bkui-vue": "~2.0.2-beta.98",
+    "highlight.js": "~11.8.0",
     "markdown-it-container": "~3.0.0",
-    "unplugin-vue-markdown": "~0.25.0",
-    "vite": "6.3.2",
-    "vue-i18n": "~9.14.3",
-    "vue-router": "~4.2.4"
+    "unplugin-vue-markdown": "^0.26.3",
+    "vite": "^8.0.16",
+    "vue": "^3.5.35",
+    "vue-i18n": "^9.14.3",
+    "vue-router": "^4.5.0"
   }
 }

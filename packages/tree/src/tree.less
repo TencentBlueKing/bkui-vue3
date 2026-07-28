@@ -23,34 +23,6 @@
       }
     }
 
-    &.drop-before {
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background-color: #2196F3;
-      }
-    }
-    &.drop-after {
-      &::before {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background-color: #2196F3;
-      }
-    }
-
-    &.drop-inner {
-      background-color: rgba(33, 150, 243, 0.1);
-      outline: 1px dashed #2196F3;
-      outline-offset: -1px;
-    }
   }
 
   &-node {
@@ -58,7 +30,8 @@
     display: flex;
     height: var(--lineHeight);
     padding-left: 0;
-    line-height: var(--lineHeight);
+    /* 行高只作用在文本上；此处用 normal 避免 SVG/icon 继承大行高后贴基线，导致视觉中心偏上、连线看起来打在 prefix 底部 */
+    line-height: normal;
     cursor: pointer;
     align-items: center;
 
@@ -73,7 +46,7 @@
 
             &::before {
               position: absolute;
-              top: calc(50% + 1px);
+              top: 50%;
               left: 0;
               right: 0;
               z-index: 1;
@@ -87,7 +60,7 @@
 
         &::before {
           position: absolute;
-          top: calc(50% + 1px);
+          top: 50%;
           left: calc(0px - var(--indent) + 6px);
           z-index: 1;
           width: calc(var(--indent) - 6px);
@@ -108,7 +81,12 @@
 
     .node-virtual-line {
       position: absolute;
-      top: -12px;
+      /*
+       * 竖线终点：当前行中线（与横向连线相接）
+       * 竖线起点：父级行中线 + 半个 prefix(14/2)，即父级 bk-node-prefix 下沿
+       * 避免 top=-50% 时竖线穿过父级展开图标中心造成「重合」
+       */
+      top: calc(var(--lineHeight) / -2 + 7px);
       bottom: 50%;
       left: calc(var(--depth) * var(--indent) * -1 + 6px);
       display: inline-block;
@@ -118,16 +96,24 @@
 
     .@{bk-prefix}-node-prefix {
       display: flex;
+      flex-shrink: 0;
       width: 14px;
       height: 14px;
+      line-height: 1;
       align-items: center;
       justify-content: center;
     }
 
     .@{bk-prefix}-node-action {
+      display: inline-flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 14px;
       margin-right: 6px;
+      line-height: 1;
       color: #979ba5;
-      min-width: 14px;
     }
 
     .@{bk-prefix}-tree-icon {
@@ -139,9 +125,13 @@
       flex: 1;
       align-items: center;
       min-width: 0;
+      line-height: normal;
 
       .node-check-box {
         display: inline-flex;
+        flex-shrink: 0;
+        align-items: center;
+        line-height: 1;
       }
 
       .@{bk-prefix}-checkbox {
@@ -157,27 +147,66 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        line-height: var(--lineHeight);
       }
     }
   }
 
-  &-drop-active {
-    background: #f5f7fa;
-  }
+  &-node-draggable {
+    cursor: grab;
+    user-select: none;
 
-  &-drop-disabled {
-    background: #ffd5d5;
-    .@{bk-prefix}-tree-node {
-      cursor: no-drop;
+    &:hover {
+      background-color: #f5f7fa;
     }
   }
 
-  .insert-line {
-    position: absolute;
-    height: 2px;
-    background: #2196F3;
-    display: none;
-    pointer-events: none;
-    z-index: 999;
+  &-drop-disabled {
+    cursor: no-drop;
+    opacity: 0.5;
+  }
+
+  &-drag {
+    opacity: 0.85;
+    cursor: grabbing;
+  }
+
+  &-drag-disabled {
+    cursor: no-drop;
+    opacity: 0.5;
+  }
+
+  &-drop-before,
+  &-drop-after,
+  &-drop-inner {
+    background-clip: content-box;
+  }
+
+  &-drop-before,
+  &-drop-after {
+    &::after {
+      position: absolute;
+      right: 0;
+      left: var(--drop-line-left, 0);
+      display: block;
+      height: 2px;
+      border-radius: 1px;
+      background-color: #3a84ff;
+      content: '';
+      pointer-events: none;
+    }
+  }
+
+  &-drop-before::after {
+    top: -1px;
+  }
+
+  &-drop-after::after {
+    bottom: -1px;
+  }
+
+  &-drop-inner {
+    background-color: rgba(58, 132, 255, 0.08);
+    box-shadow: inset 0 0 0 1px rgba(58, 132, 255, 0.28);
   }
 }

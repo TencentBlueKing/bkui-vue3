@@ -24,17 +24,23 @@
  * IN THE SOFTWARE.
  */
 
-import { defineComponent, h, VNodeChild } from 'vue';
+import { ComputedRef, defineComponent, h, inject, VNodeChild } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 
-import { tabPanelProps } from './props';
+import { tabActiveInjectionKey, tabPanelProps } from './props';
 
 export default defineComponent({
   name: 'TabPanel',
   props: tabPanelProps,
+  setup() {
+    // 优先通过 inject 获取激活态；单独使用 TabPanel（无父级 Tab）时回退到 $parent。
+    const tabActive = inject<ComputedRef<number | string> | null>(tabActiveInjectionKey, null);
+    return { tabActive };
+  },
   render() {
-    const active: boolean = this.name === (this.$parent as any).active;
+    const parentActive = this.tabActive ?? (this.$parent as any)?.active;
+    const active: boolean = this.name === parentActive;
     const getContent = (): VNodeChild => {
       // 不渲染
       if (!this.visible || ((this.renderDirective as unknown as string) === 'if' && !active)) {

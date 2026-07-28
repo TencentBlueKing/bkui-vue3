@@ -103,6 +103,7 @@ declare module '@vue/runtime-core' {
     BkSearchSelect: typeof import('./search-select/search-select').default;
     BkConfigProvider: typeof import('./config-provider/config-provider').default;
     BkPopConfirm: typeof import('./pop-confirm/pop-confirm').default;
+    BkCollapsePanel: typeof import('./collapse/collapse-panel').default;
   }
 }
 export {};

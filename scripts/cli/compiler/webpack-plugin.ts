@@ -28,7 +28,7 @@ import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import webpack from 'webpack';
 
-import { capitalize, hasStyleComponentList } from './babel-plugin';
+import { capitalize, HAS_STYLE_COMPONENT_LIST } from './babel-plugin';
 import { PRESET_URL, replaceEnvVars } from './helpers';
 export default class RemoveWildcardImportsPlugin {
   apply(compiler: webpack.Compiler): void {
@@ -42,7 +42,7 @@ export default class RemoveWildcardImportsPlugin {
           let newSource = sourceString.replace(importPattern, 'import "$1";').replace(bkuiLibPattern, '../');
           const [componentName, compFilename] = filename.split('/');
           if (compFilename === 'index.js') {
-            if (hasStyleComponentList.includes(capitalize(componentName))) {
+            if (HAS_STYLE_COMPONENT_LIST.includes(capitalize(componentName))) {
               newSource = `import "./${componentName}.less";\n${newSource}`;
             }
             // icon的按需加载特殊处理

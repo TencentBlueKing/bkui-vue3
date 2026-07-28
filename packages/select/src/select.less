@@ -374,6 +374,15 @@
               background-color: @select-active-color;
             }
 
+            &.is-disabled {
+              color: #c4c6cc;
+              cursor: not-allowed;
+
+              &:hover {
+                background-color: transparent;
+              }
+            }
+
             .select-all-icon {
               margin-right: 4px;
               font-size: 16px;
@@ -486,6 +495,15 @@
             &.collapsible {
               cursor: pointer;
             }
+
+            // 虚拟滚动模式下不再有 .bk-option-group 容器包裹，
+            // 这里补齐 disabled 的 label 样式
+            &.disabled {
+              .default-group-label {
+                color: #c4c6cc;
+                cursor: not-allowed;
+              }
+            }
           }
 
           &.collapsible {
@@ -523,6 +541,17 @@
 
           .@{bk-prefix}-select-option {
             padding-left: 24px;
+          }
+        }
+
+        // 虚拟滚动模式：分组项缩进（无 .bk-option-group 容器时用）
+        .@{bk-prefix}-select-option {
+          &.is-grouped {
+            padding-left: 24px;
+          }
+
+          &.is-grouped.is-group-collapsible {
+            padding-left: 40px;
           }
         }
 
@@ -571,4 +600,8 @@
 
 .@{bk-prefix}-select-popover-reference {
   width: 100%;
+}
+
+.@{bk-prefix}-select-tag-overflow-title {
+  height: 22px;
 }

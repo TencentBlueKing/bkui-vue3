@@ -68,6 +68,13 @@ export default [
         optional: [],
       },
       {
+        name: 'watch-data-deep',
+        type: 'Boolean',
+        default: 'false',
+        desc: '是否深度监听 data 内部变更（原地 push/改 children 等）。默认 false：仅监听 data 引用变化，大数据量下性能更好；若业务依赖「不换引用、原地改树」自动刷新，可设为 true（建议仅小数据场景）',
+        optional: ['true', 'false'],
+      },
+      {
         name: 'prefix-icon',
         type: 'Boolean|Function',
         default: 'true',
@@ -173,6 +180,13 @@ export default [
         default: 'true',
         desc: '在显示复选框的情况下，是否严格的遵循父子互相关联的做法',
         optional: ['true', 'false'],
+      },
+      {
+        name: 'drag-target-open-state',
+        type: 'String',
+        default: 'inherit',
+        desc: '拖拽添加为子节点后，目标节点的展开状态',
+        optional: ['expand', 'collapse', 'inherit'],
       },
     ],
   },
@@ -291,6 +305,16 @@ export default [
       { name: 'isNodeMatched', desc: '判定指定节点是否匹配成功', params: 'row, expanded' },
       { name: 'hasChildNode', desc: '判定指定节点是否有子节点', params: 'row, expanded' },
       { name: 'setOpen', desc: '指定节点展开', params: '(item: any[] | any, isOpen = true, autoOpenParents = false)' },
+      {
+        name: 'collapseAll',
+        desc: '收起全部节点（批量更新，大数据量下避免逐节点 setOpen）',
+        params: '()',
+      },
+      {
+        name: 'expandAll / openAllNodes',
+        desc: '展开全部有子节点的节点（批量更新，与 collapseAll 对应）',
+        params: '()',
+      },
       { name: 'setChecked', desc: '设置指定节点是否勾选', params: '(item: any[] | any, checked = true)' },
       {
         name: 'setNodeAction',

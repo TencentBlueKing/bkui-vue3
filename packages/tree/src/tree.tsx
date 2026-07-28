@@ -23,15 +23,16 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { computed, defineComponent, nextTick, onMounted, reactive, ref, watch } from 'vue';
+import { defineComponent, nextTick, onMounted, ref, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import { debounce } from '@bkui-vue/shared';
 import VirtualRender from '@bkui-vue/virtual-render';
 import { cloneDeep } from 'lodash';
 
-import { EVENTS, NODE_ATTRIBUTES, TreeEmitEventsType } from './constant';
-import { treeProps, TreePropTypes as defineTypes, TreeNode } from './props';
+import { EVENTS, NODE_ATTRIBUTES, NODE_SOURCE_ATTRS, TreeEmitEventsType } from './constant';
+import { TreeDataChangePayload, treeProps, TreePropTypes as defineTypes, TreeNode } from './props';
+import TreeNodeRow from './tree-node-row';
 import useEmpty from './use-empty';
 import useIntersectionObserver from './use-intersection-observer';
 import useNodeAction from './use-node-action';
@@ -39,6 +40,7 @@ import useNodeAttribute from './use-node-attribute';
 import useNodeDrag from './use-node-drag';
 import useSearch from './use-search';
 import useTreeInit from './use-tree-init';
+import useVisibleNodes from './use-visible-nodes';
 import { getLabel, getTreeStyle, resolveNodeItem } from './util';
 
 export type TreePropTypes = defineTypes;
@@ -54,8 +56,9 @@ export default defineComponent({
   emits: TreeEmitEventsType,
   setup(props, ctx) {
     const root = ref();
+    const treeDataRef = ref<TreeNode[]>(props.data as TreeNode[]);
 
-    const { flatData, onSelected, registerNextLoop } = useTreeInit(props);
+    const { flatData, onSelected, rebuildData, registerNextLoop, onAfterRebuild } = useTreeInit(props);
 
     const {
       checkNodeIsOpen,
@@ -64,46 +67,233 @@ export default defineComponent({
       isNodeChecked,
       isNodeMatched,
       hasChildNode,
-      getNodePath,
       getNodeId,
       getNodeAttr,
       getNodeById,
       getParentNode,
       getRootNodeList,
       getIntersectionResponse,
+      getChildNodes,
+      getNodePath,
+      getSchemaVal,
+      setNodeAttr,
     } = useNodeAttribute(flatData, props);
 
-    const { searchFn, isSearchActive, refSearch, isSearchDisabled, isTreeUI, showChildNodes } = useSearch(props);
-    const matchedNodePath = reactive([]);
+    const {
+      createMatcher,
+      searchValue,
+      isSearchActive,
+      isTreeUI,
+      resultType,
+      showChildNodes,
+    } = useSearch(props);
+    // 不可用 reactive(Set)：百万次 add/clear 会反复触发依赖，导致检索「连续刷新」
+    const matchedNodeIds = new Set<string>();
+    const visibleNodeIds = new Set<string>();
+    /** 搜索候选节点（DFS 序），展开/收起时只在此集合上过滤，O(命中集) */
+    let searchCandidateNodes: TreeNode[] = [];
+    const searchOriginalOpenState = new Map<string, boolean>();
 
-    const filterFn = (item: TreeNode) => {
-      if (isSearchActive.value) {
-        if (showChildNodes) {
-          const itemPath = getNodePath(item) ?? '';
-          const asParentPath = `${itemPath}-`;
-          const isNodeOpen = checkNodeIsOpen(item);
-          const isNodeMatch = isNodeMatched(item);
-          const isNodeRoot = isRootNode(item);
-          if (isNodeOpen) {
-            if (isNodeRoot) {
-              return isNodeMatch;
-            }
-
-            return isNodeMatch || matchedNodePath.some(path => asParentPath.indexOf(`${path}-`) === 0);
-          }
-
-          return false;
-        }
-
-        return checkNodeIsOpen(item) && isNodeMatched(item);
+    const getChildNodesForVisible = (node: TreeNode) => {
+      const children = getChildNodes(node);
+      if (!isSearchActive.value) {
+        return children;
       }
-
-      return checkNodeIsOpen(item);
+      // 搜索态只插入检索可见集内的子节点，保证展开/收起增量正确
+      return children.filter(child => visibleNodeIds.has(`${getNodeId(child)}`));
     };
 
-    // 计算当前需要渲染的节点信息
-    const renderData = computed(() => flatData.data.filter(item => filterFn(item)));
+    const {
+      visibleNodes: renderData,
+      uiVersion,
+      uiTick,
+      nodeUiVersions,
+      rebuildVisibleNodes,
+      setVisibleNodes,
+      syncNodeOpenState: syncNodeOpenStateRaw,
+      scheduleUiRefresh,
+    } = useVisibleNodes(flatData, {
+      checkNodeIsOpen,
+      getChildNodes: getChildNodesForVisible,
+      getNodeAttr,
+      getNodeId,
+      getNodePath,
+      getNodeOrder: node => (getNodeAttr(node, NODE_ATTRIBUTES.ORDER) as number) ?? 0,
+      getSchemaVal,
+      isNodeOpened,
+    });
+
+    const isSearchTreeNodeVisible = (item: TreeNode) => {
+      if (!visibleNodeIds.has(`${getNodeId(item)}`)) {
+        return false;
+      }
+      let parent = getParentNode(item) as TreeNode | null;
+      while (parent) {
+        if (!isNodeOpened(parent)) {
+          return false;
+        }
+        parent = getParentNode(parent) as TreeNode | null;
+      }
+      return true;
+    };
+
+    const rebuildSearchVisibleList = () => {
+      if (!isTreeUI.value) {
+        setVisibleNodes(searchCandidateNodes);
+        return;
+      }
+      const next: TreeNode[] = [];
+      for (let i = 0, len = searchCandidateNodes.length; i < len; i++) {
+        const item = searchCandidateNodes[i];
+        if (isSearchTreeNodeVisible(item)) {
+          next.push(item);
+        }
+      }
+      setVisibleNodes(next);
+    };
+
+    /**
+     * 搜索 list 模式：展开不影响可见集。
+     * 其它情况走增量 expand/collapse（搜索 tree 下 getChildNodes 已按候选集过滤）。
+     */
+    const syncNodeOpenState = (node: TreeNode, isOpen: boolean) => {
+      if (isSearchActive.value && !isTreeUI.value) {
+        scheduleUiRefresh(node);
+        return;
+      }
+      syncNodeOpenStateRaw(node, isOpen);
+    };
+
+    flatData.notifySchemaChange = (node, attr) => {
+      // IS_OPEN 由 syncNodeOpenState 增量维护可见列表，并按节点刷新图标
+      if (attr === NODE_ATTRIBUTES.IS_OPEN) {
+        return;
+      }
+      // 选中/勾选等：只刷新变更节点，避免自定义插槽全量重跑
+      scheduleUiRefresh(node);
+    };
+
+    const getRenderNodeId = (node: TreeNode) => `${getNodeId(node)}`;
+
+    const setSearchNodeOpen = (node: TreeNode) => {
+      const nodeId = getRenderNodeId(node);
+      if (!searchOriginalOpenState.has(nodeId)) {
+        searchOriginalOpenState.set(nodeId, isNodeOpened(node));
+      }
+      setNodeAttr(node, NODE_ATTRIBUTES.IS_OPEN, true, undefined, { silent: true });
+    };
+
+    const restoreSearchOpenState = () => {
+      searchOriginalOpenState.forEach((isOpen, nodeId) => {
+        const node = getNodeById(nodeId);
+        if (node) {
+          setNodeAttr(node, NODE_ATTRIBUTES.IS_OPEN, isOpen, undefined, { silent: true });
+        }
+      });
+      searchOriginalOpenState.clear();
+    };
+
+    const clearMatchedFlags = () => {
+      matchedNodeIds.forEach(nodeId => {
+        const node = getNodeById(nodeId);
+        if (node) {
+          setNodeAttr(node, NODE_ATTRIBUTES.IS_MATCH, false, undefined, { silent: true });
+        }
+      });
+      matchedNodeIds.clear();
+    };
+
+    const addAncestorNodes = (node: TreeNode) => {
+      let parent = getParentNode(node) as TreeNode | null;
+      while (parent) {
+        const parentId = getRenderNodeId(parent);
+        visibleNodeIds.add(parentId);
+        setSearchNodeOpen(parent);
+        parent = getParentNode(parent) as TreeNode | null;
+      }
+    };
+
+    const addDescendantNodes = (node: TreeNode) => {
+      const children = getChildNodes(node);
+      for (let i = 0, len = children.length; i < len; i++) {
+        const child = children[i];
+        visibleNodeIds.add(getRenderNodeId(child));
+        // showChildNodes：默认展开有子节点的路径，深层结果可直接可见；用户仍可手动收起
+        if (hasChildNode(child)) {
+          setSearchNodeOpen(child);
+        }
+        addDescendantNodes(child);
+      }
+    };
+
     const { getLastVisibleElement, intersectionObserver } = useIntersectionObserver(props);
+
+    const collectOpenNodeIds = () => {
+      const openNodeIds = new Set<string>();
+      flatData.data.forEach(node => {
+        if (isNodeOpened(node)) {
+          openNodeIds.add(`${getNodeId(node)}`);
+        }
+      });
+
+      return openNodeIds;
+    };
+
+    const getSourceNodeId = (node: TreeNode) => `${node?.[props.nodeKey || NODE_ATTRIBUTES.UUID]}`;
+    const getSourceChildren = (node: TreeNode) => (node?.[props.children] as TreeNode[]) || [];
+    const sourceOpenAttr = NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.IS_OPEN];
+
+    const removeOpenState = (node: TreeNode, openNodeIds: Set<string>) => {
+      openNodeIds.delete(getSourceNodeId(node));
+      getSourceChildren(node).forEach(child => {
+        removeOpenState(child, openNodeIds);
+      });
+    };
+
+    const syncDragTargetOpenState = (openNodeIds: Set<string>, payload: TreeDataChangePayload) => {
+      if (payload.trigger !== 'drag' || payload.dropType !== 'child' || !payload.targetNode) {
+        return;
+      }
+
+      const targetOpenState = props.dragTargetOpenState || 'inherit';
+      if (targetOpenState === 'inherit') {
+        return;
+      }
+
+      const targetNodeId = getSourceNodeId(payload.targetNode);
+      if (targetOpenState === 'expand') {
+        openNodeIds.add(targetNodeId);
+      }
+      if (targetOpenState === 'collapse') {
+        removeOpenState(payload.targetNode, openNodeIds);
+      }
+    };
+
+    const syncSourceOpenState = (treeData: TreeNode[], openNodeIds: Set<string>, parentOpened = true) => {
+      treeData.forEach(node => {
+        const isOpen = parentOpened && openNodeIds.has(getSourceNodeId(node));
+        if (isOpen || !parentOpened || Object.prototype.hasOwnProperty.call(node, sourceOpenAttr)) {
+          node[sourceOpenAttr] = isOpen;
+        }
+        syncSourceOpenState(getSourceChildren(node), openNodeIds, isOpen);
+      });
+    };
+
+    const normalizeDragOpenState = (payload: TreeDataChangePayload) => {
+      const openNodeIds = collectOpenNodeIds();
+      syncDragTargetOpenState(openNodeIds, payload);
+      syncSourceOpenState(payload.data, openNodeIds);
+    };
+
+    const onTreeDataChange = (payload: TreeDataChangePayload) => {
+      if (payload.trigger === 'drag') {
+        normalizeDragOpenState(payload);
+      }
+      treeDataRef.value = payload.data ?? [];
+      rebuildData(treeDataRef.value);
+      ctx.emit(EVENTS.NODE_DATA_CHANGE, payload);
+      props.onDataChange?.(payload);
+    };
 
     const {
       renderTreeNode,
@@ -112,33 +302,93 @@ export default defineComponent({
       setNodeAction,
       setSelect,
       asyncNodeClick,
-      setNodeAttribute,
-      isIndeterminate,
-      deepUpdateChildNode,
-      updateParentChecked,
-    } = useNodeAction(props, ctx, flatData, renderData, { registerNextLoop });
-
-    const handleSearch = debounce(120, () => {
-      matchedNodePath.length = 0;
-      flatData.data.forEach((item: TreeNode) => {
-        const isMatch = searchFn(getLabel(item, props), item);
-        if (isMatch) {
-          matchedNodePath.push(getNodePath(item));
-        }
-
-        setNodeAttribute(item, [NODE_ATTRIBUTES.IS_MATCH], [isMatch], isTreeUI.value && isMatch);
-      });
+      applyCheckedChange,
+      emitCheckedChange,
+      rebuildCheckedSetsFromList,
+      clearAllCheckedState,
+    } = useNodeAction(props, ctx, flatData, renderData, {
+      getTreeData: () => treeDataRef.value,
+      onTreeDataChange,
+      registerNextLoop,
+      syncNodeOpenState,
+      scheduleUiRefresh,
     });
 
-    if (!isSearchDisabled) {
-      watch(
-        [refSearch],
-        () => {
-          handleSearch();
-        },
-        { deep: true, immediate: true },
-      );
-    }
+    // 数据重建完成后同步勾选索引与可见列表（保证读到最新 schema）
+    const runSearch = () => {
+      restoreSearchOpenState();
+      clearMatchedFlags();
+      visibleNodeIds.clear();
+      searchCandidateNodes = [];
+
+      // 非搜索态：只恢复展开并重建可见列表，禁止扫全表写 IS_MATCH
+      if (!isSearchActive.value) {
+        rebuildVisibleNodes();
+        scheduleUiRefresh();
+        return;
+      }
+
+      const matcher = createMatcher();
+      const data = flatData.data;
+      const matchedNodes: TreeNode[] = [];
+
+      for (let i = 0, len = data.length; i < len; i++) {
+        const item = data[i];
+        if (!matcher(getLabel(item, props), item)) {
+          continue;
+        }
+        const nodeId = getRenderNodeId(item);
+        matchedNodeIds.add(nodeId);
+        visibleNodeIds.add(nodeId);
+        matchedNodes.push(item);
+        // 仅给命中节点打标，禁止全表 setAttribute
+        setNodeAttr(item, NODE_ATTRIBUTES.IS_MATCH, true, undefined, { silent: true });
+      }
+
+      for (let i = 0, len = matchedNodes.length; i < len; i++) {
+        const item = matchedNodes[i];
+        if (resultType.value === 'tree') {
+          addAncestorNodes(item);
+        }
+        if (showChildNodes.value) {
+          setSearchNodeOpen(item);
+          addDescendantNodes(item);
+        }
+      }
+
+      // 按 DFS 序收集候选集，后续展开/收起只扫候选集
+      for (let i = 0, len = data.length; i < len; i++) {
+        const item = data[i];
+        if (visibleNodeIds.has(getRenderNodeId(item))) {
+          searchCandidateNodes.push(item);
+        }
+      }
+
+      rebuildSearchVisibleList();
+      scheduleUiRefresh();
+    };
+
+    const syncAfterRebuild = () => {
+      rebuildCheckedSetsFromList(flatData.checkedList || []);
+      if (isSearchActive.value) {
+        runSearch();
+        return;
+      }
+      rebuildVisibleNodes();
+    };
+    onAfterRebuild(syncAfterRebuild);
+    watch(() => flatData.data, syncAfterRebuild);
+
+    const handleSearch = debounce(120, runSearch);
+
+    // 只浅监听检索值 / 展示模式，避免 deep watch search 对象在赋值时连环触发
+    watch(
+      () => [searchValue.value, resultType.value, showChildNodes.value] as const,
+      () => {
+        handleSearch();
+      },
+      { immediate: true },
+    );
 
     onMounted(() => {
       if (props.virtualRender) {
@@ -183,34 +433,29 @@ export default defineComponent({
       const nodes = resolveToNodes(item);
       nodes.forEach(node => {
         const resolvedNode = resolveNodeItem(node);
-        setNodeAction(resolvedNode, NODE_ATTRIBUTES.IS_CHECKED, checked);
-        if (checked) {
-          setNodeAction(resolvedNode, NODE_ATTRIBUTES.IS_INDETERMINATE, false);
+        if (resolvedNode[NODE_ATTRIBUTES.IS_NULL]) {
+          return;
         }
-
-        // 如果设置了 checkStrictly，需要同步更新子节点和父节点的状态
-        if (props.checkStrictly) {
-          deepUpdateChildNode(
-            resolvedNode,
-            [NODE_ATTRIBUTES.IS_CHECKED, NODE_ATTRIBUTES.IS_INDETERMINATE],
-            [checked, false],
-          );
-          updateParentChecked(resolvedNode, checked);
-        }
+        applyCheckedChange(resolvedNode, checked, { emitEvent: false, refresh: false });
       });
 
+      scheduleUiRefresh();
+
       if (triggerEvent) {
-        ctx.emit(
-          EVENTS.NODE_CHECKED,
-          flatData.data.filter(t => isNodeChecked(t)),
-          flatData.data.filter(t => isIndeterminate(t)),
-        );
+        emitCheckedChange();
       }
     };
 
     onSelected((newData: TreeNode) => {
       setSelect(newData, true, props.autoOpenParentNode, true);
     });
+
+    watch(
+      () => props.data,
+      value => {
+        treeDataRef.value = value as TreeNode[];
+      },
+    );
 
     /**
      * 根据最新的schema生成最新的Tree结构数据
@@ -248,14 +493,7 @@ export default defineComponent({
     watch(
       () => [props.checked],
       () => {
-        // 先清除所有节点的选中和半选状态
-        flatData.data.forEach(node => {
-          if (isNodeChecked(node) || isIndeterminate(node)) {
-            setNodeAction(node, NODE_ATTRIBUTES.IS_CHECKED, false);
-            setNodeAction(node, NODE_ATTRIBUTES.IS_INDETERMINATE, false);
-          }
-        });
-        // 再设置新的选中节点
+        clearAllCheckedState();
         setChecked(props.checked, true);
       },
       {
@@ -309,6 +547,59 @@ export default defineComponent({
       setChecked(getNodeById(id), checked, triggerEvent);
     };
 
+    /**
+     * 收起全部节点。
+     * 直接批量清 schema.IS_OPEN，避免逐节点 setOpen 触发百万次增量更新。
+     */
+    const collapseAll = () => {
+      const data = flatData.data;
+      for (let i = 0, len = data.length; i < len; i++) {
+        const schema = getSchemaVal(data[i]);
+        if (schema?.[NODE_ATTRIBUTES.IS_OPEN]) {
+          schema[NODE_ATTRIBUTES.IS_OPEN] = false;
+        }
+      }
+      flatData.openCount = 0;
+
+      if (isSearchActive.value) {
+        rebuildSearchVisibleList();
+      } else {
+        rebuildVisibleNodes();
+      }
+      scheduleUiRefresh();
+    };
+
+    /**
+     * 展开全部节点（openAllNodes）。
+     * 批量写 IS_OPEN 后一次性重建可见列表。
+     */
+    const expandAllNodes = () => {
+      const data = flatData.data;
+      let openCount = 0;
+      for (let i = 0, len = data.length; i < len; i++) {
+        const node = data[i];
+        if (!hasChildNode(node)) {
+          continue;
+        }
+        const schema = getSchemaVal(node);
+        if (!schema) {
+          continue;
+        }
+        if (!schema[NODE_ATTRIBUTES.IS_OPEN]) {
+          schema[NODE_ATTRIBUTES.IS_OPEN] = true;
+        }
+        openCount += 1;
+      }
+      flatData.openCount = openCount;
+
+      if (isSearchActive.value) {
+        rebuildSearchVisibleList();
+      } else {
+        rebuildVisibleNodes();
+      }
+      scheduleUiRefresh();
+    };
+
     ctx.expose({
       handleTreeNodeClick,
       isNodeChecked,
@@ -328,13 +619,33 @@ export default defineComponent({
       reset,
       getNodeAttr,
       getParentNode,
+      collapseAll,
+      expandAll: expandAllNodes,
+      openAllNodes: expandAllNodes,
     });
 
     const { renderEmpty } = useEmpty(props);
-    useNodeDrag(props, ctx, root, flatData);
+    useNodeDrag(props, ctx, root, flatData, {
+      getTreeData: () => treeDataRef.value,
+      onTreeDataChange,
+    });
     const renderTreeContent = (scopedData: TreeNode[]) => {
       if (scopedData.length) {
-        return scopedData.map(d => renderTreeNode(d, !isSearchActive.value || isTreeUI.value));
+        const showTree = !isSearchActive.value || isTreeUI.value;
+        const globalVersion = uiVersion.value;
+        return scopedData.map(d => {
+          const id = `${getNodeId(d)}`;
+          return (
+            <TreeNodeRow
+              key={id}
+              item={d}
+              showTree={showTree}
+              version={nodeUiVersions[id] || 0}
+              globalVersion={globalVersion}
+              renderFn={renderTreeNode}
+            />
+          );
+        });
       }
 
       const emptyType = isSearchActive.value ? 'search-empty' : 'empty';
@@ -366,25 +677,30 @@ export default defineComponent({
 
     const { resolveClassName } = usePrefix();
 
-    return () => (
-      <VirtualRender
-        ref={root}
-        style={getTreeStyle(null, props)}
-        height={props.height}
-        class={resolveClassName('tree')}
-        contentClassName={resolveClassName('container')}
-        enabled={props.virtualRender}
-        keepAlive={true}
-        lineHeight={props.lineHeight}
-        list={renderData.value}
-        rowKey={NODE_ATTRIBUTES.UUID}
-        throttleDelay={0}
-        onContentScroll={handleContentScroll}
-      >
-        {{
-          default: (scoped: { data: TreeNode[] }) => renderTreeContent(scoped.data || []),
-        }}
-      </VirtualRender>
-    );
+    return () => {
+      // uiTick：节点级刷新时唤醒 Tree；具体哪些行更新由 TreeNodeRow 的 version 决定
+      void uiTick.value;
+
+      return (
+        <VirtualRender
+          ref={root}
+          style={getTreeStyle(null, props)}
+          height={props.height}
+          class={resolveClassName('tree')}
+          contentClassName={resolveClassName('container')}
+          enabled={props.virtualRender}
+          keepAlive={true}
+          lineHeight={props.lineHeight}
+          list={renderData.value}
+          rowKey={props.nodeKey || NODE_ATTRIBUTES.UUID}
+          throttleDelay={0}
+          onContentScroll={handleContentScroll}
+        >
+          {{
+            default: (scoped: { data: TreeNode[] }) => renderTreeContent(scoped.data || []),
+          }}
+        </VirtualRender>
+      );
+    };
   },
 });

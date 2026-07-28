@@ -27,5 +27,6 @@ import { zhCn } from '@bkui-vue/locale';
 export const rootProviderKey = Symbol('rootProviderData');
 export const defaultRootConfig = {
   locale: zhCn,
+  popoverRenderReferenceWrapper: undefined as boolean | undefined,
   prefix: 'bk',
 };

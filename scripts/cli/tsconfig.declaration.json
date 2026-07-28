@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "rootDir": "../../",
+    "ignoreDeprecations": "6.0",
     "strictNullChecks": false,
     "strict": true,
     "moduleResolution": "node",
@@ -14,12 +16,21 @@
     "noImplicitAny": false,
     "module": "esnext",
     "target": "esnext",
-    "lib": ["dom", "es2017"],
+    "lib": [
+      "dom",
+      "es2022"
+    ],
+    "types": [
+      "node",
+      "vue/jsx"
+    ],
     "skipLibCheck": true,
     "allowJs": true,
     "baseUrl": "../../packages",
     "paths": {
-      "@bkui-vue/*": ["*/src"]
+      "@bkui-vue/*": [
+        "*/src"
+      ]
     },
     "importHelpers": true,
     "isolatedModules": true,
@@ -32,5 +43,8 @@
     "../../packages/bkui-vue/index.ts",
     "../../index.d.ts"
   ],
-  "exclude": ["../../packages/bkui-vue/index.dist.ts", "../../packages/icon"]
+  "exclude": [
+    "../../packages/bkui-vue/index.dist.ts",
+    "../../packages/icon"
+  ]
 }

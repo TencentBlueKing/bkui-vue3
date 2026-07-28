@@ -30,56 +30,89 @@ import { SearchOption, TreePropTypes } from './props';
 
 export default (props: TreePropTypes) => {
   const refSearch = toRef(props, 'search');
-  const { resultType = 'tree', showChildNodes = true } = (props.search ?? {}) as SearchOption;
 
   const isCommonType = (val: unknown) => ['string', 'number', 'boolean'].includes(typeof val);
-  const exactMath = (matchValue: unknown, itemValue: unknown) => matchValue === itemValue;
-  const regMatch = (matchValue: unknown, itemValue: unknown) => new RegExp(`${matchValue}`, 'i').test(`${itemValue}`);
-  const matchFn = (match: (...args) => boolean, args: unknown[]) => Reflect.apply(match, this, args);
-  const isSearchDisabled = refSearch.value === undefined || refSearch.value === false;
+  const exactMatch = (matchValue: unknown, itemValue: unknown) => matchValue === itemValue;
+  const fuzzyMatchWithRegex = (regex: RegExp, itemValue: unknown) => regex.test(`${itemValue}`);
+  const fuzzyMatchIncludes = (matchValue: string, itemValue: unknown) =>
+    `${itemValue}`.toLowerCase().includes(matchValue);
 
-  const searchFn = (itemValue: unknown, item: unknown) => {
-    if (isSearchDisabled) {
-      return true;
+  const isSearchDisabled = computed(() => refSearch.value === undefined || refSearch.value === false);
+
+  const searchOption = computed<SearchOption>(() => {
+    if (refSearch.value && typeof refSearch.value === 'object') {
+      return refSearch.value as SearchOption;
+    }
+    return { value: '' };
+  });
+
+  const resultType = computed(() => searchOption.value.resultType ?? 'tree');
+  const showChildNodes = computed(() => searchOption.value.showChildNodes ?? false);
+
+  /** 只暴露原始检索值，供外部浅层 watch，避免 deep watch 整个 search 对象 */
+  const searchValue = computed(() => {
+    if (isSearchDisabled.value) {
+      return '';
+    }
+    if (isCommonType(refSearch.value)) {
+      return refSearch.value;
+    }
+    return searchOption.value.value ?? '';
+  });
+
+  const isSearchActive = computed(() => !isSearchDisabled.value && `${searchValue.value}`.length > 0);
+
+  const isTreeUI = computed(() => resultType.value === 'tree');
+
+  /**
+   * 为一次检索创建匹配器（模糊匹配只编译一次正则），避免百万节点循环内重复 new RegExp。
+   */
+  const createMatcher = (): ((itemValue: unknown, item: unknown) => boolean) => {
+    if (isSearchDisabled.value) {
+      return () => true;
+    }
+
+    const value = searchValue.value;
+    if (`${value}`.length === 0) {
+      return () => false;
     }
 
     if (isCommonType(refSearch.value)) {
-      if (`${refSearch.value}`.length === 0) {
-        return false;
+      const text = `${value}`;
+      try {
+        const regex = new RegExp(text, 'i');
+        return itemValue => fuzzyMatchWithRegex(regex, itemValue);
+      } catch {
+        const lower = text.toLowerCase();
+        return itemValue => fuzzyMatchIncludes(lower, itemValue);
       }
-
-      return matchFn(regMatch, [refSearch.value, itemValue, item]);
     }
 
-    const { value = '', match = 'fuzzy' } = refSearch.value as SearchOption;
-    const defultMatch = match === 'fuzzy' ? regMatch : exactMath;
-    const matchCallback = typeof match === 'function' ? match : defultMatch;
-    if (`${value}`.length === 0) {
-      return false;
+    const { match = 'fuzzy' } = searchOption.value;
+    if (typeof match === 'function') {
+      return (itemValue, item) => !!match(value, itemValue, item);
     }
 
-    return matchFn(matchCallback, [value, itemValue, item]);
+    if (match === 'full') {
+      return itemValue => exactMatch(value, itemValue);
+    }
+
+    const text = `${value}`;
+    try {
+      const regex = new RegExp(text, 'i');
+      return itemValue => fuzzyMatchWithRegex(regex, itemValue);
+    } catch {
+      const lower = text.toLowerCase();
+      return itemValue => fuzzyMatchIncludes(lower, itemValue);
+    }
   };
 
-  const isSearchActive = computed(() => {
-    if (refSearch.value === false) {
-      return false;
-    }
-
-    if (isCommonType(refSearch.value)) {
-      return `${refSearch.value}`.length > 0;
-    }
-
-    const { value = '' } = refSearch.value as SearchOption;
-    return `${value}`.length > 0;
-  });
-  /**
-   * 索索结果展示为Tree
-   */
-  const isTreeUI = computed(() => resultType === 'tree');
+  const searchFn = (itemValue: unknown, item: unknown) => createMatcher()(itemValue, item);
 
   return {
     searchFn,
+    createMatcher,
+    searchValue,
     refSearch,
     isSearchActive,
     isSearchDisabled,

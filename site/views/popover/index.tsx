@@ -38,7 +38,9 @@ import Callback from './demo/callback.vue';
 import ManualTrigger from './demo/manual-trigger.vue';
 import MouseEvent from './demo/mouse-event.vue';
 import Position from './demo/position.vue';
+import GlobalConfig from './demo/global-config.vue';
 import HideIgnoreReference from './demo/hide-ignore-reference.vue';
+import ReferenceWrapper from './demo/reference-wrapper.vue';
 import Slot from './demo/slot.vue';
 
 const props: IPropsTableItem[] = [
@@ -243,6 +245,13 @@ const props: IPropsTableItem[] = [
     optional: [],
   },
   {
+    name: 'renderReferenceWrapper',
+    type: 'Boolean',
+    default: 'undefined',
+    desc: '是否渲染默认插槽最外层 reference span。仅 true 时主动追加 span；undefined/false 不主动追加 span，事件和 ref 会挂到默认插槽节点，组件节点通过实例解析真实 DOM',
+    optional: ['true', 'false'],
+  },
+  {
     name: 'hideIgnoreReference',
     type: 'Boolean',
     default: 'false',
@@ -397,6 +406,20 @@ const demos = [
     componentName: 'popover',
     demoName: 'demo/hide-ignore-reference',
     DemoComponent: HideIgnoreReference,
+  },
+  {
+    title: 'Reference wrapper 配置',
+    desc: 'renderReferenceWrapper=false 时不主动追加 span；ConfigProvider 的 popoverRenderReferenceWrapper 仅对子树生效',
+    componentName: 'popover',
+    demoName: 'demo/reference-wrapper',
+    DemoComponent: ReferenceWrapper,
+  },
+  {
+    title: '全局配置 reference wrapper',
+    desc: '通过 bk-config-provider 的 popover-render-reference-wrapper 或项目初始化配置，统一控制 Popover reference 是否渲染包裹容器',
+    componentName: 'popover',
+    demoName: 'demo/global-config',
+    DemoComponent: GlobalConfig,
   },
 ];
 

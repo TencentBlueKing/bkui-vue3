@@ -84,7 +84,7 @@ export default defineComponent({
       }
 
       return this.closeText ? this.closeText : <CloseLine />;
-    }
+    };
 
     return (
       <div class={typeClass}>

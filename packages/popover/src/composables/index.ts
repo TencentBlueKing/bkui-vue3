@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 /*
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
@@ -25,22 +24,11 @@
  * IN THE SOFTWARE.
  */
 
-export const enum EMIT_EVENTS {
-  CLICK_OUTSIDE = 'clickoutside',
-  CONTENT_AfterHidden = 'afterHidden',
-  CONTENT_AfterShow = 'afterShow',
-  CONTENT_MOUSEENTER = 'contentMouseenter',
-  CONTENT_MOUSELEAVE = 'contentMouseleave',
-}
+export { useDelay, resolveDelay } from './use-delay';
+export type { UseDelayOptions } from './use-delay';
 
-export const EVENT_SHOW_HIDE_FN = (_args: { isShow: boolean }) => true;
-export const EVENT_COMMON_FN = (e: MouseEvent) => e;
-export const EVENT_CLICK_OUTSIDE_FN = (_args: { isShow: boolean; event: MouseEvent }) => true;
+export { useTrigger } from './use-trigger';
+export type { UseTriggerOptions, UseTriggerProps, UseTriggerReturn } from './use-trigger';
 
-export const EMIT_EVENT_TYPES = {
-  [EMIT_EVENTS.CLICK_OUTSIDE]: EVENT_CLICK_OUTSIDE_FN,
-  [EMIT_EVENTS.CONTENT_MOUSEENTER]: EVENT_COMMON_FN,
-  [EMIT_EVENTS.CONTENT_MOUSELEAVE]: EVENT_COMMON_FN,
-  [EMIT_EVENTS.CONTENT_AfterHidden]: EVENT_SHOW_HIDE_FN,
-  [EMIT_EVENTS.CONTENT_AfterShow]: EVENT_SHOW_HIDE_FN,
-};
+export { usePopoverFloating, useFloating } from './use-floating';
+export type { UseFloatingProps, UseFloatingReturn } from './use-floating';

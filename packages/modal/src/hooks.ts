@@ -23,7 +23,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { onBeforeUnmount, onMounted, type Ref, ref, useSlots, watch } from 'vue';
+import { onBeforeUnmount, onMounted, type Ref, ref, watch } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
 import throttle from 'lodash/throttle';
@@ -36,38 +36,39 @@ export const useContentResize = (
   props: ModalProps,
 ) => {
   const { resolveClassName } = usePrefix();
-  const slots = useSlots();
   const isContentScroll = ref(false);
   const contentStyles = ref({});
 
   const calcContentScroll = throttle(() => {
-    if (!props.isShow) {
-      // onMouted 时监听了 window resize事件这个时候 DOM 可能不存在
+    if (!props.isShow || !root.value) {
       return;
     }
-    const { height: headerHeight } = root.value
-      .querySelector(`.${resolveClassName('modal-header')}`)
-      .getBoundingClientRect();
 
-    const { height: contentHeight } = root.value
-      .querySelector(`.${resolveClassName('modal-content')} div`)
-      .getBoundingClientRect();
+    const headerEl = root.value.querySelector(`.${resolveClassName('modal-header')}`);
+    const contentEl = root.value.querySelector(`.${resolveClassName('modal-content')} div`);
+    const footerEl = root.value.querySelector(`.${resolveClassName('modal-footer')}`);
 
-    const { height: footerHeight } = root.value
-      .querySelector(`.${resolveClassName('modal-footer')}`)
-      .getBoundingClientRect();
+    if (!headerEl || !contentEl) {
+      return;
+    }
+
+    const { height: headerHeight } = headerEl.getBoundingClientRect();
+    const { height: contentHeight } = contentEl.getBoundingClientRect();
+
+    const hasFooter = !!footerEl;
+    const footerHeight = hasFooter ? footerEl.getBoundingClientRect().height : 0;
 
     const windowInnerHeight = window.innerHeight;
-    const footerMarginTop = 32;
+    const footerMarginTop = hasFooter ? 32 : 0;
+    const footerFixedHeight = hasFooter ? 48 : 0;
 
     isContentScroll.value = windowInnerHeight < headerHeight + contentHeight + footerHeight + footerMarginTop;
     if (isContentScroll.value || props.fullscreen) {
       contentStyles.value = {
-        height: `${windowInnerHeight - headerHeight - (slots.footer ? 48 : 0)}px`,
+        height: `${windowInnerHeight - headerHeight - footerFixedHeight}px`,
         overflow: 'auto',
         'scrollbar-gutter': 'stable',
       };
-      // fullscreen 时默认为 true
       isContentScroll.value = true;
     } else {
       contentStyles.value = {};

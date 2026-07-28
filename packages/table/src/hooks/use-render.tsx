@@ -40,12 +40,13 @@ import {
   formatPropAsArray,
   resolveCellSpan,
   resolveColumnSpan,
+  resolveActiveColumns,
   resolveHeadConfig,
   resolveNumberOrStringToPix,
   resolvePropVal,
   resolveWidth,
 } from '../utils';
-import useCell from './use-cell';
+import { createCellRenderer } from './use-cell';
 import { UseColumns } from './use-columns';
 import useHead from './use-head';
 import { UsePagination } from './use-pagination';
@@ -67,11 +68,15 @@ export default ({ props, ctx, columns, rows, pagination }: RenderType) => {
 
   const multiShiftKey = useShiftKey(props);
 
+  // 创建复用的单元格渲染器，避免在循环中重复创建闭包
+  const cellRenderer = createCellRenderer({ props, rows, ctx, columns, multiShiftKey });
+
   /**
    * 渲染table colgroup
    * @returns
    */
   const renderColgroup = () => {
+    const activeCols = resolveActiveColumns(props);
     return (
       <colgroup>
         {(columns.visibleColumns || []).map((column: Column, _index: number) => {
@@ -80,6 +85,9 @@ export default ({ props, ctx, columns, rows, pagination }: RenderType) => {
           const minWidth = columns.getColumnAttribute(column, COLUMN_ATTRIBUTE.COL_MIN_WIDTH);
           return (
             <col
+              class={{
+                active: activeCols.includes(_index),
+              }}
               style={{
                 width: resolveNumberOrStringToPix(width, 'auto'),
                 minWidth: resolveNumberOrStringToPix(minWidth as string, 'auto'),
@@ -347,17 +355,19 @@ export default ({ props, ctx, columns, rows, pagination }: RenderType) => {
     isChild = false,
   ) => {
     const rowLength = rowList.length;
+    const rowHeightPx = `${getRowHeight(row, rowIndex)}px`;
     const rowStyle = [
       ...formatPropAsArray(props.rowStyle, [row, rowIndex]),
-      {
-        '--row-height': `${getRowHeight(row, rowIndex)}px`,
-      },
+      props.rowHeight === 'auto'
+        ? { '--row-min-height': rowHeightPx }
+        : { '--row-height': rowHeightPx },
     ];
 
     const rowClass = [
       ...formatPropAsArray(props.rowClass, [row, rowIndex]),
       `hover-${props.rowHover}`,
       rowIndex % 2 === 1 && props.stripe ? 'stripe-row' : '',
+      props.rowHeight === 'auto' ? 'row-height-auto' : '',
     ];
     const rowId = rows.getRowAttribute(row, TABLE_ROW_ATTRIBUTE.ROW_UID);
 
@@ -378,7 +388,7 @@ export default ({ props, ctx, columns, rows, pagination }: RenderType) => {
         >
           {columns.visibleColumns.map((column: Column, index: number) => {
             const cellStyle = [
-              columns.getFixedStlye(column),
+              columns.getFixedStyle(column),
               ...formatPropAsArray(props.cellStyle, [column, index, row, rowIndex]),
             ];
 
@@ -410,17 +420,8 @@ export default ({ props, ctx, columns, rows, pagination }: RenderType) => {
 
               const columnKey = `${rowId}_${index}`;
               const cellKey = `${rowId}_${index}_cell`;
-              const { renderCell } = useCell({
-                props,
-                rows,
-                ctx,
-                columns,
-                row,
-                index: rowIndex,
-                column,
-                isChild,
-                multiShiftKey,
-              });
+              // 使用优化后的渲染器，避免在循环中重复创建闭包
+              const renderCellContent = () => cellRenderer(row, rowIndex, column, isChild);
 
               const handleEmit = (event, type: string) => {
                 const args = {
@@ -428,7 +429,7 @@ export default ({ props, ctx, columns, rows, pagination }: RenderType) => {
                   row,
                   column,
                   cell: {
-                    getValue: () => renderCell(),
+                    getValue: renderCellContent,
                   },
                   rowIndex,
                   columnIndex: index,
@@ -458,7 +459,7 @@ export default ({ props, ctx, columns, rows, pagination }: RenderType) => {
                     parentSetting={props.showOverflowTooltip}
                     row={row}
                   >
-                    {renderCell()}
+                    {renderCellContent()}
                   </TableCell>
                 </td>
               );

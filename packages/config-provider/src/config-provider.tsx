@@ -32,6 +32,10 @@ export const configProviderProps = {
   locale: {
     type: Object as PropType<Language>,
   },
+  popoverRenderReferenceWrapper: {
+    type: Boolean as PropType<boolean | undefined>,
+    default: undefined,
+  },
   prefix: {
     // 组件前缀
     type: String,

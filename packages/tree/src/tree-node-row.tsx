@@ -23,16 +23,44 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { defineComponent } from 'vue';
 
-import { PropTypes } from '@bkui-vue/shared';
+import { defineComponent, type PropType } from 'vue';
 
+import { TreeNode } from './props';
+
+/**
+ * 独立树行组件：仅在 version / globalVersion 变化时重渲染。
+ * 展开/选中时避免所有可见行的自定义插槽被连带重跑。
+ */
 export default defineComponent({
+  name: 'BkTreeNodeRow',
   props: {
-    class: PropTypes.string.def(''),
-    mode: PropTypes.string.def(''),
+    item: {
+      type: Object as PropType<TreeNode>,
+      required: true,
+    },
+    showTree: {
+      type: Boolean,
+      default: true,
+    },
+    version: {
+      type: Number,
+      default: 0,
+    },
+    globalVersion: {
+      type: Number,
+      default: 0,
+    },
+    renderFn: {
+      type: Function as PropType<(item: TreeNode, showTree?: boolean) => unknown>,
+      required: true,
+    },
   },
-  render() {
-    return <>{this.$slots.default?.()}</>;
+  setup(props) {
+    return () => {
+      void props.version;
+      void props.globalVersion;
+      return props.renderFn(props.item, props.showTree) as ReturnType<typeof props.renderFn>;
+    };
   },
 });

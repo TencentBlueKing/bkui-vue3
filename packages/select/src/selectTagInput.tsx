@@ -31,7 +31,7 @@ import { OverflowTitle } from '@bkui-vue/overflow-title';
 import { classes, InputBehaviorType, PropTypes, TagThemeType } from '@bkui-vue/shared';
 import Tag from '@bkui-vue/tag';
 import debounce from 'lodash/debounce';
-import { PropType } from 'vue-types/dist/types';
+import { PropType } from 'vue';
 
 import { selectKey } from './common';
 import { ISelected } from './type';
@@ -206,7 +206,12 @@ export default defineComponent({
                 onClose={() => this.handleRemoveTag(item.value)}
               >
                 {this.$slots.tagRender?.(item) ?? (
-                  <OverflowTitle type='tips'>{this.select?.handleGetLabelByValue(item.value)}</OverflowTitle>
+                  <OverflowTitle
+                    class={this.resolveClassName('select-tag-overflow-title')}
+                    type='tips'
+                  >
+                    {this.select?.handleGetLabelByValue(item.value)}
+                  </OverflowTitle>
                 )}
               </Tag>
             ))}

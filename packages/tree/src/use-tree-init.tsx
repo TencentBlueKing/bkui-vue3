@@ -24,14 +24,24 @@
  * IN THE SOFTWARE.
  */
 
-import { onMounted, reactive, watch } from 'vue';
+import { markRaw, onMounted, shallowReactive, toRaw, watch } from 'vue';
 
 import { v4 as uuidv4 } from 'uuid';
 
 import { NODE_ATTRIBUTES, NODE_SOURCE_ATTRS } from './constant';
 import { TreeNode, TreePropTypes } from './props';
 import useNodeAsync from './use-node-async';
-import { resolvePropIsMatched, showCheckbox } from './util';
+import { IFlatData, resolvePropIsMatched, showCheckbox } from './util';
+
+const toRawStore = <T extends object>(value: T): T => markRaw(value);
+
+const SOURCE_IS_OPEN = NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.IS_OPEN];
+const SOURCE_IS_CHECKED = NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.IS_CHECKED];
+const SOURCE_IS_SELECTED = NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.IS_SELECTED];
+const SOURCE_IS_ASYNC = NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.IS_ASYNC];
+const SOURCE_IS_MATCH = NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.IS_MATCH];
+const SOURCE_IS_CACHED = NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.IS_CACHED];
+const SOURCE_IS_LOADING = NODE_SOURCE_ATTRS[NODE_ATTRIBUTES.IS_LOADING];
 
 export default (props: TreePropTypes) => {
   /**
@@ -48,7 +58,11 @@ export default (props: TreePropTypes) => {
     const checkedList = [];
     const outputData = [];
     let order = 0;
+    let openCount = 0;
     const treeSchema = new WeakMap();
+    const nodeMap = new Map<string, TreeNode>();
+    const childMap = new WeakMap<TreeNode, TreeNode[]>();
+    const rootNodes: TreeNode[] = [];
 
     /**
      * 递归更新节点属性
@@ -76,103 +90,54 @@ export default (props: TreePropTypes) => {
               return;
             }
 
-            Object.assign(target, { [attrName]: attrValue });
+            if (attrName === NODE_ATTRIBUTES.IS_OPEN) {
+              const prevOpen = !!target[attrName];
+              const nextOpen = !!attrValue;
+              if (prevOpen !== nextOpen) {
+                openCount += nextOpen ? 1 : -1;
+              }
+            }
+
+            target[attrName] = attrValue;
             loopUpdateNodeAttr(target[NODE_ATTRIBUTES.PARENT], attrName, attrValue, callFn);
           }
         }
       }
     }
 
-    function getUid(item: TreeNode) {
-      let uid = null;
-      if (typeof props.nodeKey === 'string') {
-        uid = item[props.nodeKey] || uuidv4();
-      }
+    const nodeKey = props.nodeKey;
+    const expandAll = !!props.expandAll;
+    const autoOpenParentNode = !!props.autoOpenParentNode;
+    const selectable = !!props.selectable;
+    const hasCheckedProp = Array.isArray(props.checked) && props.checked.length > 0;
+    const hasSelectedProp = props.selected !== undefined && props.selected !== null;
+    const checkboxEnabled = props.showCheckbox !== false && !!props.showCheckbox;
+    const useCache = !!cachedSchema;
 
-      return uid || item[NODE_ATTRIBUTES.UUID] || uuidv4();
+    function getUid(item: TreeNode) {
+      if (typeof nodeKey === 'string') {
+        const keyVal = item[nodeKey];
+        if (keyVal !== undefined && keyVal !== null && keyVal !== '') {
+          return keyVal;
+        }
+      }
+      return item[NODE_ATTRIBUTES.UUID] || uuidv4();
     }
 
-    /**
-     * 默认设置
-     * 如果传入数据没有设置相关属性值
-     * 这里会自动生成
-     */
-    const cachedDefaultVal = {
-      [NODE_ATTRIBUTES.IS_OPEN]: () => !!props.expandAll,
-      [NODE_ATTRIBUTES.IS_CHECKED]: () => false,
-      [NODE_ATTRIBUTES.IS_MATCH]: () => false,
-      [NODE_ATTRIBUTES.IS_SELECTED]: (node: TreeNode, uuid) => resolvePropIsMatched(node, props.selected, uuid),
-      [NODE_ATTRIBUTES.IS_CACHED]: () => false,
-      [NODE_ATTRIBUTES.IS_ASYNC]: () => null,
-      [NODE_ATTRIBUTES.IS_LOADING]: () => false,
-    };
-
-    /**
-     * 根据Props设置和已缓存数据解析当前节点对应属性值
-     * @param uuid 当前节点id
-     * @param node 当前节点
-     * @param cachedAttr 当前节点属性名称
-     * @param defVal 默认值
-     */
-    function getCachedTreeNodeAttr(uuid, node: TreeNode, cachedAttr: string, defVal = undefined) {
-      let defaultValue = defVal;
-      // 设置默认值
-      if (defVal === undefined && typeof cachedDefaultVal[cachedAttr] === 'function') {
-        defaultValue = cachedDefaultVal[cachedAttr](node, uuid);
-      }
-
-      // 通过映射配置，检查当前数据是否设置相关属性值
-      // 如果传入数据设置了相关属性值，则返回传入数据设置值
-      const sourceAttr = NODE_SOURCE_ATTRS[cachedAttr];
-      if (Object.prototype.hasOwnProperty.call(node, sourceAttr)) {
+    function resolveAttr(node: TreeNode, sourceAttr: string, cachedAttr: string, defaultValue: unknown) {
+      if (sourceAttr in node) {
         return node[sourceAttr];
       }
-
-      // 判断是缓存数据是否已经处理过此属性
-      // 在数据改变时，如果缓存数据没有处理过此属性，则返回默认值
-      const cached = cachedSchema?.get(node) ?? undefined;
-      let result = undefined;
-      if (cached) {
-        result = cached[cachedAttr];
+      if (useCache) {
+        const cached = cachedSchema.get(node);
+        if (cached) {
+          const cachedVal = cached[cachedAttr];
+          if (cachedVal !== undefined && cachedVal !== null) {
+            return cachedVal;
+          }
+        }
       }
-
-      // 处理默认值
-      if (result === undefined || result === null) {
-        result = defaultValue;
-      }
-
-      return result;
-    }
-
-    /**
-     * 当前节点是否是选中状态
-     * @param uuid 当前节点id
-     * @param node 当前节点
-     * @returns
-     */
-    function isCachedTreeNodeSelected(uuid: string, node: TreeNode) {
-      if (!props.selectable) {
-        return false;
-      }
-
-      const isMatch = resolvePropIsMatched(node, props.selected, uuid);
-      return getCachedTreeNodeAttr(uuid, node, NODE_ATTRIBUTES.IS_SELECTED, isMatch);
-    }
-
-    function isNodeOpend(uuid, item, parent) {
-      const isItemOpened = getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_OPEN);
-      const isParentOpened = treeSchema.has(parent) ? treeSchema.get(parent)?.[NODE_ATTRIBUTES.IS_OPEN] : true;
-      return isItemOpened && isParentOpened;
-    }
-
-    function isCheckedNode(node, uuid, attributes) {
-      const isChecked = showCheckbox(props, { data: node, attributes });
-      if (!isChecked) {
-        return false;
-      }
-
-      const isMatch = resolvePropIsMatched(node, props.checked, uuid);
-      return getCachedTreeNodeAttr(uuid, node, NODE_ATTRIBUTES.IS_CHECKED, isMatch);
+      return defaultValue;
     }
 
     function validateIsOpenLoopFn(targetAttr: Record<string, unknown>) {
@@ -180,10 +145,9 @@ export default (props: TreePropTypes) => {
     }
 
     function loopUpdateCheckedEvent(target, _attrName, _attrValue, node) {
-      target[NODE_ATTRIBUTES.IS_INDETERMINATE] = (node[props.children] || []).some(
+      target[NODE_ATTRIBUTES.IS_INDETERMINATE] = (node[children] || []).some(
         child => !(treeSchema.get(child)?.[NODE_ATTRIBUTES.IS_CHECKED] ?? false),
       );
-
       return true;
     }
 
@@ -191,75 +155,106 @@ export default (props: TreePropTypes) => {
       const arrLength = array.length;
       for (let i = 0; i < arrLength; i++) {
         const item = array[i];
+        if (item === null || item === undefined) {
+          continue;
+        }
         if (Array.isArray(item)) {
           flatten(item, depth, parent, path);
-        } else {
-          if (typeof item === 'object' && item !== null) {
-            const currentPath = path !== null ? `${path}-${i}` : `${i}`;
-            const uuid = `${getUid(item)}`;
-            const hasChildren = !!((item[children] || []) as TreeNode[]).length;
-            /**
-             * 当前节点设置是否为展开状态
-             */
-            let isOpened = getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_OPEN);
+          continue;
+        }
+        if (typeof item !== 'object') {
+          continue;
+        }
 
-            /**
-             * 如果初始化发现当前属性为展开或者选中 & 设置了 autoOpenParentNode = true
-             * 此时需要设置当前节点的所有父级节点都为展开状态
-             */
-            if (props.autoOpenParentNode) {
-              isOpened && loopUpdateNodeAttr(parent, NODE_ATTRIBUTES.IS_OPEN, true, validateIsOpenLoopFn);
-            } else {
-              /**
-               * 如果没有设置自动展开所有父级
-               * 此时需要判定当前节点是否可以展开状态需要同时判定父级是否展开
-               * 如果父级不是展开状态，此节点不能展示，应该也是关闭状态，只有当父级展开时，此节点才为展开状态
-               */
-              isOpened = isNodeOpend(uuid, item, parent);
-            }
+        // 统一用 raw 作为 WeakMap key，避免 Proxy/raw 不一致导致 schema 全量失效
+        const rawItem = toRaw(item) as TreeNode;
+        const currentPath = path !== null ? `${path}-${i}` : `${i}`;
+        const uuid = `${getUid(rawItem)}`;
+        const childList = rawItem[children] as TreeNode[] | undefined;
+        const hasChildren = !!(childList && childList.length);
+        if (!nodeKey) {
+          rawItem[NODE_ATTRIBUTES.UUID] = uuid;
+        }
 
-            const attributes = {
-              [NODE_ATTRIBUTES.DEPTH]: depth,
-              [NODE_ATTRIBUTES.INDEX]: order,
-              [NODE_ATTRIBUTES.UUID]: uuid,
-              [NODE_ATTRIBUTES.PARENT]: parent,
-              [NODE_ATTRIBUTES.HAS_CHILD]: hasChildren,
-              [NODE_ATTRIBUTES.PATH]: currentPath,
-              [NODE_ATTRIBUTES.IS_ROOT]: parent === null,
-              [NODE_ATTRIBUTES.ORDER]: order,
-              [NODE_ATTRIBUTES.IS_SELECTED]: isCachedTreeNodeSelected(uuid, item),
-              [NODE_ATTRIBUTES.IS_MATCH]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_MATCH),
-              [NODE_ATTRIBUTES.IS_OPEN]: isOpened,
-              [NODE_ATTRIBUTES.IS_CHECKED]: undefined,
-              [NODE_ATTRIBUTES.IS_CACHED]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_CACHED),
-              [NODE_ATTRIBUTES.IS_ASYNC]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_ASYNC),
-              [NODE_ATTRIBUTES.IS_LOADING]: getCachedTreeNodeAttr(uuid, item, NODE_ATTRIBUTES.IS_LOADING),
-              [NODE_ATTRIBUTES.IS_INDETERMINATE]: false,
-            };
-
-            attributes[NODE_ATTRIBUTES.IS_CHECKED] = isCheckedNode(item, uuid, attributes);
-            if (attributes[NODE_ATTRIBUTES.IS_CHECKED]) {
-              checkedList.push(item);
-            }
-
-            treeSchema.set(item, attributes);
-            outputData.push(item);
-            order += 1;
-
-            if (Object.prototype.hasOwnProperty.call(item, children)) {
-              flatten((item[children] || []) as TreeNode[], depth + 1, item, currentPath);
-            }
+        let isOpened = !!resolveAttr(rawItem, SOURCE_IS_OPEN, NODE_ATTRIBUTES.IS_OPEN, expandAll);
+        if (autoOpenParentNode) {
+          if (isOpened && parent) {
+            loopUpdateNodeAttr(parent, NODE_ATTRIBUTES.IS_OPEN, true, validateIsOpenLoopFn);
           }
+        } else if (parent) {
+          const parentOpened = !!treeSchema.get(parent)?.[NODE_ATTRIBUTES.IS_OPEN];
+          isOpened = isOpened && parentOpened;
+        }
+
+        let isSelected = false;
+        if (selectable) {
+          const selectedDefault = hasSelectedProp ? resolvePropIsMatched(rawItem, props.selected, uuid) : false;
+          isSelected = !!resolveAttr(rawItem, SOURCE_IS_SELECTED, NODE_ATTRIBUTES.IS_SELECTED, selectedDefault);
+        }
+
+        let isChecked = false;
+        if (checkboxEnabled) {
+          const canCheck = showCheckbox(props, { data: rawItem });
+          if (canCheck) {
+            const checkedDefault = hasCheckedProp ? resolvePropIsMatched(rawItem, props.checked, uuid) : false;
+            isChecked = !!resolveAttr(rawItem, SOURCE_IS_CHECKED, NODE_ATTRIBUTES.IS_CHECKED, checkedDefault);
+          }
+        }
+
+        const attributes = {
+          [NODE_ATTRIBUTES.DEPTH]: depth,
+          [NODE_ATTRIBUTES.INDEX]: order,
+          [NODE_ATTRIBUTES.UUID]: uuid,
+          [NODE_ATTRIBUTES.PARENT]: parent,
+          [NODE_ATTRIBUTES.HAS_CHILD]: hasChildren,
+          [NODE_ATTRIBUTES.PATH]: currentPath,
+          [NODE_ATTRIBUTES.IS_ROOT]: parent === null,
+          [NODE_ATTRIBUTES.ORDER]: order,
+          [NODE_ATTRIBUTES.IS_SELECTED]: isSelected,
+          [NODE_ATTRIBUTES.IS_MATCH]: !!resolveAttr(rawItem, SOURCE_IS_MATCH, NODE_ATTRIBUTES.IS_MATCH, false),
+          [NODE_ATTRIBUTES.IS_OPEN]: isOpened,
+          [NODE_ATTRIBUTES.IS_CHECKED]: isChecked,
+          [NODE_ATTRIBUTES.IS_CACHED]: !!resolveAttr(rawItem, SOURCE_IS_CACHED, NODE_ATTRIBUTES.IS_CACHED, false),
+          [NODE_ATTRIBUTES.IS_ASYNC]: resolveAttr(rawItem, SOURCE_IS_ASYNC, NODE_ATTRIBUTES.IS_ASYNC, null),
+          [NODE_ATTRIBUTES.IS_LOADING]: !!resolveAttr(rawItem, SOURCE_IS_LOADING, NODE_ATTRIBUTES.IS_LOADING, false),
+          [NODE_ATTRIBUTES.IS_INDETERMINATE]: false,
+        };
+
+        if (isChecked) {
+          checkedList.push(rawItem);
+        }
+        if (isOpened) {
+          openCount += 1;
+        }
+
+        treeSchema.set(rawItem, attributes);
+        nodeMap.set(uuid, rawItem);
+        if (parent === null) {
+          rootNodes.push(rawItem);
+        } else {
+          let siblings = childMap.get(parent);
+          if (!siblings) {
+            siblings = [];
+            childMap.set(parent, siblings);
+          }
+          siblings.push(rawItem);
+        }
+        outputData.push(rawItem);
+        order += 1;
+
+        if (hasChildren) {
+          flatten(childList, depth + 1, rawItem, currentPath);
         }
       }
     }
+
     flatten(treeData ?? data);
-    if (props.showCheckbox !== false && props.checkStrictly) {
-      checkedList?.forEach(value => {
+    if (checkboxEnabled && props.checkStrictly) {
+      checkedList.forEach(value => {
         loopUpdateNodeAttr(value, NODE_ATTRIBUTES.IS_CHECKED, true, loopUpdateCheckedEvent);
       });
     }
-    return [outputData, treeSchema];
+    return [outputData, treeSchema, nodeMap, childMap, rootNodes, openCount, checkedList];
   };
 
   const formatData = getFlatdata();
@@ -270,11 +265,17 @@ export default (props: TreePropTypes) => {
 
   /**
    * 扁平化数据
-   * schema: 需要展示连线时，用于计算连线高度
+   * shallowReactive：只跟踪 data/rootNodes 等字段替换，避免百万节点被深代理
+   * schema/nodeMap/childMap 使用 markRaw，避免 WeakMap get/set 进入依赖收集
    */
-  const flatData = reactive({
+  const flatData = shallowReactive<IFlatData>({
     data: formatData[0] as Array<TreeNode>,
-    schema: formatData[1] as WeakMap<TreeNode, Record<string, unknown>>,
+    schema: toRawStore(formatData[1] as WeakMap<TreeNode, Record<string, unknown>>),
+    nodeMap: toRawStore(formatData[2] as Map<string, TreeNode>),
+    childMap: toRawStore(formatData[3] as WeakMap<TreeNode, TreeNode[]>),
+    rootNodes: formatData[4] as TreeNode[],
+    openCount: (formatData[5] as number) || 0,
+    checkedList: (formatData[6] as TreeNode[]) || [],
     levelLineSchema: {},
   });
 
@@ -352,24 +353,38 @@ export default (props: TreePropTypes) => {
   /**
    * 监听组件配置Data改变
    */
+  const afterRebuildCallbacks: Array<() => void> = [];
+  const onAfterRebuild = (callback: () => void) => {
+    afterRebuildCallbacks.push(callback);
+  };
+
+  const rebuildData = (treeData: TreeNode[], cachedSchema = flatData.schema) => {
+    const next = getFlatdata(treeData, cachedSchema);
+    // 先替换 schema/maps，再替换 data，避免 data watcher 读到旧 schema
+    flatData.schema = toRawStore(next[1] as WeakMap<TreeNode, Record<string, unknown>>);
+    flatData.nodeMap = toRawStore(next[2] as Map<string, TreeNode>);
+    flatData.childMap = toRawStore(next[3] as WeakMap<TreeNode, TreeNode[]>);
+    flatData.rootNodes = next[4] as TreeNode[];
+    flatData.openCount = (next[5] as number) || 0;
+    flatData.checkedList = (next[6] as TreeNode[]) || [];
+    flatData.data = next[0] as Array<TreeNode>;
+    afterRebuildCallbacks.forEach(callback => callback());
+  };
+
+  // watchDataDeep=false（默认）：仅监听 data 引用变化，大数据量友好
+  // watchDataDeep=true：深度监听原地变更；百万节点下会明显变慢，仅建议小数据使用
+  // 组件内部拖拽/异步仍走 onTreeDataChange → rebuildData
   watch(
-    () => [props.data],
+    () => props.data,
     newData => {
-      const formatData = getFlatdata(newData[0], flatData.schema);
-      flatData.data = formatData[0] as Array<TreeNode>;
-      flatData.schema = formatData[1] as WeakMap<TreeNode, Record<string, unknown>>;
+      rebuildData(newData as TreeNode[], flatData.schema);
       if (props.async?.callback && props.async?.deepAutoOpen === 'every') {
         deepAutoOpen();
       }
-
-      /**
-       * 执行缓存下来的周期函数
-       * 保证data改变之后执行相关操作
-       */
       executeNextEvent();
     },
     {
-      deep: true,
+      deep: !!props.watchDataDeep,
     },
   );
 
@@ -411,6 +426,8 @@ export default (props: TreePropTypes) => {
     deepAutoOpen,
     afterDataUpdate,
     registerNextLoop,
+    rebuildData,
+    onAfterRebuild,
     onSelected,
   };
 };

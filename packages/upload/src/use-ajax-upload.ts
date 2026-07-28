@@ -30,6 +30,21 @@ import type { UploadProgressEvent, UploadRequestHandler, UploadRequestOptions } 
 
 const errMsg = 'An error occurred during upload';
 
+const appendFormDataValue = (formData: FormData, name: string, value: [Blob | string, string] | Blob | string) => {
+  if (Array.isArray(value)) {
+    const [data, filename] = value;
+    if (data instanceof Blob) {
+      formData.append(name, data, filename);
+      return;
+    }
+    formData.append(name, data);
+    return;
+  }
+
+  formData.append(name, value);
+};
+
+
 function getRes(xhr: XMLHttpRequest): XMLHttpRequestResponseType {
   const res = xhr.responseText || xhr.response;
   if (!res) {
@@ -70,8 +85,7 @@ export const ajaxUpload: UploadRequestHandler = option => {
     }
     appendData.forEach(data => {
       for (const [key, value] of Object.entries(data)) {
-        if (Array.isArray(value)) formData.append(key, ...value);
-        else formData.append(key, value);
+        appendFormDataValue(formData, key, value);
       }
     });
   }
@@ -82,8 +96,7 @@ export const ajaxUpload: UploadRequestHandler = option => {
       appendData = [appendData];
     }
     appendData.forEach(item => {
-      if (Array.isArray(item.value)) formData.append(item.name, ...item.value);
-      else formData.append(item.name, item.value);
+      appendFormDataValue(formData, item.name, item.value);
     });
   }
 
@@ -205,7 +218,7 @@ export const ajaxSliceUpload: UploadRequestHandler = async option => {
 const sliceSend = (
   option: UploadRequestOptions,
   file: File,
-  blockCount: Blob | number | string,
+  blockCount: number,
   hash: unknown,
   progressList: any[],
   chunkSize: number,
@@ -223,8 +236,7 @@ const sliceSend = (
         }
         appendData.forEach(data => {
           for (const [key, value] of Object.entries(data)) {
-            if (Array.isArray(value)) formData.append(key, ...value);
-            else formData.append(key, value);
+            appendFormDataValue(formData, key, value);
           }
         });
       }
@@ -235,8 +247,7 @@ const sliceSend = (
           appendData = [appendData];
         }
         appendData.forEach(item => {
-          if (Array.isArray(item.value)) formData.append(item.name, ...item.value);
-          else formData.append(item.name, item.value);
+          appendFormDataValue(formData, item.name, item.value);
         });
       }
 

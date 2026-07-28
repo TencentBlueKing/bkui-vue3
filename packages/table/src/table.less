@@ -13,12 +13,10 @@
 .@{bk-prefix}-table {
   position: relative;
   width: 100%;
-  height: 100%;
   overflow: hidden;
   border-spacing: 0;
   display: flex;
   flex-direction: column;
-  max-height: fit-content;
 
   .@{bk-prefix}-table-body {
     position: relative;
@@ -39,10 +37,54 @@
       overflow: hidden;
     }
 
-    .prepend-row {
-      transform: translate(var(--translate-x), 0);
+    // height=auto + 非像素 maxHeight 时，内容未超出 maxHeight：
+    // 阻止 Chrome scrollHeight/clientHeight 整数截断产生的 1px 虚假垂直滚动条
+    &.is-overflow-hidden {
+      overflow-y: hidden !important;
     }
 
+  }
+
+  // body overlay wrapper（让 overlay 不参与原生滚动）
+  .bk-table-body-wrapper {
+    position: relative;
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    font-size: 0;
+
+    // 表头右侧设置按钮：固定在可视区域右侧（不随横向滚动移动）
+    .bk-table-head-settings-wrapper {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: calc(var(--row-height));
+      height: calc(var(--row-height));
+      z-index: 8;
+      pointer-events: auto;
+
+      > div {
+        height: 100%;
+      }
+
+      .table-head-settings {
+        display: flex;
+        height: 100%;
+        width: calc(var(--row-height));
+        height: calc(var(--row-height));
+        font-size: 14px;
+        cursor: pointer;
+
+        background: @table-head-bg-color;
+        border-left: 1px solid @table-border-color;
+        border-radius: 0 2px 0 0;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+
+    // 列宽拖拽指示线（overlay）
     .resize-column {
       position: absolute;
       top: 0;
@@ -50,7 +92,10 @@
       left: 0;
       width: 1px;
       background-color: #3785ff;
-      transform: translate(var(--drag-offset-x), var(--translate-y));
+      // 辅助线不应随纵向滚动位移，否则滚动一定距离后会被移出可视区域导致“看不到”
+      transform: translate3d(var(--drag-offset-x), 0, 0);
+      z-index: 8;
+      pointer-events: none;
     }
   }
 
@@ -78,7 +123,19 @@
   .@{bk-prefix}-table-body {
     background: @table-bg-color;
     transform: translateZ(0);
+  }
 
+  // body 及其内 table 不设 transform，否则会破坏 tbody td.column_fixed 的 position: sticky 粘滞参照，导致固定列与可滚动列错位重叠
+  .@{bk-prefix}-table-body {
+    transform: none;
+
+    table {
+      transform: none;
+    }
+  }
+
+  .@{bk-prefix}-table-head,
+  .@{bk-prefix}-table-body {    
     &.__is-empty {
       display: flex;
       height: 100%;
@@ -175,7 +232,12 @@
 
         &.column_fixed {
           position: sticky;
-          z-index: 1;
+          // 固定列需要盖住可滚动区域的内容（避免内容透传/重叠）
+          // 阴影层再由 .bk-table-fixed 以更高层级渲染
+          z-index: 3;
+          // 不要使用 inherit（它会从 tr/table 继承，导致固定列背景变透明）
+          // 保持 td 自身的背景（stripe/hover 等）即可
+          background-clip: padding-box;
         }
 
         &.row_expend {
@@ -280,20 +342,17 @@
 
           }
 
+          &.cell-resize {
+            cursor: col-resize;
+          }
+
           .cell {
             display: flex;
             align-items: center;
             height: calc(var(--row-height) - 2px);
             color: @table-head-font-color;
-
-            &.cell-resize {
-              cursor: col-resize;
-            }
           }
 
-          &.column_fixed {
-            transform: translateX(var(--translate-x));
-          }
         }
       }
 
@@ -316,6 +375,12 @@
             background: #fafbfd;
             td {
               background-color: #fafbfd;
+            }
+          }
+
+          &:last-child {
+            td {
+              border-bottom: none;
             }
           }
 
@@ -344,6 +409,28 @@
             }
           }
 
+          &.row-height-auto {
+            td {
+              // 覆盖全局 th, td { height: var(--row-height) }，让内容撑起行高
+              // auto 模式使用独立的 --row-min-height 变量，语义上明确表示最小高度而非固定高度
+              height: auto !important;
+              min-height: var(--row-min-height, 42px);
+
+              .cell {
+                display: flex;
+                align-items: center;
+                height: auto;
+                min-height: calc(var(--row-min-height, 42px) - 4px);
+                // 允许文字换行，覆盖全局 white-space: nowrap / overflow: hidden / text-overflow: ellipsis
+                white-space: normal;
+                overflow: visible;
+                text-overflow: unset;
+                word-break: break-word;
+                line-height: normal;
+              }
+            }
+          }
+
           &:hover {
             &.hover-highlight {
               td {
@@ -366,12 +453,19 @@
   }
 
   .@{bk-prefix}-table-head {
-    position: relative;
-    z-index: 2;
-    overflow: hidden;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    // 若设置 overflow: hidden，会让 th.column_fixed 的 sticky 参照变为 table-head 自身（其 scrollLeft 不变化）
+    // 导致横向滚动时 header 固定列不生效；这里保持 visible，让 sticky 参照外层滚动容器
+    overflow: visible;
     background-color: var(--background-color);
     height: var(--row-height);
     min-height: var(--row-height);
+
+    th.column_fixed {
+      z-index: 6;
+    }
 
     &.has-group {
       .is-head-group {
@@ -392,7 +486,7 @@
       top: 0;
       left: 0;
       bottom: 0;
-      z-index: 1;
+      z-index: 7;
       width: 6px;
       background-color: #3785ff;
       transform: translate3d(var(--drag-offset-h-x), 0, 0);
@@ -403,27 +497,8 @@
       transform: translate(0, 0);
     }
 
-    thead {
-      transform: translate(var(--translate-x-1), 0);
-    }
-
     .table-head-settings {
-      position: absolute;
-      top: 0;
-      right: 1px;
-      bottom: 0;
-      z-index: 2;
-      display: flex;
-      width: calc(var(--row-height));
-      font-size: 14px;
-      cursor: pointer;
-
-      background: @table-head-bg-color;
-      border-left: 1px solid @table-border-color;
-      border-radius: 0 2px 0 0;
-      justify-content: center;
-      align-items: center;
-
+      // 由 .bk-table-head-settings-wrapper 负责定位，这里只保留内部图标布局
       > span {
         display: flex;
         width: 1em;
@@ -442,6 +517,10 @@
 
     &.is-hidden {
       display: none;
+    }
+
+    &:not(.is-hidden) {
+      border-top: 1px solid @table-border-color;
     }
   }
 
@@ -462,25 +541,52 @@
   }
 
   &.bordered-outer {
-    border-top: 1px solid @table-border-color;
-    border-right: 1px solid @table-border-color;
-    border-left: 1px solid @table-border-color;
+    .bk-table-body-wrapper {
+      border: 1px solid @table-border-color;
+      border-radius: 2px;
+      box-sizing: border-box;
+    }
 
-    .@{bk-prefix}-table-footer {
+    .@{bk-prefix}-table-footer:not(.is-hidden) {
+      border-left: 1px solid @table-border-color;
+      border-right: 1px solid @table-border-color;
       border-bottom: 1px solid @table-border-color;
+      border-radius: 0 0 2px 2px;
+      box-sizing: border-box;
+    }
+
+    .bk-table-body-wrapper:has(~ .@{bk-prefix}-table-footer:not(.is-hidden)) {
+      border-bottom: none;
+      border-radius: 2px 2px 0 0;
     }
   }
 
   &.bordered-horizontal {
-    border-top: 1px solid @table-border-color;
-    border-bottom: 1px solid @table-border-color;
+    .bk-table-body-wrapper {
+      border-top: 1px solid @table-border-color;
+      border-bottom: 1px solid @table-border-color;
+      box-sizing: border-box;
+    }
+
+    .@{bk-prefix}-table-footer:not(.is-hidden) {
+      border-bottom: 1px solid @table-border-color;
+      box-sizing: border-box;
+    }
+
+    .bk-table-body-wrapper:has(~ .@{bk-prefix}-table-footer:not(.is-hidden)) {
+      border-bottom: none;
+    }
   }
 
   &.bordered-outer,
   &.bordered-horizontal {
-    .__is-empty {
-      .@{bk-prefix}-table-body-content {
-        border-bottom: 1px solid @table-border-color;
+    .@{bk-prefix}-table-body {
+      tbody {
+        tr:last-child {
+          td {
+            border-bottom-color: @table-bg-color;
+          }
+        }
       }
     }
   }
@@ -524,6 +630,15 @@
         }
       }
     }
+
+    &.bordered-outer {
+      .@{bk-prefix}-table-head {
+        border-right: none;
+      }
+      .@{bk-prefix}-table-body {
+        border-right: none;
+      }
+    }
   }
 
   th,
@@ -562,11 +677,10 @@
     bottom: 0;
     left: 0;
     pointer-events: none;
-    transform: translate(var(--translate-x), var(--translate-y));
-
-    &.has-virtual-scroll {
-      transform: translate(var(--translate-x), 0);
-    }
+    // 阴影层应固定在可视区域，不应随滚动位移（避免抖动/错位）
+    transform: none;
+    // 确保阴影不被 sticky 单元格盖住
+    z-index: 4;
 
     .column_fixed_right {
       box-shadow: var(--shadow-right);
@@ -578,7 +692,7 @@
 
     .column_fixed {
       position: absolute;
-      z-index: 2;
+      z-index: 4;
       bottom: 0;
       top: 0;
     }
