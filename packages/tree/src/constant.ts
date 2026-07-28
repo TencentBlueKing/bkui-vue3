@@ -80,6 +80,8 @@ export const enum NODE_ATTRIBUTES {
   ORDER = '__order',
   PARENT = '__parent',
   PATH = '__path',
+  /** 同级是否存在下一个兄弟（用于 level-line，避免渲染时 indexOf） */
+  HAS_NEXT_SIBLING = '__has_next_sibling',
   TREE_NODE_ATTR = '__attr__',
   UUID = '__uuid',
 }

@@ -210,6 +210,7 @@ export default (props: TreePropTypes) => {
           [NODE_ATTRIBUTES.PATH]: currentPath,
           [NODE_ATTRIBUTES.IS_ROOT]: parent === null,
           [NODE_ATTRIBUTES.ORDER]: order,
+          [NODE_ATTRIBUTES.HAS_NEXT_SIBLING]: false,
           [NODE_ATTRIBUTES.IS_SELECTED]: isSelected,
           [NODE_ATTRIBUTES.IS_MATCH]: !!resolveAttr(rawItem, SOURCE_IS_MATCH, NODE_ATTRIBUTES.IS_MATCH, false),
           [NODE_ATTRIBUTES.IS_OPEN]: isOpened,
@@ -230,12 +231,26 @@ export default (props: TreePropTypes) => {
         treeSchema.set(rawItem, attributes);
         nodeMap.set(uuid, rawItem);
         if (parent === null) {
+          if (rootNodes.length) {
+            const prevRoot = rootNodes[rootNodes.length - 1];
+            const prevSchema = treeSchema.get(prevRoot);
+            if (prevSchema) {
+              prevSchema[NODE_ATTRIBUTES.HAS_NEXT_SIBLING] = true;
+            }
+          }
           rootNodes.push(rawItem);
         } else {
           let siblings = childMap.get(parent);
           if (!siblings) {
             siblings = [];
             childMap.set(parent, siblings);
+          }
+          if (siblings.length) {
+            const prevSibling = siblings[siblings.length - 1];
+            const prevSchema = treeSchema.get(prevSibling);
+            if (prevSchema) {
+              prevSchema[NODE_ATTRIBUTES.HAS_NEXT_SIBLING] = true;
+            }
           }
           siblings.push(rawItem);
         }
@@ -390,10 +405,35 @@ export default (props: TreePropTypes) => {
 
   if (props.selectable) {
     onMounted(() => {
+      /**
+       * 按「选中 id」监听，而非 props.selected 引用。
+       * 业务侧常见写法 selected={[id]} 每次 computed 都是新数组，按引用 watch 会在每次
+       * content click 后重复 setSelect/autoOpen，放大卡顿。
+       */
+      const resolveSelectedWatchId = (value: unknown) => {
+        if (value === undefined || value === null || value === '') {
+          return undefined;
+        }
+        if (Array.isArray(value)) {
+          return resolveSelectedWatchId(value[0]);
+        }
+        if (typeof value === 'string' || typeof value === 'number') {
+          return value;
+        }
+        if (typeof value === 'object') {
+          const node = value as TreeNode;
+          const key = props.nodeKey;
+          if (key && node[key] !== undefined && node[key] !== null) {
+            return node[key] as string | number;
+          }
+          return node[NODE_ATTRIBUTES.UUID] as string | number;
+        }
+        return value as string | number;
+      };
+
       watch(
-        () => props.selected,
+        () => resolveSelectedWatchId(props.selected),
         newData => {
-          // console.log('watch selected changed');
           afterSelectWatch.length = 0;
           afterSelectEvents.forEach((event: () => void) => {
             Reflect.apply(event, this, [newData]);

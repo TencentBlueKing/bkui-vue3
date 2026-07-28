@@ -65,7 +65,6 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     resolveScopedSlotParam,
     extendNodeAttr,
     extendNodeScopedData,
-    getRootNodeList,
   } = useNodeAttribute(flatData, props);
 
   const { resolveClassName } = usePrefix();
@@ -132,11 +131,11 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
   /**
    * 根据节点状态获取节点操作Icon
    * @param item
-   * @returns
+   * @param scopedData 可选，同一行渲染内复用，避免重复 Object.assign / resolveScopedSlotParam
    */
-  const getActionIcon = (item: TreeNode) => {
+  const getActionIcon = (item: TreeNode, scopedData?) => {
     if (ctx.slots.nodeAction) {
-      return ctx.slots.nodeAction(getScopedSlotData(item));
+      return ctx.slots.nodeAction(scopedData ?? getScopedSlotData(item));
     }
 
     let prefixFnVal = null;
@@ -146,7 +145,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
     }
 
     if (typeof props.prefixIcon === 'function') {
-      prefixFnVal = props.prefixIcon(getScopedSlotData(item), 'node_action');
+      prefixFnVal = props.prefixIcon(scopedData ?? getScopedSlotData(item), 'node_action');
       if (prefixFnVal !== 'default') {
         return renderPrefixVal(prefixFnVal);
       }
@@ -171,21 +170,21 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
   /**
    * 获取节点类型Icon
    * @param item
-   * @returns
+   * @param scopedData 可选，同一行渲染内复用
    */
-  const getNodePrefixIcon = (item: TreeNode) => {
+  const getNodePrefixIcon = (item: TreeNode, scopedData?) => {
     if (!props.showNodeTypeIcon) {
       return null;
     }
 
     if (ctx.slots.nodeType) {
-      return ctx.slots.nodeType(getScopedSlotData(item));
+      return ctx.slots.nodeType(scopedData ?? getScopedSlotData(item));
     }
 
     let prefixFnVal = null;
 
     if (typeof props.prefixIcon === 'function') {
-      prefixFnVal = props.prefixIcon(getScopedSlotData(item), 'node_type');
+      prefixFnVal = props.prefixIcon(scopedData ?? getScopedSlotData(item), 'node_type');
 
       if (prefixFnVal !== 'default') {
         return renderPrefixVal(prefixFnVal);
@@ -269,8 +268,13 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
 
   const isIndeterminate = (item: TreeNode) => isNodeIndeterminate(item);
 
-  const getCheckboxRender = (item: TreeNode) => {
-    if (!showCheckbox(props, extendNodeScopedData(item))) {
+  const getCheckboxRender = (item: TreeNode, scopedData?) => {
+    // showCheckbox 函数形态需要 { data, attributes }；布尔形态直接短路
+    if (typeof props.showCheckbox === 'function') {
+      if (!showCheckbox(props, scopedData?.data ? scopedData : extendNodeScopedData(item))) {
+        return null;
+      }
+    } else if (!showCheckbox(props, item)) {
       return null;
     }
 
@@ -452,6 +456,22 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
    * @param triggerEvent 是否触发抛出事件 false
    * @returns
    */
+  const resolveSelectedPropId = (value: unknown) => {
+    if (value === undefined || value === null || value === '') {
+      return undefined;
+    }
+    if (Array.isArray(value)) {
+      return resolveSelectedPropId(value[0]);
+    }
+    if (typeof value === 'string' || typeof value === 'number' || typeof value === 'symbol') {
+      return value;
+    }
+    if (typeof value === 'object') {
+      return getNodeId(value as TreeNode);
+    }
+    return value as string | number;
+  };
+
   const setSelect = (
     nodes: TreeNode | TreeNode[],
     selected = true,
@@ -486,21 +506,37 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
       return;
     }
 
+    const nextId = getNodeId(resolvedItem);
+    const nextIdKey = nextId === undefined || nextId === null ? '' : String(nextId);
+    const selectedIdKey =
+      selectedNodeId === undefined || selectedNodeId === null ? '' : String(selectedNodeId);
+    const alreadySelected =
+      selected && selectedIdKey !== '' && selectedIdKey === nextIdKey && !!getNodeAttr(resolvedItem, NODE_ATTRIBUTES.IS_SELECTED);
+
+    // 已选中同一节点：完全短路（含受控 selected 数组每次新引用触发的同步）
+    // 展开由 content click / 箭头自行处理，避免重复 setOpen → expandVisibleNode
+    if (alreadySelected) {
+      return;
+    }
+
     // 取消旧选中：优先用缓存节点引用，避免 setNodeAttrById → 全表查找
     if (selectedNode && selectedNode !== resolvedItem) {
       setNodeAttr(selectedNode, NODE_ATTRIBUTES.IS_SELECTED, false, undefined, { silent: true });
       scheduleUiRefresh?.(selectedNode);
-    } else if (selectedNodeId !== null && selectedNodeId !== undefined && `${selectedNodeId}` !== `${getNodeId(resolvedItem)}`) {
+    } else if (selectedIdKey && selectedIdKey !== nextIdKey) {
       setNodeAttrById(selectedNodeId, NODE_ATTRIBUTES.IS_SELECTED, false, { silent: true });
     }
 
-    if (props.selected && props.selected !== selectedNodeId && `${props.selected}` !== `${getNodeId(resolvedItem)}`) {
-      setNodeAttrById(props.selected, NODE_ATTRIBUTES.IS_SELECTED, false, { silent: true });
+    const selectedPropId = resolveSelectedPropId(props.selected);
+    const selectedPropKey =
+      selectedPropId === undefined || selectedPropId === null ? '' : String(selectedPropId);
+    if (selectedPropKey && selectedPropKey !== nextIdKey && selectedPropKey !== selectedIdKey) {
+      setNodeAttrById(selectedPropId, NODE_ATTRIBUTES.IS_SELECTED, false, { silent: true });
     }
 
     setNodeAttr(resolvedItem, NODE_ATTRIBUTES.IS_SELECTED, selected, undefined, { silent: true });
     selectedNode = resolvedItem as TreeNode;
-    selectedNodeId = getNodeId(resolvedItem);
+    selectedNodeId = nextId;
     scheduleUiRefresh?.(resolvedItem as TreeNode);
 
     if (triggerEvent) {
@@ -614,7 +650,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
       return false;
     }
 
-    // 取 depth 层祖先，判断其是否存在下一个兄弟节点 —— O(depth) 替代全表 some
+    // 取 depth 层祖先，用 flatten 预计算的 HAS_NEXT_SIBLING，避免 siblings.indexOf O(兄弟数)
     let ancestor: TreeNode = node;
     for (let i = nodeDepth; i > depth; i--) {
       ancestor = getParentNode(ancestor) as TreeNode;
@@ -623,10 +659,7 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
       }
     }
 
-    const parent = getParentNode(ancestor) as TreeNode | null;
-    const siblings = parent ? getChildNodes(parent) : getRootNodeList();
-    const idx = siblings.indexOf(ancestor);
-    return idx >= 0 && idx < siblings.length - 1;
+    return !!getNodeAttr(ancestor, NODE_ATTRIBUTES.HAS_NEXT_SIBLING);
   };
 
   /**
@@ -644,34 +677,37 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
       return null;
     }
 
-    const getNodeLineStyle = (dpth: number) => ({
-      '--depth': dpth,
-    });
-
-    const maxDeep = (getNodeAttr(node, NODE_ATTRIBUTES.DEPTH) ?? 0) + 1;
-    return (
-      new Array(maxDeep)
-        .fill('')
-        .map((_, index: number) => index)
-        .filter((depth: number) => filterNextNode(depth, node))
-        .filter((depth: number) => depth > 0)
-        // @ts-ignore:next-line
-        .map((index: number) => (
-          <span
-            style={getNodeLineStyle(maxDeep - index)}
-            class='node-virtual-line'
-          ></span>
-        ))
-    );
+    const maxDeep = ((getNodeAttr(node, NODE_ATTRIBUTES.DEPTH) as number) ?? 0) + 1;
+    const lines = [];
+    for (let depth = 1; depth < maxDeep; depth++) {
+      if (!filterNextNode(depth, node)) {
+        continue;
+      }
+      lines.push(
+        <span
+          style={{ '--depth': maxDeep - depth }}
+          class='node-virtual-line'
+        ></span>,
+      );
+    }
+    return lines.length ? lines : null;
   };
 
-  const renderNodeSlots = (item: TreeNode) => {
+  const renderNodeSlots = (
+    item: TreeNode,
+    options?: {
+      nodeScoped?: Record<string, unknown>;
+      defaultScoped?: Record<string, unknown>;
+    },
+  ) => {
+    // #node：参数为 { ...node, ...attributes }（keepSlotData=false 时）
     if (ctx.slots.node) {
-      return ctx.slots.node?.(getScopedSlotData(item));
+      return ctx.slots.node?.(options?.nodeScoped ?? getScopedSlotData(item));
     }
 
+    // #default：参数为 { data, attributes }
     if (ctx.slots.default) {
-      return ctx.slots.default?.(extendNodeScopedData(item));
+      return ctx.slots.default?.(options?.defaultScoped ?? extendNodeScopedData(item));
     }
 
     return [getLabel(item, props)];
@@ -696,7 +732,35 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
    * @param showTree 是否展示为树形结构
    */
   const renderTreeNode = (item: TreeNode, showTree = true) => {
-    const child = getActionIcon(item);
+    // 同一行内按需各生成一次，避免 prefixIcon / 多插槽重复构造 scoped 参数
+    let attrScoped: ReturnType<typeof getScopedSlotData> | null = null;
+    let defaultScoped: ReturnType<typeof extendNodeScopedData> | null = null;
+    const getAttrScoped = () => {
+      if (!attrScoped) {
+        attrScoped = getScopedSlotData(item);
+      }
+      return attrScoped;
+    };
+    const getDefaultScoped = () => {
+      // keepSlotData 时两种插槽格式一致，可复用
+      if (props.keepSlotData) {
+        return getAttrScoped();
+      }
+      if (!defaultScoped) {
+        defaultScoped = extendNodeScopedData(item);
+      }
+      return defaultScoped;
+    };
+
+    const needAttrScoped =
+      ctx.slots.nodeAction ||
+      ctx.slots.nodeType ||
+      ctx.slots.nodeAppend ||
+      ctx.slots.node ||
+      typeof props.prefixIcon === 'function';
+    const rowAttrScoped = needAttrScoped ? getAttrScoped() : null;
+    const child = getActionIcon(item, rowAttrScoped);
+
     return (
       <div
         key={getNodeId(item)}
@@ -719,9 +783,17 @@ export default (props: TreePropTypes, ctx, flatData: IFlatData, _renderData, ini
             {child}
           </div>
           <div class={resolveClassName('node-content')}>
-            {[getCheckboxRender(item), getNodePrefixIcon(item)]}
-            <span class={resolveClassName('node-text')}>{renderNodeSlots(item)}</span>
-            {ctx.slots.nodeAppend?.(getScopedSlotData(item))}
+            {[
+              getCheckboxRender(item, typeof props.showCheckbox === 'function' ? getDefaultScoped() : null),
+              getNodePrefixIcon(item, rowAttrScoped),
+            ]}
+            <span class={resolveClassName('node-text')}>
+              {renderNodeSlots(item, {
+                nodeScoped: ctx.slots.node ? rowAttrScoped ?? getAttrScoped() : undefined,
+                defaultScoped: ctx.slots.default ? getDefaultScoped() : undefined,
+              })}
+            </span>
+            {ctx.slots.nodeAppend?.(rowAttrScoped ?? getAttrScoped())}
           </div>
           {showTree && getVirtualLines(item)}
         </div>
