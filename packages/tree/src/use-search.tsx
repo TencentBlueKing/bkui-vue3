@@ -33,14 +33,9 @@ export default (props: TreePropTypes) => {
 
   const isCommonType = (val: unknown) => ['string', 'number', 'boolean'].includes(typeof val);
   const exactMatch = (matchValue: unknown, itemValue: unknown) => matchValue === itemValue;
-  const fuzzyMatch = (matchValue: unknown, itemValue: unknown) => {
-    try {
-      return new RegExp(`${matchValue}`, 'i').test(`${itemValue}`);
-    } catch {
-      return `${itemValue}`.toLowerCase().includes(`${matchValue}`.toLowerCase());
-    }
-  };
-  const matchFn = (match: (...args) => boolean, args: unknown[]) => Reflect.apply(match, this, args);
+  const fuzzyMatchWithRegex = (regex: RegExp, itemValue: unknown) => regex.test(`${itemValue}`);
+  const fuzzyMatchIncludes = (matchValue: string, itemValue: unknown) =>
+    `${itemValue}`.toLowerCase().includes(matchValue);
 
   const isSearchDisabled = computed(() => refSearch.value === undefined || refSearch.value === false);
 
@@ -48,51 +43,76 @@ export default (props: TreePropTypes) => {
     if (refSearch.value && typeof refSearch.value === 'object') {
       return refSearch.value as SearchOption;
     }
-    const emptyOption: SearchOption = { value: '' };
-    return emptyOption;
+    return { value: '' };
   });
 
   const resultType = computed(() => searchOption.value.resultType ?? 'tree');
   const showChildNodes = computed(() => searchOption.value.showChildNodes ?? false);
 
-  const getSearchValue = () => {
+  /** 只暴露原始检索值，供外部浅层 watch，避免 deep watch 整个 search 对象 */
+  const searchValue = computed(() => {
+    if (isSearchDisabled.value) {
+      return '';
+    }
     if (isCommonType(refSearch.value)) {
       return refSearch.value;
     }
     return searchOption.value.value ?? '';
-  };
-
-  const searchFn = (itemValue: unknown, item: unknown) => {
-    if (isSearchDisabled.value) {
-      return true;
-    }
-
-    const value = getSearchValue();
-    if (`${value}`.length === 0) {
-      return false;
-    }
-
-    if (isCommonType(refSearch.value)) {
-      return matchFn(fuzzyMatch, [value, itemValue, item]);
-    }
-
-    const { match = 'fuzzy' } = searchOption.value;
-    const defaultMatch = match === 'fuzzy' ? fuzzyMatch : exactMatch;
-    const matchCallback = typeof match === 'function' ? match : defaultMatch;
-    return matchFn(matchCallback, [value, itemValue, item]);
-  };
-
-  const isSearchActive = computed(() => {
-    if (isSearchDisabled.value) {
-      return false;
-    }
-    return `${getSearchValue()}`.length > 0;
   });
+
+  const isSearchActive = computed(() => !isSearchDisabled.value && `${searchValue.value}`.length > 0);
 
   const isTreeUI = computed(() => resultType.value === 'tree');
 
+  /**
+   * 为一次检索创建匹配器（模糊匹配只编译一次正则），避免百万节点循环内重复 new RegExp。
+   */
+  const createMatcher = (): ((itemValue: unknown, item: unknown) => boolean) => {
+    if (isSearchDisabled.value) {
+      return () => true;
+    }
+
+    const value = searchValue.value;
+    if (`${value}`.length === 0) {
+      return () => false;
+    }
+
+    if (isCommonType(refSearch.value)) {
+      const text = `${value}`;
+      try {
+        const regex = new RegExp(text, 'i');
+        return itemValue => fuzzyMatchWithRegex(regex, itemValue);
+      } catch {
+        const lower = text.toLowerCase();
+        return itemValue => fuzzyMatchIncludes(lower, itemValue);
+      }
+    }
+
+    const { match = 'fuzzy' } = searchOption.value;
+    if (typeof match === 'function') {
+      return (itemValue, item) => !!match(value, itemValue, item);
+    }
+
+    if (match === 'full') {
+      return itemValue => exactMatch(value, itemValue);
+    }
+
+    const text = `${value}`;
+    try {
+      const regex = new RegExp(text, 'i');
+      return itemValue => fuzzyMatchWithRegex(regex, itemValue);
+    } catch {
+      const lower = text.toLowerCase();
+      return itemValue => fuzzyMatchIncludes(lower, itemValue);
+    }
+  };
+
+  const searchFn = (itemValue: unknown, item: unknown) => createMatcher()(itemValue, item);
+
   return {
     searchFn,
+    createMatcher,
+    searchValue,
     refSearch,
     isSearchActive,
     isSearchDisabled,
