@@ -40,7 +40,7 @@ export default defineComponent({
     const localActiveItems = ref([]);
     // 以保证当前的设置生效
     watch(
-      () => [props.modelValue],
+      () => props.modelValue,
       () => {
         const value = props.modelValue;
         if (Array.isArray(value)) {
@@ -52,6 +52,7 @@ export default defineComponent({
         }
       },
       {
+        deep: true,
         immediate: true,
       },
     );
