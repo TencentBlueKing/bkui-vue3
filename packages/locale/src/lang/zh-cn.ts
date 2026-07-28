@@ -159,6 +159,16 @@ const zhCn: Language = {
     noData: '无数据',
     emptyText: '暂无搜索结果',
   },
+  image: {
+    zoomIn: '放大',
+    zoomOut: '缩小',
+    rotate: '旋转',
+    reset: '重置',
+    download: '下载',
+    reload: '重新加载',
+    loadFailed: '抱歉，图片加载失败，可尝试重新加载',
+    width: '宽',
+  },
   // exception: {
   //   403: '无业务权限',
   //   404: '页面不存在',

@@ -23,103 +23,216 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-import { computed, defineComponent, ref, watch } from 'vue';
+import { computed, CSSProperties, defineComponent, inject, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
 
-import { usePrefix } from '@bkui-vue/config-provider';
-import { Spinner } from '@bkui-vue/icon';
+import { useLocale, usePrefix } from '@bkui-vue/config-provider';
+import { ImgError } from '@bkui-vue/icon';
 
-import { ImageViewer } from './index';
-import { propsImage as props } from './props';
+import { ReloadIcon } from './icons';
+import ImagePreview from './image-preview';
+import { imageProps } from './props';
+import { IMAGE_PREVIEW_GROUP_KEY } from './types';
+
+import type { ImageItem, ImageLoadingStatus } from './types';
 
 export default defineComponent({
   name: 'Image',
-  props,
-  emits: ['loaded', 'error', 'close', 'change'],
-  setup(props, { emit, slots }) {
-    const loading = ref(true);
-    const hasError = ref(true);
-    const isShowViewer = ref(false);
-    const prevOverflow = ref('');
-    const imageSrc = ref('');
-    function clickHandler() {}
-    watch(
-      () => props.src,
-      () => {
-        loadImage();
-      },
-    );
-    const preview = computed(() => props?.urlList?.length > 0);
-    function closeViewer() {
-      document.body.style.overflow = prevOverflow.value;
-      isShowViewer.value = false;
-      emit('close');
-    }
-    function change(val) {
-      emit('change', val);
-    }
-    function loadImage() {
-      loading.value = true;
-      hasError.value = false;
-      imageSrc.value = props.src;
-    }
-
+  props: imageProps,
+  emits: {
+    load: (e: Event) => e instanceof Event,
+    error: (e: Event) => e instanceof Event,
+    preview: () => true,
+  },
+  setup(props, { emit, slots, expose }) {
     const { resolveClassName } = usePrefix();
+    const t = useLocale('image');
+
+    const groupContext = inject(IMAGE_PREVIEW_GROUP_KEY, null);
+
+    // 每个 Image 实例的唯一标识（用于 group 注册）
+    const uid = Symbol('BkImage');
+
+    const containerRef = ref<HTMLElement>();
+    const status = shallowRef<ImageLoadingStatus>('loading');
+    const previewVisible = shallowRef(false);
+    const isInView = shallowRef(!props.lazy);
+    const reloadToken = shallowRef(0);
+
+    let observer: IntersectionObserver | null = null;
+
+    const previewSrc = computed(() => props.previewProps?.src || props.src);
+
+    const getPreviewItem = (): ImageItem => {
+      const pp = props.previewProps;
+      return {
+        url: previewSrc.value,
+        name: pp?.name,
+        width: pp?.width,
+        resolution: pp?.resolution,
+        downloadUrl: pp?.downloadUrl,
+      };
+    };
+
+    const actualSrc = computed(() => {
+      if (props.lazy && !isInView.value) {
+        return '';
+      }
+      const base = props.src;
+      if (reloadToken.value === 0) {
+        return base;
+      }
+      // 重新加载时附加时间戳避免命中缓存
+      return `${base}${base.includes('?') ? '&' : '?'}_t=${reloadToken.value}`;
+    });
+
+    const standalonePreviewImages = computed<ImageItem[]>(() => [getPreviewItem()]);
+
+    const containerStyle = computed<CSSProperties>(() => {
+      const style: CSSProperties = {};
+      if (props.width != null) {
+        style.width = typeof props.width === 'number' ? `${props.width}px` : props.width;
+      }
+      if (props.height != null) {
+        style.height = typeof props.height === 'number' ? `${props.height}px` : props.height;
+      }
+      return style;
+    });
+
+    const innerStyle = computed<CSSProperties>(() => ({
+      width: '100%',
+      height: '100%',
+      objectFit: props.fit,
+    }));
+
+    const handleLoad = (ev: Event) => {
+      status.value = 'loaded';
+      emit('load', ev);
+    };
+
+    const handleError = (ev: Event) => {
+      status.value = 'error';
+      emit('error', ev);
+    };
+
+    const handleReload = (ev: MouseEvent) => {
+      ev.stopPropagation();
+      status.value = 'loading';
+      reloadToken.value = Date.now();
+    };
+
+    const handleImageClick = () => {
+      if (!props.preview || status.value !== 'loaded') {
+        return;
+      }
+      if (groupContext) {
+        groupContext.preview(uid);
+      } else {
+        previewVisible.value = true;
+      }
+      emit('preview');
+    };
+
+    const updatePreviewVisible = (val: boolean) => {
+      previewVisible.value = val;
+    };
+
+    const initObserver = () => {
+      if (!props.lazy || !containerRef.value || typeof IntersectionObserver === 'undefined') {
+        return;
+      }
+      observer = new IntersectionObserver(
+        entries => {
+          if (entries[0]?.isIntersecting) {
+            isInView.value = true;
+            observer?.disconnect();
+            observer = null;
+          }
+        },
+        { rootMargin: '200px' },
+      );
+      observer.observe(containerRef.value);
+    };
+
+    const destroyObserver = () => {
+      observer?.disconnect();
+      observer = null;
+    };
+
+    onMounted(() => {
+      initObserver();
+      groupContext?.register(uid, getPreviewItem);
+    });
+
+    onBeforeUnmount(() => {
+      destroyObserver();
+      groupContext?.unregister(uid);
+    });
+
+    expose({
+      previewVisible,
+      reload: () => handleReload(new MouseEvent('reload')),
+    });
 
     return () => {
-      function getContent() {
-        if (loading.value) {
-          return (
-            <div class={`${resolveClassName('image-placeholder')}`}>
-              <Spinner />
-            </div>
-          );
-        }
-        if (hasError.value) {
-          if (slots.error) {
-            if (typeof slots.error === 'function') {
-              return slots.error();
-            }
-            return slots.error;
-          }
-          return (
-            <div class={`${resolveClassName('image-placeholder')}`}>
-              {props.fallback ? (
-                <img
-                  alt='图片加载错误'
-                  src={props.fallback}
-                />
-              ) : (
-                ''
-              )}
-              <i
-                v-else
-                class={`${resolveClassName('icon')} icon-image-fail`}
-              ></i>
-            </div>
-          );
-        }
-        return (
-          <img
-            src={props.src}
-            onClick={clickHandler}
-            // style={{ objectFit: fit }}
-          />
-        );
-      }
+      const isPreviewable = props.preview && status.value === 'loaded';
+
+      const classNames = [
+        resolveClassName('image'),
+        {
+          [resolveClassName('image-error')]: status.value === 'error',
+          [resolveClassName('image-preview-cursor')]: isPreviewable,
+        },
+        props.extCls,
+      ];
+
       return (
-        <div class={`${resolveClassName('image')}`}>
-          {getContent()}
-          {preview.value && isShowViewer.value ? (
-            <ImageViewer
-              is-show-title={props.isShowPreviewTitle}
-              maskClose={props.maskClose}
-              url-list={props.urlList}
-              zIndex={props.zIndex}
-              onChange={change}
-              onClose={closeViewer}
+        <div
+          ref={containerRef}
+          style={containerStyle.value}
+          class={classNames}
+          onClick={handleImageClick}
+        >
+          {status.value !== 'error' && actualSrc.value && (
+            <img
+              style={innerStyle.value}
+              class={resolveClassName('image-inner')}
+              alt={props.alt}
+              src={actualSrc.value}
+              onError={handleError}
+              onLoad={handleLoad}
             />
-          ) : (
-            ''
+          )}
+
+          {status.value === 'error' && (
+            <div class={resolveClassName('image-error-content')}>
+              <ImgError class={resolveClassName('image-error-icon')} />
+            </div>
+          )}
+
+          {status.value === 'error' && (
+            <div
+              class={resolveClassName('image-error-overlay')}
+              onClick={handleReload}
+            >
+              <ReloadIcon class={resolveClassName('image-reload-icon')} />
+              <span>{t.value.reload}</span>
+            </div>
+          )}
+
+          {slots.default?.()}
+
+          {!groupContext && props.preview && previewVisible.value && (
+            <ImagePreview
+              images={standalonePreviewImages.value}
+              modelValue={previewVisible.value}
+              showInfo={props.showInfo}
+              onDownload={props.onDownload}
+              onUpdate:modelValue={updatePreviewVisible}
+            >
+              {{
+                extra: slots.extra ? () => slots.extra?.() : undefined,
+              }}
+            </ImagePreview>
           )}
         </div>
       );

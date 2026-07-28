@@ -55,6 +55,9 @@ declare module '@vue/runtime-core' {
     BkCollapse: typeof import('./collapse/collapse').default;
     BkDialog: typeof import('./dialog/dialog').default;
     BkException: typeof import('./exception/exception').default;
+    BkImage: typeof import('./image/image').default;
+    BkImagePreview: typeof import('./image/image-preview').default;
+    BkImagePreviewGroup: typeof import('./image/image-preview-group').default;
     BkFixedNavbar: typeof import('./fixed-navbar/fixed-navbar').default;
     BkInput: typeof import('./input/input').default;
     BkLink: typeof import('./link/link').default;

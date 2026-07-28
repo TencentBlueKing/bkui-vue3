@@ -2,7 +2,7 @@
  * Tencent is pleased to support the open source community by making
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) available.
  *
- * Copyright (C) 2025 Tencent, a Tencent company.  All rights reserved.
+ * Copyright (C) 2025 Tencent.  All rights reserved.
  *
  * 蓝鲸智云PaaS平台社区版 (BlueKing PaaS Community Edition) is licensed under the MIT License.
  *
@@ -23,10 +23,60 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
+import { onBeforeUnmount, watch } from 'vue';
 
-const baseJestConf = require('../../jest.config');
+import type { Ref } from 'vue';
 
-module.exports = {
-  ...baseJestConf,
-  testRegex: 'packages/input/__test__/.*\\.test\\.(js|ts|tsx)$',
-};
+export interface PreviewKeyboardOptions {
+  visible: Ref<boolean>;
+  onClose: () => void;
+  onNext?: () => void;
+  onPrev?: () => void;
+}
+
+export function usePreviewKeyboard(options: PreviewKeyboardOptions) {
+  const { visible, onClose, onPrev, onNext } = options;
+  let prevBodyOverflow = '';
+
+  const handleKeydown = (e: KeyboardEvent) => {
+    if (!visible.value) {
+      return;
+    }
+    switch (e.key) {
+      case 'Escape':
+        onClose();
+        break;
+      case 'ArrowLeft':
+        onPrev?.();
+        break;
+      case 'ArrowRight':
+        onNext?.();
+        break;
+    }
+  };
+
+  const bind = () => {
+    document.addEventListener('keydown', handleKeydown);
+    prevBodyOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+  };
+
+  const unbind = () => {
+    document.removeEventListener('keydown', handleKeydown);
+    document.body.style.overflow = prevBodyOverflow;
+  };
+
+  watch(
+    visible,
+    val => {
+      if (val) {
+        bind();
+      } else {
+        unbind();
+      }
+    },
+    { immediate: true },
+  );
+
+  onBeforeUnmount(unbind);
+}

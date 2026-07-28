@@ -1,47 +1,311 @@
 @import '@bkui-vue/styles/themes/themes.less';
-@import './image-viewer.less';
 
+/* ===== Image 缩略图卡片 ===== */
 .@{bk-prefix}-image {
   position: relative;
   display: inline-block;
   overflow: hidden;
+  vertical-align: top;
+  border-radius: @border-radius-base;
+
+  &-error {
+    background: @image-error-bg;
+    border: 1px solid @image-error-border;
+  }
 
   &-inner {
-    width: 100%;
-    height: 100%;
-    vertical-align: top;
-
-    &-center {
-      position: relative;
-      top: 50%;
-      left: 50%;
-      display: block;
-      transform: translate(-50%, -50%)
-    }
-
+    display: block;
   }
 
-
-  &-placeholder {
-    position: absolute;
-    top: 0;
-    left: 0;
+  &-error-content {
     display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     height: 100%;
-    font-size: 24px;
-    color: #c4c6cc;
-    vertical-align: middle;
-    background: #f0f1f5;
-    justify-content: center;
-    align-items: center;
+    font-size: 32px;
+  }
 
-    img {
-      width: 100%;
+  &-error-icon {
+    width: 24px;
+    height: 24px;
+    color: @image-error-icon-color;
+  }
+
+  &-error-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    justify-content: center;
+    font-size: @font-size-base;
+    color: #fff;
+    cursor: pointer;
+    background: @image-mask-bg;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  &-reload-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  &-preview-cursor {
+    cursor: zoom-in;
+  }
+
+  &:hover .@{bk-prefix}-image-error-overlay {
+    opacity: 1;
+  }
+}
+
+/* ===== ImagePreviewGroup ===== */
+.@{bk-prefix}-image-preview-group {
+  display: contents;
+}
+
+/* ===== ImagePreview 大图浮层 ===== */
+.@{bk-prefix}-image-preview {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  background: @image-mask-bg;
+
+  &-close {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    background: @image-fab-bg;
+    border-radius: 50%;
+    transition: background 0.2s;
+
+    &:hover {
+      background: @image-fab-hover-bg;
+    }
+
+    &-icon {
+      width: 20px;
+      height: 20px;
+      color: #fff;
     }
   }
 
-  &-preview {
-    cursor: pointer
+  &-arrow {
+    position: absolute;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    background: @image-fab-bg;
+    border-radius: 50%;
+    transition: background 0.2s;
+
+    &:hover {
+      background: @image-fab-hover-bg;
+    }
+
+    &-left {
+      left: 64px;
+    }
+
+    &-right {
+      right: 64px;
+    }
+
+    &-icon {
+      width: 24px;
+      height: 24px;
+      color: #fff;
+    }
   }
+
+  &-body {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  &-img {
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
+    transform-origin: center center;
+
+    &--blur {
+      filter: blur(10px);
+      opacity: 0.6;
+    }
+  }
+
+  &-loading {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &-error {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+    justify-content: center;
+
+    &-icon {
+      width: 96px;
+      height: 86px;
+      color: @image-error-text-color;
+    }
+
+    &-text {
+      margin: 0;
+      font-size: @font-size-medium;
+      line-height: 22px;
+      color: @image-error-text-color;
+    }
+  }
+}
+
+/* ===== Toolbar ===== */
+.@{bk-prefix}-image-preview-toolbar {
+  position: absolute;
+  bottom: 48px;
+  left: 50%;
+  z-index: 2;
+  transform: translateX(-50%);
+
+  &-inner {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    height: 36px;
+    padding: 0 12px;
+    background: @image-toolbar-bg;
+    border-radius: 18px;
+  }
+
+  &-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+    color: @image-toolbar-color;
+    cursor: pointer;
+    border-radius: @border-radius-base;
+    transition: color 0.2s, background 0.2s;
+
+    &:hover {
+      color: #fff;
+      background: @image-toolbar-hover-bg;
+    }
+
+    &[data-tooltip]::before,
+    &[data-tooltip]::after {
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    &[data-tooltip]::before {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      padding: 4px 8px;
+      font-size: @font-size-base;
+      line-height: 16px;
+      color: #fff;
+      white-space: nowrap;
+      content: attr(data-tooltip);
+      background: @image-toolbar-tooltip-bg;
+      border-radius: @border-radius-base;
+      transform: translateX(-50%);
+    }
+
+    &[data-tooltip]::after {
+      position: absolute;
+      bottom: calc(100% + 4px);
+      left: 50%;
+      content: '';
+      border-color: @image-toolbar-tooltip-bg transparent transparent;
+      border-style: solid;
+      border-width: 4px;
+      transform: translateX(-50%);
+    }
+
+    &[data-tooltip]:hover::before,
+    &[data-tooltip]:hover::after {
+      opacity: 1;
+    }
+  }
+
+  &-pages {
+    padding: 0 8px;
+    font-size: @font-size-base;
+    line-height: 28px;
+    color: @image-toolbar-color;
+    white-space: nowrap;
+  }
+
+  &-divider {
+    width: 1px;
+    height: 16px;
+    margin: 0 4px;
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  &-info {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    font-size: @font-size-base;
+    color: @image-toolbar-color;
+    white-space: nowrap;
+
+    &-icon {
+      width: 14px;
+      height: 14px;
+    }
+
+    &-dot {
+      width: 4px;
+      height: 4px;
+      background: @image-toolbar-color;
+      border-radius: 50%;
+    }
+  }
+}
+
+/* ===== Transition ===== */
+.@{bk-prefix}-image-preview-fade-enter-active,
+.@{bk-prefix}-image-preview-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.@{bk-prefix}-image-preview-fade-enter-from,
+.@{bk-prefix}-image-preview-fade-leave-to {
+  opacity: 0;
 }

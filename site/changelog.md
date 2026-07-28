@@ -1,6 +1,16 @@
 ## 更新日志
 
 
+### 3.0.4-beta.5
+
+* **[feat]**:
+    - bugfix(input): type=number时如果值为空上下键填充的值不满足 min,max 限制
+    - feature(tree): 100万级别的节点虚拟滚动性能优化
+    - bugfix(collapse): 修复 collapse 不响应 modelValue 的后续变化的问题
+    - fix(search-select): 修复选中项布局对齐及溢出展示优化
+    - feat(image): 重构 Image 组件并新增 ImagePreview / ImagePreviewGroup
+
+
 ### 3.0.3
 
 * **[feat]**:
