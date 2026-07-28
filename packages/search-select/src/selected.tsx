@@ -25,6 +25,7 @@
  */
 import { defineComponent, PropType, ref } from 'vue';
 
+import { bkTooltips } from '@bkui-vue/directives';
 import { Error } from '@bkui-vue/icon';
 
 import SearchSelectInput from './input';
@@ -41,6 +42,9 @@ import {
 } from './utils';
 export default defineComponent({
   name: 'SearchSelected',
+  directives: {
+    bkTooltips,
+  },
   props: {
     data: {
       type: Array as PropType<ISearchItem[]>,
@@ -149,6 +153,7 @@ export default defineComponent({
         >
           <span
             class='selected-name'
+            title={item.inputInnerText}
             onClick={e => this.handleEditSelected(e, item, index)}
           >
             {item.inputInnerText}
@@ -163,7 +168,17 @@ export default defineComponent({
       <>
         {this.selectedList.map((item, index) => [
           this.overflowIndex >= 0 && index === this.overflowIndex && (
-            <div class='search-container-selected overflow-selected'>
+            <div
+              class='search-container-selected overflow-selected'
+              v-bk-tooltips={{
+                content: this.selectedList
+                  .slice(this.overflowIndex)
+                  .map(item => item.inputInnerText)
+                  .join('\n'),
+                placement: 'bottom-start',
+                theme: 'light',
+              }}
+            >
               +{this.selectedList.length - this.overflowIndex}
             </div>
           ),
