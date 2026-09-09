@@ -1,12 +1,11 @@
 {
   "name": "bkui-vue",
-  "version": "3.0.4-beta.4",
+  "version": "3.0.6",
   "workspaces": [
     "packages/**",
     "scripts/cli",
     "site"
   ],
-  "private": true,
   "files": [
     "lib",
     "dist"

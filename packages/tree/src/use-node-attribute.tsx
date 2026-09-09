@@ -48,6 +48,7 @@ type TreeNodeAttributeMap = {
   [NODE_ATTRIBUTES.ORDER]: number;
   [NODE_ATTRIBUTES.PARENT]: TreeNode;
   [NODE_ATTRIBUTES.PATH]: string;
+  [NODE_ATTRIBUTES.HAS_NEXT_SIBLING]: boolean;
   [NODE_ATTRIBUTES.TREE_NODE_ATTR]: Record<string, unknown>;
   [NODE_ATTRIBUTES.UUID]: string | number;
 };
@@ -288,17 +289,25 @@ export default (
     return getNodeAttr(getNodeAttr(node, NODE_ATTRIBUTES.PARENT), attrName);
   };
 
-  const isParentNodeOpened = (node: TreeNode): boolean =>
-    isItemOpen(getNodeAttr(node, NODE_ATTRIBUTES.PARENT) as TreeNode);
-
   /**
-   * 过滤当前状态为Open的节点
-   * 页面展示只会展示Open的节点
-   * @param item
-   * @returns
+   * 判定节点是否应出现在可见列表中：
+   * 根节点始终可见；非根节点仅当所有祖先均为展开时可见。
+   * 注意：不能用「自身 isOpen」——否则父节点收起后，仍 open 的子节点会残留在列表中，
+   * 出现「图标收起、内容仍展开」的不一致（搜索清空后尤其明显）。
    */
-  const checkNodeIsOpen = (node: TreeNode): boolean =>
-    isRootNode(node) || isItemOpen(node) || isParentNodeOpened(node);
+  const checkNodeIsOpen = (node: TreeNode): boolean => {
+    if (isRootNode(node)) {
+      return true;
+    }
+    let parent = getParentNode(node) as TreeNode | null;
+    while (parent) {
+      if (!isNodeOpened(parent)) {
+        return false;
+      }
+      parent = getParentNode(parent) as TreeNode | null;
+    }
+    return true;
+  };
 
   /**
    * 根据节点path返回源数据中节点信息

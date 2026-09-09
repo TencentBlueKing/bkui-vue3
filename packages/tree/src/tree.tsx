@@ -193,6 +193,18 @@ export default defineComponent({
       searchOriginalOpenState.clear();
     };
 
+    /** 校准 openCount，避免搜索展开/收起后计数漂移导致可见列表走错快捷路径 */
+    const syncOpenCount = () => {
+      let count = 0;
+      const data = flatData.data;
+      for (let i = 0, len = data.length; i < len; i++) {
+        if (getSchemaVal(data[i])?.[NODE_ATTRIBUTES.IS_OPEN]) {
+          count += 1;
+        }
+      }
+      flatData.openCount = count;
+    };
+
     const clearMatchedFlags = () => {
       matchedNodeIds.forEach(nodeId => {
         const node = getNodeById(nodeId);
@@ -323,6 +335,7 @@ export default defineComponent({
 
       // 非搜索态：只恢复展开并重建可见列表，禁止扫全表写 IS_MATCH
       if (!isSearchActive.value) {
+        syncOpenCount();
         rebuildVisibleNodes();
         scheduleUiRefresh();
         return;
@@ -446,8 +459,9 @@ export default defineComponent({
       }
     };
 
+    // 同步受控 selected：勿再抛 node-selected，避免与 content click 形成「emit → 改 props → 再 setSelect/emit」环
     onSelected((newData: TreeNode) => {
-      setSelect(newData, true, props.autoOpenParentNode, true);
+      setSelect(newData, true, props.autoOpenParentNode, false);
     });
 
     watch(

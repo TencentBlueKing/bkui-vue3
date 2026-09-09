@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "rootDir": "../../",
+    "rootDir": "../../packages",
     "ignoreDeprecations": "6.0",
     "strictNullChecks": false,
     "strict": true,
