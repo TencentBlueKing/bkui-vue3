@@ -1,6 +1,5 @@
 @import '@bkui-vue/styles/themes/themes.less';
 
-
 .@{bk-prefix}-popover {
   &.@{bk-prefix}-pop2-content {
     position: absolute;
@@ -31,36 +30,41 @@
       background-color: #fff;
       box-shadow: 0 0 6px 0 #dcdee5;
       border: 1px solid #dcdee5;
+
       .@{bk-prefix}-pop2-arrow {
         background-color: #fff;
-        &[data-arrow='top']{
+        &[data-arrow='top'] {
           border-right: 1px solid transparent;
           border-bottom: 1px solid transparent;
 
           border-left: 1px solid #dcdee5;
           border-top: 1px solid #dcdee5;
         }
-        &[data-arrow='right']{
+        &[data-arrow='right'] {
           border-left: 1px solid transparent;
           border-bottom: 1px solid transparent;
 
           border-right: 1px solid #dcdee5;
-          border-top: 1px solid #dcdee5
+          border-top: 1px solid #dcdee5;
         }
-        &[data-arrow='left']{
+        &[data-arrow='left'] {
           border-right: 1px solid transparent;
           border-top: 1px solid transparent;
 
           border-left: 1px solid #dcdee5;
           border-bottom: 1px solid #dcdee5;
         }
-        &[data-arrow='bottom']{
+        &[data-arrow='bottom'] {
           border-left: 1px solid transparent;
           border-top: 1px solid transparent;
 
           border-right: 1px solid #dcdee5;
           border-bottom: 1px solid #dcdee5;
         }
+      }
+
+      .@{bk-prefix}-dropdown-menu {
+        border: none;
       }
     }
   }
