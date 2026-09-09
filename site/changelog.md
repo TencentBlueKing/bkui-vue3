@@ -1,6 +1,14 @@
 ## 更新日志
 
 
+### 3.0.7
+
+* **[feat]**:
+    - fix(Dropdown): Dropdwon组件Popover为light模式时存在2px的边框
+    - feature(select): 移入已选择的项时，蓝色hover 色加深一个度 #2754
+    - feat(tree): 优化百万级节点点击事件以及展开收起能力 #2749
+
+
 ### 3.0.4-beta.5
 
 * **[feat]**:
