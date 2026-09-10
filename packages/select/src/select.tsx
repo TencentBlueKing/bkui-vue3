@@ -575,6 +575,11 @@ export default defineComponent({
     // );
     // 自定义创建失焦后仍保留输入框内的内容
     const isInput = computed(() => (filterable.value && inputSearch.value && isPopoverShow.value) || allowCreate.value);
+    const resetOptionVisible = () => {
+      options.value.forEach(option => {
+        option.visible = true;
+      });
+    };
     watch(isPopoverShow, isShow => {
       emit('toggle', isPopoverShow.value);
       if (!isShow) {
@@ -585,6 +590,10 @@ export default defineComponent({
       } else {
         // 打开时刷新一次 slot options 元信息（用于虚拟模式回显/空态判断）
         refreshSlotOptionMetaMap();
+        // 搜索已空时复位 slot option 可见性，避免上次下拉过滤态残留
+        if (!searchValue.value) {
+          resetOptionVisible();
+        }
         document.addEventListener('keydown', handleDocumentKeydown);
         setTimeout(() => {
           focusInput();
@@ -666,21 +675,23 @@ export default defineComponent({
     // 处理options模式时默认搜索方法
     const handleDefaultOptionSearch = (searchValue: string) => {
       if (!filterable.value) return;
+
+      // 关键字为空必须复位可见性。slot 模式下关闭下拉会先把 isPopoverShow 置 false
+      // 再清空 searchValue；若此处直接 return，option.visible 会停在上次过滤态。
+      if (!searchValue) {
+        resetOptionVisible();
+        return;
+      }
+
       // Popover 关闭时：下拉搜索无需处理；但 inputSearch/allowCreate 仍需要更新可见性
       if (!isPopoverShow.value && !(inputSearch.value || allowCreate.value)) return;
 
-      if (!searchValue) {
-        options.value.forEach(option => {
-          option.visible = true;
+      options.value.forEach(option => {
+        option.visible = defaultSearchMethod(searchValue, String(option.optionName), {
+          ...option.$props,
+          ...option.$attrs,
         });
-      } else {
-        options.value.forEach(option => {
-          option.visible = defaultSearchMethod(searchValue, String(option.optionName), {
-            ...option.$props,
-            ...option.$attrs,
-          });
-        });
-      }
+      });
     };
     const { searchValue, customOptionName, curSearchValue, searchLoading } = useRemoteSearch(
       isRemoteSearch.value ? remoteMethod.value : handleDefaultOptionSearch,

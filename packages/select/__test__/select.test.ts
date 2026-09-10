@@ -446,6 +446,58 @@ describe('Select.tsx', () => {
     }, 400);
   });
 
+  // slot + 下拉搜索：关闭后再打开应恢复完整列表（搜索框已清空）
+  test('reset option visible after dropdown search close', async () => {
+    const wrapper = mount({
+      components: {
+        BkSelect,
+        BkOption,
+      },
+      template: `
+        <BkSelect v-model="seletValue" filterable>
+          <BkOption v-for="item in options" :key="item.value" :id="item.value" :name="item.label"></BkOption>
+        </BkSelect>
+      `,
+      data() {
+        return {
+          seletValue: '',
+          options: [
+            { value: 1, label: 'apple' },
+            { value: 2, label: 'banana' },
+            { value: 3, label: 'orange' },
+            { value: 4, label: 'grape' },
+          ],
+        };
+      },
+    });
+
+    await wrapper.find('.bk-select-trigger').trigger('click');
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    const searchInput = document.querySelector('.bk-select-search-input') as HTMLInputElement | null;
+    expect(searchInput).toBeTruthy();
+    searchInput!.value = 'apple';
+    searchInput!.dispatchEvent(new Event('input'));
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    const select = wrapper.findComponent(BkSelect);
+    expect(select.vm.searchValue).toBe('apple');
+    expect(wrapper.findAllComponents({ name: 'Option' }).filter(com => com.vm.visible).length).toBe(1);
+
+    await wrapper.find('.bk-select-trigger').trigger('click');
+    await nextTick();
+    expect(select.vm.isPopoverShow).toBe(false);
+    expect(select.vm.searchValue).toBe('');
+
+    await wrapper.find('.bk-select-trigger').trigger('click');
+    await new Promise(resolve => setTimeout(resolve, 50));
+    expect(select.vm.isPopoverShow).toBe(true);
+    expect(select.vm.searchValue).toBe('');
+    expect(wrapper.findAllComponents({ name: 'Option' }).filter(com => com.vm.visible).length).toBe(4);
+
+    wrapper.unmount();
+  });
+
   // 虚拟滚动功能
   test('virtual select', async () => {
     const wrapper = await mount(BkSelect, {
