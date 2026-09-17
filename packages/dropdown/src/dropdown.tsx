@@ -93,6 +93,8 @@ export default defineComponent({
       placement: this.placement,
       isShow: this.isShow,
       disabled: this.disabled,
+      // 点击菜单项后收起，避免随后打开的 Dialog 被 Dropdown（更高 z-index）挡住
+      clickContentAutoHide: true,
     };
     const popoverOptions: Partial<PopoverPropTypes> = merge(basePopoverOptions, this.popoverOptions);
     return (

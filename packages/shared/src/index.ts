@@ -30,6 +30,7 @@ export * from './helper';
 export * from './hooks/use-form';
 export * from './hooks/use-form-item';
 export * from './popover';
+export * from './popover-overlay';
 export * from './scrollbar-width';
 export * from './token';
 export * from './utils';
