@@ -345,12 +345,19 @@ export default defineComponent({
       return typeof b === 'function' ? b() : b;
     };
 
+    const isParentBoundary = computed(() => {
+      const b = resolveBoundary();
+      return typeof b === 'string' && /^parent$/i.test(b);
+    });
+
+    const isTeleportDisabled = computed(() => disableTeleport.value || isParentBoundary.value);
+
     const floatingStrategy = computed<'absolute' | 'fixed'>(() => {
-      if (disableTeleport.value) return 'absolute';
+      if (isTeleportDisabled.value) return 'absolute';
 
       const b = resolveBoundary();
       if (typeof b === 'string') {
-        return b === 'body' || b === 'parent' ? 'fixed' : 'absolute';
+        return /^body$/i.test(b) ? 'fixed' : 'absolute';
       }
       if (b === document.body) return 'fixed';
       return 'absolute';
@@ -863,7 +870,7 @@ export default defineComponent({
     const teleportTo = computed(() => {
       const boundaryVal = resolveBoundary();
       if (typeof boundaryVal === 'string') {
-        if (boundaryVal === 'body' || boundaryVal === 'parent') {
+        if (/^body$/i.test(boundaryVal) || isParentBoundary.value) {
           return 'body';
         }
         try {
@@ -914,7 +921,7 @@ export default defineComponent({
 
       const renderTeleport = () => (
         <Teleport
-          disabled={disableTeleport.value}
+          disabled={isTeleportDisabled.value}
           to={teleportTo.value}
         >
           {floatingNode}

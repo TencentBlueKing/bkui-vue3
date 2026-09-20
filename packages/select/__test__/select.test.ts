@@ -766,4 +766,32 @@ describe('Select.tsx', () => {
     expect((wrapper.find('.bk-input--text').element as any).value).toBe('testObject');
     wrapper.unmount();
   });
+
+  test('popover-options boundary parent should mount dropdown under select', async () => {
+    const wrapper = mount(
+      {
+        components: {
+          BkSelect,
+          BkOption,
+        },
+        template: `
+          <BkSelect :popover-options="{ boundary: 'parent' }">
+            <BkOption :id="1" name="选项1" />
+          </BkSelect>
+        `,
+      },
+      { attachTo: document.body },
+    );
+
+    await wrapper.find('.bk-select-trigger').trigger('click');
+    await nextTick();
+
+    const selectEl = wrapper.find('.bk-select').element;
+    const popover = document.querySelector('.bk-pop2-content');
+
+    expect(popover).toBeTruthy();
+    expect(selectEl.contains(popover)).toBe(true);
+    expect(popover.parentElement).not.toBe(document.body);
+    wrapper.unmount();
+  });
 });
