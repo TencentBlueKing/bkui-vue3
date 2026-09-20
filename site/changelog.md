@@ -1,6 +1,13 @@
 ## 更新日志
 
 
+### 3.0.10
+
+* **[feat]**:
+    - bugfix(dropdown): 与dialog层级冲突导致显示异常 #2734
+    - fix(popover): 修复 popover boundary属性不生效问题
+
+
 ### 3.0.8
 
 * **[feat]**:
