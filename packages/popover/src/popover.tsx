@@ -46,7 +46,7 @@ import {
 } from 'vue';
 
 import { useGlobalConfig, usePrefix } from '@bkui-vue/config-provider';
-import { bkZIndexManager, RenderType } from '@bkui-vue/shared';
+import { bkZIndexManager, registerPopoverOverlay, RenderType } from '@bkui-vue/shared';
 
 import { useDelay, usePopoverFloating, useTrigger } from './composables';
 import { PopoverProps } from './props';
@@ -575,6 +575,26 @@ export default defineComponent({
       return String(val);
     };
 
+    // 打开时固定 z-index，避免 computed 重复递增把已展开的 Dropdown 再次抬到 Dialog 之上
+    const localZIndex = ref<number | undefined>(undefined);
+    const assignZIndex = () => {
+      localZIndex.value = zIndex.value ?? bkZIndexManager.getPopperIndex();
+    };
+    watch(
+      isOpen,
+      val => {
+        if (val) {
+          assignZIndex();
+        }
+      },
+      { immediate: true, flush: 'sync' },
+    );
+    watch(zIndex, val => {
+      if (isOpen.value && val !== undefined) {
+        localZIndex.value = val;
+      }
+    });
+
     // 内容样式
     const contentStyles = computed<CSSProperties>(() => {
       const styles: CSSProperties = {
@@ -587,7 +607,7 @@ export default defineComponent({
 
       // 设置 z-index
       if (isOpen.value) {
-        styles.zIndex = zIndex.value ?? bkZIndexManager.getPopperIndex();
+        styles.zIndex = localZIndex.value;
       }
 
       // 隐藏时设置 display: none
@@ -806,6 +826,25 @@ export default defineComponent({
       }
     });
 
+    const unregisterPopoverOverlay = registerPopoverOverlay({
+      hide: () => {
+        if (always.value) {
+          return;
+        }
+        clearTimers();
+        if (isOpen.value) {
+          isOpen.value = false;
+        }
+      },
+      isOpen: () => isOpen.value,
+      isAlways: () => always.value,
+      getReferenceEl: () =>
+        getActualReferenceElement() ||
+        resolveDefaultReferenceElement() ||
+        resolveReferenceRefElement(referenceWrapperRef.value),
+      getFloatingEl: () => floatingRef.value,
+    });
+
     // 卸载时清理
     onBeforeUnmount(() => {
       document.removeEventListener('click', handleClickOutside, true);
@@ -816,6 +855,7 @@ export default defineComponent({
         clearTimeout(eventDelayTimer);
       }
       bkPopoverRegistry.delete(popoverId);
+      unregisterPopoverOverlay();
       stopHoverTrack();
     });
 

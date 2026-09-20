@@ -39,7 +39,7 @@ import {
 } from 'vue';
 
 import { usePrefix } from '@bkui-vue/config-provider';
-import { bkZIndexManager } from '@bkui-vue/shared';
+import { bkZIndexManager, hidePopoversOutside } from '@bkui-vue/shared';
 
 import { useContentResize } from './hooks';
 import { mask } from './mask';
@@ -65,6 +65,7 @@ export default defineComponent({
     const localShow = ref(props.isShow);
     const zIndex = ref(props.zIndex);
     const initRendered = ref(false);
+    let showTimer: ReturnType<typeof setTimeout> | undefined;
 
     const { contentStyles, isContentScroll } = useContentResize(rootRef, resizeTargetRef, props);
 
@@ -91,13 +92,22 @@ export default defineComponent({
       () => {
         if (props.isShow) {
           initRendered.value = true;
-          setTimeout(() => {
+          showTimer = setTimeout(() => {
+            showTimer = undefined;
             zIndex.value = props.zIndex || bkZIndexManager.getModalNextIndex();
             props.showMask && mask.showMask(maskRef.value);
             ctx.emit('shown');
             localShow.value = true;
+            // Dropdown / Popover 默认层级高于 Modal，先收起页面上未挂在当前弹窗内的弹出层
+            if (rootRef.value) {
+              hidePopoversOutside(rootRef.value);
+            }
           });
         } else if (initRendered.value) {
+          if (showTimer !== undefined) {
+            clearTimeout(showTimer);
+            showTimer = undefined;
+          }
           props.showMask && mask.hideMask(maskRef.value);
           ctx.emit('hidden');
           localShow.value = false;
@@ -140,6 +150,10 @@ export default defineComponent({
     });
 
     onBeforeUnmount(() => {
+      if (showTimer !== undefined) {
+        clearTimeout(showTimer);
+        showTimer = undefined;
+      }
       removeEventListener('keydown', handleEscClose);
       mask.destroyMask(maskRef.value);
       ctx.emit('hidden');

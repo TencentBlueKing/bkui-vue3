@@ -26,13 +26,17 @@
 
 import { nextTick } from 'vue';
 
+import Dialog from '@bkui-vue/dialog';
+import Dropdown from '@bkui-vue/dropdown';
+import Popover from '@bkui-vue/popover';
+import Select from '@bkui-vue/select';
+import { hidePopoversOutside, registerPopoverOverlay } from '@bkui-vue/shared';
+import Sideslider from '@bkui-vue/sideslider';
 import { mount } from '@vue/test-utils';
 import ResizeObserver from 'resize-observer-polyfill';
 
-import Dialog from '@bkui-vue/dialog';
-import Popover from '@bkui-vue/popover';
-import Select from '@bkui-vue/select';
-import Sideslider from '@bkui-vue/sideslider';
+import DropdownItem from '../../dropdown/src/dropdown-item';
+import DropdownMenu from '../../dropdown/src/dropdown-menu';
 import Option from '../../select/src/option';
 
 jest.setTimeout(10000);
@@ -86,7 +90,9 @@ describe('Popover nested interactions', () => {
     expect(isPopoverVisible(parent)).toBe(true);
 
     // 打开 Select 下拉（会 Teleport 到 body）
-    (parent as HTMLElement).querySelector('.bk-select-trigger')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    (parent as HTMLElement)
+      .querySelector('.bk-select-trigger')
+      ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     await sleep(20);
     await nextTick();
 
@@ -97,7 +103,9 @@ describe('Popover nested interactions', () => {
     expect(isPopoverVisible(parent)).toBe(true);
 
     // 点击下拉选项（发生在“子 popover”内容区）
-    (selectDropdown as HTMLElement).querySelector('.bk-select-option')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    (selectDropdown as HTMLElement)
+      .querySelector('.bk-select-option')
+      ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     await nextTick();
     await sleep(0);
 
@@ -137,7 +145,9 @@ describe('Popover nested interactions', () => {
     expect(parent).toBeTruthy();
     expect(isPopoverVisible(parent)).toBe(true);
 
-    (parent as HTMLElement).querySelector('.bk-select-trigger')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    (parent as HTMLElement)
+      .querySelector('.bk-select-trigger')
+      ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     await sleep(20);
     await nextTick();
 
@@ -146,7 +156,9 @@ describe('Popover nested interactions', () => {
     expect(isPopoverVisible(selectDropdown)).toBe(true);
     expect(isPopoverVisible(parent)).toBe(true);
 
-    (selectDropdown as HTMLElement).querySelector('.bk-select-option')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    (selectDropdown as HTMLElement)
+      .querySelector('.bk-select-option')
+      ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     await nextTick();
     await sleep(0);
 
@@ -243,5 +255,92 @@ describe('Popover nested interactions', () => {
 
     wrapper.unmount();
   });
+
+  it('opening Dialog should hide outside Dropdown to avoid covering the dialog', async () => {
+    const wrapper = mount(
+      {
+        components: {
+          Dialog,
+          Dropdown,
+          DropdownMenu,
+          DropdownItem,
+        },
+        template: `
+        <div>
+          <Dropdown trigger="click" :popover-options="{ popoverDelay: 0, clickContentAutoHide: false }">
+            <button class="open-dropdown">more</button>
+            <template #content>
+              <DropdownMenu>
+                <DropdownItem class="edit-item">编辑包配置</DropdownItem>
+              </DropdownMenu>
+            </template>
+          </Dropdown>
+          <Dialog v-model:isShow="show" title="编辑包类型" :quickClose="false" :transfer="true">
+            dialog content
+          </Dialog>
+        </div>
+      `,
+        data() {
+          return { show: false };
+        },
+      },
+      { attachTo: document.body },
+    );
+
+    await nextTick();
+    const trigger = wrapper.find('.open-dropdown');
+    expect(trigger.exists()).toBe(true);
+    trigger.element.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    await nextTick();
+    await sleep(20);
+
+    const dropdownPopover = document.querySelector('.bk-dropdown-popover');
+    expect(dropdownPopover).toBeTruthy();
+    expect(isPopoverVisible(dropdownPopover)).toBe(true);
+
+    await wrapper.setData({ show: true });
+    await sleep(30);
+    await nextTick();
+
+    expect(isPopoverVisible(document.querySelector('.bk-dropdown-popover'))).toBe(false);
+    expect(document.querySelector('.bk-modal-wrapper')).toBeTruthy();
+
+    wrapper.unmount();
+  });
 });
 
+describe('hidePopoversOutside', () => {
+  it('hides popovers whose reference is outside the container', () => {
+    const container = document.createElement('div');
+    const insideRef = document.createElement('button');
+    const outsideRef = document.createElement('button');
+    container.appendChild(insideRef);
+    document.body.appendChild(container);
+    document.body.appendChild(outsideRef);
+
+    const insideHide = jest.fn();
+    const outsideHide = jest.fn();
+    const unregInside = registerPopoverOverlay({
+      hide: insideHide,
+      isOpen: () => true,
+      getReferenceEl: () => insideRef,
+      getFloatingEl: () => null,
+    });
+    const unregOutside = registerPopoverOverlay({
+      hide: outsideHide,
+      isOpen: () => true,
+      getReferenceEl: () => outsideRef,
+      getFloatingEl: () => null,
+    });
+
+    hidePopoversOutside(container);
+
+    expect(insideHide).not.toHaveBeenCalled();
+    expect(outsideHide).toHaveBeenCalled();
+
+    unregInside();
+    unregOutside();
+    container.remove();
+    outsideRef.remove();
+  });
+});
