@@ -5,6 +5,9 @@
       v-model="selectedValue"
       auto-focus
       filterable
+      :popover-options="{
+        boundary: 'parent',
+      }"
       @select="handleSelect"
     >
       <bk-option
@@ -22,6 +25,9 @@
       :list="datasourceList"
       disable-focus-behavior
       filterable
+      :popover-options="{
+        boundary: 'parent',
+      }"
       multiple
     />
   </div>

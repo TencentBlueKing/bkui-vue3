@@ -244,3 +244,71 @@ describe('Popover renderReferenceWrapper', () => {
     wrapper.unmount();
   });
 });
+
+describe('Popover boundary', () => {
+  afterEach(() => {
+    document.body.innerHTML = '';
+  });
+
+  it('should mount content under parent when boundary is parent', async () => {
+    const wrapper = mount(
+      {
+        components: { Popover },
+        template: `
+          <div class="boundary-host">
+            <Popover
+              boundary="parent"
+              trigger="manual"
+              :is-show="true"
+              :popover-delay="0"
+              content="parent-boundary-content"
+            >
+              <button class="ref-btn">ref</button>
+            </Popover>
+          </div>
+        `,
+      },
+      { attachTo: document.body },
+    );
+
+    await Promise.resolve();
+    const content = document.querySelector('.bk-pop2-content');
+    const host = document.querySelector('.boundary-host');
+
+    expect(content).toBeTruthy();
+    expect(host.contains(content)).toBe(true);
+    expect(document.body.contains(content)).toBe(true);
+    expect(content.parentElement).not.toBe(document.body);
+    wrapper.unmount();
+  });
+
+  it('should mount content under body by default', async () => {
+    const wrapper = mount(
+      {
+        components: { Popover },
+        template: `
+          <div class="boundary-host">
+            <Popover
+              trigger="manual"
+              :is-show="true"
+              :popover-delay="0"
+              content="body-boundary-content"
+            >
+              <button class="ref-btn">ref</button>
+            </Popover>
+          </div>
+        `,
+      },
+      { attachTo: document.body },
+    );
+
+    await Promise.resolve();
+    const content = document.querySelector('.bk-pop2-content');
+    const host = document.querySelector('.boundary-host');
+
+    expect(content).toBeTruthy();
+    expect(content.parentElement).toBe(document.body);
+    expect(host.contains(content)).toBe(false);
+    wrapper.unmount();
+  });
+});
