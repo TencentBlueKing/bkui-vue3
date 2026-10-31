@@ -31,6 +31,7 @@ import DemoTitle from '../../components/demo-title';
 import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
 import BaseDemo from './base-demo.vue';
+import BorderDemo from './border-demo.vue';
 import ComprehensiveUseDemo from './comprehensive-use.vue';
 import MenuDemo from './menu-demo.vue';
 import PlaceholderDemo from './placeholder-demo.vue';
@@ -319,6 +320,15 @@ export default defineComponent({
           title='配置 valueBehevior 属性定义生成 value 交互行为'
         >
           <ValueBehaviorDemo />
+        </DemoBox>
+        <DemoBox
+          componentName='search-select'
+          demoName='border-demo'
+          desc='自定义边框颜色'
+          subtitle='给组件添加自定义 class，通过 :deep(.bk-search-select-container) 覆盖边框颜色；聚焦态边框带 !important，覆盖时也需要 !important'
+          title='自定义边框颜色'
+        >
+          <BorderDemo />
         </DemoBox>
 
         <DemoBox
