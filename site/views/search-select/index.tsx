@@ -32,6 +32,7 @@ import PropsBox from '../../components/props-box';
 import { IPropsTableItem } from '../../typings';
 import BaseDemo from './base-demo.vue';
 import ComprehensiveUseDemo from './comprehensive-use.vue';
+import MaxHeightDemo from './max-height-demo.vue';
 import MenuDemo from './menu-demo.vue';
 import PlaceholderDemo from './placeholder-demo.vue';
 import RemoteDemo from './remote-demo.vue';
@@ -301,6 +302,15 @@ export default defineComponent({
           title='配置每个选项独立的placeholder'
         >
           <PlaceholderDemo />
+        </DemoBox>
+        <DemoBox
+          componentName='search-select'
+          demoName='max-height-demo'
+          desc='max-height 为 120'
+          subtitle='通过配置属性 max-height 为 120，限制聚焦后的输入区域和选择菜单的最大高度'
+          title='自定义最大高度'
+        >
+          <MaxHeightDemo />
         </DemoBox>
         <DemoBox
           componentName='search-select'
