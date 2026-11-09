@@ -1,4 +1,6 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
+# TS 6 会把 tsconfig 的 baseUrl / moduleResolution 当成错误，commitlint 因此起不来
+export TS_NODE_COMPILER_OPTIONS='{"ignoreDeprecations":"6.0"}'
 yarn commitlint --edit "$1"
