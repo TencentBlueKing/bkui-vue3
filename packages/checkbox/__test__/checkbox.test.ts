@@ -25,6 +25,8 @@
  */
 
 import { mount } from '@vue/test-utils';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
 
 import Checkbox from '../src/';
 
@@ -71,5 +73,43 @@ describe('Checkbox', () => {
     expect(wrapper.text()).toMatch(label);
     expect(wrapper.classes()).toContain('is-disabled');
     expect(wrapper.classes()).toContain('bk-checkbox');
+  });
+
+  it('indeterminate', () => {
+    const wrapper = mount({
+      components,
+      template: `<Checkbox label=${label} indeterminate />`,
+    });
+    expect(wrapper.classes()).toContain('is-indeterminated');
+    expect(wrapper.classes()).not.toContain('is-checked');
+    expect(wrapper.find('input').attributes('disabled')).toBeUndefined();
+  });
+
+  it('disabled checked keeps both states', () => {
+    const wrapper = mount({
+      components,
+      template: `<Checkbox label=${label} disabled :model-value="true" />`,
+    });
+    expect(wrapper.classes()).toContain('is-disabled');
+    expect(wrapper.classes()).toContain('is-checked');
+    expect(wrapper.find('input').attributes('disabled')).toBeDefined();
+  });
+
+  it('focus does not clear checked, disabled, or indeterminate', async () => {
+    const wrapper = mount({
+      components,
+      template: `<Checkbox label=${label} disabled :model-value="true" indeterminate />`,
+    });
+    const before = wrapper.classes();
+    await wrapper.find('input').trigger('focus');
+    await wrapper.find('input').trigger('blur');
+    expect(wrapper.classes()).toEqual(before);
+    expect(wrapper.classes()).toEqual(expect.arrayContaining(['is-disabled', 'is-checked', 'is-indeterminated']));
+  });
+
+  it('unchecked hover border uses the primary token and skips selected or disabled states', () => {
+    const source = readFileSync(resolve(__dirname, '../src/checkbox.less'), 'utf8');
+    expect(source).toContain('&:hover:not(.is-disabled):not(.is-checked):not(.is-indeterminated)');
+    expect(source).toContain('border-color: @primary-color;');
   });
 });
