@@ -119,6 +119,13 @@
       visibility: hidden;
     }
   }
+
+  // 未选悬停：品牌主色描边。已选、半选、禁用保持原状态。
+  &:hover:not(.is-disabled):not(.is-checked):not(.is-indeterminated) {
+    .@{bk-prefix}-checkbox-input {
+      border-color: @primary-color;
+    }
+  }
 }
 
 .@{bk-prefix}-checkbox-input {
