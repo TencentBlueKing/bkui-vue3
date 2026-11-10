@@ -223,6 +223,14 @@
       display: none;
     }
   }
+
+  .@{bk-prefix}-radio-button:hover:not(.is-disabled):not(.is-checked) {
+    background: @white-color;
+
+    .@{bk-prefix}-radio-button-label {
+      color: #4d4f56;
+    }
+  }
 }
 
 .@{bk-prefix}-radio-tab,
@@ -233,6 +241,15 @@
 
     &:nth-child(n+2) {
       margin-left: -1px;
+    }
+
+    // 相邻项用负 margin 叠 1px。未抬高层级时，后一项灰边会盖住前一项的 hover 右边框。
+    &:hover:not(.is-disabled):not(.is-checked) {
+      z-index: 2;
+
+      .@{bk-prefix}-radio-button-label {
+        color: @radio-active-color;
+      }
     }
 
     &:first-child {
