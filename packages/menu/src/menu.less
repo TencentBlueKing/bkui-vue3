@@ -96,6 +96,32 @@
       /* stylelint-disable-next-line declaration-no-important */
       transition-property: all !important;
     }
+
+    &.is-disabled {
+      cursor: not-allowed;
+
+      .submenu-header-content,
+      .submenu-header-icon .menu-icon,
+      .submenu-header-collapse {
+        color: @bk-menu-color-dark-text-disabled;
+      }
+
+      .submenu-header.is-collapse {
+        color: @bk-menu-color-dark-text-disabled;
+        background: none;
+      }
+
+      &:hover {
+        color: @bk-menu-color-dark-text-disabled;
+        cursor: not-allowed;
+
+        .submenu-header-content,
+        .submenu-header-icon .menu-icon,
+        .submenu-header-collapse {
+          color: @bk-menu-color-dark-text-disabled;
+        }
+      }
+    }
   }
 
   &-item {
@@ -124,17 +150,25 @@
     }
 
     &.is-disabled {
-      color: @bk-menu-color-dark-group-text;
+      color: @bk-menu-color-dark-text-disabled;
       cursor: not-allowed;
-      
-      &:hover {
-        color: @bk-menu-color-dark-group-text;
-        cursor: not-allowed;
-        background: none;
+
+      .item-icon .default-icon {
+        background: @bk-menu-color-dark-text-disabled;
+        background-color: @bk-menu-color-dark-text-disabled;
+        opacity: 1;
       }
       
-      .default-icon {
-        opacity: 0.4;
+      &:hover {
+        color: @bk-menu-color-dark-text-disabled;
+        cursor: not-allowed;
+        background: none;
+
+        .item-icon .default-icon {
+          background: @bk-menu-color-dark-text-disabled;
+          background-color: @bk-menu-color-dark-text-disabled;
+          opacity: 1;
+        }
       }
     }
 

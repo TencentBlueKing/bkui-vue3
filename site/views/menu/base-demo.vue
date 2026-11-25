@@ -49,6 +49,13 @@
       <bk-menu-item key="阅文集团"> 阅文集团 </bk-menu-item>
       <bk-menu-item key="腾讯电竞"> 腾讯电竞 </bk-menu-item>
     </bk-submenu>
+    <bk-submenu
+      key="未开放"
+      title="未开放"
+      disabled
+    >
+      <bk-menu-item key="暂未开放"> 暂未开放 </bk-menu-item>
+    </bk-submenu>
   </bk-menu>
 </template>
 
