@@ -29,44 +29,44 @@
     padding: 0 10px 0 30px;
     font-size: 12px;
     line-height: 32px;
-    color: @default-color;
+    color: @bk-default-color;
     cursor: pointer;
-    border: 1px solid @light-gray;
+    border: 1px solid @bk-light-gray-color;
     border-radius: 2px;
     outline: none;
 
     &.only-bottom-border {
-      border-color: transparent transparent @light-gray transparent;
+      border-color: transparent transparent @bk-light-gray-color transparent;
 
       &:focus {
-        border-color: transparent transparent @primary-color transparent;
+        border-color: transparent transparent @bk-primary-color transparent;
         box-shadow: none;
       }
 
       &[disabled],
       &.readonly {
-        border-color: transparent transparent @disable-color transparent;
+        border-color: transparent transparent @bk-disabled-color transparent;
       }
     }
 
     &:focus {
-      border: 1px solid @primary-color;
+      border: 1px solid @bk-primary-color;
     }
 
     &::placeholder {
-      color: @light-gray;
+      color: @bk-light-gray-color;
     }
 
     &[disabled] {
-      color: @light-gray;
+      color: @bk-light-gray-color;
       cursor: not-allowed;
-      background-color: @date-picker-disabled-bg;
-      border-color: @light-gray;
+      background-color: @bk-date-picker-color-bg-disabled;
+      border-color: @bk-light-gray-color;
     }
 
     &.readonly {
-      background-color: @date-picker-disabled-bg;
-      border-color: @light-gray;
+      background-color: @bk-date-picker-color-bg-disabled;
+      border-color: @bk-light-gray-color;
     }
 
     &.medium-font {
@@ -84,12 +84,12 @@
     right: 10px;
     padding: 5px 0;
     font-size: 14px;
-    color: @light-gray;
+    color: @bk-light-gray-color;
     cursor: pointer;
     transform: translateY(-50%);
 
     &:hover {
-      color: @gray-color;
+      color: @bk-gray-color;
     }
   }
 
@@ -100,7 +100,7 @@
     display: inline-block;
     width: 32px;
     height: 32px;
-    color: @light-gray;
+    color: @bk-light-gray-color;
     cursor: pointer;
     background-color: transparent;
 
@@ -132,8 +132,8 @@
   box-sizing: border-box;
   padding: 5px 0 0 0;
   overflow: auto;
-  background-color: @date-picker-dropdown-bg;
-  border: 1px solid @disable-color;
+  background-color: @bk-date-picker-color-dropdown-bg;
+  border: 1px solid @bk-disabled-color;
   border-radius: 2px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, .1);
 }

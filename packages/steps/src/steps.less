@@ -97,7 +97,7 @@
       border-radius: 50%;
 
       // .@{bk-prefix}-steps-icon {
-      //   color: @white-color;
+      //   color: @bk-white-color;
       // }
     }
 
@@ -158,7 +158,7 @@
 
     &.done {
       .@{bk-prefix}-step-title {
-        color: @default-color;
+        color: @bk-default-color;
       }
       .@{bk-prefix}-step-description {
         color: #979ba5;
@@ -180,7 +180,7 @@
         .@{bk-prefix}-step-title,
         .@{bk-prefix}-step-indicator {
           &::after {
-            background-image: linear-gradient(to right, @danger-color 50%, transparent 0%);
+            background-image: linear-gradient(to right, @bk-danger-color 50%, transparent 0%);
           }
         }
       }
@@ -195,31 +195,31 @@
 
       .@{bk-prefix}-step-title,
       .@{bk-prefix}-step-description {
-        color: @default-color;
+        color: @bk-default-color;
       }
 
       &.@{bk-prefix}-step-error {
         .@{bk-prefix}-step-indicator {
-          background-color: @danger-color;
-          border-color: @danger-color;
+          background-color: @bk-danger-color;
+          border-color: @bk-danger-color;
         }
 
         .@{bk-prefix}-step-title,
         .@{bk-prefix}-step-description {
-          color: @danger-color;
+          color: @bk-danger-color;
         }
       }
     }
 
     &.is-error {
       .@{bk-prefix}-step-indicator {
-        background-color: @danger-color !important;
-        border-color: @danger-color !important;
+        background-color: @bk-danger-color !important;
+        border-color: @bk-danger-color !important;
       }
 
       .@{bk-prefix}-step-content {
         .@{bk-prefix}-step-title {
-          color: @danger-color !important;
+          color: @bk-danger-color !important;
         }
       }
     }
@@ -227,7 +227,7 @@
 
 
   each(@themeSelectors, {
-  @color: '@{value}-color';
+  @color: 'bk-@{value}-color';
   &-@{value} {
     .@{bk-prefix}-step {
       &.done {
@@ -270,7 +270,7 @@
       .@{bk-prefix}-step-title,
       .@{bk-prefix}-step-indicator {
         &::after {
-          background-image: linear-gradient(to right, @light-gray 50%, transparent 0%);
+          background-image: linear-gradient(to right, @bk-light-gray-color 50%, transparent 0%);
           background-repeat: repeat-x;
           background-position: bottom;
           background-size: 6px 1px;
@@ -284,7 +284,7 @@
       .@{bk-prefix}-step-title,
       .@{bk-prefix}-step-indicator {
         &::after {
-          background-color: @light-gray;
+          background-color: @bk-light-gray-color;
         }
       }
     }
@@ -312,7 +312,7 @@
         width: 1px;
         height: 100%;
         content: '';
-        background-image: linear-gradient(@light-gray 50%, transparent 0%);
+        background-image: linear-gradient(@bk-light-gray-color 50%, transparent 0%);
         background-repeat: repeat-y;
         background-position: right;
         background-size: 1px 6px;
@@ -322,7 +322,7 @@
         &:has(+ .current.is-error),
         &:has(+ .current.@{bk-prefix}-step-error) {
           &::after {
-            background-image: linear-gradient(@danger-color 50%, transparent 0%);
+            background-image: linear-gradient(@bk-danger-color 50%, transparent 0%);
           }
         }
       }

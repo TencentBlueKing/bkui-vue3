@@ -23,17 +23,17 @@
     height: 24px;
     font-size: 12px;
     line-height: 24px;
-    color: @default-color;
+    color: @bk-default-color;
     text-align: center;
     text-decoration: none;
-    border: 1px solid @light-gray;
+    border: 1px solid @bk-light-gray-color;
     border-radius: 50%;
 
     &.active,
     &:hover {
       color: #fff;
-      background: @primary-color;
-      border-color: @primary-color;
+      background: @bk-primary-color;
+      border-color: @bk-primary-color;
     }
   }
 
@@ -80,7 +80,7 @@
     font-family: PingFang SC,Microsoft Yahei,Helvetica,Aria;
     font-size: 12px;
     line-height: 24px;
-    color: @default-color;
+    color: @bk-default-color;
     text-align: center;
     background-color: #f0f1f5;
     flex: 1;
@@ -149,7 +149,7 @@
       .success {
         i {
           display: inline-block;
-          color: @success-color;
+          color: @bk-success-color;
         }
       }
 
@@ -160,10 +160,10 @@
 
     &.success {
       color: #fff;
-      background: @success-color;
+      background: @bk-success-color;
 
       &::after {
-        border-color: transparent transparent transparent @success-color;
+        border-color: transparent transparent transparent @bk-success-color;
       }
 
       .icon-done {
@@ -174,10 +174,10 @@
 
     &.current {
       color: #fff;
-      background: @primary-color;
+      background: @bk-primary-color;
 
       &::after {
-        border-color: transparent transparent transparent @primary-color;
+        border-color: transparent transparent transparent @bk-primary-color;
       }
 
       >.@{bk-prefix}-spin-loading {
@@ -187,10 +187,10 @@
 
     &.error {
       color: #fff;
-      background: @danger-color;
+      background: @bk-danger-color;
 
       &::after {
-        border-color: transparent transparent transparent @danger-color;
+        border-color: transparent transparent transparent @bk-danger-color;
       }
 
       >.@{bk-prefix}-spin-loading {

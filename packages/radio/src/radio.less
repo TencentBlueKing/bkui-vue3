@@ -11,7 +11,7 @@
   align-items: center;
   font-weight: normal;
   letter-spacing: normal;
-  color: @radio-font-color;
+  color: @bk-radio-color-text-default;
   white-space: nowrap;
   cursor: pointer;
   outline: none;
@@ -29,26 +29,26 @@
   &.is-checked {
     .@{bk-prefix}-radio-input {
       padding: 3px;
-      color: @radio-active-color;
-      background-color: @radio-active-color;
-      border-color: @radio-active-color;
+      color: @bk-radio-color-accent-active;
+      background-color: @bk-radio-color-accent-active;
+      border-color: @bk-radio-color-accent-active;
     }
   }
 
   &.is-disabled {
-    color: @radio-disabled-font-color;
+    color: @bk-radio-color-text-disabled;
     cursor: not-allowed;
 
     &.is-checked {
       .@{bk-prefix}-radio-input {
-        background-color: @radio-disabled-checked-bg;
-        border-color: @radio-disabled-checked-bg;
+        background-color: @bk-radio-color-bg-disabled-checked;
+        border-color: @bk-radio-color-bg-disabled-checked;
       }
     }
 
     .@{bk-prefix}-radio-input {
       cursor: not-allowed;
-      border-color: @radio-disabled-border;
+      border-color: @bk-radio-color-border-disabled;
     }
 
     .@{bk-prefix}-radio-label {
@@ -58,7 +58,7 @@
 
   &.is-focused {
     .@{bk-prefix}-radio-input {
-      border-color: @radio-active-color;
+      border-color: @bk-radio-color-accent-active;
     }
   }
 }
@@ -72,7 +72,7 @@
   vertical-align: middle;
   cursor: pointer;
   background-color: #fff;
-  border: @border-width-base @border-style-base @light-gray;
+  border: @border-width-base @border-style-base @bk-light-gray-color;
   border-radius: 50%;
   outline: none;
   visibility: visible;
@@ -81,7 +81,7 @@
   appearance: none;
 
   &:hover {
-    border-color: @radio-hover-border-color;
+    border-color: @bk-radio-color-border-hover;
   }
 }
 
@@ -101,7 +101,7 @@
   display: inline-flex;
   font-weight: normal;
   letter-spacing: normal;
-  color: @radio-font-color;
+  color: @bk-radio-color-text-default;
   white-space: nowrap;
   cursor: pointer;
   outline: none;
@@ -156,7 +156,7 @@
     font-style: normal;
     font-weight: normal;
     line-height: @component-size-base;
-    color: @default-color;
+    color: @bk-default-color;
     text-align: center;
     vertical-align: middle;
     cursor: pointer;
@@ -168,13 +168,13 @@
     z-index: 2;
 
     .@{bk-prefix}-radio-button-label {
-      color: @radio-active-color;
+      color: @bk-radio-color-accent-active;
     }
   }
 
   &.is-disabled {
     z-index: 0;
-    color: @radio-disabled-font-color;
+    color: @bk-radio-color-text-disabled;
     cursor: not-allowed;
 
     .@{bk-prefix}-radio-button-label {
@@ -225,7 +225,7 @@
   }
 
   .@{bk-prefix}-radio-button:hover:not(.is-disabled):not(.is-checked) {
-    background: @white-color;
+    background: @bk-white-color;
 
     .@{bk-prefix}-radio-button-label {
       color: #4d4f56;
@@ -248,7 +248,7 @@
       z-index: 2;
 
       .@{bk-prefix}-radio-button-label {
-        color: @radio-active-color;
+        color: @bk-radio-color-accent-active;
       }
     }
 
@@ -270,21 +270,21 @@
       z-index: 2;
 
       .@{bk-prefix}-radio-button-label {
-        background: @radio-button-checked-bg;
-        border-color: @radio-active-color;
+        background: @bk-radio-color-button-bg-checked;
+        border-color: @bk-radio-color-accent-active;
       }
     }
 
     &.is-disabled {
       .@{bk-prefix}-radio-button-label {
-        background: @radio-button-disabled-checked-bg;
-        border-color: @radio-disabled-border;
+        background: @bk-radio-color-button-bg-disabled-checked;
+        border-color: @bk-radio-color-border-disabled;
       }
     }
 
     &.is-focused {
       .@{bk-prefix}-radio-button-label {
-        border-color: @radio-active-color;
+        border-color: @bk-radio-color-accent-active;
       }
     }
 
@@ -292,11 +292,11 @@
 
   .@{bk-prefix}-radio-button-label {
     height: @component-size-base;
-    border: @border-width-base @border-style-base @light-gray;
+    border: @border-width-base @border-style-base @bk-light-gray-color;
     transition: all .3s;
 
     &:hover {
-      border-color: @radio-hover-border-color;
+      border-color: @bk-radio-color-border-hover;
     }
   }
 

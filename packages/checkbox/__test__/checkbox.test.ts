@@ -110,6 +110,6 @@ describe('Checkbox', () => {
   it('unchecked hover border uses the primary token and skips selected or disabled states', () => {
     const source = readFileSync(resolve(__dirname, '../src/checkbox.less'), 'utf8');
     expect(source).toContain('&:hover:not(.is-disabled):not(.is-checked):not(.is-indeterminated)');
-    expect(source).toContain('border-color: @primary-color;');
+    expect(source).toContain('border-color: @bk-primary-color;');
   });
 });

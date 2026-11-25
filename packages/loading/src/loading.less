@@ -47,14 +47,14 @@
 }
 
 @sizeSelectors: mini, small, large;
-@selectors: @danger-color, @warning-color, @success-color, @primary-color;
+@selectors: @bk-color-base-danger-2, @bk-color-base-warn-2, @bk-color-base-success-2, @bk-color-base-brand-2;
 @themeSelectors: {
-  success: @success-color;
-  danger: @danger-color;
-  warning: @warning-color;
-  primary: @primary-color;
-  white: @white-color;
-  default: @light-gray;
+  success: @bk-color-base-success-2;
+  danger: @bk-color-base-danger-2;
+  warning: @bk-color-base-warn-2;
+  primary: @bk-color-base-brand-2;
+  white: @bk-white-color;
+  default: @bk-light-gray-color;
 };
 
 .@{bk-prefix}-loading-wrapper {
@@ -107,7 +107,7 @@
 
     width: @ovalWidth;
     height: @ovalHeight;
-    background-color: @default-color;
+    background-color: #63656e;
     border-radius: @ovalHeight;
     animation-duration: 1.2s;
     animation-iteration-count: infinite;
@@ -199,7 +199,7 @@
       margin-top: @titleMarginTop;
       font-size: @font-size-medium;
       line-height: normal;
-      color: @default-color;
+      color: @bk-default-color;
       text-align: center;
     }
   }

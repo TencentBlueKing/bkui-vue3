@@ -1,38 +1,78 @@
 @import '@bkui-vue/styles/themes/themes.less';
 
-@tag-base-color: #fff;
-@tag-success-color: #14a568;
-@tag-info-color: @primary-color;
-@tag-warning-color: #fe9c00;
-@tag-danger-color: @danger-color;
+// One inverse text token for filled text and checkable selected text. No filled alias.
+@bk-tag-color-text-inverse: @bk-color-base-neutral-10;
+@bk-tag-color-default-light-text-default: @bk-color-base-neutral-2;
+@bk-tag-color-default-light-bg-default: @bk-color-base-neutral-7;
+@bk-tag-color-default-light-bg-hover: @bk-color-base-neutral-6;
+@bk-tag-color-default-stroke-border-default: @bk-color-base-neutral-5;
+@bk-tag-color-default-filled-bg-default: @bk-color-base-neutral-3;
+@bk-tag-color-filled-bg-hover: @bk-color-base-neutral-4;
+@bk-tag-color-checkable-bg-hover: @bk-color-base-neutral-7;
 
-@tag-success-bg-color: #E4FAF0;
-@tag-info-bg-color: #EDF4FF;
-@tag-warning-bg-color: #FFF1DB;
-@tag-danger-bg-color: #FEEBEA;
+@bk-tag-color-success-light-text-default: @bk-color-base-success-1;
+@bk-tag-color-success-light-bg-default: @bk-color-base-success-6;
+@bk-tag-color-success-light-bg-hover: @bk-color-base-success-5;
+@bk-tag-color-success-stroke-border-default: @bk-color-base-success-4;
+@bk-tag-color-success-filled-bg-default: @bk-color-base-success-2;
+@bk-tag-color-success-filled-bg-hover: @bk-color-base-success-3;
+
+@bk-tag-color-info-light-text-default: @bk-color-base-brand-1;
+@bk-tag-color-info-bg: @bk-color-base-brand-6;
+@bk-tag-color-info-light-bg-hover: @bk-color-base-brand-5;
+@bk-tag-color-info-border: @bk-color-base-brand-4;
+@bk-tag-color-info-filled-bg-default: @bk-color-base-brand-2;
+@bk-tag-color-info-bg-hover: @bk-color-base-brand-3;
+// Keep the original themeSelectors list. These names only forward to the confirmed info tokens.
+@bk-tag-color-info-light-bg-default: @bk-tag-color-info-bg;
+@bk-tag-color-info-stroke-border-default: @bk-tag-color-info-border;
+@bk-tag-color-info-filled-bg-hover: @bk-tag-color-info-bg-hover;
+
+@bk-tag-color-warning-light-text-default: @bk-color-base-warn-1;
+@bk-tag-color-warning-light-bg-default: @bk-color-base-warn-6;
+@bk-tag-color-warning-light-bg-hover: @bk-color-base-warn-5;
+@bk-tag-color-warning-stroke-border-default: @bk-color-base-warn-4;
+@bk-tag-color-warning-filled-bg-default: @bk-color-base-warn-2;
+@bk-tag-color-warning-filled-bg-hover: @bk-color-base-warn-3;
+
+@bk-tag-color-danger-light-text-default: @bk-color-base-danger-1;
+@bk-tag-color-danger-light-bg-default: @bk-color-base-danger-6;
+@bk-tag-color-danger-light-bg-hover: @bk-color-base-danger-5;
+@bk-tag-color-danger-stroke-border-default: @bk-color-base-danger-4;
+@bk-tag-color-danger-filled-bg-default: @bk-color-base-danger-2;
+@bk-tag-color-danger-filled-bg-hover: @bk-color-base-danger-3;
+
+// Old names kept. Stroke tokens had no internal consumer and stay at their original values.
+@tag-base-color: @bk-tag-color-text-inverse;
+@tag-success-color: @bk-tag-color-success-light-text-default;
+@tag-info-color: @bk-tag-color-info-light-text-default;
+@tag-warning-color: @bk-tag-color-warning-light-text-default;
+@tag-danger-color: @bk-tag-color-danger-light-text-default;
+@tag-success-bg-color: @bk-tag-color-success-light-bg-default;
+@tag-info-bg-color: @bk-tag-color-info-bg;
+@tag-warning-bg-color: @bk-tag-color-warning-light-bg-default;
+@tag-danger-bg-color: @bk-tag-color-danger-light-bg-default;
 @tag-stroke-bg-color: #FAFBFD;
-@tag-filled-bg-color: #979BA5;
-@tag-filled-success-bg-color: #14A568;
-@tag-filled-info-bg-color: #3A84FF;
-@tag-filled-warning-bg-color: #FE9C00;
-@tag-filled-danger-bg-color: #EA3536;
-
-@tag-success-border-color: rgba(20,165,104,.3);
-@tag-info-border-color: rgba(58,132,255,.3);
-@tag-warning-border-color: rgba(254,165,0,.3);
-@tag-danger-border-color: rgba(234,53,54,.3);
-
-@tag-success-hover-bg-color: #C9F5E2;
-@tag-info-hover-bg-color: #E1ECFF;
-@tag-warning-hover-bg-color: #FFE8C3;
-@tag-danger-hover-bg-color: #FEDDDC;
+@tag-filled-bg-color: @bk-tag-color-default-filled-bg-default;
+@tag-filled-success-bg-color: @bk-tag-color-success-filled-bg-default;
+@tag-filled-info-bg-color: @bk-tag-color-info-filled-bg-default;
+@tag-filled-warning-bg-color: @bk-tag-color-warning-filled-bg-default;
+@tag-filled-danger-bg-color: @bk-tag-color-danger-filled-bg-default;
+@tag-success-border-color: @bk-tag-color-success-stroke-border-default;
+@tag-info-border-color: @bk-tag-color-info-border;
+@tag-warning-border-color: @bk-tag-color-warning-stroke-border-default;
+@tag-danger-border-color: @bk-tag-color-danger-stroke-border-default;
+@tag-success-hover-bg-color: @bk-tag-color-success-light-bg-hover;
+@tag-info-hover-bg-color: @bk-tag-color-info-light-bg-hover;
+@tag-warning-hover-bg-color: @bk-tag-color-warning-light-bg-hover;
+@tag-danger-hover-bg-color: @bk-tag-color-danger-light-bg-hover;
 @tag-stroke-hover-bg-color: #F0F1F5;
-@tag-filled-hover-bg-color: #ACAFB6;
-@tag-filled-success-hover-bg-color: #42B685;
-@tag-filled-info-hover-bg-color: #609CFE;
-@tag-filled-warning-hover-bg-color: #FDAF32;
-@tag-filled-danger-hover-bg-color: #ED5C5D;
-@tag-checkable-hover-bg-color: #F0F1F5;
+@tag-filled-hover-bg-color: @bk-tag-color-filled-bg-hover;
+@tag-filled-success-hover-bg-color: @bk-tag-color-success-filled-bg-hover;
+@tag-filled-info-hover-bg-color: @bk-tag-color-info-bg-hover;
+@tag-filled-warning-hover-bg-color: @bk-tag-color-warning-filled-bg-hover;
+@tag-filled-danger-hover-bg-color: @bk-tag-color-danger-filled-bg-hover;
+@tag-checkable-hover-bg-color: @bk-tag-color-checkable-bg-hover;
 
 @themeSelectors: success, info, warning, danger;
 
@@ -43,19 +83,19 @@
   padding: 0 10px;
   font-size: 12px;
   line-height: 22px;
-  color: @default-color;
+  color: @bk-tag-color-default-light-text-default;
   cursor: default;
-  background-color: #f0f1f5;
-  border-color: rgba(151,155,165,.3);
+  background-color: @bk-tag-color-default-light-bg-default;
+  border-color: @bk-tag-color-default-stroke-border-default;
   box-sizing: border-box;
 
   each(@themeSelectors, {
-    @color: 'tag-@{value}-color';
-    @borderColor: 'tag-@{value}-border-color';
-    @bgColor: 'tag-@{value}-bg-color';
-    @bgHoverColor: 'tag-@{value}-hover-bg-color';
-    @filledBgColor: 'tag-filled-@{value}-bg-color';
-    @filledBgHoverColor: 'tag-filled-@{value}-hover-bg-color';
+    @color: 'bk-tag-color-@{value}-light-text-default';
+    @borderColor: 'bk-tag-color-@{value}-stroke-border-default';
+    @bgColor: 'bk-tag-color-@{value}-light-bg-default';
+    @bgHoverColor: 'bk-tag-color-@{value}-light-bg-hover';
+    @filledBgColor: 'bk-tag-color-@{value}-filled-bg-default';
+    @filledBgHoverColor: 'bk-tag-color-@{value}-filled-bg-hover';
     &.@{bk-prefix}-tag-@{value} {
       color: @@color;
       border-color: @@borderColor;
@@ -73,15 +113,15 @@
   });
 
   &:hover {
-    background-color: #dcdee5;
+    background-color: @bk-tag-color-default-light-bg-hover;
   }
 
   &.@{bk-prefix}-tag-filled {
-    color: @tag-base-color;
-    background-color: @tag-filled-bg-color;
+    color: @bk-tag-color-text-inverse;
+    background-color: @bk-tag-color-default-filled-bg-default;
 
     &:hover {
-      background-color: @tag-filled-hover-bg-color;
+      background-color: @bk-tag-color-filled-bg-hover;
     }
   }
 
@@ -101,17 +141,17 @@
     background: none;
 
     &:hover {
-      background: @tag-checkable-hover-bg-color;
+      background: @bk-tag-color-checkable-bg-hover;
     }
   }
 
   &.@{bk-prefix}-tag-check {
-    color: @tag-base-color;
-    background: @tag-info-color;
+    color: @bk-tag-color-text-inverse;
+    background: @bk-primary-color;
 
     &:hover {
-      color: @tag-base-color;
-      background: @tag-info-color;
+      color: @bk-tag-color-text-inverse;
+      background: @bk-primary-color;
       opacity: 1;
     }
   }
