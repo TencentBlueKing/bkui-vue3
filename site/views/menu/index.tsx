@@ -117,18 +117,20 @@ const eventJson = [
     params: 'opened: boolean, {key: string, parentKey: string}',
   },
 ];
+const subMenuPropsJson = [
+  {
+    name: 'disabled',
+    type: 'Boolean',
+    default: 'false',
+    desc: '是否禁用。禁用后不可展开或收起',
+    optional: [],
+  },
+];
 const subMenuEventJson = [
   {
     name: 'collapse',
     desc: '展开变化时触发事件',
     params: 'collapse: boolean, instance: VNode',
-  },
-];
-const menuItemEventJson = [
-  {
-    name: 'click',
-    desc: '点击事件',
-    params: 'Event',
   },
 ];
 const subMenuSlotsJson = [
@@ -201,6 +203,10 @@ export default defineComponent({
           columnMap={eventColumnMap}
           propsData={eventJson}
           title='MenuItem 事件'
+        />
+        <PropsBox
+          propsData={subMenuPropsJson}
+          title='SubMenu 属性'
         />
         <PropsBox
           columnMap={eventColumnMap}

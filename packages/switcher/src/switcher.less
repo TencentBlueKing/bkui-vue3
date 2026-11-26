@@ -18,7 +18,7 @@
   vertical-align: middle;
   list-style: none;
   cursor: pointer;
-  background-color: @switch-grey-color;
+  background-color: @bk-switch-color-neutral-shared;
   border: 1px solid transparent;
   border-radius: 50px;
   border-radius: 100px;
@@ -34,7 +34,7 @@
     width: 16px;
     height: 16px;
     cursor: pointer;
-    background: @switch-default-color;
+    background: @bk-switch-color-surface-light;
     background-color: #fff;
     border-radius: 18px;
     content: ' ';
@@ -78,7 +78,7 @@
     width: 16px;
     height: 16px;
     font-size: 12px;
-    color: @switch-grey-color;
+    color: @bk-switch-color-neutral-shared;
     cursor: pointer;
     background: transparent;
     border-radius: 16px;
@@ -143,20 +143,20 @@
   }
 
   &.is-checked {
-    background: @success-color;
+    background: @bk-success-color;
 
     .@{bk-prefix}-switcher-loading {
       svg {
-        color: @success-color;
+        color: @bk-success-color;
       }
     }
 
     &:not(.@{bk-prefix}-switcher-outline)&.@{bk-prefix}-primary {
-      background: @primary-color;
+      background: @bk-primary-color;
 
       .@{bk-prefix}-switcher-loading {
         svg {
-          color: @primary-color;
+          color: @bk-primary-color;
         }
       }
     }
@@ -180,31 +180,31 @@
   }
 
   &.@{bk-prefix}-switcher-outline {
-    background: @switch-default-color;
-    border: 1px solid @switch-grey-color;
+    background: @bk-switch-color-surface-light;
+    border: 1px solid @bk-switch-color-neutral-shared;
 
     &:after {
       width: 24px;
       height: 24px;
-      background-color: @switch-grey-color;
+      background-color: @bk-switch-color-neutral-shared;
       box-shadow: none;
     }
 
     .switcher-text {
-      color: @switch-grey-color;
+      color: @bk-switch-color-neutral-shared;
     }
 
 
 
     &.is-checked {
-      border: 1px solid @success-color;
+      border: 1px solid @bk-success-color;
 
       &:after {
-        background-color: @success-color;
+        background-color: @bk-success-color;
       }
 
       .switcher-text {
-        color: @success-color;
+        color: @bk-success-color;
       }
 
     }
@@ -218,14 +218,14 @@
 
   &.@{bk-prefix}-switcher-outline&.@{bk-prefix}-primary {
     &.is-checked {
-      border: 1px solid @primary-color;
+      border: 1px solid @bk-primary-color;
 
       &:after {
-        background: @primary-color;
+        background: @bk-primary-color;
       }
 
       .switcher-text {
-        color: @primary-color;
+        color: @bk-primary-color;
       }
     }
 

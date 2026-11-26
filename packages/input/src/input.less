@@ -1,8 +1,8 @@
 @import '@bkui-vue/styles/themes/themes.less';
 @import '@bkui-vue/styles/mixins/mixins.less';
 
-.active(@color: @primary-color) {
-  border-color: @primary-color;
+.active(@color: @bk-primary-color) {
+  border-color: @bk-primary-color;
   outline: 0;
   box-shadow: 0px 0px 3px 0px @input-shadow-color;
 }
@@ -11,14 +11,14 @@
 
   &.is-disabled,
   &.is-readonly {
-    background-color: @input-disabled-bg;
-    border-color: @disable-color;
+    background-color: @bk-input-color-bg-disabled;
+    border-color: @bk-disabled-color;
 
     .@{bk-prefix}-input--prefix-area,
     .@{bk-prefix}-input--suffix-area,
     .@{bk-prefix}-input--suffix-icon {
       cursor: not-allowed;
-      background-color: @input-disabled-bg;
+      background-color: @bk-input-color-bg-disabled;
     }
   }
 
@@ -27,7 +27,7 @@
   &.is-disabled textarea,
   &.is-readonly textarea {
     cursor: not-allowed;
-    background-color: @input-disabled-bg;
+    background-color: @bk-input-color-bg-disabled;
     opacity: 1;
   }
 
@@ -41,7 +41,7 @@
 .placeholder(@fontSize: @font-size-base) {
   ::placeholder {
     font-size: @fontSize;
-    color: @light-gray;
+    color: @bk-light-gray-color;
   }
 }
 
@@ -52,9 +52,9 @@
   overflow: hidden;
   font-size: @font-size-base;
   line-height: var(--textarea-line-height);
-  color: @input-color;
+  color: @bk-input-color-text-default;
   background-color: white;
-  border: @border-width-base @border-style-base @input-border-color;
+  border: @border-width-base @border-style-base @bk-input-color-border;
   border-radius: @border-radius-base;
   box-sizing: border-box;
   transition: all .3s;
@@ -102,11 +102,11 @@
     justify-content: flex-end;
 
     &.is-over-limit {
-      color: @danger-color;
+      color: @bk-danger-color;
     }
 
     span {
-      color: @input-maxlength-color;
+      color: @bk-input-color-counter-text;
     }
   }
 
@@ -115,7 +115,7 @@
   }
   
   &--suffix-icon {
-    color: @gray-color;
+    color: @bk-gray-color;
     padding-right: @input-horizontal-padding;
     font-size: @font-size-medium;
     margin: 0;
@@ -151,16 +151,16 @@
   display: inline-flex;
   align-items: stretch;
   width: 100%;
-  height: @input-height-base;
+  height: @component-size-base;
   font-size: @font-size-base;
-  border: @border-width-base @border-style-base @input-border-color;
+  border: @border-width-base @border-style-base @bk-input-color-border;
   border-radius: @border-radius-base;
   transition: all .3s;
   .placeholder();
   .disabled();
 
   &:hover:not(.is-disabled) {
-    border-color: @gray-color;
+    border-color: @bk-gray-color;
 
     .show-clear-only-hover {
       display: flex;
@@ -170,17 +170,17 @@
   &.is-simplicity {
     background-color: transparent;
     border-color: transparent;
-    border-bottom-color: @input-border-color;
+    border-bottom-color: @bk-input-color-border;
 
     &:hover:not(.is-disabled) {
-      background-color: @input-block-color;
+      background-color: @bk-input-color-block-bg;
       border-color: transparent;
-      border-bottom-color: @light-gray;
+      border-bottom-color: @bk-light-gray-color;
       box-shadow: none;
 
       .@{bk-prefix}-input--text,
       .@{bk-prefix}-input--suffix-icon {
-        background-color: @input-block-color;
+        background-color: @bk-input-color-block-bg;
       }
     }
   }
@@ -189,9 +189,9 @@
     display: flex;
     height: 100%;
     padding-right: @input-horizontal-padding;
-    font-size: @input-icon-size;
-    color: @light-gray;
-    background-color: @input-bg;
+    font-size: @font-size-medium;
+    color: @bk-light-gray-color;
+    background-color: @bk-input-color-bg;
     align-items: center;
     align-self: center;
     flex-shrink: 0;
@@ -211,7 +211,7 @@
     flex-shrink: 0;
 
     &:hover {
-      color: @gray-color;
+      color: @bk-gray-color;
     }
   }
 
@@ -252,12 +252,12 @@
 
     &.is-simplicity {
       border-color: transparent;
-      border-bottom-color: @primary-color;
+      border-bottom-color: @bk-primary-color;
       box-shadow: none;
 
       .@{bk-prefix}-input--text,
       .@{bk-prefix}-input--suffix-icon {
-        background-color: @input-block-color;
+        background-color: @bk-input-color-block-bg;
       }
     }
   }
@@ -268,15 +268,15 @@
   &--suffix-area {
     display: flex;
     padding: 0 @input-horizontal-padding;
-    color: @default-color;
-    background-color: @input-block-color;
-    border-right: 1px solid @input-border-color;
+    color: @bk-default-color;
+    background-color: @bk-input-color-block-bg;
+    border-right: 1px solid @bk-input-color-border;
     align-items: center;
   }
 
   &--suffix-area {
     border: 0;
-    border-left: 1px solid @input-border-color;
+    border-left: 1px solid @bk-input-color-border;
   }
 
   &--max-length {
@@ -286,11 +286,11 @@
     transform: scale(.8);
 
     &.is-over-limit {
-      color: @danger-color;
+      color: @bk-danger-color;
     }
 
     span {
-      color: @input-maxlength-color;
+      color: @bk-input-color-counter-text;
     }
   }
 
@@ -299,10 +299,10 @@
     padding: 0 @input-horizontal-padding;
     overflow: hidden;
     line-height: 1;
-    color: @input-color;
+    color: @bk-input-color-text-default;
     text-overflow: ellipsis;
     white-space: nowrap;
-    background-color: @input-bg;
+    background-color: @bk-input-color-bg;
     background-image: none;
     border: none;
     border-radius: @border-radius-base;
@@ -355,21 +355,21 @@
       display: flex;
       overflow: hidden;
       line-height: 1;
-      color: @gray-color;
+      color: @bk-gray-color;
       text-align: center;
       cursor: pointer;
-      background-color: @input-block-color;
+      background-color: @bk-input-color-block-bg;
       flex: 1;
       align-items: center;
 
       &.is-disabled {
-        color: @light-gray;
+        color: @bk-light-gray-color;
         cursor: not-allowed;
       }
     }
 
     svg {
-      font-size: @input-icon-size;
+      font-size: @font-size-medium;
     }
 
     span:first-child {
@@ -377,7 +377,7 @@
     }
 
     span:not(.is-disabled):hover {
-      background-color: @input-block-hover-color;
+      background-color: @bk-input-color-block-bg-hover;
     }
   }
 }
@@ -388,8 +388,8 @@ input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 100px @input-bg inset !important;
-  box-shadow: 0 0 0 100px @input-bg inset !important;
+  -webkit-box-shadow: 0 0 0 100px @bk-input-color-bg inset !important;
+  box-shadow: 0 0 0 100px @bk-input-color-bg inset !important;
 }
 
 /* 针对 Firefox 的样式 */
@@ -397,6 +397,6 @@ input:-moz-autofill,
 input:-moz-autofill:hover,
 input:-moz-autofill:focus,
 input:-moz-autofill:active {
-  -moz-box-shadow: 0 0 0 100px @input-bg inset !important;
-  box-shadow: 0 0 0 100px @input-bg inset !important;
+  -moz-box-shadow: 0 0 0 100px @bk-input-color-bg inset !important;
+  box-shadow: 0 0 0 100px @bk-input-color-bg inset !important;
 }

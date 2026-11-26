@@ -8,9 +8,9 @@
   min-width: 300px;
   padding: 10px 15px;
   font-size: 14px;
-  color: @message-color;
-  background: @message-primary-bg-color;
-  border: 1px solid @message-primary-border-color;
+  color: @bk-message-color-text-default;
+  background: @bk-message-color-primary-bg;
+  border: 1px solid @bk-message-color-primary-border;
   border-radius: 2px;
   transform: translateX(-50%);
   box-shadow: 0px 2px 4px 0px @message-primary-shadow-color;
@@ -20,11 +20,11 @@
     padding-left: 20px;
     margin-right: 0;
     font-size: 14px;
-    color: @light-gray;
+    color: @bk-light-gray-color;
     cursor: pointer;
 
     &:hover {
-      color: @gray-color;
+      color: @bk-gray-color;
     }
   }
 }
@@ -34,38 +34,38 @@
   height: 18px;
   margin-right: 10px;
   font-size: 18px;
-  color: @primary-color;
+  color: @bk-primary-color;
 }
 
 .@{bk-prefix}-message-primary {
-  background: @message-primary-bg-color;
-  border: 1px solid @message-primary-border-color;
+  background: @bk-message-color-primary-bg;
+  border: 1px solid @bk-message-color-primary-border;
 }
 
 .@{bk-prefix}-message-warning {
-  background: @message-warning-bg-color;
-  border: 1px solid @message-warning-border-color;
+  background: @bk-message-color-warning-bg;
+  border: 1px solid @bk-message-color-warning-border;
   box-shadow: 0px 2px 4px 0px @message-warning-shadow-color;
   .@{bk-prefix}-message-icon {
-    color: @warning-color;
+    color: @bk-warning-color;
   }
 }
 
 .@{bk-prefix}-message-success {
-  background: @message-success-bg-color;
-  border: 1px solid @message-success-border-color;
+  background: @bk-message-color-success-bg;
+  border: 1px solid @bk-message-color-success-border;
   box-shadow: 0px 2px 4px 0px @message-success-shadow-color;
   .@{bk-prefix}-message-icon {
-    color: @success-color;
+    color: @bk-success-color;
   }
 }
 
 .@{bk-prefix}-message-error {
-  background: @message-danger-bg-color;
-  border: 1px solid @message-danger-border-color;
+  background: @bk-message-color-danger-bg;
+  border: 1px solid @bk-message-color-danger-border;
   box-shadow: 0px 2px 4px 0px @message-danger-shadow-color;
   .@{bk-prefix}-message-icon {
-    color: @danger-color;
+    color: @bk-danger-color;
   }
 }
 

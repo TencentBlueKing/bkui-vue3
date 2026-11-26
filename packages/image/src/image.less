@@ -9,8 +9,8 @@
   border-radius: @border-radius-base;
 
   &-error {
-    background: @image-error-bg;
-    border: 1px solid @image-error-border;
+    background: @bk-image-color-error-bg;
+    border: 1px solid @bk-image-color-error-border;
   }
 
   &-inner {
@@ -29,7 +29,7 @@
   &-error-icon {
     width: 24px;
     height: 24px;
-    color: @image-error-icon-color;
+    color: @bk-image-color-error-icon;
   }
 
   &-error-overlay {
@@ -43,7 +43,7 @@
     font-size: @font-size-base;
     color: #fff;
     cursor: pointer;
-    background: @image-mask-bg;
+    background: @bk-image-color-mask-bg;
     opacity: 0;
     transition: opacity 0.2s;
   }
@@ -76,7 +76,7 @@
   align-items: center;
   justify-content: center;
   user-select: none;
-  background: @image-mask-bg;
+  background: @bk-image-color-mask-bg;
 
   &-close {
     position: absolute;
@@ -89,12 +89,12 @@
     width: 40px;
     height: 40px;
     cursor: pointer;
-    background: @image-fab-bg;
+    background: @bk-image-color-fab-bg;
     border-radius: 50%;
     transition: background 0.2s;
 
     &:hover {
-      background: @image-fab-hover-bg;
+      background: @bk-image-color-fab-bg-hover;
     }
 
     &-icon {
@@ -113,12 +113,12 @@
     width: 40px;
     height: 40px;
     cursor: pointer;
-    background: @image-fab-bg;
+    background: @bk-image-color-fab-bg;
     border-radius: 50%;
     transition: background 0.2s;
 
     &:hover {
-      background: @image-fab-hover-bg;
+      background: @bk-image-color-fab-bg-hover;
     }
 
     &-left {
@@ -175,14 +175,14 @@
     &-icon {
       width: 96px;
       height: 86px;
-      color: @image-error-text-color;
+      color: @bk-image-color-error-text;
     }
 
     &-text {
       margin: 0;
       font-size: @font-size-medium;
       line-height: 22px;
-      color: @image-error-text-color;
+      color: @bk-image-color-error-text;
     }
   }
 }
@@ -201,7 +201,7 @@
     align-items: center;
     height: 36px;
     padding: 0 12px;
-    background: @image-toolbar-bg;
+    background: @bk-image-color-toolbar-bg;
     border-radius: 18px;
   }
 
@@ -213,14 +213,14 @@
     width: 28px;
     height: 28px;
     font-size: 16px;
-    color: @image-toolbar-color;
+    color: @bk-image-color-toolbar-foreground;
     cursor: pointer;
     border-radius: @border-radius-base;
     transition: color 0.2s, background 0.2s;
 
     &:hover {
       color: #fff;
-      background: @image-toolbar-hover-bg;
+      background: @bk-image-color-toolbar-bg-hover;
     }
 
     &[data-tooltip]::before,
@@ -240,7 +240,7 @@
       color: #fff;
       white-space: nowrap;
       content: attr(data-tooltip);
-      background: @image-toolbar-tooltip-bg;
+      background: @bk-image-color-toolbar-tooltip-bg;
       border-radius: @border-radius-base;
       transform: translateX(-50%);
     }
@@ -250,7 +250,7 @@
       bottom: calc(100% + 4px);
       left: 50%;
       content: '';
-      border-color: @image-toolbar-tooltip-bg transparent transparent;
+      border-color: @bk-image-color-toolbar-tooltip-bg transparent transparent;
       border-style: solid;
       border-width: 4px;
       transform: translateX(-50%);
@@ -266,7 +266,7 @@
     padding: 0 8px;
     font-size: @font-size-base;
     line-height: 28px;
-    color: @image-toolbar-color;
+    color: @bk-image-color-toolbar-foreground;
     white-space: nowrap;
   }
 
@@ -282,7 +282,7 @@
     gap: 4px;
     align-items: center;
     font-size: @font-size-base;
-    color: @image-toolbar-color;
+    color: @bk-image-color-toolbar-foreground;
     white-space: nowrap;
 
     &-icon {
@@ -293,7 +293,7 @@
     &-dot {
       width: 4px;
       height: 4px;
-      background: @image-toolbar-color;
+      background: @bk-image-color-toolbar-foreground;
       border-radius: 50%;
     }
   }

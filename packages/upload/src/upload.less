@@ -37,12 +37,12 @@
 .@{bk-prefix}-upload {
   &__tip {
     font-size: 12px;
-    color: @default-color;
+    color: @bk-default-color;
   }
 
   &--disabled {
     .@{bk-prefix}-upload__tip {
-      color: @light-gray;
+      color: @bk-light-gray-color;
     }
   }
 
@@ -80,7 +80,7 @@
 }
 
 .@{bk-prefix}-upload-trigger {
-  color: @default-color;
+  color: @bk-default-color;
 
   &__input-file {
     display: none;
@@ -98,7 +98,7 @@
   &__picture-icon {
     font-size: 24px;
     font-weight: bold;
-    color: @gray-color;
+    color: @bk-gray-color;
   }
 
   &__picture-text {
@@ -133,13 +133,13 @@
   &--draggable {
     height: 80px;
     cursor: pointer;
-    background-color: @whitesmoke-color;
-    border: @border-width-base dashed @light-gray;
+    background-color: @bk-whitesmoke-color;
+    border: @border-width-base dashed @bk-light-gray-color;
     border-radius: @border-radius-base;
   }
 
   &--dragover {
-    border-color: @primary-color;
+    border-color: @bk-primary-color;
   }
 
   &__draggable {
@@ -154,7 +154,7 @@
   &__draggable-icon {
     font-size: 24px;
     font-weight: bold;
-    color: @gray-color;
+    color: @bk-gray-color;
   }
 
   &__draggable-text {
@@ -162,7 +162,7 @@
   }
 
   &__draggable-upload-link {
-    color: @primary-color;
+    color: @bk-primary-color;
   }
 
   &--picture {
@@ -173,8 +173,8 @@
     margin: 0 8px 8px 0;
     overflow: hidden;
     cursor: pointer;
-    background-color: @whitesmoke-color;
-    border: @border-width-base dashed @light-gray;
+    background-color: @bk-whitesmoke-color;
+    border: @border-width-base dashed @bk-light-gray-color;
     border-radius: @border-radius-base;
     align-items: center;
     justify-content: center;
@@ -199,13 +199,13 @@
 
   &--disabled {
     &.@{bk-prefix}-upload-trigger {
-      color: @light-gray;
+      color: @bk-light-gray-color;
 
       &--draggable,
       &--picture {
         cursor: not-allowed;
         background-color: #fff;
-        border-color: @disable-color;
+        border-color: @bk-disabled-color;
       }
     }
     .@{bk-prefix}-upload-trigger {
@@ -215,19 +215,19 @@
       &__picture-inner,
       &__picture-icon,
       &__picture-upload-link {
-        color: @light-gray;
+        color: @bk-light-gray-color;
       }
     }
   }
 
   &:not(.@{bk-prefix}-upload-trigger--disabled) {
     &:hover {
-      border-color: @primary-color;
+      border-color: @bk-primary-color;
 
       .@{bk-prefix}-upload-trigger {
         &__picture-icon,
         &__draggable-icon {
-          color: @primary-color;
+          color: @bk-primary-color;
         }
       }
     }
@@ -243,7 +243,7 @@
     }
     &.@{bk-prefix}-upload-trigger--has-file {
       &:hover {
-        border-color: @light-gray;
+        border-color: @bk-light-gray-color;
       }
     }
   }
@@ -259,12 +259,12 @@
     padding: 10px;
     margin: 8px 0;
     background: #fff;
-    border: 1px solid @light-gray;
+    border: 1px solid @bk-light-gray-color;
     border-radius: 2px;
     transition: all .125s cubic-bezier(.55, 0, .1, 1);
 
     &:hover {
-      border-color: @gray-color;
+      border-color: @bk-gray-color;
       .@{bk-prefix}-upload-list {
         &__item-speed {
           display: none;
@@ -292,7 +292,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: @gray-color;
+    color: @bk-gray-color;
   }
 
   &__item-thumbnail {
@@ -317,7 +317,7 @@
 
   &__item-name {
     font-size: 12px;
-    color: @default-color;
+    color: @bk-default-color;
     text-align: left;
     direction: rtl;
     .ellipsis-style(85%, block);
@@ -329,7 +329,7 @@
     right: 0;
     font-size: 12px;
     font-weight: 700;
-    color: @default-color;
+    color: @bk-default-color;
   }
 
   &__item-speed-rate {
@@ -356,14 +356,14 @@
 
   &__item-del-icon {
     font-size: 14px;
-    color: @gray-color;
+    color: @bk-gray-color;
     cursor: pointer;
   }
 
   &__item-retry-icon {
     margin-right: 12px;
     font-size: 14px;
-    color: @gray-color;
+    color: @bk-gray-color;
     cursor: pointer;
   }
 
@@ -380,7 +380,7 @@
       }
 
       &__item-message {
-        color: @success-color;
+        color: @bk-success-color;
       }
 
       &__item-message-success-icon {

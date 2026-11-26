@@ -34,14 +34,14 @@
 
   &.is-disabled {
     cursor: not-allowed;
-    background-color: @input-disabled-bg;
-    border-color: @disable-color;
+    background-color: @bk-input-color-bg-disabled;
+    border-color: @bk-disabled-color;
     opacity: 1;
 
     .@{bk-prefix}-cascader-name,
     input {
       cursor: not-allowed;
-      background-color: @input-disabled-bg;
+      background-color: @bk-input-color-bg-disabled;
       opacity: 1;
     }
   }
@@ -49,15 +49,15 @@
   &.is-simplicity {
     background-color: transparent;
     border-color: transparent;
-    border-bottom-color: @input-border-color;
+    border-bottom-color: @bk-input-color-border;
 
     &:hover:not(.is-disabled) {
-      background-color: @input-block-color;
+      background-color: @bk-input-color-block-bg;
       border-color: transparent;
-      border-bottom-color: @light-gray;
+      border-bottom-color: @bk-light-gray-color;
       box-shadow: none;
       .@{bk-prefix}-input--text, .@{bk-prefix}-input--suffix-icon {
-        background-color: @input-block-color;
+        background-color: @bk-input-color-block-bg;
       }
     }
   }
@@ -79,10 +79,10 @@
 
     &.is-simplicity.is-simplicity {
       border-color: transparent;
-      border-bottom-color: @primary-color;
+      border-bottom-color: @bk-primary-color;
       box-shadow: none;
       .@{bk-prefix}-input--text, .@{bk-prefix}-input--suffix-icon {
-        background-color: @input-block-color;
+        background-color: @bk-input-color-block-bg;
       }
     }
   }
@@ -214,7 +214,7 @@
 }
 
 .@{bk-prefix}-cascader-popover{
-  border: 1px solid @cascader-panel-border-color;
+  border: 1px solid @bk-cascader-color-panel-border;
   border-radius: 2px;
   box-shadow: 0px 2px 6px 0px rgba(0,0,0,.10);
   .@{bk-prefix}-cascader-panel-wrapper {
@@ -222,8 +222,8 @@
     .@{bk-prefix}-cascader-panel {
       min-width: 160px;
       padding: 4px 0;
-      background: @white-color;
-      border-right: 1px solid @cascader-panel-border-color;
+      background: @bk-white-color;
+      border-right: 1px solid @bk-cascader-color-panel-border;
   
       &:last-child {
         border-right: none;
@@ -240,13 +240,13 @@
         cursor: pointer;
   
         &:hover {
-          background: @cascader-panel-hover;
+          background: @bk-cascader-color-panel-hover;
         }
   
         &.is-selected,
         &.is-checked {
-          color: @primary-color;
-          background: @cascader-panel-active;
+          color: @bk-primary-color;
+          background: @bk-cascader-color-panel-active;
 
           &:hover {
             background-color: #cddffe;
@@ -254,12 +254,12 @@
         }
   
         &.is-disabled {
-          color: @light-gray;
+          color: @bk-light-gray-color;
           cursor: not-allowed;
-          background-color: @white-color;
+          background-color: @bk-white-color;
   
           .@{bk-prefix}-icon-angle-right {
-            color: @light-gray;
+            color: @bk-light-gray-color;
           }
         }
   
@@ -268,7 +268,7 @@
           top: 50%;
           right: 0;
           font-size: 20px;
-          color: @gray-color;
+          color: @bk-gray-color;
           transform: translateY(-50%);
         }
   
@@ -277,7 +277,7 @@
           top: 50%;
           right: 5px;
           font-size: 12px;
-          color: @gray-color;
+          color: @bk-gray-color;
           transform: translateY(-50%);
         }
 

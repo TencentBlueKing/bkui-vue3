@@ -1,20 +1,29 @@
 @import '@bkui-vue/styles/themes/themes.less';
 
-@info-border-color: #c5daff;
-@info-background-color: #f0f8ff;
-@info-icon-color: #3a84ff;
-
-@success-border-color: #94f5a4;
-@success-background-color: #f2fff4;
-@success-icon-color: #2dcb56;
-
-@warning-border-color: #ffdfac;
-@warning-background-color: #fff4e2;
-@warning-icon-color: #ff9c01;
-
-@danger-border-color: #ffd2d2;
-@danger-background-color: #ffeded;
-@danger-icon-color: #ea3636;
+@bk-alert-color-info-border: @bk-color-base-brand-4;
+@bk-alert-color-info-bg: @bk-color-base-brand-7;
+@bk-alert-color-info-icon: @bk-color-base-brand-2;
+@bk-alert-color-success-border: @bk-color-base-success-4;
+@bk-alert-color-success-bg: @bk-color-base-success-7;
+@bk-icon-color-success: @bk-color-base-success-2;
+@bk-alert-color-warning-border: @bk-color-base-warn-4;
+@bk-alert-color-warning-bg: @bk-color-base-warn-7;
+@bk-icon-color-warning: @bk-color-base-warn-2;
+@bk-alert-color-danger-border: @bk-color-base-danger-4;
+@bk-alert-color-danger-bg: @bk-color-base-danger-6;
+@bk-alert-color-danger-icon: @bk-color-base-danger-2;
+@info-border-color: @bk-alert-color-info-border;
+@info-background-color: @bk-alert-color-info-bg;
+@info-icon-color: @bk-alert-color-info-icon;
+@success-border-color: @bk-alert-color-success-border;
+@success-background-color: @bk-alert-color-success-bg;
+@success-icon-color: @bk-icon-color-success;
+@warning-border-color: @bk-alert-color-warning-border;
+@warning-background-color: @bk-alert-color-warning-bg;
+@warning-icon-color: @bk-icon-color-warning;
+@danger-border-color: @bk-alert-color-danger-border;
+@danger-background-color: @bk-alert-color-danger-bg;
+@danger-icon-color: @bk-alert-color-danger-icon;
 
 .@{bk-prefix}-alert {
   position: relative;
@@ -41,47 +50,47 @@
 }
 
 .@{bk-prefix}-alert-info {
-  background-color: @info-background-color;
-  border-color: @info-border-color;
+  background-color: @bk-alert-color-info-bg;
+  border-color: @bk-alert-color-info-border;
 
   .@{bk-prefix}-alert-icon-info {
-    color: @info-icon-color;
+    color: @bk-alert-color-info-icon;
   }
 }
 
 .@{bk-prefix}-alert-success {
-  background-color: @success-background-color;
-  border-color: @success-border-color;
+  background-color: @bk-alert-color-success-bg;
+  border-color: @bk-alert-color-success-border;
 
   .@{bk-prefix}-alert-icon-info {
-    color: @success-icon-color;
+    color: @bk-icon-color-success;
   }
 }
 
 .@{bk-prefix}-alert-warning {
-  background-color: @warning-background-color;
-  border-color: @warning-border-color;
+  background-color: @bk-alert-color-warning-bg;
+  border-color: @bk-alert-color-warning-border;
 
   .@{bk-prefix}-alert-icon-info {
-    color: @warning-icon-color;
+    color: @bk-icon-color-warning;
   }
 }
 
 .@{bk-prefix}-alert-danger {
-  background-color: @danger-background-color;
-  border-color: @danger-border-color;
+  background-color: @bk-alert-color-danger-bg;
+  border-color: @bk-alert-color-danger-border;
 
   .@{bk-prefix}-alert-icon-info {
-    color: @danger-icon-color;
+    color: @bk-alert-color-danger-icon;
   }
 }
 // 兼容历史 prop theme 的配置 error 调整为danger
 .@{bk-prefix}-alert-error {
-  background-color: @danger-background-color;
-  border-color: @danger-border-color;
+  background-color: @bk-alert-color-danger-bg;
+  border-color: @bk-alert-color-danger-border;
 
   .@{bk-prefix}-alert-icon-info {
-    color: @danger-icon-color;
+    color: @bk-alert-color-danger-icon;
   }
 }
 // 兼容历史 prop theme 的配置 error 调整为danger

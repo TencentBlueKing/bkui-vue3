@@ -1,6 +1,7 @@
 @import '@bkui-vue/styles/themes/themes.less';
 
-@transfer-item-hover-background-color: #e1ecff;
+@bk-transfer-color-item-bg-hover: @bk-color-base-brand-6;
+@transfer-item-hover-background-color: @bk-transfer-color-item-bg-hover;
 
 .@{bk-prefix}-transfer {
   display: flex;
@@ -11,7 +12,7 @@
   .@{bk-prefix}-transfer-icon {
     margin: 0 8px;
     font-size: 24px;
-    color: @light-gray;
+    color: @bk-light-gray-color;
   }
 
   .transfer-button-group {
@@ -23,10 +24,10 @@
       justify-content: center;
       width: 24px;
       height: 24px;
-      color: @white-color;
+      color: @bk-white-color;
       cursor: pointer;
-      background-color: @primary-color;
-      border: 1px solid @primary-color;
+      background-color: @bk-primary-color;
+      border: 1px solid @bk-primary-color;
       border-radius: 2px;
 
       &:first-child {
@@ -34,10 +35,10 @@
       }
 
       &.disabled {
-        color: @light-gray;
+        color: @bk-light-gray-color;
         cursor: not-allowed;
-        background-color: @whitesmoke-color;
-        border-color: @disable-color;
+        background-color: @bk-whitesmoke-color;
+        border-color: @bk-disabled-color;
       }
 
       span {
@@ -54,16 +55,16 @@
     min-width: 200px;
     height: 400px;
     overflow: hidden;
-    background-color: @white-color;
-    border: 1px solid @disable-color;
+    background-color: @bk-white-color;
+    border: 1px solid @bk-disabled-color;
     border-radius: 2px;
 
     .slot-header,
     .header {
       height: 40px;
       padding: 0 16px;
-      background-color: @whitesmoke-color;
-      border-bottom: 1px solid @disable-color;
+      background-color: @bk-whitesmoke-color;
+      border-bottom: 1px solid @bk-disabled-color;
     }
 
     .header {
@@ -75,18 +76,18 @@
       .select-all {
         font-size: 12px;
         font-weight: normal;
-        color: @primary-color;
+        color: @bk-primary-color;
         cursor: pointer;
 
         &.disabled {
-          color: @light-gray;
+          color: @bk-light-gray-color;
           cursor: not-allowed;
         }
       }
 
       .select-total-count {
         font-weight: normal;
-        color: @gray-color;
+        color: @bk-gray-color;
       }
     }
 
@@ -95,7 +96,7 @@
       height: 30px;
       margin: 8px 16px 0;
       border-width: 0 0 1px 0;
-      border-bottom: 1px solid @disable-color;
+      border-bottom: 1px solid @bk-disabled-color;
       border-radius: 0;
       outline: none;
 
@@ -106,7 +107,7 @@
       .@{bk-prefix}-icon-search {
         font-size: 18px;
         line-height: 28px;
-        color: @light-gray;
+        color: @bk-light-gray-color;
       }
 
       input {
@@ -120,7 +121,7 @@
       align-items: center;
       justify-content: center;
       padding-bottom: 30px;
-      color: @light-gray;
+      color: @bk-light-gray-color;
       cursor: default;
     }
 
@@ -146,8 +147,8 @@
         cursor: pointer;
 
         &:hover:not(.is-disabled) {
-          color: @primary-color;
-          background-color: @transfer-item-hover-background-color;
+          color: @bk-primary-color;
+          background-color: @bk-transfer-color-item-bg-hover;
 
           .icon-wrapper {
             visibility: visible;
@@ -176,7 +177,7 @@
         }
 
         &.is-disabled {
-          color: @light-gray;
+          color: @bk-light-gray-color;
           cursor: not-allowed;
         }
 

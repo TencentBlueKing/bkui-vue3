@@ -4,7 +4,7 @@
 .@{bk-prefix}-breadcrumb {
   display: flex;
   font-size: 14px;
-  color: @breadcrumb-black-color ;
+  color: @bk-breadcrumb-color-text-muted ;
   align-items: center;
 
   &::after {
@@ -23,7 +23,7 @@
 
   &-goback {
     margin-right: 12px;
-    color: @breadcrumb-primary-hover-color;
+    color: @bk-breadcrumb-color-hover;
     cursor: pointer;
 
     svg {
@@ -35,18 +35,18 @@
     &-inner {
       &.is-link,
       & a {
-        color: @breadcrumb-fn-main-color ;
+        color: @bk-breadcrumb-color-text-default ;
         text-decoration: none;
 
         &:hover {
-          color: @breadcrumb-primary-hover-color;
+          color: @bk-breadcrumb-color-hover;
           cursor: pointer;
         }
       }
     }
 
     &:last-child {
-      color: @breadcrumb-black-color;
+      color: @bk-breadcrumb-color-text-muted;
 
       .el-breadcrumb__inner,
       .el-breadcrumb__inner a {

@@ -6,14 +6,14 @@
 }
 
 .open {
-  background: @submenu-bg-color;
+  background: @bk-submenu-color-bg;
 }
 
 .@{bk-prefix}-menu {
   display: flex;
   flex-direction: column;
   width: @menu-width;
-  background-color: @menu-bg-color;
+  background-color: @bk-menu-color-bg;
   transition: width .3s ease-out;
 
   &.is-collapse {
@@ -35,7 +35,7 @@
     }
 
     &:hover {
-      color: @menu-active-color;
+      color: @bk-menu-color-text-active;
       cursor: pointer;
     }
 
@@ -46,8 +46,8 @@
       height: 40px;
 
       &.is-collapse {
-        color: @menu-active-color;
-        background: @menu-active-bg-color;
+        color: @bk-menu-color-text-active;
+        background: @bk-menu-color-bg-active;
       }
 
       &-icon {
@@ -96,6 +96,37 @@
       /* stylelint-disable-next-line declaration-no-important */
       transition-property: all !important;
     }
+
+    &.is-disabled {
+      .submenu-header {
+        cursor: not-allowed;
+      }
+
+      .submenu-header-content,
+      .submenu-header-icon .menu-icon,
+      .submenu-header-collapse {
+        color: @bk-menu-color-dark-text-disabled;
+      }
+
+      .submenu-header.is-collapse {
+        color: @bk-menu-color-dark-text-disabled;
+        background: none;
+      }
+
+      &:hover {
+        color: @bk-menu-color-dark-text-disabled;
+
+        .submenu-header {
+          cursor: not-allowed;
+        }
+
+        .submenu-header-content,
+        .submenu-header-icon .menu-icon,
+        .submenu-header-collapse {
+          color: @bk-menu-color-dark-text-disabled;
+        }
+      }
+    }
   }
 
   &-item {
@@ -107,34 +138,42 @@
     margin: 2px 0;
     overflow: hidden;
     font-size: 14px;
-    color: @menu-color;
+    color: @bk-menu-color-dark-text;
     text-overflow: clip;
     white-space: nowrap;
     transition: width .3s ease-in-out;
 
     &:hover {
-      color: @menu-active-color;
+      color: @bk-menu-color-text-active;
       cursor: pointer;
       background-color:  #31394F;;
     }
 
     &.is-active {
-      color: @menu-active-color;
-      background: @menu-active-bg-color;
+      color: @bk-menu-color-text-active;
+      background: @bk-menu-color-bg-active;
     }
 
     &.is-disabled {
-      color: @menu-group-color;
+      color: @bk-menu-color-dark-text-disabled;
       cursor: not-allowed;
-      
-      &:hover {
-        color: @menu-group-color;
-        cursor: not-allowed;
-        background: none;
+
+      .item-icon .default-icon {
+        background: @bk-menu-color-dark-text-disabled;
+        background-color: @bk-menu-color-dark-text-disabled;
+        opacity: 1;
       }
       
-      .default-icon {
-        opacity: 0.4;
+      &:hover {
+        color: @bk-menu-color-dark-text-disabled;
+        cursor: not-allowed;
+        background: none;
+
+        .item-icon .default-icon {
+          background: @bk-menu-color-dark-text-disabled;
+          background-color: @bk-menu-color-dark-text-disabled;
+          opacity: 1;
+        }
       }
     }
 
@@ -150,8 +189,8 @@
         display: inline-block;
         width: 3px;
         height: 3px;
-        background: @menu-group-color;
-        background-color: @menu-active-color;
+        background: @bk-menu-color-dark-group-text;
+        background-color: @bk-menu-color-text-active;
         border-radius: 50%;
       }
     }
@@ -177,7 +216,7 @@
       overflow: hidden;
       font-size: 12px;
       line-height: 16px;
-      color: @menu-group-color;
+      color: @bk-menu-color-dark-group-text;
       text-overflow: clip;
       white-space: nowrap;
     }

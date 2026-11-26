@@ -4,11 +4,23 @@
 
 @colorSelectors: blue, red, green, yellow, gray;
 
-@blue-color: #3a84ff;
-@green-color: #2dcb56;
-@yellow-color: #ff9c01;
-@red-color: #ea3636;
-@gray-color: #63656e;
+@bk-timeline-color-blue-accent: @bk-color-base-brand-2;
+@bk-timeline-color-red-accent: @bk-color-base-danger-2;
+@bk-green-color: @bk-color-base-success-2;
+@bk-yellow-color: @bk-color-base-warn-2;
+// Local node color. color: 'gray' still emits .bk-timeline-gray. Not the public gray token.
+@bk-timeline-color-node-dark-gray: @bk-color-base-neutral-2;
+@bk-timeline-color-node-default: @bk-color-base-neutral-5;
+@bk-timeline-color-line-default: @bk-color-base-neutral-5;
+@bk-timeline-theme-primary: @bk-color-base-brand-2;
+@bk-timeline-theme-success: @bk-color-base-success-2;
+@bk-timeline-theme-warning: @bk-color-base-warn-2;
+@bk-timeline-theme-danger: @bk-color-base-danger-2;
+@blue-color: @bk-timeline-color-blue-accent;
+@green-color: @bk-green-color;
+@yellow-color: @bk-yellow-color;
+@red-color: @bk-timeline-color-red-accent;
+@gray-color: @bk-timeline-color-node-dark-gray;
 
 * {
   box-sizing: border-box;
@@ -31,7 +43,7 @@
     /* spacing 1px */
     margin-top: 13px;
     font-size: 0;
-    border-left: 1px solid #d8d8d8;
+    border-left: 1px solid @bk-timeline-color-line-default;
 
     &::before {
       position: absolute;
@@ -41,7 +53,7 @@
       width: 11px;
       height: 11px;
       background: #fff;
-      border: 2px solid #d8d8d8;
+      border: 2px solid @bk-timeline-color-node-default;
       border-radius: 50%;
       content: '';
       box-sizing: border-box;
@@ -147,7 +159,7 @@
 
 
   each(@themeSelectors, {
-  @color: '@{value}-color';
+  @color: 'bk-timeline-theme-@{value}';
 
   .@{bk-prefix}-timeline{
     &-@{value} {
@@ -167,32 +179,43 @@
   }
 })
 
-  each(@colorSelectors, {
-  @color: '@{value}-color';
-
-  .@{bk-prefix}-timeline{
-    &-@{value} {
+  .timeline-node-color(@nodeColor) {
+    &::before,
+    .@{bk-prefix}-timeline-icon {
+      color: @nodeColor;
+      border: 2px solid @nodeColor;
+    }
+    &.@{bk-prefix}-timeline-filled {
       &::before,
       .@{bk-prefix}-timeline-icon {
-        color: @@color;
-        border: 2px solid @@color;
-      }
-      &.@{bk-prefix}-timeline-filled {
-        &::before,
-        .@{bk-prefix}-timeline-icon {
-          background: @@color;
-        }
+        background: @nodeColor;
       }
     }
   }
-})
+
+  .@{bk-prefix}-timeline-blue {
+    .timeline-node-color(@bk-timeline-color-blue-accent);
+  }
+  .@{bk-prefix}-timeline-red {
+    .timeline-node-color(@bk-timeline-color-red-accent);
+  }
+  .@{bk-prefix}-timeline-green {
+    .timeline-node-color(@bk-green-color);
+  }
+  .@{bk-prefix}-timeline-yellow {
+    .timeline-node-color(@bk-yellow-color);
+  }
+  // Archived compatibility: explicit color 'gray' still uses this node color.
+  .@{bk-prefix}-timeline-gray {
+    .timeline-node-color(@bk-timeline-color-node-dark-gray);
+  }
 
   &-dashed {
     .@{bk-prefix}-step {
       .@{bk-prefix}-step-title,
       .@{bk-prefix}-step-indicator {
         &::after {
-          background-image: linear-gradient(to right, @light-gray 50%, transparent 0%);
+          background-image: linear-gradient(to right, @bk-light-gray-color 50%, transparent 0%);
           background-position: bottom;
           background-repeat: repeat-x;
           background-size: 6px 1px;
@@ -206,7 +229,7 @@
       .@{bk-prefix}-step-title,
       .@{bk-prefix}-step-indicator {
         &::after {
-          background-color: @light-gray;
+          background-color: @bk-light-gray-color;
         }
       }
     }
@@ -233,7 +256,7 @@
         left: 12px;
         width: 1px;
         height: 100%;
-        background-image: linear-gradient(@light-gray 50%, transparent 0%);
+        background-image: linear-gradient(@bk-light-gray-color 50%, transparent 0%);
         background-position: right;
         background-repeat: repeat-y;
         background-size: 1px 6px;

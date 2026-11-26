@@ -76,8 +76,8 @@
         font-size: 14px;
         cursor: pointer;
 
-        background: @table-head-bg-color;
-        border-left: 1px solid @table-border-color;
+        background: @bk-table-color-head-bg;
+        border-left: 1px solid @bk-table-color-border;
         border-radius: 0 2px 0 0;
         justify-content: center;
         align-items: center;
@@ -106,7 +106,7 @@
           tr {
             &:nth-child(even) {
               td {
-                background-color: @table-strip-color;
+                background-color: @bk-table-color-row-alternate-bg;
               }
             }
 
@@ -121,7 +121,7 @@
 
   .@{bk-prefix}-table-head,
   .@{bk-prefix}-table-body {
-    background: @table-bg-color;
+    background: @bk-table-color-bg;
     transform: translateZ(0);
   }
 
@@ -181,7 +181,7 @@
           padding: 0 16px;
           overflow: hidden;
           font-size: 12px;
-          color: @table-body-font-color;
+          color: @bk-table-color-body-text;
           text-overflow: ellipsis;
           white-space: nowrap;
 
@@ -275,7 +275,7 @@
       }
 
       thead {
-        background-color: @table-head-bg-color;
+        background-color: @bk-table-color-head-bg;
 
         th {
           position: relative;
@@ -350,7 +350,7 @@
             display: flex;
             align-items: center;
             height: calc(var(--row-height) - 2px);
-            color: @table-head-font-color;
+            color: @bk-table-color-header-text;
           }
 
         }
@@ -362,7 +362,7 @@
             &.active,
             &:hover {
               cursor: pointer;
-              background: @table-row-active-bg-color;
+              background: @bk-table-color-row-bg-active;
             }
           }
         }
@@ -386,9 +386,9 @@
 
           td {
             background-color: #fff;
-            border-top: 1px solid @table-bg-color;
-            border-bottom: 1px solid @table-bg-color;
-            border-right: 1px solid @table-bg-color;
+            border-top: 1px solid @bk-table-color-bg;
+            border-bottom: 1px solid @bk-table-color-bg;
+            border-right: 1px solid @bk-table-color-bg;
 
             box-sizing: border-box;
 
@@ -435,8 +435,8 @@
             &.hover-highlight {
               td {
                 &:not(.empty-cell) {
-                  background: @table-row-hover-bg-color;
-                  border-right-color: @table-row-hover-bg-color;
+                  background: @bk-table-color-row-bg-hover;
+                  border-right-color: @bk-table-color-row-bg-hover;
                 }
               }
             }
@@ -469,11 +469,11 @@
 
     &.has-group {
       .is-head-group {
-        border-bottom: 1px solid @table-border-color;
+        border-bottom: 1px solid @bk-table-color-border;
       }
 
       th {
-        border-right: 1px solid @table-border-color;
+        border-right: 1px solid @bk-table-color-border;
 
         &.is-last-child {
           border-right: none;
@@ -520,20 +520,20 @@
     }
 
     &:not(.is-hidden) {
-      border-top: 1px solid @table-border-color;
+      border-top: 1px solid @bk-table-color-border;
     }
   }
 
   &.bordered-row {
     .@{bk-prefix}-table-head {
-      border-bottom: 1px solid @table-border-color;
+      border-bottom: 1px solid @bk-table-color-border;
     }
 
     .bk-table-body {
       tbody {
         tr {
           td {
-            border-bottom-color: @table-border-color;
+            border-bottom-color: @bk-table-color-border;
           }
         }
       }
@@ -542,15 +542,15 @@
 
   &.bordered-outer {
     .bk-table-body-wrapper {
-      border: 1px solid @table-border-color;
+      border: 1px solid @bk-table-color-border;
       border-radius: 2px;
       box-sizing: border-box;
     }
 
     .@{bk-prefix}-table-footer:not(.is-hidden) {
-      border-left: 1px solid @table-border-color;
-      border-right: 1px solid @table-border-color;
-      border-bottom: 1px solid @table-border-color;
+      border-left: 1px solid @bk-table-color-border;
+      border-right: 1px solid @bk-table-color-border;
+      border-bottom: 1px solid @bk-table-color-border;
       border-radius: 0 0 2px 2px;
       box-sizing: border-box;
     }
@@ -563,13 +563,13 @@
 
   &.bordered-horizontal {
     .bk-table-body-wrapper {
-      border-top: 1px solid @table-border-color;
-      border-bottom: 1px solid @table-border-color;
+      border-top: 1px solid @bk-table-color-border;
+      border-bottom: 1px solid @bk-table-color-border;
       box-sizing: border-box;
     }
 
     .@{bk-prefix}-table-footer:not(.is-hidden) {
-      border-bottom: 1px solid @table-border-color;
+      border-bottom: 1px solid @bk-table-color-border;
       box-sizing: border-box;
     }
 
@@ -584,7 +584,7 @@
       tbody {
         tr:last-child {
           td {
-            border-bottom-color: @table-bg-color;
+            border-bottom-color: @bk-table-color-bg;
           }
         }
       }
@@ -593,13 +593,13 @@
 
   &.bordered-col {
     .@{bk-prefix}-table-head {
-      border-right: 1px solid @table-border-color;
+      border-right: 1px solid @bk-table-color-border;
       .is-head-group {
-        border-bottom: 1px solid @table-border-color;
+        border-bottom: 1px solid @bk-table-color-border;
       }
     }
     th {
-      border-right: 1px solid @table-border-color;
+      border-right: 1px solid @bk-table-color-border;
 
       &:last-child {
         border-right: none;
@@ -607,11 +607,11 @@
     }
 
     .@{bk-prefix}-table-body {
-      border-right: 1px solid @table-border-color;
+      border-right: 1px solid @bk-table-color-border;
       tbody {
         tr {
           td {
-            border-right-color: @table-border-color;
+            border-right-color: @bk-table-color-border;
 
             &:last-child {
               border-right: none;
@@ -622,7 +622,7 @@
             &.hover-highlight {
               td {
                 &:not(.empty-cell) {
-                  border-right-color: @table-border-color;
+                  border-right-color: @bk-table-color-border;
                 }
               }
             }
@@ -643,14 +643,14 @@
 
   th,
   td {
-    border-right: 1px solid @table-bg-color;
+    border-right: 1px solid @bk-table-color-bg;
   }
 
   &.bordered-none {
     th,
     td {
       border-top: none;
-      border-right: 1px solid @table-bg-color;
+      border-right: 1px solid @bk-table-color-bg;
       border-bottom: none;
       border-left: none;
     }
@@ -660,7 +660,7 @@
           tr {
             td {
               border-top: none;
-              border-right: 1px solid @table-bg-color;
+              border-right: 1px solid @bk-table-color-bg;
               border-bottom: none;
               border-left: none;
             }
@@ -719,11 +719,11 @@
   }
   colgroup {
     col {
-      background: @table-bg-color;
+      background: @bk-table-color-bg;
 
       &.active {
         position: relative;
-        background: @table-row-active-bg-color;
+        background: @bk-table-color-row-bg-active;
       }
     }
   }

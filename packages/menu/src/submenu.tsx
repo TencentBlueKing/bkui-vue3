@@ -36,6 +36,10 @@ export const subMenuProps = {
     type: String,
     default: 'title',
   },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
 };
 export default defineComponent({
   name: 'Submenu',
@@ -65,9 +69,23 @@ export default defineComponent({
       parentKey: parentInfo?.key,
     });
     onBeforeUnmount(() => unregisterMenuInfo(key));
-    const handleCollapse = () => {
+    const handleCollapse = (event?: MouseEvent) => {
+      if (props.disabled) {
+        event?.preventDefault();
+        event?.stopPropagation();
+        return;
+      }
       handleOpenChange(key, !isShow.value);
       emit('collapse', !isShow.value, instance);
+    };
+    const handleKeydown = (event: KeyboardEvent) => {
+      if (!props.disabled) {
+        return;
+      }
+      if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') {
+        event.preventDefault();
+        event.stopPropagation();
+      }
     };
 
     const { resolveClassName } = usePrefix();
@@ -77,14 +95,19 @@ export default defineComponent({
         class={{
           [`${resolveClassName('menu-submenu')}`]: true,
           'is-opened': isShow.value,
+          'is-disabled': props.disabled,
         }}
+        aria-disabled={props.disabled ? 'true' : undefined}
       >
         <div
           class={{
             'submenu-header': true,
             'is-collapse': specialCollapse.value,
           }}
+          aria-disabled={props.disabled ? 'true' : undefined}
+          tabindex={props.disabled ? 0 : undefined}
           onClick={handleCollapse}
+          onKeydown={handleKeydown}
         >
           <span class='submenu-header-icon'>{slots.icon?.() || <TreeApplicationShape class='menu-icon' />}</span>
           <span class='submenu-header-content'>{slots.title?.() || props.title}</span>
