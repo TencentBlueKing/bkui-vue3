@@ -98,7 +98,9 @@
     }
 
     &.is-disabled {
-      cursor: not-allowed;
+      .submenu-header {
+        cursor: not-allowed;
+      }
 
       .submenu-header-content,
       .submenu-header-icon .menu-icon,
@@ -113,7 +115,10 @@
 
       &:hover {
         color: @bk-menu-color-dark-text-disabled;
-        cursor: not-allowed;
+
+        .submenu-header {
+          cursor: not-allowed;
+        }
 
         .submenu-header-content,
         .submenu-header-icon .menu-icon,
